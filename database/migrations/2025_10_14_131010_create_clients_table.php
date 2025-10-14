@@ -20,8 +20,6 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone_number');
             $table->string('npwp_number');
-            $table->date('created_at');
-            $table->date('updated_at');
             $table->timestamps();
         });
     }
