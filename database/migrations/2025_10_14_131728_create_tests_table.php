@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('tests', function (Blueprint $table) {
             $table->id();
+            $table->string('order_id')->unique();
+            $table->string('sample_id')->unique();
+            $table->string('test_parameter_id')->unique();
+            $table->string('analyst_id')->unique();
+            $table->string('test_method_id')->unique();
+            $table->string('equipment_id')->unique();
+            $table->string('reagent_id')->unique();
+            $table->string('result_value');
+            $table->enum('status', ['approved', 'in_progredd', 'disapproved']);
             $table->timestamps();
         });
     }

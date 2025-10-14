@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
+            $table->string('order_id')->unique();
+            $table->string('issued_by_id')->unique();
+            $table->id('report_number')->unique();
+            $table->date('issued_at');
+            $table->string('file_path');
+            $table->enum('status', ['draft', 'final', 'revised']);
             $table->timestamps();
         });
     }

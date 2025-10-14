@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('equipments', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('brand_type');
+            $table->string('serial_number')->nullable();
+            $table->date('purchase_year');
+            $table->enum('calibration_schedule', ['internal', 'eksternal']);
+            $table->enum('status', ['active', 'maintenance', 'broken']);
+            $table->string('location');
             $table->timestamps();
         });
     }
