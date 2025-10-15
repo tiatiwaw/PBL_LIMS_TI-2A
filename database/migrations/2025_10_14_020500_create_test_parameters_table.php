@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('test_parameters', function (Blueprint $table) {
             $table->id();
-            $table->string('unit_value_id')->unique();
+            $table->foreignId('unit_value_id')->constrained('unit_values')->onDelete('cascade');
             $table->string('name');
             $table->enum('category', ['kimia', 'mikrobiologi', 'fisika', 'klinik'])->default('kimia');
             $table->enum('detection_limit', ['LOD', 'LOQ'])->default('LOD');

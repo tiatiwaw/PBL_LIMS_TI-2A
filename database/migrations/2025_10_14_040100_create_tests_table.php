@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('tests', function (Blueprint $table) {
             $table->id();
-            $table->string('order_id')->unique();
-            $table->string('sample_id')->unique();
-            $table->string('test_parameter_id')->unique();
-            $table->string('analyst_id')->unique();
-            $table->string('test_method_id')->unique();
-            $table->string('equipment_id')->unique();
-            $table->string('reagent_id')->unique();
+            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
+            $table->foreignId('sample_id')->constrained('samples')->onDelete('cascade');
+            $table->foreignId('test_parameter_id')->constrained('test_parameters')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('test_method_id')->constrained('test_methods')->onDelete('cascade');
+            $table->foreignId('equipment_id')->constrained('equipments')->onDelete('cascade');
+            $table->foreignId('reagent_id')->constrained('reagents')->onDelete('cascade');
             $table->string('result_value');
             $table->enum('status', ['approved', 'in_progredd', 'disapproved']);
             $table->timestamps();

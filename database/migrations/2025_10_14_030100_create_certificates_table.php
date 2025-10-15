@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('certificates', function (Blueprint $table) {
             $table->id();
-            $table->string('analyst_id');
+            $table->foreignId('analyst_id')->constrained('analysts')->onDelete('cascade');
             $table->string('name');
             $table->date('issued_date');
             $table->date('expired_date');
