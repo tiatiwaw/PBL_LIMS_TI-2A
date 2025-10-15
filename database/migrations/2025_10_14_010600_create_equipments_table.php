@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('equipments', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('brand_type');
+            $table->foreignId('brand_type_id')->constrained('brand_types')->onDelete('cascade');
             $table->string('serial_number')->nullable();
             $table->date('purchase_year');
             $table->enum('calibration_schedule', ['internal', 'eksternal']);
