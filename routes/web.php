@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -8,6 +9,11 @@ use Inertia\Inertia;
 
 Route::controller(HomeController::class)->name('home')->group(function () {
     Route::get('/home', 'index')->name('home');
+});
+
+// Admin
+Route::controller(AdminController::class)->name('admin')->group(function () {
+    Route::get('/admin', 'index')->name('admin');
 });
 
 // Route::middleware('auth')->group(function () {
