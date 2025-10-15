@@ -2,18 +2,23 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LoginController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::controller(HomeController::class)->name('home')->group(function () {
-    Route::get('/home', 'index')->name('home');
+// Home
+Route::controller(HomeController::class)->name('index')->group(function () {
+    Route::get('/', 'index')->name('index');
 });
 
 // Admin
 Route::controller(AdminController::class)->name('admin')->group(function () {
     Route::get('/admin', 'index')->name('admin');
+});
+
+// Login
+Route::controller(LoginController::class)->name('login')->group(function () {
+    Route::get('/auth/login', 'index')->name('login');
 });
 
 // Route::middleware('auth')->group(function () {
