@@ -2,6 +2,7 @@ import { Head } from '@inertiajs/react';
 import { menuItems } from '@/utils/menu';
 import { Sidebar } from './sidebar';
 import { HeaderCard } from '../shared/dashboard/header-card';
+import { usePage } from '@inertiajs/react'
 
 export default function DashboardLayout({
     children,
@@ -14,11 +15,14 @@ export default function DashboardLayout({
         console.log('Logging out...');
     };
 
+    const { url } = usePage()
+    const getMenuItems = menuItems(url)
+
     return (
         <div className="p-4 flex gap-4 h-screen bg-primary-hijauTerang">
             <Head title={title} />
 
-            <Sidebar menuItems={menuItems} onLogout={handleLogout} />
+            <Sidebar menuItems={getMenuItems} onLogout={handleLogout} />
 
             <div className="flex-1 flex flex-col overflow-hidden">
                 <header className="mb-6">
