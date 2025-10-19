@@ -11,9 +11,17 @@ class Order extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'user_id',
+        'client_id',
+        'analyses_method_id',
+        'sample_id',
+        'analyst_id',
+        'order_number',
+        'title',
+        'result_value',
         'order_date',
-        'estimated_date',
+        'estimate_date',
+        'report_issued_at',
+        'report_file_path',
         'notes',
         'order_type',
         'status',
