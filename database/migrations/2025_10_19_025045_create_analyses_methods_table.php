@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('certificates', function (Blueprint $table) {
+        Schema::create('analyses_methods', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('analyst_id')->constrained('analysts')->cascadeOnDelete();
-            $table->string('name');
-            $table->date('issued_date');
-            $table->date('expired_date');
-            $table->string('filed_path');
+            $table->string('analyses_method');
             $table->timestamps();
         });
     }
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('certificates');
+        Schema::dropIfExists('analyses_methods');
     }
 };

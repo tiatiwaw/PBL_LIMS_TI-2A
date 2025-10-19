@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
@@ -27,13 +28,25 @@ class Order extends Model
         'status',
     ];
 
-    function user()
+    function client()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Client::class);
     }
+
 
     function sample()
     {
-        return $this->hasMany(Sample::class, 'order_id');
+        return $this->hasMany(Sample::class);
     }
+
+    function analyses_method()
+    {
+        return $this->hasOne(AnalysesMethod::class);
+    }
+
+    function analyst()
+    {
+        return $this->belongsTo(Analyst::class);
+    }
+
 }

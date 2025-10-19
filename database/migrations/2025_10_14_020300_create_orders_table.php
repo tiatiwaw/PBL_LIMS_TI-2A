@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
-            $table->foreignId('analyses_method_id')->constrained('analyses_types')->onDelete('cascade');
-            $table->foreignId('sample_id')->constrained('samples')->onDelete('cascade');
-            $table->foreignId('analyst_id')->constrained('n_parameter_methods')->onDelete('cascade');
+            $table->foreignId('client_id')->constrained('clients')->cascadeOnDelete();
+            $table->foreignId('analyses_method_id')->constrained('analyses_types')->cascadeOnDelete();
+            $table->foreignId('sample_id')->constrained('samples')->cascadeOnDelete();
+            $table->foreignId('analyst_id')->constrained('analysts')->cascadeOnDelete();
             $table->string('order_number');
             $table->string('title');
             $table->string('result_value');
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->date('report_issued_at');
             $table->string('report_file_path');
             $table->string('notes');
-            $table->enum('order_type', ['internal', 'external', 'urgent'])->default('internal');
+            $table->enum('order_type', ['internal','regular', 'external', 'urgent'])->default('internal');
             $table->enum('status', ['received', 'in_progress', 'pending', 'disapproved', 'approved', 'completed'])->default('received');
             $table->timestamps();
         });

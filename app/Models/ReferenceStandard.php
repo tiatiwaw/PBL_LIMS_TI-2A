@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Reference_Standard extends Model
+class ReferenceStandard extends Model
 {
     //
 }
