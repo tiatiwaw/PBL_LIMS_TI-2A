@@ -67,5 +67,37 @@ export function menuItems (url) {
                 role: "admin",
             },
         ]
+    } else if (url.startsWith('/manager')) {
+        return [
+            {
+                name: "Beranda",
+                icon: Home,
+                href: "/manager",
+                active: true,
+                role: "manager",
+            },
+            {
+                name: "Validasi Laporan",
+                icon: Wrench,
+                href: "/validasi-laporan",
+                active: false,
+                role: "manager",
+            },
+            {
+                name: "Orders",
+                icon: TrendingUp,
+                href: "/orders",
+                active: false,
+                role: "manager",
+            },
+            {
+                name: "Users",
+                icon: Users,
+                href: "/users",
+                active: false,
+                role: "manager",
+            },
+
+        ]
     }
 }

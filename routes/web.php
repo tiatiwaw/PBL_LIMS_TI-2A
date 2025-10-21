@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AnalystController;
+use App\Http\Controllers\ManagerController;
 
 // Home
 Route::controller(HomeController::class)->name('index')->group(function () {
@@ -24,6 +25,13 @@ Route::prefix('analyst')->name('analyst')->group(function () {
     Route::get('/history', [AnalystController::class, 'history'])->name('.history');
 });
 
+//Manager
+Route::prefix('manager')->name('manager')->group(function () {
+    Route::get('/', [ManagerController::class, 'index'])->name('.index');
+    Route::get('/validasi-laporan', [ManagerController::class, 'validasiLaporan'])->name('.validasi-laporan');
+    Route::get('/orders', [ManagerController::class, 'orders'])->name('.orders');
+    Route::get('/users', [ManagerController::class, 'users'])->name('.users');
+});
 // Login
 Route::controller(LoginController::class)->name('login')->group(function () {
     Route::get('/auth/login', 'index')->name('login');
