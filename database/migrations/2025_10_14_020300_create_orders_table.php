@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->cascadeOnDelete();
-            $table->foreignId('analyses_method_id')->constrained('analyses_types')->cascadeOnDelete();
-            $table->foreignId('sample_id')->constrained('samples')->cascadeOnDelete();
-            $table->foreignId('analyst_id')->constrained('analysts')->cascadeOnDelete();
+            $table->foreignId('analyses_method_id')->constrained('analyses_methods')->cascadeOnDelete();
             $table->string('order_number');
             $table->string('title');
             $table->string('result_value');

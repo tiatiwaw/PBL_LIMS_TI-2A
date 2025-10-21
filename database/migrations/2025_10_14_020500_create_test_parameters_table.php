@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->enum('category', ['kimia', 'mikrobiologi', 'fisika', 'klinik'])->default('kimia');
             $table->enum('detection_limit', ['LOD', 'LOQ'])->default('LOD');
+            $table->string('quality_standard'); // Baku  Mutu
             $table->timestamps();
         });
     }

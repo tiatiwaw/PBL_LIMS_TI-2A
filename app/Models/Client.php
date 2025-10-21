@@ -13,10 +13,8 @@ class Client extends Model
         "user_id",
         "name",
         "address",
-        "contact_person",
-        "email",
         "phone_number",
-        "npwp_number",
+        "npwp_number"
     ];
 
     public function user()

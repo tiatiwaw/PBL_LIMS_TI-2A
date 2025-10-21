@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('test_methods', function (Blueprint $table) {
+        Schema::create('n_analysts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reference_id')->constrained('reference_standards')->cascadeOnDelete();
-            $table->string('name');
-            $table->string('applicable_parameter');
-            $table->integer('duration');
-            $table->date('validity_period');
+            $table->foreignId('n_parameter_method_id')->nullable()->constrained('n_parameter_methods')->nullOnDelete(); // Dibuat nullable agar bisa migrate
+            $table->foreignId('analyst_id')->constrained('analysts')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('test_methods');
+        Schema::dropIfExists('n_analysts');
     }
 };

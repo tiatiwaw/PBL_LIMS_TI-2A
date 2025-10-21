@@ -15,7 +15,6 @@ class Order extends Model
         'client_id',
         'analyses_method_id',
         'sample_id',
-        'analyst_id',
         'order_number',
         'title',
         'result_value',
@@ -25,7 +24,7 @@ class Order extends Model
         'report_file_path',
         'notes',
         'order_type',
-        'status',
+        'status'
     ];
 
     function client()
@@ -41,12 +40,12 @@ class Order extends Model
 
     function analyses_method()
     {
-        return $this->hasOne(AnalysesMethod::class);
+        return $this->belongsTo(AnalysesMethod::class);
     }
 
-    function analyst()
+    function n_parameter_methods()
     {
-        return $this->belongsTo(Analyst::class);
+        return $this->hasMany(NParameterMethods::class);
     }
 
 }

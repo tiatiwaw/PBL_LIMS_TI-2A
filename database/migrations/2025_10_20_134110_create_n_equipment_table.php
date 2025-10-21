@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('guards', function (Blueprint $table) {
+        Schema::create('n_equipment', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('n_parameter_method_id')->nullable()->constrained('n_parameter_methods')->nullOnDelete(); // Dibuat nullable agar bisa migrate
+            $table->foreignId('equipment_id')->constrained('equipments')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('guards');
+        Schema::dropIfExists('n_equipment');
     }
 };
