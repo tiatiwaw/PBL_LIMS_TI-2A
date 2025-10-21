@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('n_equipment', function (Blueprint $table) {
+        Schema::create('n_order_samples', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('n_parameter_method_id')->nullable()->constrained('n_parameter_methods')->nullOnDelete(); // Dibuat nullable agar bisa migrate
-            $table->foreignId('equipment_id')->constrained('equipments')->cascadeOnDelete();
+            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
+            $table->foreignId('sample_id')->constrained('samples')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('n_equipment');
+        Schema::dropIfExists('n_order_samples');
     }
 };

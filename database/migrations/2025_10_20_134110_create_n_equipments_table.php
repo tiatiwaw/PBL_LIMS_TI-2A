@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('n_reagents', function (Blueprint $table) {
+        Schema::create('n_equipments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('n_parameter_method_id')->constrained('n_parameter_methods')->cascadeOnDelete();
-            $table->foreignId('reagent_id')->constrained('reagents')->cascadeOnDelete();
+            $table->foreignId('equipment_id')->constrained('equipments')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('n_reagents');
+        Schema::dropIfExists('n_equipment');
     }
 };

@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('samples', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
             $table->foreignId('sample_category_id')->constrained('sample_categories')->cascadeOnDelete();
             $table->string('name');
             $table->enum('form', ['solid', 'liquid', 'gas'])->default('solid');

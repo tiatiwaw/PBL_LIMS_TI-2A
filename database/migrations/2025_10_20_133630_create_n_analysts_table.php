@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('n_analysts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('n_parameter_method_id')->nullable()->constrained('n_parameter_methods')->nullOnDelete(); // Dibuat nullable agar bisa migrate
             $table->foreignId('analyst_id')->constrained('analysts')->cascadeOnDelete();
+            $table->foreignId('n_parameter_method_id')->constrained('n_parameter_methods')->cascadeOnDelete();
             $table->timestamps();
         });
     }
