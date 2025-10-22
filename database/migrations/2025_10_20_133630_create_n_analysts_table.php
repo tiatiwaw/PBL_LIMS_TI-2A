@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('n_analysts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('analyst_id')->constrained('analysts')->cascadeOnDelete();
-            $table->foreignId('n_parameter_method_id')->constrained('n_parameter_methods')->cascadeOnDelete();
+            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
             $table->timestamps();
         });
     }
