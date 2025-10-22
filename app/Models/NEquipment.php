@@ -16,11 +16,11 @@ class NEquipment extends Model
 
     public function n_parameter_methods()
     {
-        return $this->belongsTo(NParameterMethod::class);
+        return $this->belongsTo(NParameterMethod::class,'n_parameter_method_id');
     }
 
     public function equipments()
     {
-        return $this->belongsTo(Equipment::class);
+        return $this->belongsTo(Equipment::class,'equipment_id');
     }
 }

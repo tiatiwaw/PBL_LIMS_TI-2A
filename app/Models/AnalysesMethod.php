@@ -15,6 +15,6 @@ class AnalysesMethod extends Model
 
     public function orders()
     {
-        return $this->hasOne(Order::class);
+        return $this->hasOne(Order::class,'analyses_method_id');
     }
 }

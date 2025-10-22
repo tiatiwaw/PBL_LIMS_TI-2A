@@ -28,27 +28,38 @@ class Order extends Model
 
     public function clients()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class,'client_id');
     }
 
 
     public function n_order_samples()
     {
-        return $this->hasMany(NOrderSample::class);
+        return $this->hasMany(NOrderSample::class,'order_id');
     }
+
+    public function samples()
+    {
+        return $this->belongsToMany(Sample::class,'n_order_samples','order_id','sample_id');
+    }
+
 
     public function analyses_methods()
     {
-        return $this->belongsTo(AnalysesMethod::class);
+        return $this->belongsTo(AnalysesMethod::class,'analyses_method_id');
     }
+
 
     public function n_parameter_methods()
     {
-        return $this->hasMany(NParameterMethod::class);
+        return $this->hasMany(NParameterMethod::class,'order_id');
     }
+
 
     public function n_analysts(){
         return $this->hasMany(NAnalyst::class);
+    }
+    public function analysts(){
+        return $this->belongsToMany(Analyst::class,'n_alaysts','order_id','analyst_id');
     }
 
 }
