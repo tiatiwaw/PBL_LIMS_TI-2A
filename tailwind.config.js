@@ -39,6 +39,7 @@ export default {
                     hijauTua: "#024D60",
                     hijauMuda: "#2CACAD",
                     hijauTerang: "#F0FFFC",
+                    hijauPudar: "#d6f6f5",
                     toska: "#DDFFF9",
                 },
                 secondary: {
