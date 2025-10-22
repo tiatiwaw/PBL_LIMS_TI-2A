@@ -9,24 +9,27 @@ class ManagerController extends Controller
 {
     public function index()
     {
+        return redirect()->route('manager.index');
+    }
+    public function beranda(){
         // Mengarah ke file: /resources/js/Pages/Manager/Index.jsx
-        return Inertia::render('manager/index');
+        return Inertia::render('manager/beranda/index');
     }
 
-    public function validasiLaporan()
+    public function reportValid()
     {
-        return Inertia::render('manager/reportvalid');
+        return Inertia::render('manager/reportvalid/index');
     }
 
     public function orders()
     {
-    
-        return Inertia::render('manager/orders');
+
+        return Inertia::render('manager/orders/index');
     }
 
     public function users()
     {
         // Ganti nama file 'Users' sesuai dengan nama file JSX Anda
-        return Inertia::render('manager/users');
+        return Inertia::render('manager/users/index');
     }
 }
