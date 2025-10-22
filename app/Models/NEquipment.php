@@ -14,12 +14,13 @@ class NEquipment extends Model
         'equipment_id'
     ];
 
-    function n_parameter_method()
+    public function n_parameter_methods()
     {
-        return $this->belongsTo(NParameterMethod::class);
+        return $this->belongsToMany(
+            NParameterMethod::class);
     }
 
-    function equipment()
+    public function equipments()
     {
         return $this->belongsTo(Equipment::class);
     }

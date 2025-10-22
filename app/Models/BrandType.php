@@ -4,30 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BrandType extends Model
 {
     use HasFactory;
 
+    protected $table = 'brand_types';
+    public $timestamps = false;
+
     protected $fillable = [
-        "id",
-        "order_id",
-        "issued_by_id",
-        "report_number",
-        "issued_at",
-        "file_path",
-        "status",
-        "created_at",
-        "updated_at"
+        'name',
     ];
 
-    public function order ()
+    public function equipments()
     {
-        return $this->belongsTo(Order::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Equipment::class);
     }
 }

@@ -6,18 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Supplier extends Model
+class Grade extends Model
 {
     use HasFactory;
 
-    protected $table = 'suppliers';
+    protected $table = 'grades';
     public $timestamps = false;
 
     protected $fillable = [
         'name',
-        'contact_person',
-        'phone_number',
-        'address',
     ];
 
     public function reagents()
