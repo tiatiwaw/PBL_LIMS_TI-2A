@@ -3,22 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Inertia\Inertia; // <-- Pastikan ini ada
+use Inertia\Inertia;
 
 class ManagerController extends Controller
 {
     public function index()
     {
-        return redirect()->route('manager.index');
-    }
-    public function beranda(){
-        // Mengarah ke file: /resources/js/Pages/Manager/Index.jsx
-        return Inertia::render('manager/beranda/index');
+        return Inertia::render('manager/index');
     }
 
     public function reportValid()
     {
-        return Inertia::render('manager/reportvalid/index');
+        return Inertia::render('manager/report-validation/index');
     }
 
     public function orders()

@@ -22,7 +22,7 @@ export const UserMenu = ({ user, onLogout }) => {
                         flex items-center gap-3 
                         bg-white/10 hover:bg-white/20 
                         text-white rounded-xl 
-                        px-4 h-14 
+                        px-4 h-14 group
                         transition-all duration-300
                     "
                 >
@@ -33,14 +33,14 @@ export const UserMenu = ({ user, onLogout }) => {
                         </AvatarFallback>
                     </Avatar>
                     <div className="text-left">
-                        <p className="font-semibold text-sm leading-none">
+                        <p className="font-semibold text-sm leading-none text-white group-hover:text-gray-300">
                             {user.name}
                         </p>
                         <p className="text-xs text-white/70 mt-1.5">
                             {user.role}
                         </p>
                     </div>
-                    <ChevronDown size={16} className="opacity-70" />
+                    <ChevronDown size={16} className="opacity-70 group-hover:text-gray-300" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -63,18 +63,18 @@ export const UserMenu = ({ user, onLogout }) => {
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem className="hover:bg-white/10 cursor-pointer py-2.5">
+                <DropdownMenuItem className="hover:!bg-primary-hijauTerang cursor-pointer py-2.5">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="hover:bg-white/10 cursor-pointer py-2.5">
+                <DropdownMenuItem className="hover:!bg-primary-hijauTerang cursor-pointer py-2.5">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-white/10" />
                 <DropdownMenuItem
                     onClick={onLogout}
-                    className="text-red-400 hover:text-red-300 hover:bg-red-500/10 cursor-pointer py-2.5"
+                    className="text-red-400 hover:!text-white hover:!bg-red-400 cursor-pointer py-2.5"
                 >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>

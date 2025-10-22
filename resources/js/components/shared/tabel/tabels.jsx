@@ -8,9 +8,16 @@ import {
     TableCell,
 } from "@/components/ui/table";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import DataTableToolbar from "@/components/shared/dashboard/searchfilter"; // Mengimpor toolbar dengan path absolut
+import { cn } from "@/lib/utils";
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import SearchFilter from "../dashboard/searchfilter";
 
-// Komponen ini sekarang menerima: columns, data, dan opsi untuk toolbar
 export default function DataTable({
     columns,
     data,
@@ -32,88 +39,106 @@ export default function DataTable({
     };
 
     return (
-        <div className="w-full rounded-2xl p-6">
-            {/* 1. Memanggil Toolbar dengan opsi yang bisa diatur */}
-            <DataTableToolbar showSearch={showSearch} showFilter={showFilter} />
-
-            {/* Bagian Tabel */}
-            <Table>
-                <TableHeader>
-                    <TableRow className="bg-primary-hijauTua hover:bg-primary-hijauTua border-none">
-                        {/* 2. Membuat header tabel secara dinamis dari 'columns' */}
-                        {columns.map((column, index) => (
-                            <TableHead
-                                key={column.accessorKey}
-                                className={`text-white font-bold ${
-                                    index === 0 ? "rounded-l-lg" : ""
-                                } ${
-                                    index === columns.length - 1
-                                        ? "rounded-r-lg"
-                                        : ""
-                                }`}
-                            >
-                                {column.header}
-                            </TableHead>
-                        ))}
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {currentData.map((row) => (
-                        <TableRow key={row.id} className="font-medium border-b-gray-200 bg-white text-primary-hijauTua">
-                            {/* 3. Membuat sel tabel secara dinamis dari 'columns' */}
-                            {columns.map((column) => (
-                                <TableCell
+        <Card className="w-full rounded-2xl shadow-lg border-none">
+            <CardHeader className="pb-0">
+                <SearchFilter
+                    showSearch={showSearch}
+                    showFilter={showFilter}
+                />
+            </CardHeader>
+            <CardContent className="pt-0">
+                <Table className="border-separate border-spacing-y-3">
+                    <TableHeader>
+                        <TableRow className="bg-primary-hijauTua hover:bg-primary-hijauTua">
+                            {columns.map((column, index) => (
+                                <TableHead
                                     key={column.accessorKey}
-                                    className="py-4 font-mediumx"
+                                    className={cn(
+                                        "text-white font-bold",
+                                        index === 0 ? "rounded-l-lg" : "",
+                                        index === columns.length - 1
+                                            ? "rounded-r-lg"
+                                            : ""
+                                    )}
                                 >
-                                    {/* Memanggil fungsi 'cell' untuk merender konten */}
-                                    {column.cell
-                                        ? column.cell({ row })
-                                        : row[column.accessorKey]}
-                                </TableCell>
+                                    {column.header}
+                                </TableHead>
                             ))}
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-
-            {/* Bagian Pagination (tidak berubah) */}
-            <div className="flex justify-between items-center mt-6">
+                    </TableHeader>
+                    <TableBody>
+                        {currentData.map((row) => (
+                            <TableRow
+                                key={row.id}
+                                className={cn(
+                                    "font-medium cursor-pointer text-primary-hijauTua",
+                                    "odd:bg-primary-hijauTua/10",
+                                    "even:bg-primary-hijauTua/30",
+                                    "transition-colors duration-150 ease-in-out",
+                                    "hover:bg-primary-hijauTua/70 hover:text-white",
+                                    "data-[state=selected]:bg-primary-hijauTua/60 data-[state=selected]:text-white"
+                                )}
+                            >
+                                {columns.map((column, index) => (
+                                    <TableCell
+                                        key={column.accessorKey}
+                                        className={cn(
+                                            "py-4 font-medium",
+                                            index === 0 ? "rounded-l-lg" : "",
+                                            index === columns.length - 1
+                                                ? "rounded-r-lg"
+                                                : ""
+                                        )}
+                                    >
+                                        {column.cell
+                                            ? column.cell({ row })
+                                            : row[column.accessorKey]}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </CardContent>
+            <CardFooter className="flex justify-between items-center p-6 pt-4">
                 <p className="text-sm text-gray-500">
                     Showing page {currentPage} of {totalPages}
                 </p>
-                <div className="flex items-center gap-1">
-                    <button
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => goToPage(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <ChevronLeft size={16} />
-                    </button>
+                    </Button>
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                         (page) => (
-                            <button
+                            <Button
                                 key={page}
+                                size="sm"
+                                variant={currentPage === page ? "default" : "ghost"}
                                 onClick={() => goToPage(page)}
-                                className={`px-3 py-1 text-sm rounded-md ${
-                                    currentPage === page
-                                        ? "bg-primary-hijauTua text-white font-bold"
-                                        : "text-gray-600 hover:bg-gray-200"
-                                }`}
+                                className={cn(
+                                    currentPage === page &&
+                                    "bg-primary-hijauTua hover:bg-primary-hijauTua/90"
+                                )}
                             >
                                 {page}
-                            </button>
+                            </Button>
                         )
                     )}
-                    <button
+                    <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => goToPage(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <ChevronRight size={16} />
-                    </button>
+                    </Button>
                 </div>
-            </div>
-        </div>
+            </CardFooter>
+        </Card>
     );
 }

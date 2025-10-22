@@ -1,28 +1,71 @@
 import React from 'react';
 import { Search, ListFilter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 
-export default function DataTableToolbar({ showSearch, showFilter }) {
+export default function SearchFilter({ showSearch, showFilter, filterOptions = [] }) {
+    console.log('Filter Options:', filterOptions);
     return (
         <div className="flex items-center justify-between mb-4">
-            {/* Bagian Search Bar (ditampilkan jika showSearch true) */}
             {showSearch && (
                 <div className="relative w-full max-w-sm">
-                    <input 
-                        type="text" 
-                        placeholder="Search..." 
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-hijauMuda" 
-                    />
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    <div className="relative flex items-center">
+                        <Input
+                            type="text"
+                            className={cn(
+                                'w-full bg-white/10 backdrop-blur-md border border-primary-hijauTua/30 rounded-lg py-2.5 pl-12 pr-4 text-sm text-primary-hijauTua placeholder:text-primary-hijauTua/60',
+                                'focus:outline-none focus:ring-2 focus:ring-primary-hijauTua/50 focus:border-primary-hijauMuda',
+                                'hover:border-primary-hijauTua/50 transition-all duration-300',
+                                'shadow-sm hover:shadow-md'
+                            )}
+                            placeholder="Search..."
+                            aria-label="Search input"
+                        />
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className={cn(
+                                'absolute left-2 top-1/2 -translate-y-1/2 rounded-full',
+                                'bg-transparent hover:bg-transparent text-primary-hijauTua hover:text-primary-hijauTua border-none',
+                                'transition-all duration-75 ease-in',
+                                'focus:outline-none focus:ring-2 focus:ring-primary-hijauTua'
+                            )}
+                            aria-label="Search"
+                        >
+                            <Search size={18} className="animate-pulse" />
+                        </Button>
+                    </div>
                 </div>
             )}
 
-            {/* Bagian Filter (ditampilkan jika showFilter true) */}
             {showFilter && (
-                <Button variant="outline" className="flex items-center gap-2 border-gray-300 text-gray-600">
-                    <ListFilter size={16} />
-                    Filters
-                </Button>
+                <Select>
+                    <SelectTrigger
+                        className={cn(
+                            'flex items-center gap-2 border-primary-hijauMuda-300 text-primary-hijauMuda',
+                            'hover:text-primary-hijauMuda/60 hover:bg-primary-hijauTua/10',
+                            'focus:ring-2 focus:ring-primary-hijauTua/50 w-[180px]'
+                        )}
+                    >
+                        <ListFilter size={16} />
+                        <SelectValue placeholder="Select filter" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {filterOptions.map((option, index) => (
+                            <SelectItem key={index} value={option.value}>
+                                {option.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             )}
         </div>
     );
