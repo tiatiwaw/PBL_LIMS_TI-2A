@@ -1,4 +1,5 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
+import { NotebookText } from "lucide-react";
 
 const History = () => {
     const user = {
@@ -9,8 +10,10 @@ const History = () => {
 
     return (
         <DashboardLayout title="Analyst" user={user} header='Selamat Datang Analyst!'>
-            <div className="flex items-center justify-center text-primary-hijauTua font-bold">
-                <h1>Histories here!</h1>
+            <div className="flex flex-col items-center p-6 justify-center text-primary-hijauTua font-bold">
+               <div className="bg-primary-hijauMuda w-full min-h-10 rounded-xl">
+                    
+               </div>
             </div>
         </DashboardLayout>
     )

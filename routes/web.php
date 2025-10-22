@@ -21,6 +21,7 @@ Route::controller(AdminController::class)->name('admin')->group(function () {
 Route::prefix('analyst')->name('analyst')->group(function () {
     Route::get('/', [AnalystController::class, 'index'])->name('.index');
     Route::get('/inbox', [AnalystController::class, 'inbox'])->name('.inbox');
+    Route::get('/inbox/details', [AnalystController::class, 'show'])->name('.inbox.show');
     Route::get('/history', [AnalystController::class, 'history'])->name('.history');
 });
 

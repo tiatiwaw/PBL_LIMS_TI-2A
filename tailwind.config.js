@@ -35,6 +35,7 @@ export default {
                 primary: {
                     DEFAULT: "hsl(var(--primary))",
                     foreground: "hsl(var(--primary-foreground))",
+                    hijauGelap: "#02364B",
                     hijauTua: "#024D60",
                     hijauMuda: "#2CACAD",
                     hijauTerang: "#F0FFFC",

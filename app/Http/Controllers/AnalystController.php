@@ -18,4 +18,8 @@ class AnalystController extends Controller
     public function history() {
         return Inertia::render('analyst/history');
     }
+
+    public function show() {
+        return Inertia::render('analyst/inbox-detail');
+    }
 }

@@ -6,7 +6,7 @@ import {
     Database,
     FileCheck2,
     ShoppingCart,
-    Inbox,
+    Mail,
     History,
 } from "lucide-react";
 
@@ -16,7 +16,7 @@ export function menuItems (url) {
             // Menu untuk analyst
             {
                 name: "Kotak Masuk",
-                icon: Inbox,
+                icon: Mail,
                 href: "/analyst/inbox",
                 active: url.startsWith('/analyst/inbox'),
                 role: "analyst",
