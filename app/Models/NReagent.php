@@ -2,9 +2,25 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class NReagent extends Model
 {
-    //
+    use HasFactory;
+
+    protected $fillable = [
+        'n_parameter_method_id',
+        'reagent_id'
+    ];
+
+    function n_parameter_method()
+    {
+        return $this->belongsTo(NParameterMethod::class);
+    }
+
+    function reagent()
+    {
+        return $this->belongsTo(Reagent::class);
+    }
 }

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'client_id',
@@ -33,9 +33,9 @@ class Order extends Model
     }
 
 
-    function sample()
+    function n_order_sample()
     {
-        return $this->hasMany(Sample::class);
+        return $this->hasMany(NOrderSample::class);
     }
 
     function analyses_method()
@@ -45,7 +45,11 @@ class Order extends Model
 
     function n_parameter_methods()
     {
-        return $this->hasMany(NParameterMethods::class);
+        return $this->hasMany(NParameterMethod::class);
+    }
+
+    function n_analyst(){
+        return $this->hasMany(NAnalyst::class);
     }
 
 }

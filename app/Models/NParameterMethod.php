@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class NParameterMethods extends Model
+class NParameterMethod extends Model
 {
     use HasFactory;
 
@@ -13,9 +13,6 @@ class NParameterMethods extends Model
         'order_id',
         'test_parameter_id',
         'test_method_id',
-        'n_equipment_id',
-        'n_analyst_id',
-        'n_reagent_id',
         'result'
     ];
 
@@ -32,11 +29,7 @@ class NParameterMethods extends Model
     }
 
     function n_equipment(){
-        return $this->belongsTo(NEquipment::class);
-    }
-
-    function n_analyst(){
-        return $this->belongsTo(NAnalyst::class);
+        return $this->hasMany(NEquipment::class);
     }
 
     function n_reagent(){
