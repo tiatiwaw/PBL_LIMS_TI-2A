@@ -17,22 +17,22 @@ class NParameterMethod extends Model
     ];
 
     public function orders() {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class,'order_id');
     }
 
     public function test_parameters(){
-        return $this->belongsTo(TestParameter::class);
+        return $this->belongsTo(TestParameter::class,'test_parameter_id');
     }
 
     public function test_methods(){
-        return $this->belongsTo(TestMethod::class);
+        return $this->belongsTo(TestMethod::class,'test_method_id');
     }
 
     public function n_equipments(){
-        return $this->hasMany(NEquipment::class);
+        return $this->hasMany(NEquipment::class,'n_parameter_method_id');
     }
 
     public function n_reagents(){
-        return $this->hasMany(NReagent::class);
+        return $this->hasMany(NReagent::class,'n_parameter_method_id');
     }
 }
