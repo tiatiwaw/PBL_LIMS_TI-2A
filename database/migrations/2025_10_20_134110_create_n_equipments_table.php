@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('test_methods', function (Blueprint $table) {
+        Schema::create('n_equipments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reference_id')->constrained('reference_standards')->cascadeOnDelete();
-            $table->string('name');
-            $table->string('applicable_parameter');
-            $table->integer('duration');
-            $table->date('validity_period');
+            $table->foreignId('n_parameter_method_id')->constrained('n_parameter_methods')->cascadeOnDelete();
+            $table->foreignId('equipment_id')->constrained('equipments')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('test_methods');
+        Schema::dropIfExists('n_equipment');
     }
 };

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('test_methods', function (Blueprint $table) {
+        Schema::create('certificates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reference_id')->constrained('reference_standards')->cascadeOnDelete();
+            $table->foreignId('analyst_id')->constrained('analysts')->cascadeOnDelete();
             $table->string('name');
-            $table->string('applicable_parameter');
-            $table->integer('duration');
-            $table->date('validity_period');
+            $table->date('issued_date');
+            $table->date('expired_date');
+            $table->string('filed_path');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('test_methods');
+        Schema::dropIfExists('certificates');
     }
 };
