@@ -14,13 +14,13 @@ class NReagent extends Model
         'reagent_id'
     ];
 
-    public function reagents()
-    {
-        return $this->belongsTo(Reagent::class);
-    }
-
     public function n_parameter_methods()
     {
         return $this->belongsTo(NParameterMethod::class);
+    }
+
+    public function reagents()
+    {
+        return $this->belongsTo(Reagent::class);
     }
 }

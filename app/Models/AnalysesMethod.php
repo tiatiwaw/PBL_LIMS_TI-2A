@@ -13,7 +13,7 @@ class AnalysesMethod extends Model
         "analyses_method"
     ];
 
-    public function order()
+    public function orders()
     {
         return $this->hasOne(Order::class);
     }

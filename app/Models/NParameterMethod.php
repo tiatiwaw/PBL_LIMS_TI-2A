@@ -16,23 +16,23 @@ class NParameterMethod extends Model
         'result'
     ];
 
-    function order() {
+    public function orders() {
         return $this->belongsTo(Order::class);
     }
 
-    function test_parameter(){
+    public function test_parameters(){
         return $this->belongsTo(TestParameter::class);
     }
 
-    function test_method(){
+    public function test_methods(){
         return $this->belongsTo(TestMethod::class);
     }
 
-    function n_equipment(){
+    public function n_equipments(){
         return $this->hasMany(NEquipment::class);
     }
 
-    function n_reagent(){
+    public function n_reagents(){
         return $this->hasMany(NReagent::class);
     }
 }
