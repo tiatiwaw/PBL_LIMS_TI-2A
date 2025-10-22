@@ -14,12 +14,12 @@ class NAnalyst extends Model
         'analyst_id'
     ];
 
-    function order()
+    public function orders()
     {
         return $this->belongsTo(Order::class);
     }
 
-    function analyst()
+    public function analysts()
     {
         return $this->belongsTo(Analyst::class);
     }
