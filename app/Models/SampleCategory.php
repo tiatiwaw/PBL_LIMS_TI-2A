@@ -11,7 +11,7 @@ class SampleCategory extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name'
+        'name',
     ];
 
     public function samples()
