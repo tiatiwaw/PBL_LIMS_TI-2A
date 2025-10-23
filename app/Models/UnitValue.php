@@ -11,8 +11,8 @@ class UnitValue extends Model
 
     protected $fillable = ['value'];
 
-    public function testParameters()
+    public function test_parameters()
     {
-        return $this->hasMany(TestParameter::class);
+        return $this->hasMany(TestParameter::class, 'unit_value_id');
     }
 }

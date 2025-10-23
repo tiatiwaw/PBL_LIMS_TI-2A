@@ -19,6 +19,6 @@ class BrandType extends Model
 
     public function equipments()
     {
-        return $this->belongsTo(Equipment::class);
+        return $this->hasMany(Equipment::class, 'brand_type_id');
     }
 }

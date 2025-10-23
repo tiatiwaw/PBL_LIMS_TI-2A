@@ -20,18 +20,18 @@ class Analyst extends Model
         'specialist',
     ];
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function certificates()
     {
-        return $this->hasMany(Certificate::class);
+        return $this->hasMany(Certificate::class, 'analyst_id');
     }
 
     public function trainings()
     {
-        return $this->belongsToMany(Training::class, 'n_training_analysts');
+        return $this->belongsToMany(Training::class, 'n_training_analysts', 'analyst_id', 'training_id');
     }
 }

@@ -12,7 +12,7 @@ class Equipment extends Model
     use HasFactory;
 
     protected $table = 'equipments';
-    public $timestamps = false;
+    public $timestamps = true;
 
     /**
      * Atribut yang dapat diisi secara massal.
@@ -29,16 +29,11 @@ class Equipment extends Model
 
     public function brand_types()
     {
-        return $this->belongsTo(BrandType::class);
-    }
-
-    public function n_equipments()
-    {
-        return $this->hasMany(NEquipment::class);
+        return $this->belongsTo(BrandType::class, 'brand_type_id');
     }
 
     public function n_parameter_methods()
     {
-        return $this->belongsToMany(NParameterMethod::class, 'n_equipments');
+        return $this->belongsToMany(NParameterMethod::class, 'n_equipments', 'n_parameter_method_id', 'equipment_id');
     }
 } 

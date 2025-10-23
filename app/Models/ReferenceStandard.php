@@ -13,11 +13,11 @@ class ReferenceStandard extends Model
 
     public function testParameters()
     {
-        return $this->hasMany(TestParameter::class, 'reference_id');
+        return $this->hasOne(TestParameter::class, 'reference_id');
     }
 
     public function testMethods()
     {
-        return $this->hasMany(TestMethod::class, 'reference_id');
+        return $this->hasOne(TestMethod::class, 'reference_id');
     }
 }

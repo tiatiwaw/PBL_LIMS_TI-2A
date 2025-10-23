@@ -22,14 +22,13 @@ class Sample extends Model
         'temperature',
     ];
 
-    function sample_category()
+    function sample_categories()
     {
         return $this->belongsTo(SampleCategory::class, 'sample_category_id');
     }
 
     function orders()
     {
-        return $this->belongsToMany(Order::class, 'n_order_samples', 'sample_id', 'order_id')
-            ->whithTimestamps();
+        return $this->belongsToMany(Order::class, 'n_order_samples', 'sample_id', 'order_id');
     }
 }

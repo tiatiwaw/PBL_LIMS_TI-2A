@@ -46,13 +46,13 @@ class User extends Authenticatable
         ];
     }
 
-    public function client()
+    public function clients()
     {
-        return $this->hasOne(Client::class);
+        return $this->hasOne(Client::class, 'client_id');
     }
 
-    public function analyst()
+    public function analysts()
     {
-        return $this->hasOne(Analyst::class);
+        return $this->hasOne(Analyst::class, 'analyst_id');
     }
 }

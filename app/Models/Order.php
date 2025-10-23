@@ -31,12 +31,6 @@ class Order extends Model
         return $this->belongsTo(Client::class,'client_id');
     }
 
-
-    public function n_order_samples()
-    {
-        return $this->hasMany(NOrderSample::class,'order_id');
-    }
-
     public function samples()
     {
         return $this->belongsToMany(Sample::class,'n_order_samples','order_id','sample_id');
@@ -54,10 +48,6 @@ class Order extends Model
         return $this->hasMany(NParameterMethod::class,'order_id');
     }
 
-
-    public function n_analysts(){
-        return $this->hasMany(NAnalyst::class);
-    }
     public function analysts(){
         return $this->belongsToMany(Analyst::class,'n_alaysts','order_id','analyst_id');
     }

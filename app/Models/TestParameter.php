@@ -18,17 +18,17 @@ class TestParameter extends Model
         'quality_standard'
     ];
 
-    public function unitValue()
+    public function unit_values()
     {
-        return $this->belongsTo(UnitValue::class);
+        return $this->hasMany(UnitValue::class, 'unit_value_id');
     }
 
-    public function referenceStandard()
+    public function reference_standards()
     {
-        return $this->belongsTo(ReferenceStandard::class, 'reference_id');
+        return $this->hasMany(ReferenceStandard::class, 'reference_id');
     }
 
-    public function parameterMethods()
+    public function n_parameter_methods()
     {
         return $this->hasMany(NParameterMethod::class, 'test_parameter_id');
     }

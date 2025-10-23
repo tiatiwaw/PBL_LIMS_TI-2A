@@ -28,11 +28,10 @@ class NParameterMethod extends Model
         return $this->belongsTo(TestMethod::class,'test_method_id');
     }
 
-    public function n_equipments(){
-        return $this->hasMany(NEquipment::class,'n_parameter_method_id');
+    public function equipments() {
+        return $this->belongsToMany(Equipment::class, 'n_equipments', 'n_paramether_method_id', 'equipment_id');
     }
-
-    public function n_reagents(){
-        return $this->hasMany(NReagent::class,'n_parameter_method_id');
+    public function reagents() {
+        return $this->belongsToMany(Reagent::class, 'n_reagents', 'n_paramether_method_id', 'reagent_id');
     }
 }

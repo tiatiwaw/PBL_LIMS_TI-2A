@@ -11,7 +11,7 @@ class Supplier extends Model
     use HasFactory;
 
     protected $table = 'suppliers';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'name',
@@ -22,6 +22,6 @@ class Supplier extends Model
 
     public function reagents()
     {
-        return $this->belongsTo(Reagent::class);
+        return $this->hasMany(Reagent::class, 'supplier_id');
     }
 }

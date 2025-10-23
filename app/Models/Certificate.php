@@ -22,8 +22,8 @@ class Certificate extends Model
         'file_path',
     ];
 
-    public function analyst()
+    public function analysts()
     {
-        return $this->belongsTo(Analyst::class);
+        return $this->belongsTo(Analyst::class, 'analyst_id');
     }
 }
