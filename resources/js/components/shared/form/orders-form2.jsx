@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import TableSamplesOrd from "@/components/shared/table/table-samplesord";
 import { Button } from "@/components/ui/button";
 import { dummySamples } from '@/data/samples';
@@ -36,21 +36,47 @@ export default function OrdersForm2() {
   };
 
   const handleSampleSelect = (sample) => {
-  setSelectedSamples((prev) => {
-    const exists = prev.find((s) => s.id === sample.id);
-    return exists ? prev.filter((s) => s.id !== sample.id) : [...prev, sample];
-  });
-};
+    setSelectedSamples((prev) => {
+      const exists = prev.find((s) => s.id === sample.id);
+      return exists ? prev.filter((s) => s.id !== sample.id) : [...prev, sample];
+    });
+  };
 
   const handleTambahSamples = () => {
-  setFormData((prev) => ({
-    ...prev,
-    samples: selectedSamples
-  }));
-  setIsSampleDialogOpen(false);
-};
+    setFormData((prev) => ({
+      ...prev,
+      samples: selectedSamples
+    }));
+    setIsSampleDialogOpen(false);
+  };
 
+  // ✅ Fungsi untuk handle buka dialog
+  const handleOpenDialog = () => {
+    // Sinkronkan selectedSamples dengan formData.samples saat dialog dibuka
+    setSelectedSamples(formData.samples);
+    setIsSampleDialogOpen(true);
+  };
 
+  // ✅ Fungsi untuk handle perubahan state dialog (buka/tutup)
+  const handleDialogChange = (open) => {
+    if (!open) {
+      // Saat dialog ditutup (baik dari tombol Tutup, ESC, atau klik overlay)
+      // Kembalikan selectedSamples ke formData.samples
+      setSelectedSamples(formData.samples);
+    }
+    setIsSampleDialogOpen(open);
+  };
+
+  // ✅ Fungsi untuk handle remove individual sample
+  const handleRemoveSample = (sampleId) => {
+    const updatedSamples = formData.samples.filter(s => s.id !== sampleId);
+    setFormData(prev => ({
+      ...prev,
+      samples: updatedSamples
+    }));
+    // Update selectedSamples juga jika dialog sedang terbuka
+    setSelectedSamples(updatedSamples);
+  };
 
   const handleKembali = () => {
     console.log('Kembali clicked');
@@ -125,7 +151,7 @@ export default function OrdersForm2() {
 
           <button
             type="button"
-            onClick={() => setIsSampleDialogOpen(true)}
+            onClick={handleOpenDialog}
             className={`
               w-full border rounded-lg p-3 transition-all duration-200 text-center
               ${formData.samples.length > 0
@@ -141,29 +167,38 @@ export default function OrdersForm2() {
             </span>
           </button>
 
-
           {/* Dialog Pilih Sampel */}
-          <Dialog open={isSampleDialogOpen} onOpenChange={setIsSampleDialogOpen}>
+          <Dialog 
+            open={isSampleDialogOpen} 
+            onOpenChange={handleDialogChange} // ✅ Gunakan fungsi baru
+          >
             <DialogContent className="max-w-4xl">
               <DialogHeader>
                 <DialogTitle>Pilih Sampel</DialogTitle>
+                <DialogDescription className="sr-only">
+                  Dialog untuk memilih sampel yang akan ditambahkan ke order
+                </DialogDescription>
               </DialogHeader>
               
               <div className="mt-4">
-              <TableSamplesOrd
-                data={dummySamples}
-                onSelectSample={handleSampleSelect}
-                selected={selectedSamples}
+                <TableSamplesOrd
+                  data={dummySamples}
+                  onSelectSample={handleSampleSelect}
+                  selected={selectedSamples}
                 />
               </div>
 
               <DialogFooter className="flex justify-between">
-                <Button variant="outline" onClick={() => setIsSampleDialogOpen(false)}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsSampleDialogOpen(false)} // ✅ Cukup tutup dialog
+                >
                   Tutup
                 </Button>
                 <Button
                   onClick={handleTambahSamples}
                   disabled={selectedSamples.length === 0}
+                  className="!bg-primary-hijauMuda"
                 >
                   Tambahkan ({selectedSamples.length})
                 </Button>
@@ -172,6 +207,34 @@ export default function OrdersForm2() {
             </DialogContent>
           </Dialog>
         </div>
+
+        {/* Daftar Sample yang Dipilih */}
+        {formData.samples.length > 0 && (
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h3 className="text-sm font-semibold mb-3 text-gray-700">
+              Sampel Terpilih:
+            </h3>
+            <div className="space-y-2">
+              {formData.samples.map((sample, index) => (
+                <div 
+                  key={sample.id} 
+                  className="flex items-center justify-between p-2 bg-gray-50 rounded"
+                >
+                  <span className="text-sm text-gray-700">
+                    {index + 1}. {sample.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSample(sample.id)} // ✅ Gunakan fungsi baru
+                    className="text-red-500 hover:text-red-700 text-sm font-medium"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Tanggal Order */}
         <DatePicker
@@ -196,7 +259,6 @@ export default function OrdersForm2() {
             }))
           }
         />
-
 
         {/* Catatan */}
         <div>

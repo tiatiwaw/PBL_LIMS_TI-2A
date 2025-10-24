@@ -9,9 +9,11 @@ import {
 } from "@/components/ui/table";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 
-export default function TableSampleOrd({ data = [], onSelectSample }) {
+export default function TableSampleOrd({ data = [], onSelectSample, selected = [] }) { // ✅ Tambah prop selected
     const [currentPage, setCurrentPage] = useState(1);
-    const [selected, setSelected] = useState([]); // simpan id sample yang dicentang
+    // ❌ HAPUS state selected lokal
+    // const [selected, setSelected] = useState([]);
+    
     const ITEMS_PER_PAGE = 10;
 
     const dataLength = data.length;
@@ -26,13 +28,14 @@ export default function TableSampleOrd({ data = [], onSelectSample }) {
     };
 
     const toggleSelect = (sample) => {
-        setSelected((prev) =>
-            prev.includes(sample.id)
-                ? prev.filter((id) => id !== sample.id)
-                : [...prev, sample.id]
-        );
+        // ❌ HAPUS setSelected lokal, biarkan parent yang handle
+        // setSelected((prev) =>
+        //     prev.includes(sample.id)
+        //         ? prev.filter((id) => id !== sample.id)
+        //         : [...prev, sample.id]
+        // );
 
-        // kirim object sample ke parent sehingga parent bisa manage multiple selection
+        // ✅ Langsung kirim ke parent
         if (onSelectSample) onSelectSample(sample);
     };
 
@@ -58,7 +61,8 @@ export default function TableSampleOrd({ data = [], onSelectSample }) {
                     {currentData.map((s, index) => {
                         const isEven = index % 2 === 0;
                         const rowBg = isEven ? "bg-[#024D601A]" : "bg-white";
-                        const isChecked = selected.includes(s.id);
+                        // ✅ Cek apakah sample ini ada di array selected dari parent
+                        const isChecked = selected.some(sample => sample.id === s.id);
 
                         return (
                             <TableRow
@@ -75,7 +79,7 @@ export default function TableSampleOrd({ data = [], onSelectSample }) {
                                 <TableCell className="text-center">
                                     <input
                                         type="checkbox"
-                                        checked={isChecked}
+                                        checked={isChecked} // ✅ Gunakan isChecked dari prop selected
                                         onChange={() => toggleSelect(s)}
                                         className="w-4 h-4 accent-teal-600 cursor-pointer"
                                         aria-label={`Pilih sample ${s.name}`}

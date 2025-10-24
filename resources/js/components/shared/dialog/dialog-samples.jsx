@@ -4,12 +4,12 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import InputField from "../form/input-field";
 import { Card } from "@/components/ui/card";
+import { DatePicker } from "@/components/ui/date-picker";
 
 const initialFormState = {
   name: "",
@@ -38,7 +38,6 @@ const isReadOnly = (mode) => mode === "detail";
 export default function DialogSample({
   open,
   setOpen,
-  onAdd,
   mode = "create",
   sampleData = initialFormState,
   onSubmit,
@@ -48,18 +47,18 @@ export default function DialogSample({
   useEffect(() => {
     if (mode === "edit" || mode === "detail") {
       setForm({
-        name: sampleData.name || "",
-        bentuk: sampleData.bentuk || "",
-        kategori: sampleData.kategori || "",
-        kondisi: sampleData.kondisi || "",
-        volume: sampleData.volume || "",
-        suhu: sampleData.suhu || "",
-        tanggalMasuk: sampleData.tanggalMasuk || "",
+        name: sampleData?.name || "",
+        bentuk: sampleData?.bentuk || "",
+        kategori: sampleData?.kategori || "",
+        kondisi: sampleData?.kondisi || "",
+        volume: sampleData?.volume || "",
+        suhu: sampleData?.suhu || "",
+        tanggalMasuk: sampleData?.tanggalMasuk || "",
       });
     } else {
       setForm(initialFormState);
     }
-  }, [mode, sampleData]);
+  }, [mode, sampleData, open]);
 
   const handleChange = (e) => {
     if (isReadOnly(mode)) return;
@@ -71,6 +70,7 @@ export default function DialogSample({
     if (isReadOnly(mode)) return;
 
     onSubmit(form);
+    setForm(initialFormState); // Reset form setelah submit
     setOpen(false);
   };
 
@@ -79,12 +79,6 @@ export default function DialogSample({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button onClick={onAdd} className="!bg-primary-hijauMuda">
-          Tambah Sampel Baru
-        </Button>
-      </DialogTrigger>
-
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -95,37 +89,37 @@ export default function DialogSample({
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-2">
                 <p className="font-semibold">Nama Sample</p>
-                <p className="col-span-2">: {sampleData.name}</p>
+                <p className="col-span-2">: {sampleData?.name}</p>
               </div>
 
               <div className="grid grid-cols-3 gap-2">
                 <p className="font-semibold">Bentuk</p>
-                <p className="col-span-2">: {sampleData.bentuk}</p>
+                <p className="col-span-2">: {sampleData?.bentuk}</p>
               </div>
 
               <div className="grid grid-cols-3 gap-2">
                 <p className="font-semibold">Kategori</p>
-                <p className="col-span-2">: {sampleData.kategori}</p>
+                <p className="col-span-2">: {sampleData?.kategori}</p>
               </div>
 
               <div className="grid grid-cols-3 gap-2">
                 <p className="font-semibold">Kondisi</p>
-                <p className="col-span-2">: {sampleData.kondisi}</p>
+                <p className="col-span-2">: {sampleData?.kondisi}</p>
               </div>
 
               <div className="grid grid-cols-3 gap-2">
                 <p className="font-semibold">Volume</p>
-                <p className="col-span-2">: {sampleData.volume}</p>
+                <p className="col-span-2">: {sampleData?.volume}</p>
               </div>
 
               <div className="grid grid-cols-3 gap-2">
                 <p className="font-semibold">Suhu</p>
-                <p className="col-span-2">: {sampleData.suhu}</p>
+                <p className="col-span-2">: {sampleData?.suhu}</p>
               </div>
 
               <div className="grid grid-cols-3 gap-2">
                 <p className="font-semibold">Tanggal Masuk</p>
-                <p className="col-span-2">: {sampleData.tanggalMasuk}</p>
+                <p className="col-span-2">: {sampleData?.tanggalMasuk}</p>
               </div>
 
               <DialogFooter>
@@ -150,7 +144,6 @@ export default function DialogSample({
               readOnly={readOnly}
             />
 
-            {/* Bentuk Sample: dropdown */}
             <div>
               <label className="block text-sm font-semibold mb-2">
                 Bentuk Sample
@@ -178,7 +171,6 @@ export default function DialogSample({
               readOnly={readOnly}
             />
 
-            {/* Kondisi Sample: dropdown */}
             <div>
               <label className="block text-sm font-semibold mb-2">
                 Kondisi Sample
@@ -197,7 +189,6 @@ export default function DialogSample({
               </select>
             </div>
 
-            {/* Tambahkan field volume, suhu, dan tanggalMasuk */}
             <InputField
               label="Volume"
               name="volume"
@@ -216,7 +207,7 @@ export default function DialogSample({
               readOnly={readOnly}
             />
 
-            <InputField
+            <DatePicker
               label="Tanggal Masuk"
               name="tanggalMasuk"
               type="date"
@@ -226,19 +217,17 @@ export default function DialogSample({
             />
 
             <DialogFooter>
-              <Button
+              <Button className="mr-2 bg-gray-200 hover:!bg-gray-300"
                 type="button"
                 variant="secondary"
                 onClick={() => setOpen(false)}
               >
-                {readOnly ? "Tutup" : "Batal"}
+                Batal
               </Button>
 
-              {!readOnly && (
-                <Button type="submit" className="!bg-primary-hijauMuda">
-                  {mode === "edit" ? "Simpan Perubahan" : "Simpan"}
-                </Button>
-              )}
+              <Button type="submit" className="!bg-primary-hijauMuda hover:!bg-primary-hijauTua">
+                {mode === "edit" ? "Simpan Perubahan" : "Simpan"}
+              </Button>
             </DialogFooter>
           </form>
         )}

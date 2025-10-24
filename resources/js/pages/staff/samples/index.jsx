@@ -3,11 +3,8 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { usePage } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import SearchInput from "@/components/shared/public/search-input";
-
-// ⬇️ import komponen Dialog dari shadcn (punyamu di shared/ui/dialog.jsx)
 import {
     Dialog,
-    DialogTrigger,
     DialogContent,
     DialogHeader,
     DialogTitle,
@@ -19,23 +16,19 @@ import DialogSample from "@/components/shared/dialog/dialog-samples";
 
 export default function SampleManagement() {
     const { props } = usePage();
-    const user = props.auth?.user ?? { name: "Guest", role: "User" }; // fallback biar gak error
+    const user = props.auth?.user ?? { name: "Guest", role: "User" };
 
-    // state untuk kontrol buka/tutup dialog
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedSample, setSelectedSample] = useState(null);
     const [mode, setMode] = useState("create");
     const [openDelete, setOpenDelete] = useState(false);
-    console.log("Selected Sample:", mode);
 
-    // klik tombol edit
     const handleEdit = (sample) => {
         setSelectedSample(sample);
         setMode("edit");
         setOpenDialog(true);
     };
 
-    // klik tombol tambah
     const handleAdd = () => {
         setSelectedSample(null);
         setMode("create");
@@ -48,12 +41,13 @@ export default function SampleManagement() {
         setOpenDialog(true);
     };
 
-    // simpan hasil form
     const handleSave = (formData) => {
         if (mode === "edit") {
             console.log("Edit data:", formData);
+            // TODO: Update data di state atau kirim ke backend
         } else {
             console.log("Tambah data:", formData);
+            // TODO: Tambah data ke state atau kirim ke backend
         }
     };
 
@@ -63,7 +57,8 @@ export default function SampleManagement() {
     };
 
     const confirmDelete = () => {
-        setData(data.filter((d) => d.id !== selectedSample.id));
+        console.log("Hapus sample:", selectedSample);
+        // TODO: Hapus data dari state atau backend
         setOpenDelete(false);
     };
 
@@ -80,14 +75,13 @@ export default function SampleManagement() {
                     </h2>
                     <div className="flex items-center gap-2">
                         <SearchInput />
-                        <DialogSample
-                            open={openDialog}
-                            setOpen={setOpenDialog}
-                            onAdd={handleAdd}
-                            mode={mode}
-                            sampleData={selectedSample}
-                            onSubmit={handleSave}
-                        />
+                        {/* Button Tambah dipindahkan ke sini */}
+                        <Button cla
+                            onClick={handleAdd}
+                            className="!bg-primary-hijauMuda hover:!bg-primary-hijauTua"
+                        >
+                            Tambah Sampel Baru
+                        </Button>
                     </div>
                 </div>
 
@@ -98,6 +92,16 @@ export default function SampleManagement() {
                     onDelete={handleDelete}
                 />
 
+                {/* Dialog Sample - tanpa trigger */}
+                <DialogSample
+                    open={openDialog}
+                    setOpen={setOpenDialog}
+                    mode={mode}
+                    sampleData={selectedSample}
+                    onSubmit={handleSave}
+                />
+
+                {/* Dialog Delete */}
                 <Dialog open={openDelete} onOpenChange={setOpenDelete}>
                     <DialogContent className="max-w-sm text-center">
                         <DialogHeader>

@@ -85,7 +85,7 @@ export default function DialogClient({
     <Dialog open={open} onOpenChange={setOpen}>
       {/* Hapus conditional rendering untuk DialogTrigger */}
       <DialogTrigger asChild>
-        <Button onClick={onAdd} className="!bg-primary-hijauMuda">
+        <Button onClick={onAdd} className="!bg-primary-hijauMuda hover:!bg-primary-hijauTua">
           Tambah Klien Baru
         </Button>
       </DialogTrigger>
@@ -196,7 +196,7 @@ export default function DialogClient({
           />
 
           <DialogFooter>
-            <Button
+            <Button className="mr-2 bg-gray-200 hover:!bg-gray-300"
               type="button"
               variant="secondary"
               onClick={() => setOpen(false)}
@@ -206,7 +206,7 @@ export default function DialogClient({
             
             {/* Hanya tampilkan tombol submit saat mode 'create' atau 'edit' */}
             {!readOnly && (
-              <Button type="submit" className="!bg-primary-hijauMuda">
+              <Button type="submit" className="!bg-primary-hijauMuda hover:!bg-primary-hijauTua">
                 {mode === "edit" ? "Simpan Perubahan" : "Simpan"}
               </Button>
             )}
