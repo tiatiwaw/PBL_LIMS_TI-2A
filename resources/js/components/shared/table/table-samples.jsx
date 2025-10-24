@@ -39,7 +39,7 @@ export default function TableSample({ data, onDetail }) {
     const showRightArrow = totalPages > 1 && currentPage < totalPages;
 
     return (
-        <div className="w-full bg-white rounded-2xl shadow-md p-6">
+        <div className="w-full rounded-2xl p-6">
             <Table>
                 <TableHeader>
                     <TableRow className="bg-primary-hijauTua border-none rounded-lg overflow-hidden hover:bg-primary-hijauTua cursor-default">
