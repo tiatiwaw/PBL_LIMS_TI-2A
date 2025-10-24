@@ -70,7 +70,7 @@ export default function DialogSample({
     if (isReadOnly(mode)) return;
 
     onSubmit(form);
-    setForm(initialFormState); // Reset form setelah submit
+    setForm(initialFormState);
     setOpen(false);
   };
 
@@ -124,6 +124,7 @@ export default function DialogSample({
 
               <DialogFooter>
                 <Button
+                  className="mr-2 bg-gray-200 hover:!bg-gray-300"
                   type="button"
                   variant="secondary"
                   onClick={() => setOpen(false)}
@@ -134,18 +135,25 @@ export default function DialogSample({
             </div>
           </Card>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <InputField
-              label="Nama Sample"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="Masukkan nama sample"
-              readOnly={readOnly}
-            />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* ✅ Ganti InputField dengan struktur custom untuk kontrol lebih baik */}
+            <div>
+              <label className="block text-sm font-semibold mb-1.5 text-gray-700">
+                Nama Sample
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Masukkan nama sample"
+                readOnly={readOnly}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-gray-400"
+              />
+            </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-2">
+              <label className="block text-sm font-semibold mb-1.5 text-gray-700">
                 Bentuk Sample
               </label>
               <select
@@ -153,7 +161,7 @@ export default function DialogSample({
                 value={form.bentuk}
                 onChange={handleChange}
                 disabled={readOnly}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
               >
                 <option value="">Pilih Bentuk Sample</option>
                 <option value="Cair">Cair</option>
@@ -162,17 +170,23 @@ export default function DialogSample({
               </select>
             </div>
 
-            <InputField
-              label="Kategori Sample"
-              name="kategori"
-              value={form.kategori}
-              onChange={handleChange}
-              placeholder="Masukkan kategori sample"
-              readOnly={readOnly}
-            />
+            <div>
+              <label className="block text-sm font-semibold mb-1.5 text-gray-700">
+                Kategori Sample
+              </label>
+              <input
+                type="text"
+                name="kategori"
+                value={form.kategori}
+                onChange={handleChange}
+                placeholder="Masukkan kategori sample"
+                readOnly={readOnly}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-gray-400"
+              />
+            </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-2">
+              <label className="block text-sm font-semibold mb-1.5 text-gray-700">
                 Kondisi Sample
               </label>
               <select
@@ -180,7 +194,7 @@ export default function DialogSample({
                 value={form.kondisi}
                 onChange={handleChange}
                 disabled={readOnly}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
               >
                 <option value="">Pilih Kondisi Sample</option>
                 <option value="Good">Good</option>
@@ -189,35 +203,53 @@ export default function DialogSample({
               </select>
             </div>
 
-            <InputField
-              label="Volume"
-              name="volume"
-              value={form.volume}
-              onChange={handleChange}
-              placeholder="Masukkan volume sample"
-              readOnly={readOnly}
-            />
+            <div>
+              <label className="block text-sm font-semibold mb-1.5 text-gray-700">
+                Volume
+              </label>
+              <input
+                type="text"
+                name="volume"
+                value={form.volume}
+                onChange={handleChange}
+                placeholder="Masukkan volume sample"
+                readOnly={readOnly}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-gray-400"
+              />
+            </div>
 
-            <InputField
-              label="Suhu"
-              name="suhu"
-              value={form.suhu}
-              onChange={handleChange}
-              placeholder="Masukkan suhu sample"
-              readOnly={readOnly}
-            />
+            <div>
+              <label className="block text-sm font-semibold mb-1.5 text-gray-700">
+                Suhu
+              </label>
+              <input
+                type="text"
+                name="suhu"
+                value={form.suhu}
+                onChange={handleChange}
+                placeholder="Masukkan suhu sample"
+                readOnly={readOnly}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-gray-400"
+              />
+            </div>
 
-            <DatePicker
-              label="Tanggal Masuk"
-              name="tanggalMasuk"
-              type="date"
-              value={form.tanggalMasuk}
-              onChange={handleChange}
-              readOnly={readOnly}
-            />
+            <div>
+              <label className="block text-sm font-semibold mb-1.5 text-gray-700">
+                Tanggal Masuk
+              </label>
+              <input
+                type="date"
+                name="tanggalMasuk"
+                value={form.tanggalMasuk}
+                onChange={handleChange}
+                readOnly={readOnly}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+            </div>
 
-            <DialogFooter>
-              <Button className="mr-2 bg-gray-200 hover:!bg-gray-300"
+            <DialogFooter className="mt-6">
+              <Button
+                className="mr-2 bg-gray-200 hover:!bg-gray-300"
                 type="button"
                 variant="secondary"
                 onClick={() => setOpen(false)}

@@ -125,6 +125,7 @@ export default function DialogClient({
 
               <DialogFooter>
                 <Button
+                  className="mr-2 bg-gray-200 hover:!bg-gray-300"
                   type="button"
                   variant="secondary"
                   onClick={() => setOpen(false)}
