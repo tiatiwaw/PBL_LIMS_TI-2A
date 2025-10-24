@@ -81,7 +81,7 @@ export default function OrderForms3() {
                             <div
                                 key={sample.id}
                                 className={`grid grid-cols-5 p-3 text-sm border-b ${
-                                    index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                                    index % 2 === 0 ? "bg-[#024D601A]" : "bg-white"
                                 }`}
                             >
                                 <div className="col-span-1 text-gray-600">
