@@ -6,22 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Supplier extends Model
+class BrandType extends Model
 {
     use HasFactory;
 
-    protected $table = 'suppliers';
-    public $timestamps = true;
+    protected $table = 'brand_types';
+    public $timestamps = false;
 
     protected $fillable = [
         'name',
-        'contact_person',
-        'phone_number',
-        'address',
     ];
 
-    public function reagents()
+    public function equipments()
     {
-        return $this->hasMany(Reagent::class, 'supplier_id');
+        return $this->hasMany(Equipment::class, 'brand_type_id');
     }
 }

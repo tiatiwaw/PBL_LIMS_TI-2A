@@ -10,8 +10,9 @@ class Sample extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'samples';
+
     protected $fillable = [
-        'order_id',
         'sample_category_id',
         'name',
         'form',
@@ -21,13 +22,13 @@ class Sample extends Model
         'temperature',
     ];
 
-    function order()
+    function sample_categories()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(SampleCategory::class, 'sample_category_id');
     }
 
-    function sample_category()
+    function orders()
     {
-        return $this->belongsTo(Sample_Category::class);
+        return $this->belongsToMany(Order::class, 'n_order_samples', 'sample_id', 'order_id');
     }
 }

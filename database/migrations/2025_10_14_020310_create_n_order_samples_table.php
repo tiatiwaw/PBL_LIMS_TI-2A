@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('certificates', function (Blueprint $table) {
+        Schema::create('n_order_samples', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('analyst_id')->constrained('analysts')->onDelete('cascade');
-            $table->string('name');
-            $table->date('issued_date');
-            $table->date('expired_date');
-            $table->string('filed_path');
+            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
+            $table->foreignId('sample_id')->constrained('samples')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('certificates');
+        Schema::dropIfExists('n_order_samples');
     }
 };
