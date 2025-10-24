@@ -5,12 +5,11 @@ import { BookText } from "lucide-react";
 const StatCard = ({ icon: Icon, title, value, subtitle }) => {
   return (
     <div className="bg-white p-6 rounded-2xl shadow-md w-56 text-center transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
-      {/* baris atas: ikon di kotak + judul */}
+
       <div className="flex items-center justify-left gap-3">
         <div
           className=" bg-primary-hijauTua p-2 rounded-md flex items-center justify-center"
         >
-          {/* pakai Icon dengan huruf kapital */}
           <Icon size={20} className="text-white" />
         </div>
 
@@ -19,17 +18,13 @@ const StatCard = ({ icon: Icon, title, value, subtitle }) => {
         </div>
       </div>
 
-      {/* angka besar */}
       <p className="text-5xl font-bold text-primary-hijauTua my-2">{value}</p>
 
-      {/* subtitle */}
       <p className="text-sm text-primary-hijauTua mt-1">{subtitle}</p>
     </div>
   );
 };
 
-//Bottom Section
-// Bottom Diagram Section
 const BottomDiagramSection = ({ title }) => (
   <div className="bg-white rounded-2xl shadow-md p-6 h-[250px]">
     <h2 className="text-xl font-semibold text-primary-hijauTua mb-4">{title}</h2>
@@ -37,7 +32,6 @@ const BottomDiagramSection = ({ title }) => (
   </div>
 );
 
-// Bottom Table Section
 const BottomTableSection = ({ title }) => (
   <div className="bg-white rounded-2xl shadow-md p-6 h-[400px]">
     <h2 className="text-xl font-semibold text-primary-hijauTua mb-4">{title}</h2>
@@ -45,10 +39,9 @@ const BottomTableSection = ({ title }) => (
   </div>
 );
 
-// Wrapper
 const BottomLayout = () => {
   return (
-    <div className="grid grid-cols-2 gap-6 mt-8">
+    <div className="max-w-6xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
       <BottomDiagramSection title="Clients" />
       <BottomTableSection title="Bahan" />
       <BottomDiagramSection title="Order" />
@@ -58,14 +51,14 @@ const BottomLayout = () => {
   );
 };
 
-export default function HomePage() {
+
+export default function berandaPage() {
     const user = {
         name: 'Ben No Han',
         role: 'Admin',
         avatar: 'https://i.pravatar.cc/150?img=3',
     }
 
-      // Data dummy untuk kartu
     const stats = [
         { title: 'Total Clients', value: '40', subtitle: 'increased from last month', icon: BookText },
         { title: 'Total Orders', value: '15', subtitle: 'increased from last month', icon: BookText },

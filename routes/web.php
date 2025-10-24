@@ -14,8 +14,15 @@ Route::controller(HomeController::class)->name('index')->group(function () {
 });
 
 // Admin
-Route::controller(AdminController::class)->name('admin')->group(function () {
-    Route::get('/admin', 'index')->name('admin');
+Route::prefix('admin')->name('admin')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('.index');
+    Route::get('/beranda', [AdminController::class, 'beranda'])->name('.beranda');
+    Route::get('/alat', [AdminController::class, 'alat'])->name('.alat');
+    Route::get('/bahan', [AdminController::class, 'bahan'])->name('.bahan');
+    Route::get('/aktivitas_log', [AdminController::class, 'aktivitas_log'])->name('.aktivitas_log');
+    Route::get('/pengguna', [AdminController::class, 'pengguna'])->name('.pengguna');
+    Route::get('/master_data', [AdminController::class, 'master_data'])->name('.master_data');
+
 });
 
 // Analyst
