@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AnalystController;
+use App\Http\Controllers\StaffController;
 
 // Home
 Route::controller(HomeController::class)->name('index')->group(function () {
@@ -15,6 +16,23 @@ Route::controller(HomeController::class)->name('index')->group(function () {
 // Admin
 Route::controller(AdminController::class)->name('admin')->group(function () {
     Route::get('/admin', 'index')->name('admin');
+    Route::get('/admin/users', 'users')->name('.users');
+});
+
+// Staff
+Route::prefix('staff')->name('staff')->group(function () {
+    Route::get('/', [StaffController::class, 'index'])->name('.index');
+    Route::get('/clients', [StaffController::class, 'clients'])->name('.clients');
+    
+    Route::get('/sample', [StaffController::class, 'sample'])->name('.sample'); 
+    Route::get('/samples', function () {
+        return inertia('staff/samples/index');
+    })->name('.samples');
+
+    Route::get('/order', [StaffController::class, 'order'])->name('.order'); 
+    Route::get('/orders', function () {
+        return inertia('staff/orders/index');
+    })->name('.orders');
 });
 
 // Analyst

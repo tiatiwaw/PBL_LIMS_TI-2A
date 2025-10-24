@@ -11,4 +11,9 @@ class AdminController extends Controller
     {
         return Inertia::render('admin/index');
     }
+
+    public function users()
+    {
+        return Inertia::render('admin/ManageUsers');
+    }
 }

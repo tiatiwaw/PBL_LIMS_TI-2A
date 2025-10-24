@@ -3,7 +3,7 @@ import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavItem } from '../shared/dashboard/nav-item';
 
-export const Sidebar = ({ menuItems, onLogout }) => (
+export const Sidebar = ({ menuItems = [], onLogout }) => (
     <aside className="w-60 bg-primary-hijauTua text-white flex flex-col shadow-2xl rounded-2xl overflow-hidden">
         <div className="p-8 border-b border-white/10 bg-white/5">
             <h1 className="text-2xl font-bold tracking-tight text-white">

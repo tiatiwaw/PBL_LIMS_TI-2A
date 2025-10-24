@@ -16,7 +16,7 @@ export default function DashboardLayout({
     };
 
     const { url } = usePage()
-    const getMenuItems = menuItems(url)
+    const getMenuItems = menuItems(url);
 
     return (
         <div className="p-4 flex gap-4 h-screen bg-primary-hijauTerang">
