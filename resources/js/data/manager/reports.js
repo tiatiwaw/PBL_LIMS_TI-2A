@@ -1,4 +1,4 @@
-export const reportData = [
+export const reports = [
     {
         id: 1,
         sample: "Cuka Apel",

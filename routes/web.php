@@ -28,7 +28,10 @@ Route::prefix('analyst')->name('analyst')->group(function () {
 //Manager
 Route::prefix('manager')->name('manager')->group(function () {
     Route::get('/', [ManagerController::class, 'index'])->name('.index');
-    Route::get('/report-validation', [ManagerController::class, 'reportValid'])->name('.reportvalid');
+    Route::prefix('report-validation')->name('.report')->group(function () {
+        Route::get('/', [ManagerController::class, 'reportValidation'])->name('.index');
+        Route::get('/detail', [ManagerController::class, 'detailOrder'])->name('.detail');
+    });
     Route::get('/orders', [ManagerController::class, 'orders'])->name('.orders');
     Route::get('/users', [ManagerController::class, 'users'])->name('.users');
 });

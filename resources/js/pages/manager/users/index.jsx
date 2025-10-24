@@ -1,41 +1,32 @@
-import DashboardLayout from "../../../components/layouts/dashboard-layout";
-import DataTable from "../../../components/shared/tabel/tabels"; // Mengimpor komponen DataTable yang sama
+import DashboardLayout from "@/components/layouts/dashboard-layout";
+import { getColumns } from "@/components/shared/manager/user-columns";
+import DataTable from "@/components/shared/tabel/data-tabels";
+import { users } from "@/data/manager/users";
 
-// Data dummy
-const usersData = [
-    { id: 'A1', nama: 'Bahlil', role: 'Admin', email: 'korup@gmail.com'},
-    { id: 'A1', nama: 'Ahmad', role: 'Admin', email: 'test@gmail.com'},
-    { id: 'A1', nama: 'Bagas', role: 'Admin', email: 'bagas@gmail.com' },
-    { id: 'A1', nama: 'Sahroni', role: 'Admin', email: 'sahroni@gmail.com'},
-    { id: 'A1', nama: 'Bahlil', role: 'Admin', email: 'korup@gmail.com'},
-    { id: 'A1', nama: 'Ahmad', role: 'Admin', email: 'test@gmail.com'},
-    { id: 'A1', nama: 'Bagas', role: 'Admin', email: 'bagas@gmail.com' },
-    { id: 'A1', nama: 'Sahroni', role: 'Admin', email: 'sahroni@gmail.com'},
-    { id: 'A1', nama: 'Bahlil', role: 'Admin', email: 'korup@gmail.com'},
-    { id: 'A1', nama: 'Ahmad', role: 'Admin', email: 'test@gmail.com'},
-    { id: 'A1', nama: 'Bagas', role: 'Admin', email: 'bagas@gmail.com' },
-    { id: 'A1', nama: 'Sahroni', role: 'Admin', email: 'sahroni@gmail.com'},
+const filterData = [
+    { value: "all", label: "All Role" },
+    { value: "Staff", label: "Staff" },
+    { value: "Analis", label: "Analis" },
+    { value: "Supervisor", label: "Supervisor" },
 ];
 
-export default function OrdersPage() {
-    const user = { name: 'BIJI', role: 'Manager' };
+export default function UsersPage({ auth, usersData }) {
+    const columns = getColumns();
 
-    // Mendefinisikan kolom yang berbeda untuk tabel Orders
-    const columns = [
-        { accessorKey: 'id', header: 'ID' },
-        { accessorKey: 'nama', header: 'Nama' },
-        { accessorKey: 'role', header: 'Role' },
-        { accessorKey: 'email', header: 'Email' },
-
-    ];
+    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
+    const currentUsers = usersData || users;
 
     return (
-        <DashboardLayout title="Users" user={user} header='Users'>
+        <DashboardLayout title="Users" user={currentUser} header="Users">
             <DataTable
                 columns={columns}
-                data={usersData}
-                showSearch={true} // Menampilkan search bar
-                showFilter={true}  // Menampilkan filter juga!
+                data={currentUsers}
+                pageSize={10}
+                showSearch={true}
+                searchColumn="user"
+                showFilter={true}
+                filterColumn="role"
+                filterOptions={filterData}
             />
         </DashboardLayout>
     );

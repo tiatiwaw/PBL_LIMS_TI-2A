@@ -12,7 +12,7 @@ class ManagerController extends Controller
         return Inertia::render('manager/index');
     }
 
-    public function reportValid()
+    public function reportValidation()
     {
         return Inertia::render('manager/report-validation/index');
     }
@@ -25,7 +25,11 @@ class ManagerController extends Controller
 
     public function users()
     {
-        // Ganti nama file 'Users' sesuai dengan nama file JSX Anda
         return Inertia::render('manager/users/index');
+    }
+
+    public function detailOrder()
+    {
+        return Inertia::render('manager/report-validation/detail/index');
     }
 }

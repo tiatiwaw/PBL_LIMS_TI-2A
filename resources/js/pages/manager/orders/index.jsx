@@ -1,71 +1,51 @@
-import { ordersData } from "@/data/manager/orders";
-import DashboardLayout from "../../../components/layouts/dashboard-layout";
-import DataTable from "../../../components/shared/tabel/tabels";
+import { useState } from "react";
+import { orders } from "@/data/manager/orders";
+import { getColumns } from "@/components/shared/manager/order-columns";
+import DashboardLayout from "@/components/layouts/dashboard-layout";
+import DataTable from "@/components/shared/tabel/data-tabels";
+import OrderDetailsDialog from "@/components/shared/manager/order-detail-dialog";
 
-const Badge = ({ value, type = 'status' }) => {
-    const baseClasses = "px-3 py-1 text-xs font-semibold rounded-full text-center";
+const filterData = [
+    { value: "all", label: "All Status" },
+    { value: "Completed", label: "Completed" },
+    { value: "In Progress", label: "In Progress" },
+    { value: "Pending", label: "Pending" },
+    { value: "Disapproved", label: "Disapproved" },
+    { value: "Approved", label: "Approved" },
+    { value: "Received", label: "Received" },
+];
 
-    const variantClasses = {
-        status: {
-            'Completed': 'bg-green-100 text-green-800',
-            'In Progress': 'bg-yellow-100 text-yellow-800',
-            'Pending': 'bg-blue-200 text-blue-700',
-            'Disapproved': 'bg-red-200 text-red-800',
-            'Approved': 'bg-teal-100 text-teal-800',
-            'Received': 'bg-purple-100 text-purple-800',
-        },
-        tipe: {
-            'Eksternal': 'bg-primary-hijauMuda/20 text-primary-hijauTua',
-            'Internal': 'bg-blue-100 text-blue-800',
-            'Urgent': 'bg-red-200 text-red-800',
-        }
+export default function OrdersPage({ auth, ordersData }) {
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+
+    const handleShowDetail = (order) => {
+        setSelectedOrder(order);
+        setIsDialogOpen(true);
     };
 
-    const specificClass = variantClasses[type]?.[value] || 'bg-gray-100 text-gray-800';
+    const columns = getColumns({ onShowDetail: handleShowDetail });
 
-    return <span className={`${baseClasses} ${specificClass}`}>{value}</span>;
-}
-
-export default function OrdersPage() {
-    const user = { name: 'BIJI', role: 'Manager' };
-
-    const columns = [
-        { accessorKey: 'id', header: 'ID' },
-        { accessorKey: 'user_id', header: 'User ID' },
-        { accessorKey: 'estimasi', header: 'Estimasi Waktu' },
-        { accessorKey: 'catatan', header: 'Catatan' },
-        { 
-            accessorKey: 'tipe', 
-            header: 'Tipe Order',
-            cell: ({ row }) => <Badge value={row.tipe} type='tipe' />
-        },
-        {
-            accessorKey: 'status',
-            header: 'Status',
-            cell: ({ row }) => <Badge value={row.status} type='status' />
-        },
-    ];
-
-    const filterData = [
-        { value: 'all', label: 'All Items' },
-        { value: 'completed', label: 'Completed' },
-        { value: 'in-progress', label: 'In Progress' },
-        { value: 'pending', label: 'Pending' },
-        { value: 'disapproved', label: 'Disapproved' },
-        { value: 'approved', label: 'Approved' },
-        { value: 'received', label: 'Received' },
-    ];
+    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
+    const currentOrders = ordersData || orders;
 
     return (
-        <DashboardLayout title="Orders" user={user} header='Orders'>
+        <DashboardLayout title="Orders" user={currentUser} header="Orders">
             <DataTable
                 columns={columns}
-                data={ordersData}
+                data={currentOrders}
+                pageSize={10}
                 showSearch={true}
+                searchColumn="user"
                 showFilter={true}
+                filterColumn="status"
                 filterOptions={filterData}
+            />
+            <OrderDetailsDialog
+                order={selectedOrder}
+                isOpen={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
             />
         </DashboardLayout>
     );
 }
-
