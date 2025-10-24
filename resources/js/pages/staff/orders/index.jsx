@@ -36,7 +36,7 @@ export default function OrdersPage() {
       user={user}
       header="Registrasi Order Baru"
     >
-      <div className="bg-white px-4 py-2 rounded-md shadow-sm">
+      <div className="px-4 py-2 rounded-md shadow-sm">
         <StepperFirst currentStep={step} />
       </div>
 

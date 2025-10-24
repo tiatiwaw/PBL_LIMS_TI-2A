@@ -33,7 +33,7 @@ export default function TableClients({ data, onDetail, onEdit, onDelete }) {
     const hasData = dataLength > 0;
 
     return (
-        <div className="w-full bg-white rounded-2xl shadow-md p-6">
+        <div className="w-full rounded-2xl p-6">
             {/* Bagian Tabel */}
             <Table>
                 <TableHeader>

@@ -69,7 +69,7 @@ export default function SampleManagement() {
             header="Manajemen Sampel"
         >
             <div className="space-y-2">
-                <div className="flex bg-white px-4 py-2 items-center justify-between rounded-md">
+                <div className="flex px-4 py-2 items-center justify-between rounded-md">
                     <h2 className="text-primary-hijauTua text-lg font-bold">
                         Daftar Informasi Sampel
                     </h2>

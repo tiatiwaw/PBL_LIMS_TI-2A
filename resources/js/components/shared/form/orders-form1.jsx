@@ -35,7 +35,7 @@ export default function OrdersForm() {
   ];
 
   return (
-    <div className="bg-white p-6 rounded-lg">
+    <div className="p-6 rounded-lg">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative">
         {/* Left Column - Pilih Klien */}
         <div className="space-y-6">

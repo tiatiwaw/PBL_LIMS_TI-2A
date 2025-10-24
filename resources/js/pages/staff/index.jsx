@@ -74,7 +74,7 @@ export default function ClientManagement() {
             header="Manajemen Klien"
         >
             <div className="space-y-2">
-                <div className="flex bg-white px-4 py-2 items-center justify-between rounded-md">
+                <div className="flex px-4 py-2 items-center justify-between rounded-md">
                     <h2 className="text-primary-hijauTua text-lg font-bold">
                         Daftar & Kelola Informasi Klien
                     </h2>
