@@ -48,11 +48,11 @@ class User extends Authenticatable
 
     public function clients()
     {
-        return $this->hasOne(Client::class, 'client_id');
+        return $this->hasOne(Client::class, 'user_id');
     }
 
     public function analysts()
     {
-        return $this->hasOne(Analyst::class, 'analyst_id');
+        return $this->hasOne(Analyst::class, 'user_id');
     }
 }

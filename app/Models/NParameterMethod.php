@@ -16,22 +16,27 @@ class NParameterMethod extends Model
         'result'
     ];
 
-    public function orders() {
-        return $this->belongsTo(Order::class,'order_id');
+    public function orders()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
     }
 
-    public function test_parameters(){
-        return $this->belongsTo(TestParameter::class,'test_parameter_id');
+    public function test_parameters()
+    {
+        return $this->belongsTo(TestParameter::class, 'test_parameter_id');
     }
 
-    public function test_methods(){
-        return $this->belongsTo(TestMethod::class,'test_method_id');
+    public function test_methods()
+    {
+        return $this->belongsTo(TestMethod::class, 'test_method_id');
     }
 
-    public function equipments() {
-        return $this->belongsToMany(Equipment::class, 'n_equipments', 'n_paramether_method_id', 'equipment_id');
+    public function equipments()
+    {
+        return $this->belongsToMany(Equipment::class, 'n_equipments', 'n_parameter_method_id', 'equipment_id');
     }
-    public function reagents() {
-        return $this->belongsToMany(Reagent::class, 'n_reagents', 'n_paramether_method_id', 'reagent_id');
+    public function reagents()
+    {
+        return $this->belongsToMany(Reagent::class, 'n_reagents', 'n_parameter_method_id', 'reagent_id');
     }
 }
