@@ -20,7 +20,7 @@ const Inbox = () => {
                     >
                     <p className="font-medium text-lg">{index + 1}. {name}</p>
                     <a
-                        href="#"
+                        href="/analyst/inbox/details"
                         className="bg-white rounded-3xl px-4 py-[4px] shadow-md flex hover:scale-110 hover:bg-gray-400 duration-200 gap-2 items-center"
                     >
                         Detail
