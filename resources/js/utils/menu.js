@@ -1,15 +1,26 @@
 import {
     Home,
     Wrench,
+    FlaskConical,
+    Beaker,
+    Microscope,
+    Gauge,
+    Scale,
+    FileCheck2,
     TrendingUp,
     Users,
     Database,
-    FileCheck2,
     ShoppingCart,
     Inbox,
     History,
-    Package,
-    Boxes,
+    Factory,
+    Building2,
+    Ruler,
+    FileText,
+    ClipboardList,
+    TestTubes,
+    TestTube,
+    TestTube2,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -49,6 +60,7 @@ const MENU_CONFIG = {
             href: "/analyst/history",
         },
     ],
+
     admin: [
         {
             name: "Beranda",
@@ -56,38 +68,96 @@ const MENU_CONFIG = {
             href: "/admin",
         },
         {
-            name: "Alat & Bahan",
+            name: "Alat",
             icon: Wrench,
-            href: "/admin/alat-bahan",
             subItems: [
                 {
-                    name: "Kategori Alat",
-                    icon: Package,
-                    href: "/admin/alat-bahan/kategori",
+                    name: "Peralatan",
+                    icon: Microscope,
+                    href: "/admin/tools/equipments",
                 },
                 {
-                    name: "Stok Bahan",
-                    icon: Boxes,
-                    href: "/admin/alat-bahan/stok",
+                    name: "Jenis Brand",
+                    icon: Factory,
+                    href: "/admin/tools/brands",
+                },
+            ],
+        },
+        {
+            name: "Bahan Baku",
+            icon: FlaskConical,
+            subItems: [
+                {
+                    name: "Reagen",
+                    icon: Beaker,
+                    href: "/admin/materials/reagents",
+                },
+                {
+                    name: "Grade",
+                    icon: Scale,
+                    href: "/admin/materials/grades",
+                },
+                {
+                    name: "Pemasok",
+                    icon: Building2,
+                    href: "/admin/materials/suppliers",
+                },
+            ],
+        },
+        {
+            name: "Sampling",
+            icon: TestTubes,
+            subItems: [
+                {
+                    name: "Sampel",
+                    icon: TestTube,
+                    href: "/admin/sampling/sample",
+                },
+                {
+                    name: "Kategori Sampel",
+                    icon: TestTube2,
+                    href: "/admin/sampling/category",
+                },
+            ],
+        },
+        {
+            name: "Pengujian",
+            icon: ClipboardList,
+            subItems: [
+                {
+                    name: "Parameter",
+                    icon: Gauge,
+                    href: "/admin/test/parameter",
+                },
+                {
+                    name: "Metode Uji",
+                    icon: Microscope,
+                    href: "/admin/test/test-method",
+                },
+                {
+                    name: "Nilai Satuan",
+                    icon: Ruler,
+                    href: "/admin/test/unit-value",
+                },
+                {
+                    name: "Standard Referensi",
+                    icon: FileText,
+                    href: "/admin/test/standard-reference",
                 },
             ],
         },
         {
             name: "Aktivitas Log",
             icon: TrendingUp,
-            href: "/admin/aktivitas-log",
+            href: "/admin/log-activity",
         },
         {
             name: "Pengguna",
             icon: Users,
-            href: "/admin/pengguna",
-        },
-        {
-            name: "Master Data",
-            icon: Database,
-            href: "/admin/master-data",
+            href: "/admin/users",
         },
     ],
+
     manager: [
         {
             name: "Beranda",

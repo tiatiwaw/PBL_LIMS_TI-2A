@@ -1,9 +1,9 @@
 import DashboardLayout from "../../../components/layouts/dashboard-layout";
-import DataTable from "../../../components/shared/tabel/data-tabels";
-import { useState } from "react";
-import { getColumns } from "@/components/shared/manager/report-columns";
-import ReportDetailsDialog from "@/components/shared/manager/report-validation-dialog";
+import { useMemo, useState } from "react";
+import { getReportsColumns } from "@/components/shared/manager/report-columns";
 import { reports } from "@/data/manager/reports";
+import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
+import ReportDetailsDialog from "@/components/shared/dialog/report-validation-dialog";
 
 const filterData = [
     { value: "all", label: "All Report" },
@@ -24,10 +24,10 @@ export default function ReportValidationPage({ auth, reportData }) {
         setIsDialogOpen(true);
     };
 
-    const columns = getColumns({ onShowDetail: handleShowDetail });
+    const columns = useMemo(() => getReportsColumns({ onShowDetail: handleShowDetail }), []);
 
     const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const currentOrders = reportData || reports;
+    const parameters = reportData || reports;
 
     return (
         <DashboardLayout
@@ -35,12 +35,10 @@ export default function ReportValidationPage({ auth, reportData }) {
             user={currentUser}
             header="Validasi Laporan"
         >
-            <DataTable
+            <ManagedDataTable
+                data={parameters}
                 columns={columns}
-                data={currentOrders}
-                pageSize={10}
-                showSearch={true}
-                searchColumn="user"
+                searchColumn="name"
                 showFilter={true}
                 filterColumn="status"
                 filterOptions={filterData}

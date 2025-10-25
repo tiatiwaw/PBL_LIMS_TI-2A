@@ -1,97 +1,174 @@
-import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { BookText } from "lucide-react";
+import React from 'react';
+import { TrendingUp, Activity, AlertCircle } from "lucide-react";
+import { Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import StatCard from '@/components/shared/card/stat-card';
+import { equipmentUsage, monthlyTrend, recentActivity, stats } from '@/data/admin/beranda';
+import DashboardLayout from '@/components/layouts/dashboard-layout';
 
-// StatCard.jsx
-const StatCard = ({ icon: Icon, title, value, subtitle }) => {
+export default function AdminDashboard() {
+  const user = {
+    name: 'Yapi',
+    role: 'Manager',
+    avatar: 'https://i.pravatar.cc/150?img=3',
+  };
+
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-md w-56 text-center transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
-      {/* baris atas: ikon di kotak + judul */}
-      <div className="flex items-center justify-left gap-3">
-        <div
-          className=" bg-primary-hijauTua p-2 rounded-md flex items-center justify-center"
-        >
-          {/* pakai Icon dengan huruf kapital */}
-          <Icon size={20} className="text-white" />
+    <DashboardLayout title="Dashboard Admin" user={user} header="Selamat Datang, Admin!">
+      <div className="max-w-7xl mx-auto space-y-8">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {stats.map((stat, index) => (
+            <StatCard key={index} stat={stat} />
+          ))}
         </div>
 
-        <div>
-          <p className="text-primary-hijauTua font-semibold">{title}</p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Tren Bulanan</h2>
+                <p className="text-sm text-gray-500 mt-1">Data 6 bulan terakhir</p>
+              </div>
+              <Activity className="w-6 h-6 text-emerald-600" />
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={monthlyTrend}>
+                <defs>
+                  <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorSampel" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="month" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  }}
+                />
+                <Legend />
+                <Area type="monotone" dataKey="users" stroke="#10b981" fillOpacity={1} fill="url(#colorUsers)" name="Users" strokeWidth={2} />
+                <Area type="monotone" dataKey="sampel" stroke="#3b82f6" fillOpacity={1} fill="url(#colorSampel)" name="Sampel" strokeWidth={2} />
+                <Line type="monotone" dataKey="pengujian" stroke="#8b5cf6" strokeWidth={2} name="Pengujian" dot={{ fill: '#8b5cf6', r: 4 }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Distribusi</h2>
+                <p className="text-sm text-gray-500 mt-1">Resource allocation</p>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={equipmentUsage}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {equipmentUsage.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              {equipmentUsage.map((item, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                  <span className="text-xs text-gray-600">{item.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Aktivitas Mingguan</h2>
+                <p className="text-sm text-gray-500 mt-1">Total pengujian per hari</p>
+              </div>
+              <TrendingUp className="w-6 h-6 text-emerald-600" />
+            </div>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={recentActivity}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="day" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  }}
+                />
+                <Bar dataKey="tests" fill="#10b981" radius={[8, 8, 0, 0]} name="Pengujian" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 rounded-2xl shadow-lg text-white">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold">Ringkasan Cepat</h2>
+                <p className="text-emerald-100 text-sm mt-1">Status sistem saat ini</p>
+              </div>
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <div className="space-y-4">
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                <div className="flex items-center justify-between">
+                  <span className="text-emerald-100">Total Resources</span>
+                  <span className="text-2xl font-bold">200</span>
+                </div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                <div className="flex items-center justify-between">
+                  <span className="text-emerald-100">Pengujian Bulan Ini</span>
+                  <span className="text-2xl font-bold">45</span>
+                </div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                <div className="flex items-center justify-between">
+                  <span className="text-emerald-100">Rata-rata Harian</span>
+                  <span className="text-2xl font-bold">12</span>
+                </div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                <div className="flex items-center justify-between">
+                  <span className="text-emerald-100">Tingkat Efisiensi</span>
+                  <span className="text-2xl font-bold">92%</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* angka besar */}
-      <p className="text-5xl font-bold text-primary-hijauTua my-2">{value}</p>
-
-      {/* subtitle */}
-      <p className="text-sm text-primary-hijauTua mt-1">{subtitle}</p>
-    </div>
+    </DashboardLayout>
   );
-};
-
-//Bottom Section
-// Bottom Diagram Section
-const BottomDiagramSection = ({ title }) => (
-  <div className="bg-white rounded-2xl shadow-md p-6 h-[250px]">
-    <h2 className="text-xl font-semibold text-primary-hijauTua mb-4">{title}</h2>
-    <p>Diagram di sini...</p>
-  </div>
-);
-
-// Bottom Table Section
-const BottomTableSection = ({ title }) => (
-  <div className="bg-white rounded-2xl shadow-md p-6 h-[400px]">
-    <h2 className="text-xl font-semibold text-primary-hijauTua mb-4">{title}</h2>
-    <p>Konten di sini...</p>
-  </div>
-);
-
-// Wrapper
-const BottomLayout = () => {
-  return (
-    <div className="grid grid-cols-2 gap-6 mt-8">
-      <BottomDiagramSection title="Clients" />
-      <BottomTableSection title="Bahan" />
-      <BottomDiagramSection title="Order" />
-      <BottomTableSection title="Alat" />
-      <BottomDiagramSection title="User" />
-    </div>
-  );
-};
-
-export default function HomePage() {
-    const user = {
-        name: 'Ben No Han',
-        role: 'Admin',
-        avatar: 'https://i.pravatar.cc/150?img=3',
-    }
-
-      // Data dummy untuk kartu
-    const stats = [
-        { title: 'Total Clients', value: '40', subtitle: 'increased from last month', icon: BookText },
-        { title: 'Total Orders', value: '15', subtitle: 'increased from last month', icon: BookText },
-        { title: 'Total Analis', value: '30', subtitle: 'increased from last month', icon: BookText },
-        { title: 'Total Reagen', value: '25', subtitle: 'increased from last month', icon: BookText },
-    ];
-
-    return (
-        <DashboardLayout title="Home" user={user} header='Selamat Datang Admin!'>
-            <div className="flex items-center justify-center text-primary-hijauTua font-bold flex gap-2">
-                {stats.map((stat, index) => (
-                        <StatCard 
-                            key={index}
-                            title={stat.title}
-                            value={stat.value}
-                            subtitle={stat.subtitle}
-                            icon={stat.icon}
-                            color={stat.color}
-
-                        />
-                    ))}
-            </div>
-
-            <div><BottomLayout/></div>            
-
-
-        </DashboardLayout>
-    );
 }

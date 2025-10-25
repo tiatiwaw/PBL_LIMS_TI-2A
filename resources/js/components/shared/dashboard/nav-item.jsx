@@ -46,18 +46,18 @@ export const NavItem = ({ item }) => {
 
                 <CollapsibleContent>
                     <div className="ml-4 space-y-1 pt-1">
-                        {item.subItems.map((subItem) => {
+                        {item.subItems.map((subItem, index) => {
                             const SubIcon = subItem.icon;
                             return (
                                 <Link
-                                    key={subItem.href}
+                                    key={index}
                                     href={subItem.href}
                                     className={cn(
                                         "flex items-center gap-3 px-4 py-2.5 rounded-lg",
                                         "transition-all duration-200",
                                         "hover:bg-white/10",
                                         subItem.active
-                                            ? "bg-white/15 text-white shadow-sm border-l-2 border-white"
+                                            ? "bg-white/15 text-white shadow-sm border-white"
                                             : "text-white/70 hover:text-white"
                                     )}
                                 >

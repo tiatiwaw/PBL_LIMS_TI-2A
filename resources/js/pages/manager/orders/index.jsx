@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { orders } from "@/data/manager/orders";
-import { getColumns } from "@/components/shared/manager/order-columns";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import DataTable from "@/components/shared/tabel/data-tabels";
-import OrderDetailsDialog from "@/components/shared/manager/order-detail-dialog";
+import { getOrdersColumns } from "@/components/shared/manager/order-columns";
+import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
+import OrderDetailsDialog from "@/components/shared/dialog/order-detail-dialog";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -24,18 +24,16 @@ export default function OrdersPage({ auth, ordersData }) {
         setIsDialogOpen(true);
     };
 
-    const columns = getColumns({ onShowDetail: handleShowDetail });
-
     const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const currentOrders = ordersData || orders;
+    const parameters = ordersData || orders;
+
+    const columns = useMemo(() => getOrdersColumns({  onShowDetail: handleShowDetail}), []);
 
     return (
         <DashboardLayout title="Orders" user={currentUser} header="Orders">
-            <DataTable
+            <ManagedDataTable
+                data={parameters}
                 columns={columns}
-                data={currentOrders}
-                pageSize={10}
-                showSearch={true}
                 searchColumn="user"
                 showFilter={true}
                 filterColumn="status"

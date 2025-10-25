@@ -2,22 +2,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 const statusVariantMap = {
-    Completed: "completed",
-    "In Progress": "inProgress",
-    Pending: "pending",
-    Disapproved: "disapproved",
+    Completed: "success",
+    "In Progress": "warning",
+    Pending: "info",
+    Disapproved: "error",
     Approved: "approved",
     Received: "received",
 };
 
 const tipeVariantMap = {
-    Eksternal: "eksternal",
-    Internal: "internal",
-    Urgent: "urgent",
+    Eksternal: "warning",
+    Internal: "info",
+    Urgent: "error",
 };
 
-export const getColumns = ({ onShowDetail }) => [
-    { accessorKey: "order_number", header: "No. Order" },
+export const getOrdersColumns = ({ onShowDetail }) => [
+    { accessorKey: "no", header: "No." },
     { accessorKey: "user", header: "User" },
     { accessorKey: "title", header: "Judul Analisis" },
     { accessorKey: "estimasi", header: "Estimasi Selesai" },

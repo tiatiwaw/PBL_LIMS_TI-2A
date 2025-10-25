@@ -16,9 +16,9 @@ export const Sidebar = ({ menuItems, onLogout }) => {
             </div>
 
             <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar">
-                {menuItems.map((item) => (
+                {menuItems.map((item, index) => (
                     <NavItem
-                        key={item.href}
+                        key={index}
                         item={item}
                     />
                 ))}

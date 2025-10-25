@@ -16,13 +16,27 @@ Route::controller(HomeController::class)->name('index')->group(function () {
 // Admin
 Route::prefix('admin')->name('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('.index');
-    Route::get('/beranda', [AdminController::class, 'beranda'])->name('.beranda');
-    Route::get('/alat', [AdminController::class, 'alat'])->name('.alat');
-    Route::get('/bahan', [AdminController::class, 'bahan'])->name('.bahan');
-    Route::get('/aktivitas_log', [AdminController::class, 'aktivitas_log'])->name('.aktivitas_log');
-    Route::get('/pengguna', [AdminController::class, 'pengguna'])->name('.pengguna');
-    Route::get('/master_data', [AdminController::class, 'master_data'])->name('.master_data');
-
+    Route::prefix('tools')->name('.tools')->group(function () {
+        Route::get('/equipments', [AdminController::class, 'equipment'])->name('.equipments');
+        Route::get('/brands', [AdminController::class, 'brands'])->name('.brands');
+    });
+    Route::prefix('materials')->name('.materials')->group(function () {
+        Route::get('/reagents', [AdminController::class, 'reagents'])->name('.reagents');
+        Route::get('/grades', [AdminController::class, 'grades'])->name('.grades');
+        Route::get('/suppliers', [AdminController::class, 'suppliers'])->name('.suppliers');
+    });
+    Route::prefix('sampling')->name('.sampling')->group(function () {
+        Route::get('/sample', [AdminController::class, 'sample'])->name('.sample');
+        Route::get('/category', [AdminController::class, 'category'])->name('.category');
+    });
+    Route::prefix('test')->name('.test')->group(function () {
+        Route::get('/parameter', [AdminController::class, 'parameter'])->name('.parameter');
+        Route::get('/test-method', [AdminController::class, 'method'])->name('.method');
+        Route::get('/unit-value', [AdminController::class, 'unitValue'])->name('.unit');
+        Route::get('/standard-reference', [AdminController::class, 'standardReference'])->name('.standard');
+    });
+    Route::get('/log-activity', [AdminController::class, 'logActivity'])->name('.log');
+    Route::get('/users', [AdminController::class, 'users'])->name('.users');
 });
 
 // Analyst
@@ -42,6 +56,7 @@ Route::prefix('manager')->name('manager')->group(function () {
     Route::get('/orders', [ManagerController::class, 'orders'])->name('.orders');
     Route::get('/users', [ManagerController::class, 'users'])->name('.users');
 });
+
 // Login
 Route::controller(LoginController::class)->name('login')->group(function () {
     Route::get('/auth/login', 'index')->name('login');

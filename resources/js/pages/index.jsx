@@ -33,11 +33,10 @@ export default function HomePage() {
                     <h1 className="text-2xl md:text-3xl font-bold">LABOO</h1>
                 </div>
 
-                {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-10 text-white font-bold">
-                    {navItems.map((item) => (
+                    {navItems.map((item, index) => (
                         <Link
-                            key={item.name}
+                            key={index}
                             href={item.href}
                             className="relative group font-semibold text-white transition-colors duration-300 hover:text-white/80"
                         >
@@ -49,7 +48,6 @@ export default function HomePage() {
                     ))}
                 </div>
 
-                {/* Mobile Navigation with Sheet */}
                 <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger asChild>
@@ -64,9 +62,9 @@ export default function HomePage() {
                                 </SheetTitle>
                             </SheetHeader>
                             <nav className="flex flex-col gap-4 text-center">
-                                {navItems.map((item) => (
+                                {navItems.map((item, index) => (
                                     <Link
-                                        key={item.name}
+                                        key={index}
                                         href={item.href}
                                         className="text-white text-xl font-semibold p-2 rounded-md hover:bg-white/20 transition-colors"
                                     >

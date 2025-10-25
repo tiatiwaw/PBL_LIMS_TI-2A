@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Copy, ListFilter } from "lucide-react";
 
-export const getColumns = ({ onShowDetail }) => [
-    { accessorKey: "id", header: "ID" },
+export const getReportsColumns = ({ onShowDetail }) => [
+    { accessorKey: "no", header: "No." },
     {
         accessorKey: "sample",
         header: (
