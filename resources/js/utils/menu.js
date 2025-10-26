@@ -67,5 +67,23 @@ export function menuItems (url) {
                 role: "admin",
             },
         ]
+    } else if (url.startsWith('/client')) {
+        return [
+            {
+                name: "Dashboard",
+                icon: Home,
+                active: url.startsWith('/client/dashboard'),
+                href: "/client/dashboard",
+                role: "client",
+            },
+            {
+                name: "History",
+                icon: Wrench,
+                active: url.startsWith('/client/history'),
+                href: "/client/history",
+                role: "client",
+            },
+
+        ]
     }
 }

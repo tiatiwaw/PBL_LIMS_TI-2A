@@ -13,7 +13,7 @@ const History = () => {
                 <h1>Histories here!</h1>
             </div>
         </DashboardLayout>
-    )
+    )`
 }
 
 export default History

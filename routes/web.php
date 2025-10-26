@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AnalystController;
+use App\Http\Controllers\ClientController;
 
 // Home
 Route::controller(HomeController::class)->name('index')->group(function () {
@@ -23,6 +24,13 @@ Route::prefix('analyst')->name('analyst')->group(function () {
     Route::get('/inbox', [AnalystController::class, 'inbox'])->name('.inbox');
     Route::get('/inbox/details', [AnalystController::class, 'show'])->name('.inbox.show');
     Route::get('/history', [AnalystController::class, 'history'])->name('.history');
+});
+
+Route::prefix('client')->name('client')->group(function () {
+    Route::get('/', [ClientController::class, 'index'])->name('.index');
+    Route::get('/dashboard', [ClientController::class, 'dashboard'])->name('.dashboard');
+    Route::get('/details', [ClientController::class, 'show'])->name('.show');
+    Route::get('/history', [ClientController::class, 'history'])->name('.history');
 });
 
 // Login
