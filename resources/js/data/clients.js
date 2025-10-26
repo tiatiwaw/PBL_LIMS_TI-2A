@@ -1,0 +1,17 @@
+export const dummyClients = [
+  { id: 1, akun: "adriana@email.com", password: "user123", name: "Adriana Sitompul", alamat: "Jl. Merdeka No. 12, Bandung", nomor: "08123456701" },
+  { id: 2, akun: "bima@email.com", password: "user123", name: "Bima Santosa", alamat: "Perumahan Indah Blok C3, Jakarta", nomor: "08123456702" },
+  { id: 3, akun: "citra@email.com", password: "user123", name: "Citra Dewi", alamat: "Gg. Pelangi No. 5, Surabaya", nomor: "08123456703" },
+  { id: 4, akun: "dani@email.com", password: "user123", name: "Dani Wirawan", alamat: "Jl. Pahlawan 45, Medan", nomor: "08123456704" },
+  { id: 5, akun: "ella@email.com", password: "user123", name: "Ella Kartika", alamat: "Komplek Hijau Kav. 8, Semarang", nomor: "08123456705" },
+  { id: 6, akun: "fajar@email.com", password: "user123", name: "Fajar Nugraha", alamat: "Jl. Sudirman 100, Yogyakarta", nomor: "08123456706" },
+  { id: 7, akun: "gita@email.com", password: "user123", name: "Gita Lestari", alamat: "Ambarumda Raya No. 20, Depok", nomor: "08123456707" },
+  { id: 8, akun: "hadi@email.com", password: "user123", name: "Hadi Kusuma", alamat: "Jl. Cipto Mangunkusumo 5, Palembang", nomor: "08123456708" },
+  { id: 9, akun: "intan@email.com", password: "user123", name: "Intan Permata", alamat: "Komp. Cogeh Asri Blok B1, Makassar", nomor: "08123456709" },
+  { id: 10, akun: "joko@email.com", password: "user123", name: "Joko Setiawan", alamat: "Jl. Veteran No. 7, Malang", nomor: "08123456710" },
+  { id: 11, akun: "kiki@email.com", password: "user123", name: "Kiki Amelia", alamat: "Jl. Raya Bogor Km 30, Bogor", nomor: "08123456711" },
+  { id: 12, akun: "linda@email.com", password: "user123", name: "Linda Wahyuni", alamat: "Jl. Gajah Mada 15, Denpasar", nomor: "08123456712" },
+  { id: 13, akun: "mario@email.com", password: "user123", name: "Mario Effendi", alamat: "Komp. Damai No. 9, Balikpapan", nomor: "08123456713" },
+  { id: 14, akun: "nina@email.com", password: "user123", name: "Nina Zahra", alamat: "Jl. Kemuning No. 22, Pekanbaru", nomor: "08123456714" },
+  { id: 15, akun: "otong@email.com", password: "user123", name: "Otong Surotong", alamat: "Gg. Sempit 10, Jakarta Pusat", nomor: "08123456715" },
+];
