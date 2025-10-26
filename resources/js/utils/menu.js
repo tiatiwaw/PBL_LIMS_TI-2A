@@ -76,14 +76,6 @@ export function menuItems (url) {
                 href: "/client/dashboard",
                 role: "client",
             },
-            {
-                name: "History",
-                icon: Wrench,
-                active: url.startsWith('/client/history'),
-                href: "/client/history",
-                role: "client",
-            },
-
         ]
     }
 }

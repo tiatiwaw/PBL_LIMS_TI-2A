@@ -2,7 +2,7 @@ import React from 'react'
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 
 import { Link } from '@inertiajs/react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronsLeft } from 'lucide-react';
 
 const history = ({ id }) => {
     const user = {
@@ -37,15 +37,11 @@ const history = ({ id }) => {
                     </div>
                 </div>
 
-                <div className="w-full flex justify-end mt-10">
-                    <Link
-                        href="/"
-                        className="bg-primary-hijauTua text-white font-semibold py-2 px-5 rounded-full flex items-center gap-2 text-sm shadow"
-                    >
+        {/* --- Tombol Aksi Footer --- */}
+                <div className="w-full flex justify-end">
+                    <Link href="../" className="bg-primary-hijauTua text-white font-semibold py-2 px-5 rounded-full flex items-center gap-2 text-sm shadow">
+                    <ChevronsLeft size={18} />
                         Kembali
-                        <span className="bg-white/30 rounded-full w-5 h-5 flex items-center justify-center">
-                            <ChevronRight size={16} />
-                        </span>
                     </Link>
                 </div>
             </div>
