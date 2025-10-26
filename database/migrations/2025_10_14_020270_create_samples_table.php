@@ -19,7 +19,11 @@ return new class extends Migration
             $table->string('preservation_method');
             $table->float('sample_volume');
             $table->enum('condition', ['good', 'damages', 'expired'])->default('good');
+<<<<<<< HEAD
             $table->string('storage_condition');
+=======
+            $table->enum('temperature',['temperature','time']);
+>>>>>>> 2c51f4ec31dcb2da87a2c47a2d77199f927528de
             $table->timestamps();
         });
     }
