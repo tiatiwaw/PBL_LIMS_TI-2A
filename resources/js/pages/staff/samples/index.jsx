@@ -1,136 +1,53 @@
-import React, { useState } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { usePage } from "@inertiajs/react";
-import { Button } from "@/components/ui/button";
-import SearchInput from "@/components/shared/public/search-input";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-} from "@/components/ui/dialog";
-import TableSample from "@/components/shared/table/table-samples";
-import { dummySamples } from "@/data/samples";
-import DialogSample from "@/components/shared/dialog/dialog-samples";
+import SampleDetailsDialog from "@/components/shared/staff/sample-dialog";
+import { getSamplesColumns } from "@/components/shared/staff/sample-colums";
+import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
+import { samples } from "@/data/staff/sample";
+import { useMemo, useState } from "react";
 
-export default function SampleManagement() {
-    const { props } = usePage();
-    const user = props.auth?.user ?? { name: "Guest", role: "User" };
+const filterData = [
+    { value: "all", label: "Kondisi" },
+    { value: "good", label: "Good" },
+    { value: "damaged", label: "Damaged" },
+    { value: "expired", label: "Expired" },
+];
 
-    const [openDialog, setOpenDialog] = useState(false);
+export default function SamplesPage({ auth, samplesData }) {
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedSample, setSelectedSample] = useState(null);
-    const [mode, setMode] = useState("create");
-    const [openDelete, setOpenDelete] = useState(false);
 
-    const handleEdit = (sample) => {
+    const handleShowDetail = (sample) => {
         setSelectedSample(sample);
-        setMode("edit");
-        setOpenDialog(true);
+        setIsDialogOpen(true);
     };
 
-    const handleAdd = () => {
-        setSelectedSample(null);
-        setMode("create");
-        setOpenDialog(true);
-    };
+    const currentUser = auth?.user || { name: "King Akbar", role: "Staff" };
+    const parameters = samplesData || samples;
 
-    const handleDetail = (sample) => {
-        setSelectedSample(sample);
-        setMode("detail");
-        setOpenDialog(true);
-    };
-
-    const handleSave = (formData) => {
-        if (mode === "edit") {
-            console.log("Edit data:", formData);
-            // TODO: Update data di state atau kirim ke backend
-        } else {
-            console.log("Tambah data:", formData);
-            // TODO: Tambah data ke state atau kirim ke backend
-        }
-    };
-
-    const handleDelete = (sample) => {
-        setSelectedSample(sample);
-        setOpenDelete(true);
-    };
-
-    const confirmDelete = () => {
-        console.log("Hapus sample:", selectedSample);
-        // TODO: Hapus data dari state atau backend
-        setOpenDelete(false);
-    };
+    const columns = useMemo(
+        () => getSamplesColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
     return (
         <DashboardLayout
-            title="Manajemen Sampel"
-            user={user}
-            header="Manajemen Sampel"
+            title="Manajemen Sample"
+            user={currentUser}
+            header="Manajemen Sample"
         >
-            <div className="space-y-2">
-                <div className="flex px-4 py-2 items-center justify-between rounded-md">
-                    <h2 className="text-primary-hijauTua text-lg font-bold">
-                        Daftar Informasi Sampel
-                    </h2>
-                    <div className="flex items-center gap-2">
-                        <SearchInput />
-                        {/* Button Tambah dipindahkan ke sini */}
-                        <Button cla
-                            onClick={handleAdd}
-                            className="!bg-primary-hijauMuda hover:!bg-primary-hijauTua"
-                        >
-                            Tambah Sampel Baru
-                        </Button>
-                    </div>
-                </div>
-
-                <TableSample
-                    data={dummySamples}
-                    onDetail={handleDetail}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                />
-
-                {/* Dialog Sample - tanpa trigger */}
-                <DialogSample
-                    open={openDialog}
-                    setOpen={setOpenDialog}
-                    mode={mode}
-                    sampleData={selectedSample}
-                    onSubmit={handleSave}
-                />
-
-                {/* Dialog Delete */}
-                <Dialog open={openDelete} onOpenChange={setOpenDelete}>
-                    <DialogContent className="max-w-sm text-center">
-                        <DialogHeader>
-                            <DialogTitle>Konfirmasi Hapus</DialogTitle>
-                        </DialogHeader>
-                        <p className="text-gray-600 mb-4">
-                            Apakah Anda yakin ingin menghapus sampel{" "}
-                            <span className="font-semibold text-red-600">
-                                {selectedSample?.name}
-                            </span>
-                            ?
-                        </p>
-                        <DialogFooter className="flex justify-center gap-3">
-                            <Button
-                                onClick={() => setOpenDelete(false)}
-                                className="bg-gray-300 text-gray-800 hover:bg-gray-400"
-                            >
-                                Batal
-                            </Button>
-                            <Button
-                                onClick={confirmDelete}
-                                className="bg-red-600 hover:bg-red-700 text-white"
-                            >
-                                Hapus
-                            </Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-            </div>
+            <ManagedDataTable
+                data={parameters}
+                columns={columns}
+                searchColumn="name"
+                showFilter={true}
+                filterColumn="condition"
+                filterOptions={filterData}
+            />
+            <SampleDetailsDialog
+                sample={selectedSample}
+                isOpen={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+            />
         </DashboardLayout>
     );
 }

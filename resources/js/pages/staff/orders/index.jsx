@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { usePage } from "@inertiajs/react";
-import StepperFirst from "@/components/shared/public/stepper-first";
-import OrdersForm from "@/components/shared/form/orders-form1";
-import OrdersForm2 from "@/components/shared/form/orders-form2";
-import OrderForms3 from "@/components/shared/form/orders-form3";
+import StepperFirst from "@/components/shared/staff/stepper-first";
+import OrdersForm from "@/components/shared/staff/orders-form1";
+import OrdersForm2 from "@/components/shared/staff/orders-form2";
+import OrderForms3 from "@/components/shared/staff/orders-form3";
 import { CheckSquare } from "lucide-react";
 
-export default function OrdersPage() {
+export default function OrdersPage({ auth }) {
     const { props } = usePage();
     const [step, setStep] = useState(1);
     const [isSaved, setIsSaved] = useState(false); // Menandakan form sudah disimpan
-    const user = props.auth?.user ?? { name: "Guest", role: "User" };
+    const currentUser = auth?.user || { name: "King Akbar", role: "Staff" };
 
     const handleNext = () => {
         setStep((prev) => prev + 1);
@@ -33,7 +33,7 @@ export default function OrdersPage() {
     return (
         <DashboardLayout
             title="Orders"
-            user={user}
+            user={currentUser}
             header="Registrasi Order Baru"
         >
             <div className="px-4 py-2 rounded-md shadow-sm">

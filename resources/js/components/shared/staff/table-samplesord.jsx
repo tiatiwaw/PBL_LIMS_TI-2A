@@ -9,11 +9,16 @@ import {
 } from "@/components/ui/table";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 
-export default function TableSampleOrd({ data = [], onSelectSample, selected = [] }) { // ✅ Tambah prop selected
+export default function TableSampleOrd({
+    data = [],
+    onSelectSample,
+    selected = [],
+}) {
+    // ✅ Tambah prop selected
     const [currentPage, setCurrentPage] = useState(1);
     // ❌ HAPUS state selected lokal
     // const [selected, setSelected] = useState([]);
-    
+
     const ITEMS_PER_PAGE = 10;
 
     const dataLength = data.length;
@@ -48,12 +53,24 @@ export default function TableSampleOrd({ data = [], onSelectSample, selected = [
             <Table>
                 <TableHeader>
                     <TableRow className="bg-primary-hijauTua border-none rounded-lg overflow-hidden hover:bg-primary-hijauTua cursor-default">
-                        <TableHead className="text-center text-white font-bold rounded-l-lg">ID</TableHead>
-                        <TableHead className="text-center text-white font-bold">Nama</TableHead>
-                        <TableHead className="text-center text-white font-bold">Bentuk</TableHead>
-                        <TableHead className="text-center text-white font-bold">Kategori</TableHead>
-                        <TableHead className="text-center text-white font-bold">Kondisi</TableHead>
-                        <TableHead className="text-center text-white font-bold rounded-r-lg">Pilih</TableHead>
+                        <TableHead className="text-center text-white font-bold rounded-l-lg">
+                            ID
+                        </TableHead>
+                        <TableHead className="text-center text-white font-bold">
+                            Nama
+                        </TableHead>
+                        <TableHead className="text-center text-white font-bold">
+                            Bentuk
+                        </TableHead>
+                        <TableHead className="text-center text-white font-bold">
+                            Kategori
+                        </TableHead>
+                        <TableHead className="text-center text-white font-bold">
+                            Kondisi
+                        </TableHead>
+                        <TableHead className="text-center text-white font-bold rounded-r-lg">
+                            Pilih
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
 
@@ -62,18 +79,30 @@ export default function TableSampleOrd({ data = [], onSelectSample, selected = [
                         const isEven = index % 2 === 0;
                         const rowBg = isEven ? "bg-[#024D601A]" : "bg-white";
                         // ✅ Cek apakah sample ini ada di array selected dari parent
-                        const isChecked = selected.some(sample => sample.id === s.id);
+                        const isChecked = selected.some(
+                            (sample) => sample.id === s.id
+                        );
 
                         return (
                             <TableRow
                                 key={s.id}
                                 className={`${rowBg} border-b-gray-200 hover:bg-opacity-80 transition-colors`}
                             >
-                                <TableCell className="text-center py-4 text-gray-500">{s.id}</TableCell>
-                                <TableCell className="text-center font-medium text-gray-800">{s.name}</TableCell>
-                                <TableCell className="text-center py-4 text-gray-500">{s.bentuk}</TableCell>
-                                <TableCell className="text-center text-gray-500">{s.kategori}</TableCell>
-                                <TableCell className="text-center text-gray-500">{s.kondisi}</TableCell>
+                                <TableCell className="text-center py-4 text-gray-500">
+                                    {s.id}
+                                </TableCell>
+                                <TableCell className="text-center font-medium text-gray-800">
+                                    {s.name}
+                                </TableCell>
+                                <TableCell className="text-center py-4 text-gray-500">
+                                    {s.form}
+                                </TableCell>
+                                <TableCell className="text-center text-gray-500">
+                                    {s.sample_category}
+                                </TableCell>
+                                <TableCell className="text-center text-gray-500">
+                                    {s.condition}
+                                </TableCell>
 
                                 {/* Checkbox pilih sample */}
                                 <TableCell className="text-center">
@@ -91,7 +120,10 @@ export default function TableSampleOrd({ data = [], onSelectSample, selected = [
 
                     {!hasData && (
                         <TableRow>
-                            <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                            <TableCell
+                                colSpan={6}
+                                className="text-center py-8 text-gray-500"
+                            >
                                 Tidak ada data Sample yang tersedia.
                             </TableCell>
                         </TableRow>
@@ -111,7 +143,10 @@ export default function TableSampleOrd({ data = [], onSelectSample, selected = [
                             </button>
                         )}
 
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        {Array.from(
+                            { length: totalPages },
+                            (_, i) => i + 1
+                        ).map((page) => (
                             <button
                                 key={page}
                                 onClick={() => goToPage(page)}

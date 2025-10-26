@@ -8,9 +8,9 @@ import {
     DialogFooter,
     DialogDescription,
 } from "@/components/ui/dialog";
-import TableSamplesOrd from "@/components/shared/table/table-samplesord";
+import TableSamplesOrd from "@/components/shared/staff/table-samplesord";
 import { Button } from "@/components/ui/button";
-import { dummySamples } from "@/data/samples";
+import { samples } from "@/data/staff/sample";
 import { DatePicker } from "@/components/ui/date-picker";
 
 export default function OrdersForm2() {
@@ -273,7 +273,7 @@ export default function OrdersForm2() {
 
                     <div className="flex-grow overflow-y-auto">
                         <TableSamplesOrd
-                            data={dummySamples}
+                            data={samples}
                             onSelectSample={handleSampleSelect}
                             selected={selectedSamples}
                         />

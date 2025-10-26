@@ -1,6 +1,7 @@
 import React from "react";
-import { dummyClients } from "@/data/clients";
-import { dummySamples } from "@/data/samples";
+import { Clients } from "@/data/staff/clients";
+import { samples } from "@/data/staff/sample";
+import { dataOrder } from "@/data/staff/orders";
 
 // Komponen pembantu
 const HeaderBar = ({ title }) => (
@@ -19,17 +20,7 @@ const DetailRow = ({ label, value }) => (
 
 export default function OrderForms3() {
     //Ambil dummy pertama untuk contoh tampilan
-    const klien = dummyClients[0];
-    const samples = dummySamples;
-
-    const dataOrder = {
-        nomorOrder: "253(auto-generate)",
-        judulOrder: "Uji Komposisi Zat A",
-        metodeAnalisis: "Spektrofotometri UV-Vis",
-        tipeOrder: "Internal",
-        tanggalOrder: "1 November 2025",
-        estimasiSelesai: "29 November 2025",
-    };
+    const klien = Clients[0];
 
     return (
         <div className="p-6 md:p-10 min-h-screen font-sans">
@@ -40,8 +31,11 @@ export default function OrderForms3() {
                     <div className="px-4 py-2 space-y-2">
                         <DetailRow label="ID" value={klien.id} />
                         <DetailRow label="Nama" value={klien.name} />
-                        <DetailRow label="Alamat" value={klien.alamat} />
-                        <DetailRow label="Nomor HP" value={klien.nomor} />
+                        <DetailRow label="Alamat" value={klien.address} />
+                        <DetailRow
+                            label="Nomor HP"
+                            value={klien.phone_number}
+                        />
                     </div>
                 </div>
 
@@ -81,7 +75,9 @@ export default function OrderForms3() {
                             <div
                                 key={sample.id}
                                 className={`grid grid-cols-5 p-3 text-sm border-b ${
-                                    index % 2 === 0 ? "bg-[#024D601A]" : "bg-white"
+                                    index % 2 === 0
+                                        ? "bg-[#024D601A]"
+                                        : "bg-white"
                                 }`}
                             >
                                 <div className="col-span-1 text-gray-600">
@@ -90,22 +86,20 @@ export default function OrderForms3() {
                                 <div className="col-span-1 font-medium text-gray-800">
                                     {sample.name}
                                 </div>
+                                <div className="col-span-1">{sample.form}</div>
                                 <div className="col-span-1">
-                                    {sample.bentuk}
-                                </div>
-                                <div className="col-span-1">
-                                    {sample.kategori}
+                                    {sample.sample_category}
                                 </div>
                                 <div
                                     className={`col-span-1 font-bold ${
-                                        sample.kondisi === "Damages"
+                                        sample.condition === "damaged"
                                             ? "text-red-600"
-                                            : sample.kondisi === "Expired"
+                                            : sample.condition === "expired"
                                             ? "text-yellow-600"
                                             : "text-green-600"
                                     }`}
                                 >
-                                    {sample.kondisi}
+                                    {sample.condition}
                                 </div>
                             </div>
                         ))}
