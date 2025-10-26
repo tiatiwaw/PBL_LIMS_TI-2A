@@ -3,38 +3,30 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Analyst;
 
 class AnalystSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('analysts')->insert([
-            [
-                'user_id' => 1,
-                'name' => 'Dr. Rina Mulyani',
-                'specialist' => 'Kimia Analitik',
-            ],
-            [
-                'user_id' => 2,
-                'name' => 'Ir. Budi Santoso',
-                'specialist' => 'Mikrobiologi',
-            ],
-            [
-                'user_id' => 3,
-                'name' => 'Drs. Ahmad Zulfikar',
-                'specialist' => 'Toksikologi',
-            ],
-            [
-                'user_id' => 4,
-                'name' => 'Dr. Sinta Wulandari',
-                'specialist' => 'Farmakologi',
-            ],
-            [
-                'user_id' => 5,
-                'name' => 'Ir. Andika Rahman',
-                'specialist' => 'Bioteknologi',
-            ],
-        ]);
+        // Ambil SEMUA user yang rolenya 'analyst'
+        $analystUsers = User::where('role', 'analyst')->get();
+
+        if ($analystUsers->isEmpty()) {
+            $this->command->warn('⚠️ Tidak ditemukan user dengan role "analyst". Jalankan UserRoleSeeder dulu!');
+            return;
+        }
+
+        $specialists = ['Kimia Analitik', 'Mikrobiologi', 'Toksikologi', 'Farmakologi', 'Bioteknologi'];
+
+        // Buat data analis untuk SETIAP user analis
+        foreach ($analystUsers as $index => $user) {
+            Analyst::create([
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'specialist' => $specialists[$index % count($specialists)],
+            ]);
+        }
     }
 }

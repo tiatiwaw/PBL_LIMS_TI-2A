@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Analyses_Method;
+use App\Models\AnalysesMethod;
 
 class AnalysesMethodSeeder extends Seeder
 {
@@ -21,7 +21,7 @@ class AnalysesMethodSeeder extends Seeder
         ];
 
         foreach ($methods as $method) {
-            Analyses_Method::create($method);
+            AnalysesMethod::create($method);
         }
     }
 }

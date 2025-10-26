@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Sample_Category;
+use App\Models\SampleCategory;
 
 class SampleCategorySeeder extends Seeder
 {
@@ -26,7 +26,7 @@ class SampleCategorySeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            Sample_Category::create($category);
+            SampleCategory::create($category);
         }
     }
 }

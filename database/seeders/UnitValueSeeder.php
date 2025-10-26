@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Unit_Value;
+use App\Models\UnitValue;
 
 class UnitValueSeeder extends Seeder
 {
@@ -13,23 +13,23 @@ class UnitValueSeeder extends Seeder
     public function run(): void
     {
         $units = [
-            ['name' => 'mg/L'],        // miligram per liter
-            ['name' => 'µg/L'],        // mikrogram per liter
-            ['name' => 'ppm'],         // parts per million
-            ['name' => 'ppb'],         // parts per billion
-            ['name' => 'CFU/mL'],      // colony forming units per milliliter
-            ['name' => '%'],           // persen
-            ['name' => 'mg/kg'],       // miligram per kilogram
-            ['name' => 'g/L'],         // gram per liter
-            ['name' => 'mL'],          // mililiter
-            ['name' => 'pH'],          // unitless pH
-            ['name' => 'NTU'],         // Nephelometric Turbidity Unit
-            ['name' => '°C'],          // derajat Celsius
-            ['name' => 'μS/cm'],       // microsiemens per centimeter
+            ['value' => 'mg/L'],        // miligram per liter
+            ['value' => 'µg/L'],        // mikrogram per liter
+            ['value' => 'ppm'],         // parts per million
+            ['value' => 'ppb'],         // parts per billion
+            ['value' => 'CFU/mL'],      // colony forming units per milliliter
+            ['value' => '%'],           // persen
+            ['value' => 'mg/kg'],       // miligram per kilogram
+            ['value' => 'g/L'],         // gram per liter
+            ['value' => 'mL'],          // mililiter
+            ['value' => 'pH'],          // unitless pH
+            ['value' => 'NTU'],         // Nephelometric Turbidity Unit
+            ['value' => '°C'],          // derajat Celsius
+            ['value' => 'μS/cm'],       // microsiemens per centimeter
         ];
 
         foreach ($units as $unit) {
-            Unit_Value::create($unit);
+            UnitValue::create($unit);
         }
     }
 }

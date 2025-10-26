@@ -17,7 +17,7 @@ class SampleSeeder extends Seeder
                 'preservation_method' => 'Pendinginan 4°C',
                 'sample_volume' => 500.0,
                 'condition' => 'good',
-                'temperature' => 'temperature',
+                'storage_condition' => 'Chiller 4°C', // INI PERBAIKANNYA
             ],
             [
                 'sample_category_id' => 2,
@@ -26,34 +26,16 @@ class SampleSeeder extends Seeder
                 'preservation_method' => 'Disimpan dalam wadah tertutup',
                 'sample_volume' => 300.5,
                 'condition' => 'good',
-                'temperature' => 'temperature',
+                'storage_condition' => 'Suhu Ruang', // INI PERBAIKANNYA
             ],
             [
-                'sample_category_id' => 3,
+                'sample_category_id' => 3, // Asumsi 3 = Kategori Gas/Udara
                 'name' => 'Udara Pabrik X',
                 'form' => 'gas',
                 'preservation_method' => 'Sampel dalam tabung khusus',
                 'sample_volume' => 2.5,
                 'condition' => 'good',
-                'temperature' => 'time',
-            ],
-            [
-                'sample_category_id' => 4,
-                'name' => 'Air Limbah Rumah Tangga',
-                'form' => 'liquid',
-                'preservation_method' => 'Pendinginan 4°C',
-                'sample_volume' => 450.0,
-                'condition' => 'damages',
-                'temperature' => 'temperature',
-            ],
-            [
-                'sample_category_id' => 5,
-                'name' => 'Tanah Bekas Tambang',
-                'form' => 'solid',
-                'preservation_method' => 'Keringkan dan simpan di wadah kedap udara',
-                'sample_volume' => 600.0,
-                'condition' => 'expired',
-                'temperature' => 'time',
+                'storage_condition' => 'Rak Tabung Gas', // INI PERBAIKANNYA
             ],
         ]);
     }
