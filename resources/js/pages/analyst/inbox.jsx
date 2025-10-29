@@ -9,7 +9,7 @@ const Inbox = () => {
         avatar: 'https://i.pravatar.cc/150?img=3',
     }
 
-    const items = Array.from({ length: 10 }, (_, i) => `Nama Sample ${i + 1}`);
+    const items = Array.from({ length: 10 }, (_, i) => `ORDER-${i + 1}`);
 
     return (
         <DashboardLayout title="Analyst" user={user} header='Selamat Datang Analyst!'>

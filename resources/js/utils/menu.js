@@ -24,6 +24,7 @@ import {
     Pipette,
     ListCheck,
     ChartArea,
+    Inbox,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -54,14 +55,21 @@ const getRoleFromUrl = (url) => {
 const MENU_CONFIG = {
     analyst: [
         {
+            name: "Beranda",
+            icon: Home,
+            href: "/analyst/dashboard",
+        },
+        {
             name: "Kotak Masuk",
             icon: Inbox,
             href: "/analyst/inbox",
-        },
-        {
-            name: "Riwayat",
-            icon: History,
-            href: "/analyst/history",
+            subItems: [
+                {
+                    name: "Details",
+                    icon: Microscope,
+                    href: "/analyst/inbox/details",
+                },
+            ],
         },
     ],
 
