@@ -35,6 +35,6 @@ class Sample extends Model
 
     public function n_parameter_methods()
     {
-        return $this->hasMany(NParameterMethod::class, 'sample_id');
+        return $this->hasOne(NParameterMethod::class, 'sample_id');
     }
 }
