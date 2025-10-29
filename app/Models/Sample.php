@@ -28,9 +28,9 @@ class Sample extends Model
         return $this->belongsTo(SampleCategory::class, 'sample_category_id');
     }
 
-    function orders()
+    function n_order_samples()
     {
-        return $this->belongsToMany(Order::class, 'n_order_samples', 'sample_id', 'order_id');
+        return $this->hasMany(NOrderSample::class, 'sample_id');
     }
 
     public function n_parameter_methods()
