@@ -58,13 +58,28 @@ Route::prefix('manager')->name('manager')->group(function () {
     Route::get('/users', [ManagerController::class, 'users'])->name('.users');
 });
 
+// Di dalam file: routes/web.php
+
 // Staff
-Route::prefix('staff')->name('staff')->group(function () {
+Route::prefix('staff')->name('staff.')->group(function () {
     Route::redirect('/', '/staff/manage-clients');
 
-    Route::get('/manage-clients', [StaffController::class, 'managementClient'])->name('.clients');
-    Route::get('/samples', [StaffController::class, 'sample'])->name('.sample');
-    Route::get('/orders', [StaffController::class, 'order'])->name('.order');
+    // --- Manajemen Klien ---
+    Route::get('/manage-clients', [StaffController::class, 'clientIndex'])->name('client.index');
+    Route::post('/manage-clients', [StaffController::class, 'clientStore'])->name('client.store');
+    Route::put('/manage-clients/{client}', [StaffController::class, 'clientUpdate'])->name('client.update');
+    Route::delete('/manage-clients/{client}', [StaffController::class, 'clientDestroy'])->name('client.destroy');
+    
+    // --- Manajemen Sample (RUTE BARU DITAMBAHKAN) ---
+    Route::get('/samples', [StaffController::class, 'sampleIndex'])->name('sample.index');
+    Route::get('/samples/create', [StaffController::class, 'sampleCreate'])->name('sample.create');
+    Route::post('/samples', [StaffController::class, 'sampleStore'])->name('sample.store');
+    Route::get('/samples/{sample}/edit', [StaffController::class, 'sampleEdit'])->name('sample.edit');
+    Route::put('/samples/{sample}', [StaffController::class, 'sampleUpdate'])->name('sample.update');
+    Route::delete('/samples/{sample}', [StaffController::class, 'sampleDestroy'])->name('sample.destroy');
+
+    // --- Rute Lain ---
+    Route::get('/orders', [StaffController::class, 'order'])->name('order.index');
 });
 
 // Login
