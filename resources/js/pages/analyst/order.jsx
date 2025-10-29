@@ -1,8 +1,8 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import {ChevronRight} from 'lucide-react';
+import {ChevronRight, CircleAlert} from 'lucide-react';
 import { Link } from "@inertiajs/react";
 
-const Inbox = () => {
+const order = () => {
     const user = {
         name: 'Nardo',
         role: 'Analyst',
@@ -19,23 +19,18 @@ const Inbox = () => {
                     key={index}
                     className="bg-white border w-full py-6 rounded-2xl shadow-lg flex justify-between items-center px-6"
                     >
-                    <div className="flex gap-2 items-center">
-                        <p className="font-medium text-lg">{index + 1}. {name}</p>
-                        <div className="bg-[#75E2DF] text-primary-hijauTua rounded-full scale-75 px-3">
-                            In Progress
+                        <div className="flex gap-2 items-center">
+                            <p className="font-medium text-lg">{index + 1}. {name}</p>
+                            <div className="bg-[#75E2DF] text-primary-hijauTua rounded-full scale-75 px-3">
+                                In Progress
+                            </div>
                         </div>
-                    </div>
                     
-
-                        
                         <Link
-                            href="/analyst/inbox/details"
-                            className="bg-primary-hijauTua text-white rounded-3xl px-4 py-[4px] shadow-md flex hover:scale-110 hover:bg-gray-400 duration-200 gap-2 items-center"
+                            href="/analyst/order/details"
+                            className="bg-primary-hijauTua text-white rounded-3xl p-1 shadow-md flex hover:scale-110 hover:bg-gray-400 duration-200 gap-2 items-center"
                         >
-                            Detail
-                            <span className="bg-[#75E2DF] text-primary-hijauTua rounded-full p-1 scale-75">
-                            <ChevronRight />
-                            </span>
+                            <CircleAlert/>
                         </Link>
                     </div>
                 ))}
@@ -44,4 +39,4 @@ const Inbox = () => {
     )
 }
 
-export default Inbox
+export default order

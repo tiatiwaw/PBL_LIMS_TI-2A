@@ -25,6 +25,7 @@ import {
     ListCheck,
     ChartArea,
     Inbox,
+    ScrollText,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -40,6 +41,7 @@ const isActive = (currentUrl, href, subItems = []) => {
         return true;
     if (subItems.length > 0) {
         return subItems.some((sub) => currentUrl.startsWith(sub.href));
+
     }
     return false;
 };
@@ -60,16 +62,9 @@ const MENU_CONFIG = {
             href: "/analyst/dashboard",
         },
         {
-            name: "Kotak Masuk",
-            icon: Inbox,
-            href: "/analyst/inbox",
-            subItems: [
-                {
-                    name: "Details",
-                    icon: Microscope,
-                    href: "/analyst/inbox/details",
-                },
-            ],
+            name: "Daftar Pesanan",
+            icon: ScrollText,
+            href: "/analyst/order",
         },
     ],
 

@@ -18,7 +18,10 @@ Route::prefix('analyst')->name('analyst')->group(function () {
     Route::get('/', [AnalystController::class, 'index'])->name('.index');
     Route::get('/inbox', [AnalystController::class, 'inbox'])->name('.inbox');
     Route::get('/inbox/details', [AnalystController::class, 'show'])->name('.inbox.show');
-    Route::get('/history', [AnalystController::class, 'history'])->name('.history');
+    Route::get('/order', [AnalystController::class, 'order'])->name('.order');
+    Route::get('/order/details', [AnalystController::class, 'detail'])->name('.order.detail');
+    Route::get('/dashboard', [AnalystController::class, 'dashboard'])->name('.dashboard');
+
 });
 
 Route::prefix('client')->name('client')->group(function () {
