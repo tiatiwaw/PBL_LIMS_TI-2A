@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { getReportsColumns } from "@/components/shared/manager/report-columns";
 import { reports } from "@/data/manager/reports";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import ReportDetailsDialog from "@/components/shared/dialog/report-validation-dialog";
+import ReportDetailsDialog from "@/components/shared/manager/report-validation-dialog";
 
 const filterData = [
     { value: "all", label: "All Report" },
