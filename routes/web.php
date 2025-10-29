@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AnalystController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\StaffController;
 
 // Home
 Route::controller(HomeController::class)->name('index')->group(function () {
@@ -55,6 +56,15 @@ Route::prefix('manager')->name('manager')->group(function () {
     });
     Route::get('/orders', [ManagerController::class, 'orders'])->name('.orders');
     Route::get('/users', [ManagerController::class, 'users'])->name('.users');
+});
+
+// Staff
+Route::prefix('staff')->name('staff')->group(function () {
+    Route::redirect('/', '/staff/manage-clients');
+
+    Route::get('/manage-clients', [StaffController::class, 'managementClient'])->name('.clients');
+    Route::get('/samples', [StaffController::class, 'sample'])->name('.sample');
+    Route::get('/orders', [StaffController::class, 'order'])->name('.order');
 });
 
 // Login
