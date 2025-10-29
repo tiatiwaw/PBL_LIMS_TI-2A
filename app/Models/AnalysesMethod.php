@@ -10,11 +10,12 @@ class AnalysesMethod extends Model
     use HasFactory;
 
     protected $fillable = [
-        "analyses_method"
+        'analyses_method',
+        'price',
     ];
 
-    public function orders()
+    public function n_analyses_methods_orders()
     {
-        return $this->hasOne(Order::class,'analyses_method_id');
+        return $this->hasMany(NAnalysesMethodsOrders::class, 'analyses_method_id')
     }
 }

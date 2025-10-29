@@ -19,7 +19,8 @@ class Sample extends Model
         'preservation_method',
         'sample_volume',
         'condition',
-        'temperature',
+        'status',
+        'storage_condition',
     ];
 
     function sample_categories()
@@ -30,5 +31,10 @@ class Sample extends Model
     function orders()
     {
         return $this->belongsToMany(Order::class, 'n_order_samples', 'sample_id', 'order_id');
+    }
+
+    public function n_parameter_methods()
+    {
+        return $this->hasMany(NParameterMethod::class, 'sample_id');
     }
 }

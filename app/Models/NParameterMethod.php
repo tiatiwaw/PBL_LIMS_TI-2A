@@ -10,15 +10,16 @@ class NParameterMethod extends Model
     use HasFactory;
 
     protected $fillable = [
-        'order_id',
+        'sample_id',
         'test_parameter_id',
         'test_method_id',
-        'result'
+        'result',
+        'status',
     ];
 
-    public function orders()
+    public function samples()
     {
-        return $this->belongsTo(Order::class, 'order_id');
+        return $this->belongsTo(Sample::class, 'sample_id');
     }
 
     public function test_parameters()
