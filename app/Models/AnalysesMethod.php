@@ -16,6 +16,6 @@ class AnalysesMethod extends Model
 
     public function n_analyses_methods_orders()
     {
-        return $this->hasMany(NAnalysesMethodsOrders::class, 'analyses_method_id')
+        return $this->hasMany(NAnalysesMethodsOrder::class, 'analyses_method_id');
     }
 }
