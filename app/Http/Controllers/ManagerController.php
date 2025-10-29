@@ -4,12 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Order;
 
 class ManagerController extends Controller
 {
     public function index()
     {
-        return Inertia::render('manager/index');
+        $totalOrders = Order::count();
+        // $totalOrders = 100;
+        return Inertia::render(
+            'manager/index', [
+                'totalOrders' => $totalOrders,
+            ]
+        );
     }
 
     public function reportValidation()

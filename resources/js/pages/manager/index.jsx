@@ -1,6 +1,7 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import StatCard from "@/components/shared/card/stat-card";
 import { stats } from "@/data/manager/beranda";
+import { usePage } from "@inertiajs/react";
 
 export default function ManagerPage() {
     const user = {
@@ -8,11 +9,13 @@ export default function ManagerPage() {
         role: 'Manager',
         avatar: 'https://i.pravatar.cc/150?img=3',
     }
+    const { totalOrders } = usePage().props;
+    stats[0].value = totalOrders;
 
     return (
         <DashboardLayout title="Dashboard Manager" user={user} header='Selamat Datang, Manager!'>
             <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> 
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"> 
                     {stats.map((stat, index) => (
                         <StatCard key={index} stat={stat} />
                     ))}
