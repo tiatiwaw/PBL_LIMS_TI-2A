@@ -62,6 +62,15 @@ Route::controller(LoginController::class)->name('login')->group(function () {
     Route::get('/auth/login', 'index')->name('login');
 });
 
+// Route untuk guest (login + register)
+Route::middleware('guest')
+    ->prefix('auth')
+    ->name('auth.')
+    ->group(function () {
+        Route::inertia('/login', 'auth/login/index')->name('login.form');  // GET /auth/login untuk form
+        Route::post('/login', [LoginController::class, 'login'])->name('login');  // POST /auth/login untuk proses
+    });
+
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
