@@ -15,6 +15,13 @@ export function menuItems (url) {
         return [
             // Menu untuk analyst
             {
+                name: "Dashboard",
+                icon: Home,
+                href: "/analyst/dashboard",
+                active: url.startsWith('/analyst/dashboard'),
+                role: "analyst",
+            },
+            {
                 name: "Kotak Masuk",
                 icon: Mail,
                 href: "/analyst/inbox",

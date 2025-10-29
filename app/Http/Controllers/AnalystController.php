@@ -22,4 +22,8 @@ class AnalystController extends Controller
     public function show() {
         return Inertia::render('analyst/inbox-detail');
     }
+
+    public function dashboard() {
+        return Inertia::render('analyst/dashboard');
+    }
 }

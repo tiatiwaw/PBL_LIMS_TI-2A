@@ -23,6 +23,8 @@ Route::prefix('analyst')->name('analyst')->group(function () {
     Route::get('/inbox', [AnalystController::class, 'inbox'])->name('.inbox');
     Route::get('/inbox/details', [AnalystController::class, 'show'])->name('.inbox.show');
     Route::get('/history', [AnalystController::class, 'history'])->name('.history');
+    Route::get('/dashboard', [AnalystController::class, 'dashboard'])->name('.dashboard');
+
 });
 
 // Login
