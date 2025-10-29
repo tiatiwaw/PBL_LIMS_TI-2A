@@ -21,6 +21,7 @@ export default function UnitsPage({ auth, unitsData }) {
                 data={parameters}
                 columns={columns}
                 editFields={editUnitFields}
+                createUrl="admin.test.unit.create"
                 editUrl="admin.test.unit.update"
                 deleteUrl="admin.test.unit.destroy"
                 searchColumn="value"

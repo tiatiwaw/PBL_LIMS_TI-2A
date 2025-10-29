@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, ListFilter } from "lucide-react";
+import { Search, ListFilter, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,8 @@ import {
 export default function SearchFilter({
     showSearch,
     showFilter,
+    showCreate,
+    onCreate,
     filterOptions = [],
     searchTerm,
     onSearchChange,
@@ -53,32 +55,43 @@ export default function SearchFilter({
                     </div>
                 </div>
             )}
-            {showFilter && (
-                <Select value={filterValue} onValueChange={onFilterChange}>
-                    <SelectTrigger
-                        className={cn(
-                            "flex items-center gap-2 border-primary-hijauTua text-primary-hijauTua",
-                            "hover:text-primary-hijauTua/60 hover:bg-primary-hijauTua/10",
-                            "focus:ring-2 focus:ring-primary-hijauTua/50 w-[180px]"
-                        )}
-                    >
-                        <ListFilter size={16} />
-                        <SelectValue placeholder="Select filter" />
-                    </SelectTrigger>
-                    <SelectContent className="text-primary-hijauTua font-medium shadow-lg">
-                        {filterOptions.map((option, index) => (
-                            <SelectItem
-                                key={index}
-                                value={option.value}
-                                className="focus:bg-primary-hijauMuda focus:text-white cursor-pointer"
-                            >
-                                {option.label}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
+            <div className="flex justify-between gap-4 items-center">
+                {showFilter && (
+                    <Select value={filterValue} onValueChange={onFilterChange}>
+                        <SelectTrigger
+                            className={cn(
+                                "flex items-center gap-2 border-primary-hijauTua text-primary-hijauTua",
+                                "hover:text-primary-hijauTua/60 hover:bg-primary-hijauTua/10",
+                                "focus:ring-2 focus:ring-primary-hijauTua/50 w-[180px]"
+                            )}
+                        >
+                            <ListFilter size={16} />
+                            <SelectValue placeholder="Select filter" />
+                        </SelectTrigger>
+                        <SelectContent className="text-primary-hijauTua font-medium shadow-lg">
+                            {filterOptions.map((option, index) => (
+                                <SelectItem
+                                    key={index}
+                                    value={option.value}
+                                    className="focus:bg-primary-hijauMuda focus:text-white cursor-pointer"
+                                >
+                                    {option.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
 
-                </Select>
-            )}
+                    </Select>
+                )}
+                {showCreate && (
+                    <Button
+                        onClick={onCreate}
+                        className="bg-primary-hijauTua hover:bg-primary-hijauTua/90"
+                    >
+                        <PlusCircle size={18} className="mr-2" />
+                        Tambah Data
+                    </Button>
+                )}
+            </div>
         </div>
     );
 }

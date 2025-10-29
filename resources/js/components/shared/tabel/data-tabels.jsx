@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import SearchFilter from "../dashboard/searchfilter";
-import EditDialog from "../dialog/edit-dialog";
+import EditDialog from "../dialog/upsert-dialog";
 import DeleteDialog from "../dialog/delete-dialog";
 import { router } from "@inertiajs/react";
 import { toast } from "sonner";

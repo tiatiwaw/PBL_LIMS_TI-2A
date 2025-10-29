@@ -21,9 +21,9 @@ export default function SampleCategoriesPage({ auth, sampleCategoriesData }) {
                 data={parameters}
                 columns={columns}
                 editFields={editCategorySampleFields}
-                editUrl="admin.sampling.sample.update"
-                deleteUrl="admin.sampling.sample.destroy"
-                searchColumn="name"
+                createUrl="admin.test.categorySample.create"
+                editUrl="admin.test.categorySample.update"
+                deleteUrl="admin.test.categorySample.destroy"
                 editTitle="Edit Kategori Sampel"
                 deleteTitle="Hapus Kategori Sampel"
             />
