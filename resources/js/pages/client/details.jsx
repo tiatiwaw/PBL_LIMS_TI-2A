@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { Link } from '@inertiajs/react';
 import { ChevronsLeft, Info, X } from 'lucide-react';
-// --- Komponen Modal Informasi Sampel ---
 const SampleInfoModal = ({ sample, onClose }) => {
 
     // Data ini akan digunakan di dalam modal

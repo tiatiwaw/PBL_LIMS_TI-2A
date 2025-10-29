@@ -1,6 +1,4 @@
-// resources/js/pages/client/history.jsx
-
-import React from 'react'; // <-- PENTING: Untuk menghindari error 'React is not defined'
+import React from 'react';
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { Link } from '@inertiajs/react';
 import { ChevronsLeft } from 'lucide-react';
@@ -33,19 +31,14 @@ const history = ({ id }) => {
                         {timelineData.map((item, index) => (
                             <div key={index} className="relative">
 
-                                {/* MODIFIKASI: Styling titik (dot) diubah
-                                  - 'index === 0' (item pertama) akan mendapat style 'outline'
-                                  - Sisanya akan mendapat style 'solid'
-                                */}
                                 <div className={`absolute -left-4 top-1 w-5 h-5 rounded-full -translate-x-1/2
                                     ${index === 0
-                                        ? 'bg-white border-4 border-primary-hijauTua' // Style 'outline' untuk item pertama
-                                        : 'bg-primary-hijauTua' // Style 'solid' untuk sisanya
+                                        ? 'bg-white border-4 border-primary-hijauTua'
+                                        : 'bg-primary-hijauTua'
                                     }
                                 `}></div>
 
                                 <div className="ml-6">
-                                    {/* MODIFIKASI: Warna teks tanggal diubah dari gray-500 */}
                                     <p className="font-medium text-primary-hijauTua text-sm">{item.date}</p>
                                     <h3 className="text-xl font-semibold">{item.title}</h3>
                                 </div>
@@ -55,7 +48,7 @@ const history = ({ id }) => {
                 </div>
 
                 {/* Tombol Kembali (tetap ada untuk navigasi) */}
-                <div className="w-full flex justify-end mt-10"> {/* Diberi margin-top agar tidak menempel */}
+                <div className="w-full flex justify-end mt-10"> 
                     <Link href="../" className="bg-primary-hijauTua text-white font-semibold py-2 px-5 rounded-full flex items-center gap-2 text-sm shadow">
                         <ChevronsLeft size={18} />
                         Kembali
