@@ -1,8 +1,9 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
+import { useCallback } from 'react';
 import { menuItems } from '@/utils/menu';
 import { Sidebar } from './sidebar';
 import { HeaderCard } from '../shared/dashboard/header-card';
-import { usePage } from '@inertiajs/react'
 
 export default function DashboardLayout({
     children,
@@ -11,18 +12,22 @@ export default function DashboardLayout({
     header = "Hello World!",
     notificationCount = 3,
 }) {
-    const handleLogout = () => {
-        console.log('Logging out...');
-    };
+    const { url } = usePage();
 
-    const { url } = usePage()
-    const getMenuItems = menuItems(url)
+    const handleLogout = useCallback(() => {
+        router.post('/logout');
+    }, []);
+
+    const getMenuItems = menuItems(url);
 
     return (
         <div className="p-4 flex gap-4 h-screen bg-primary-hijauTerang">
             <Head title={title} />
 
-            <Sidebar menuItems={getMenuItems} onLogout={handleLogout} />
+            <Sidebar
+                menuItems={getMenuItems}
+                onLogout={handleLogout}
+            />
 
             <div className="flex-1 flex flex-col overflow-hidden">
                 <header className="mb-6">

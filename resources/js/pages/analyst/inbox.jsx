@@ -1,5 +1,6 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import {ChevronRight} from 'lucide-react';
+import { Link } from "@inertiajs/react";
 
 const Inbox = () => {
     const user = {
@@ -16,18 +17,26 @@ const Inbox = () => {
                 {items.map((name, index) => (
                     <div
                     key={index}
-                    className="bg-[#75E2DF] w-full py-6 rounded-2xl shadow-md flex justify-between items-center px-6"
+                    className="bg-white border w-full py-6 rounded-2xl shadow-lg flex justify-between items-center px-6"
                     >
-                    <p className="font-medium text-lg">{index + 1}. {name}</p>
-                    <a
-                        href="/analyst/inbox/details"
-                        className="bg-white rounded-3xl px-4 py-[4px] shadow-md flex hover:scale-110 hover:bg-gray-400 duration-200 gap-2 items-center"
-                    >
-                        Detail
-                        <span className="bg-[#02364B] text-white rounded-full p-1 scale-75">
-                        <ChevronRight />
-                        </span>
-                    </a>
+                    <div className="flex gap-2 items-center">
+                        <p className="font-medium text-lg">{index + 1}. {name}</p>
+                        <div className="bg-[#75E2DF] text-primary-hijauTua rounded-full scale-75 px-3">
+                            In Progress
+                        </div>
+                    </div>
+                    
+
+                        
+                        <Link
+                            href="/analyst/inbox/details"
+                            className="bg-primary-hijauTua text-white rounded-3xl px-4 py-[4px] shadow-md flex hover:scale-110 hover:bg-gray-400 duration-200 gap-2 items-center"
+                        >
+                            Detail
+                            <span className="bg-[#75E2DF] text-primary-hijauTua rounded-full p-1 scale-75">
+                            <ChevronRight />
+                            </span>
+                        </Link>
                     </div>
                 ))}
             </div>

@@ -7,7 +7,7 @@ export const NotificationButton = ({ count = 0 }) => (
         size="icon"
         className="
             relative w-14 h-14 
-            bg-white/10 hover:bg-white/20 
+            bg-white/10 hover:bg-white/20 hover:text-gray-300
             text-white rounded-xl 
             transition-all duration-300
         "

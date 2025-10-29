@@ -13,11 +13,6 @@ Route::controller(HomeController::class)->name('index')->group(function () {
     Route::get('/', 'index')->name('index');
 });
 
-// Admin
-Route::controller(AdminController::class)->name('admin')->group(function () {
-    Route::get('/admin', 'index')->name('admin');
-});
-
 // Analyst
 Route::prefix('analyst')->name('analyst')->group(function () {
     Route::get('/', [AnalystController::class, 'index'])->name('.index');
