@@ -21,6 +21,9 @@ import {
     TestTubes,
     TestTube,
     TestTube2,
+    Pipette,
+    ListCheck,
+    ChartArea,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -44,6 +47,7 @@ const getRoleFromUrl = (url) => {
     if (url.startsWith("/analyst")) return "analyst";
     if (url.startsWith("/admin")) return "admin";
     if (url.startsWith("/manager")) return "manager";
+    if (url.startsWith("/staff")) return "staff";
     return null;
 };
 
@@ -178,6 +182,23 @@ const MENU_CONFIG = {
             name: "Users",
             icon: Users,
             href: "/manager/users",
+        },
+    ],
+    staff: [
+        {
+            name: "Manajemen Klien",
+            icon: ListCheck,
+            href: "/staff/manage-clients",
+        },
+        {
+            name: "Sample",
+            icon: Pipette,
+            href: "/staff/samples",
+        },
+        {
+            name: "Orders",
+            icon: ChartArea,
+            href: "/staff/orders",
         },
     ],
 };
