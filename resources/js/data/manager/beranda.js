@@ -13,10 +13,5 @@ export const stats = [
         subtitle: "Increased from last month",
         icon: Wallet,
     },
-    {
-        title: "Jatuh Tempo",
-        value: "40",
-        subtitle: "Increased from last month",
-        icon: Clock,
-    },
+
 ];
