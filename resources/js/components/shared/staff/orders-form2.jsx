@@ -46,26 +46,32 @@ export default function OrdersForm2() {
             const exists = prev.find((s) => s.id === sample.id);
             return exists
                 ? prev.filter((s) => s.id !== sample.id)
-                : [...prev, sample];
+                : [...prev, { ...sample, value: sample.value ?? "" }];
         });
     };
 
+    // saat menambahkan dari dialog, pastikan setiap sample punya field value
     const handleTambahSamples = () => {
+        const normalized = selectedSamples.map((s) =>
+            s.hasOwnProperty("value") ? s : { ...s, value: "" }
+        );
         setFormData((prev) => ({
             ...prev,
-            samples: selectedSamples,
+            samples: normalized,
         }));
+        setSelectedSamples(normalized);
         setIsSampleDialogOpen(false);
     };
 
     const handleOpenDialog = () => {
-        setSelectedSamples([...formData.samples]);
+        // clone supaya tidak referensi langsung
+        setSelectedSamples((formData.samples || []).map(s => ({ ...s })));
         setIsSampleDialogOpen(true);
     };
 
     const handleDialogChange = (open) => {
         if (!open) {
-            setSelectedSamples([...formData.samples]);
+            setSelectedSamples((formData.samples || []).map(s => ({ ...s })));
         }
         setIsSampleDialogOpen(open);
     };
@@ -78,7 +84,20 @@ export default function OrdersForm2() {
             ...prev,
             samples: updatedSamples,
         }));
-        setSelectedSamples(updatedSamples);
+        setSelectedSamples(updatedSamples.map(s => ({ ...s })));
+    };
+
+    // update value/volume untuk sample yang dipilih
+    const handleSampleValueChange = (sampleId, value) => {
+        setFormData((prev) => {
+            const updated = (prev.samples || []).map((s) =>
+                s.id === sampleId ? { ...s, value } : s
+            );
+            return { ...prev, samples: updated };
+        });
+        setSelectedSamples((prev) =>
+            prev.map((s) => (s.id === sampleId ? { ...s, value } : s))
+        );
     };
 
     const orderTypes = [
@@ -226,7 +245,7 @@ export default function OrdersForm2() {
                     {/* Box: Sample yang dipilih */}
                     <div className="border border-gray-300 rounded-lg p-4 bg-white min-h-[400px]">
                         <h3 className="text-sm font-semibold mb-3 text-gray-700">
-                            Sampel yg dipilih:
+                            Sampel yang dipilih:
                         </h3>
 
                         {formData.samples.length > 0 ? (
@@ -234,20 +253,38 @@ export default function OrdersForm2() {
                                 {formData.samples.map((sample, index) => (
                                     <div
                                         key={sample.id}
-                                        className="flex items-center justify-between p-3 bg-gray-100 rounded-md border border-gray-200"
+                                        className="flex items-center gap-3 p-3 bg-gray-100 rounded-md border border-gray-200"
                                     >
-                                        <span className="text-sm text-gray-700">
+                                        <div className="flex-none w-2/5 text-sm text-gray-700">
                                             {index + 1}. {sample.name}
-                                        </span>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                handleRemoveSample(sample.id)
-                                            }
-                                            className="text-red-500 hover:text-red-700 text-xs font-medium"
-                                        >
-                                            Hapus
-                                        </button>
+                                        </div>
+
+                                        <div className="flex-1 px-2">
+                                            <input
+                                                type="text"
+                                                value={sample.value ?? ""}
+                                                onChange={(e) =>
+                                                    handleSampleValueChange(
+                                                        sample.id,
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder="Masukkan volume / nilai"
+                                                className="w-full text-center px-3 py-2 border border-gray-300 rounded-md bg-white"
+                                            />
+                                        </div>
+
+                                        <div className="flex-none">
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleRemoveSample(sample.id)
+                                                }
+                                                className="text-red-500 hover:text-red-700 text-xs font-medium"
+                                            >
+                                                Hapus
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
