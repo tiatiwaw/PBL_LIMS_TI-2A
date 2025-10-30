@@ -56,8 +56,8 @@ Route::prefix('analyst')->name('analyst')->group(function () {
 Route::prefix('client')->name('client')->group(function () {
     Route::get('/', [ClientController::class, 'index'])->name('.index');
     Route::get('/dashboard', [ClientController::class, 'dashboard'])->name('.dashboard');
-    Route::get('/details', [ClientController::class, 'show'])->name('.show');
-    Route::get('/history', [ClientController::class, 'history'])->name('.history');
+    Route::get('/order/details', [ClientController::class, 'show'])->name('.show');
+    Route::get('/order/history', [ClientController::class, 'history'])->name('.history');
 });
 
 //Manager
