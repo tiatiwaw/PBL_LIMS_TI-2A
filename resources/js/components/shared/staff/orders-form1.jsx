@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { Clients } from "@/data/staff/clients"; // pastikan path ini benar
+// import { Clients } from "@/data/staff/clients"; // pastikan path ini benar
 
-export default function OrdersForm() {
-    const [formData, setFormData] = useState({
-        searchKlien: "",
-        selectedKlien: null,
-        judulOrder: "",
-        metodeAnalisis: "",
-        nomorOrder: "Auto-Generate Nomor order",
-    });
+export default function OrdersForm({ clients, methods, formData, setFormData }) {
+    // const [formData, setFormData] = useState({
+    //     searchKlien: "",
+    //     selectedKlien: null,
+    //     judulOrder: "",
+    //     metodeAnalisis: "",
+    //     nomorOrder: "Auto-Generate Nomor order",
+    // });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -18,7 +18,7 @@ export default function OrdersForm() {
 
         // Jika yang diubah adalah searchKlien → cari di dummyClients
         if (name === "searchKlien") {
-            const found = Clients.find(
+            const found = clients.find(
                 (user) =>
                     user.name.toLowerCase().includes(value.toLowerCase()) ||
                     user.id.toString() === value
@@ -123,11 +123,17 @@ export default function OrdersForm() {
                                 }}
                             >
                                 <option value="">Pilih Metode Analisis</option>
-                                {metodeOptions.map((metode, index) => (
+                                {/* {metodeOptions.map((metode, index) => (
                                     <option key={index} value={metode}>
                                         {metode}
                                     </option>
+                                ))} */}
+                                {methods.map((metode) => (
+                                  <option key={metode.id} value={metode.id}>
+                                    {metode.analyses_method}
+                                  </option>
                                 ))}
+
                             </select>
                         </div>
                     </div>

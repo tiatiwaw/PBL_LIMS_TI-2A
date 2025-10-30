@@ -8,6 +8,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AnalystController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ClientController;
 
 // Home
 Route::controller(HomeController::class)->name('index')->group(function () {
@@ -64,7 +66,13 @@ Route::prefix('staff')->name('staff')->group(function () {
 
     Route::get('/manage-clients', [StaffController::class, 'managementClient'])->name('.clients');
     Route::get('/samples', [StaffController::class, 'sample'])->name('.sample');
-    Route::get('/orders', [StaffController::class, 'order'])->name('.order');
+    // Route::get('/orders', [StaffController::class, 'order'])->name('.order');
+    Route::get('/orders', [OrderController::class, 'index'])->name('.orders.index');
+    Route::post('/orders', [OrderController::class, 'store'])->name('.orders.store');
+
+    // Endpoint autocomplete client
+    Route::get('/clients/search', [ClientController::class, 'search'])->name('clients.search');
+
 });
 
 // Login

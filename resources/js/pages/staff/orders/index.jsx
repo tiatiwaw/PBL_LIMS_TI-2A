@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { usePage } from "@inertiajs/react";
+import { usePage, Inertia } from "@inertiajs/react";
 import StepperFirst from "@/components/shared/staff/stepper-first";
 import OrdersForm from "@/components/shared/staff/orders-form1";
 import OrdersForm2 from "@/components/shared/staff/orders-form2";
@@ -8,7 +8,18 @@ import OrderForms3 from "@/components/shared/staff/orders-form3";
 import { CheckSquare } from "lucide-react";
 
 export default function OrdersPage({ auth }) {
-    const { props } = usePage();
+    const [formData, setFormData] = useState({
+  selectedKlien: null,
+  judulOrder: "",
+  metodeAnalisis: "",
+  nomorOrder: "",
+  tipeOrder: "",
+  samples: [],
+  tanggalOrder: "",
+  estimasiSelesai: "",
+  catatan: "",
+});
+    //const { props } = usePage();
     const [step, setStep] = useState(1);
     const [isSaved, setIsSaved] = useState(false); // Menandakan form sudah disimpan
     const currentUser = auth?.user || { name: "King Akbar", role: "Staff" };
@@ -21,14 +32,22 @@ export default function OrdersPage({ auth }) {
         setStep((prev) => prev - 1);
     };
 
+    // const handleSave = () => {
+    //     if (step === 3) {
+    //         // Simulasi proses penyimpanan
+    //         console.log("Data berhasil disimpan!");
+    //         setIsSaved(true);
+    //         // contoh: Inertia.post("/orders", formData);
+    //     }
+    // };
     const handleSave = () => {
-        if (step === 3) {
-            // Simulasi proses penyimpanan
-            console.log("Data berhasil disimpan!");
-            setIsSaved(true);
-            // contoh: Inertia.post("/orders", formData);
-        }
+      Inertia.post(route("staff.orders.store"), formData, {
+        onSuccess: () => setIsSaved(true),
+      });
     };
+
+
+    const { samples, methods, clients } = usePage().props;
 
     return (
         <DashboardLayout
@@ -76,9 +95,25 @@ export default function OrdersPage({ auth }) {
                 ) : (
                     <>
                         {/* Tahapan form */}
-                        {step === 1 && <OrdersForm />}
+                        {/* {step === 1 && <OrdersForm />}
                         {step === 2 && <OrdersForm2 />}
-                        {step === 3 && <OrderForms3 />}
+                        {step === 3 && <OrderForms3 />} */}
+                        {step === 1 && (
+                          <OrdersForm
+                            clients={clients}
+                            methods={methods}
+                            formData={formData}
+                            setFormData={setFormData}
+                          />
+                        )}
+                        {step === 2 && (
+                          <OrdersForm2
+                            samples={samples}
+                            formData={formData}
+                            setFormData={setFormData}
+                          />
+                        )}
+                        {step === 3 && <OrderForms3 formData={formData} />}
 
                         {/* Tombol navigasi */}
                         <div className="flex justify-between mt-8">

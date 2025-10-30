@@ -10,20 +10,20 @@ import {
 } from "@/components/ui/dialog";
 import TableSamplesOrd from "@/components/shared/staff/table-samplesord";
 import { Button } from "@/components/ui/button";
-import { samples } from "@/data/staff/sample";
+// import { samples } from "@/data/staff/sample"; //ngga dipake
 import { DatePicker } from "@/components/ui/date-picker";
 
-export default function OrdersForm2() {
+export default function OrdersForm2({ samples, formData, setFormData }) {
     const [selectedSamples, setSelectedSamples] = useState([]);
     const [isSampleDialogOpen, setIsSampleDialogOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [formData, setFormData] = useState({
-        tipeOrder: "",
-        samples: [],
-        tanggalOrder: "",
-        estimasiSelesai: "",
-        catatan: "",
-    });
+    // const [formData, setFormData] = useState({
+    //     tipeOrder: "",
+    //     samples: [],
+    //     tanggalOrder: "",
+    //     estimasiSelesai: "",
+    //     catatan: "",
+    // });
 
     const handleChange = (e) => {
         const { name, value } = e.target;

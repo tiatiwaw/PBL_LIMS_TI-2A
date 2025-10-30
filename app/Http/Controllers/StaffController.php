@@ -22,6 +22,14 @@ class StaffController extends Controller
     }
     public function order()
     {
-        return Inertia::render('staff/orders/index');
+        $samples = \App\Models\Sample::all();
+        $methods = \App\Models\AnalysesMethod::all();
+        $clients = \App\Models\Client::all();
+
+        return Inertia::render('staff/orders/index', [
+        'samples' => $samples,
+        'methods' => $methods,
+        'clients' => $clients,
+        ]);
     }
 }
