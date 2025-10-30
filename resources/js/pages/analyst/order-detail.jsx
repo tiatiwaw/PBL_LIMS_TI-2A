@@ -1,3 +1,4 @@
+
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { CircleAlert } from "lucide-react";
 import React, { useState } from "react";
@@ -87,7 +88,7 @@ const detail = () => {
                     </Table>
                 </div>
 
-                <Button className="w-max bg-primary-hijauTua"><Link href=".">Kembali</Link></Button>
+                <Button className="w-max bg-primary-hijauTua"><Link href="..">Kembali</Link></Button>
             </div>
         </DashboardLayout>
     );

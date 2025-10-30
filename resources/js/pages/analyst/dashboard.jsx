@@ -1,40 +1,57 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { ChevronRight, Clipboard } from "lucide-react";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
+import { AlertTriangle } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardFooter, CardContent } from "@/components/ui/card";
+import ManagedDataTable from "@/components/shared/tabel/managed-data-table"; // 💚 PAKAI INI
 
-const Dashboard = () => {
+const dashboard = () => {
+  const [selectedTest, setSelectedTest] = useState(null);
+
   const user = {
     name: "Puff",
     role: "Analis",
     avatar: "https://i.pravatar.cc/150?img=3",
   };
 
-  const upcomingTests = [
-    { id: "M - 19", type: "Urgent", date: "01 / 10 / 2025" },
-    { id: "M - 20", type: "Reguler", date: "05 / 10 / 2025" },
-    { id: "M - 21", type: "Internal", date: "10 / 10 / 2025"},
+  // ✅ Data dummy tes mendatang
+  const data = [
+    { id: "M - 19", date: "01 / 10 / 2025", type: "Urgent" },
+    { id: "M - 20", date: "05 / 10 / 2025", type: "Reguler" },
+    { id: "M - 21", date: "10 / 10 / 2025", type: "Internal" },
+    { id: "M - 22", date: "15 / 10 / 2025", type: "Reguler" },
+    { id: "M - 23", date: "20 / 10 / 2025", type: "Urgent" },
+    { id: "M - 24", date: "25 / 10 / 2025", type: "Internal" },
   ];
 
-  const historyData = [
-    { id: "M - 1", name: "Buah Naga" },
-    { id: "M - 2", name: "Jus Seledri" },
-    { id: "M - 3", name: "Sagu Tempe" },
-    { id: "M - 4", name: "Buah Naga" },
-    { id: "M - 5", name: "Jus Seledri" },
-    { id: "M - 6", name: "Sagu Tempe" },
-    { id: "M - 7", name: "Buah Naga" },
-    { id: "M - 8", name: "Jus Seledri" },
+  // ✅ Kolom untuk ManagedDataTable (sama formatnya kayak OrderPage)
+  const columns = [
+    { header: "Kode Pesanan", accessorKey: "id" },
+    { header: "Deadline Pengujian", accessorKey: "date" },
+    { header: "Tipe Pesanan", accessorKey: "type" },
+    {
+      header: "Aksi",
+      accessorKey: "id",
+      cell: (row) => (
+        <Button
+          onClick={() => setSelectedTest(row)}
+          variant="outline"
+          className="border-primary-hijauTua hover:bg-primary-hijauTua hover:text-white"
+        >
+          Terima
+        </Button>
+      ),
+    },
   ];
 
-  const inboxItems = ["Buah Naga", "Jus Seledri", "Sagu Tempe"];
+  const handleConfirm = () => {
+    console.log("Pesanan dikonfirmasi:", selectedTest);
+    setSelectedTest(null);
+  };
+
+  const handleCancel = () => {
+    setSelectedTest(null);
+  };
 
   return (
     <DashboardLayout title="Dashboard" user={user} header="Selamat Datang, Analis">
@@ -49,44 +66,68 @@ const Dashboard = () => {
           ].map((stat, index) => (
             <div
               key={index}
-              className="bg-white shadow-md rounded-xl py-6 font-bold flex flex-col items-center"
+              className="bg-white shadow-md rounded-xl py-6 font-bold"
             >
               <p className="text-4xl">{stat.value}</p>
               <p className="text-base">{stat.label}</p>
             </div>
           ))}
         </div>
-          {/* Tes Mendatang */}
-          <h2 className="font-bold text-lg mt-3 -mb-6">Tes Mendatang</h2>
-            
-          <div className="rounded-md overflow-hidden bg-white">
-            <Table>
-            <TableHeader className="bg-primary-hijauTua">
-              <TableRow>
-                <TableHead className="text-white">Kode Pesanan</TableHead>
-                <TableHead className="text-white">Deadline Pengujian</TableHead>
-                <TableHead className="text-white">Tipe Pesanan</TableHead>
-                <TableHead className="text-white">Aksi</TableHead>
-              </TableRow>
-            </TableHeader>
 
-            <TableBody>
-              {upcomingTests.map((test, i) => (
-                <TableRow key={i}>
-                  <TableCell>{test.id}</TableCell>
-                  <TableCell>{test.date}</TableCell>
-                  <TableCell>{test.type}</TableCell>
-                  <TableCell>
-                    <Button variant="outline" className="border-primary-hijauTua hover:bg-primary-hijauTua hover:text-white">Terima</Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        {/* ✅ Tabel pakai ManagedDataTable */}
+        <h2 className="font-bold text-lg mt-3 -mb-3">Tes Mendatang</h2>
+        <ManagedDataTable
+          data={data}
+          columns={columns}
+          pageSize={5}
+          showSearch={false}
+          showFilter={false}
+          searchColumn="id"
+          filterColumn="type"
+        />
+
+        {/* Popup Konfirmasi */}
+        {selectedTest && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <Card className="border-0 w-[450px] bg-primary-hijauMuda relative rounded-2xl shadow-xl text-[#02364B]">
+              <button
+                onClick={handleCancel}
+                className="absolute top-4 right-4 text-primary-hijauTua hover:opacity-80"
+              >
+                ✕
+              </button>
+
+              <CardHeader className="flex items-center justify-center pt-10">
+                <AlertTriangle className="w-20 h-20 text-primary-hijauTua" />
+              </CardHeader>
+
+              <CardContent className="text-center px-8 pb-8">
+                <p className="font-bold text-lg leading-relaxed">
+                  Apakah Anda yakin akan menerima pesanan?
+                </p>
+              </CardContent>
+
+              <CardFooter className="flex justify-center gap-4 pb-8">
+                <Button
+                  onClick={handleConfirm}
+                  className="rounded-lg px-6 bg-primary-hijauTua text-white hover:bg-primary-hijauTua/90"
+                >
+                  Terima
+                </Button>
+                <Button
+                  onClick={handleCancel}
+                  variant="outline"
+                  className="rounded-lg px-6 border-primary-hijauTua text-primary-hijauTua hover:bg-primary-hijauTua hover:text-white"
+                >
+                  Batal
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );
 };
 
-export default Dashboard;
+export default dashboard;
