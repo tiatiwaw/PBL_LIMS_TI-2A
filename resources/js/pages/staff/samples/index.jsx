@@ -38,7 +38,6 @@ export default function SamplesPage({ auth, samplesData }) {
             <ManagedDataTable
                 data={parameters}
                 columns={columns}
-                searchColumn="name"
                 showFilter={true}
                 filterColumn="condition"
                 filterOptions={filterData}

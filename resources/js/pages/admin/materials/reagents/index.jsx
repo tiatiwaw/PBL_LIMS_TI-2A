@@ -21,9 +21,9 @@ export default function ReagentsPage({ auth, reagentsData }) {
                 data={parameters}
                 columns={columns}
                 editFields={editReagentFields}
+                createUrl="admin.materials.reagent.create"
                 editUrl="admin.materials.reagent.update"
                 deleteUrl="admin.materials.reagent.destroy"
-                searchColumn="name"
                 editTitle="Edit Reagent"
                 deleteTitle="Hapus Reagent"
             />

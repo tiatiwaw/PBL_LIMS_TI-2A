@@ -21,9 +21,9 @@ export default function ParametersPage({ auth, parametersData }) {
                 data={data}
                 columns={columns}
                 editFields={editParameterFields}
+                createUrl="admin.test.parameter.create"
                 editUrl="admin.test.parameter.update"
                 deleteUrl="admin.test.parameter.destroy"
-                searchColumn="name"
                 editTitle="Edit Tes Parameter"
                 deleteTitle="Hapus Tes Parameter"
             />

@@ -26,15 +26,12 @@ Route::prefix('admin')->name('admin')->group(function () {
         Route::get('/grades', [AdminController::class, 'grades'])->name('.grades');
         Route::get('/suppliers', [AdminController::class, 'suppliers'])->name('.suppliers');
     });
-    Route::prefix('sampling')->name('.sampling')->group(function () {
-        Route::get('/sample', [AdminController::class, 'sample'])->name('.sample');
-        Route::get('/category', [AdminController::class, 'category'])->name('.category');
-    });
     Route::prefix('test')->name('.test')->group(function () {
         Route::get('/parameter', [AdminController::class, 'parameter'])->name('.parameter');
         Route::get('/test-method', [AdminController::class, 'method'])->name('.method');
         Route::get('/unit-value', [AdminController::class, 'unitValue'])->name('.unit');
         Route::get('/standard-reference', [AdminController::class, 'standardReference'])->name('.standard');
+        Route::get('/category', [AdminController::class, 'category'])->name('.category');
     });
     Route::get('/log-activity', [AdminController::class, 'logActivity'])->name('.log');
     Route::get('/users', [AdminController::class, 'users'])->name('.users');
@@ -52,9 +49,12 @@ Route::prefix('manager')->name('manager')->group(function () {
     Route::get('/', [ManagerController::class, 'index'])->name('.index');
     Route::prefix('report-validation')->name('.report')->group(function () {
         Route::get('/', [ManagerController::class, 'reportValidation'])->name('.index');
+        Route::get('/detail', [ManagerController::class, 'detailValidation'])->name('.detail');
+    });
+    Route::prefix('orders')->name('.orders')->group(function () {
+        Route::get('/', [ManagerController::class, 'orders'])->name('.index');
         Route::get('/detail', [ManagerController::class, 'detailOrder'])->name('.detail');
     });
-    Route::get('/orders', [ManagerController::class, 'orders'])->name('.orders');
     Route::get('/users', [ManagerController::class, 'users'])->name('.users');
 });
 
