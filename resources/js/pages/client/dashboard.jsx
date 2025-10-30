@@ -54,7 +54,7 @@ const dashboard = () => {
 
                 {/* --- Judul "Sampel" --- */}
                 <h2 className="text-2xl font-bold text-center text-primary-hijauTua">
-                    Sampel
+                    Daftar Pesanan
                 </h2>
 
                 {/* --- Kontainer Tabel --- */}
