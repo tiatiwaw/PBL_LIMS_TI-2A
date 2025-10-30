@@ -25,11 +25,11 @@ const dashboard = () => {
     ];
 
     const tableData = [
-        { kode: 'M-10', nama: 'Buah Naga', status: 'Sedang Diuji', tanggal: '12/10/25' },
-        { kode: 'M-09', nama: 'Jus Seledri', status: 'Sedang Diuji', tanggal: '10/10/25' },
-        { kode: 'M-08', nama: 'Sagu Tempe', status: 'Selesai', tanggal: '07/10/25' },
-        { kode: 'M-07', nama: 'Buah Naga', status: 'Selesai', tanggal: '12/10/25' },
-        { kode: 'M-06', nama: 'Buah Naga', status: 'Selesai', tanggal: '12/10/25' },
+        { kode: 'M-10', status: 'Sedang Diuji', tanggal: '12/10/25' },
+        { kode: 'M-09', status: 'Sedang Diuji', tanggal: '10/10/25' },
+        { kode: 'M-08', status: 'Selesai', tanggal: '07/10/25' },
+        { kode: 'M-07', status: 'Selesai', tanggal: '12/10/25' },
+        { kode: 'M-06', status: 'Selesai', tanggal: '12/10/25' },
     ];
 
     return (
@@ -63,7 +63,6 @@ const dashboard = () => {
                         <thead>
                             <tr className="border-b border-gray-200">
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-primary-hijauTua">Kode Order</th>
-                                <th className="px-6 py-4 text-left text-sm font-semibold text-primary-hijauTua">Nama Sampel</th>
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-primary-hijauTua">Status</th>
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-primary-hijauTua">Tanggal</th>
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-primary-hijauTua">Aksi</th>
@@ -73,8 +72,7 @@ const dashboard = () => {
                             {tableData.map((item) => (
                                 <tr key={item.kode} className="text-gray-700">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{item.kode}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{item.nama}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <span className={`px-4 py-1.5 rounded-full text-xs font-semibold text-white
                                             ${item.status === 'Sedang Diuji' ? 'bg-teal-500' : 'bg-cyan-500'}
                                         `}>
@@ -82,30 +80,27 @@ const dashboard = () => {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{item.tanggal}</td>
-
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
                                             {item.status === 'Sedang Diuji' ? (
                                                 <Link href="/client/details" className="bg-cyan-100 text-cyan-800 px-5 py-1.5 rounded-full text-xs font-semibold hover:bg-cyan-200 flex items-center gap-1.5">
                                                     <FileText size={13} />
-                                                    Detail
                                                 </Link>
                                             ) : (
                                                 <button className="bg-cyan-100 text-cyan-800 px-5 py-1.5 rounded-full text-xs font-semibold hover:bg-cyan-200 flex items-center gap-1.5">
                                                     <Download size={13} />
-                                                    Unduh Laporan
                                                 </button>
                                             )}
-
-                                            {/* --- PERBAIKAN DI SINI --- */}
                                             <Link
                                                 href={`/client/history/`}
                                                 className="bg-gray-100 text-gray-800 px-5 py-1.5 rounded-full text-xs font-semibold hover:bg-gray-200 flex items-center gap-1.5"
                                             >
                                                 <History size={13} />
-                                                Riwayat
-                                            </Link> {/* <-- Ini sudah diperbaiki dari </Kink> */}
+                                            </Link>
                                         </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+
                                     </td>
                                 </tr>
                             ))}

@@ -1,6 +1,5 @@
-import React from 'react'
+import React from 'react';
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-
 import { Link } from '@inertiajs/react';
 import { ChevronsLeft } from 'lucide-react';
 
@@ -8,7 +7,7 @@ const history = ({ id }) => {
     const user = {
         name: 'Nardo',
         role: 'Client',
-        avatar: 'https://i.pravatar.cc/150?img=3',
+        avatar: 'https://i.pravatiar.cc/150?img=3',
     }
 
     const timelineData = [
@@ -21,15 +20,26 @@ const history = ({ id }) => {
     return (
         <DashboardLayout title={`Riwayat ${id || ''}`} user={user} header='Selamat Datang, Sangwon!'>
 
-            <div className="w-full mx-auto flex flex-col justify-between min-h-[70vh] text-primary-hijauTua p-4">
+            <div className="w-full flex flex-col justify-between min-h-[70vh] text-primary-hijauTua p-6 bg-cyan-100 rounded-2xl shadow-lg">
+
+                {/* Kontainer timeline */}
                 <div className="relative pl-8 py-4">
+                    {/* Garis vertikal (tetap sama) */}
                     <div className="absolute left-4 top-5 bottom-5 w-1.5 bg-primary-hijauTua rounded-full -translate-x-1/2"></div>
+
                     <div className="flex flex-col gap-10">
                         {timelineData.map((item, index) => (
                             <div key={index} className="relative">
-                                <div className="absolute -left-4 top-1 w-5 h-5 bg-primary-hijauTua rounded-full border-4 border-white -translate-x-1/2"></div>
+
+                                <div className={`absolute -left-4 top-1 w-5 h-5 rounded-full -translate-x-1/2
+                                    ${index === 0
+                                        ? 'bg-white border-4 border-primary-hijauTua'
+                                        : 'bg-primary-hijauTua'
+                                    }
+                                `}></div>
+
                                 <div className="ml-6">
-                                    <p className="font-medium text-gray-500 text-sm">{item.date}</p>
+                                    <p className="font-medium text-primary-hijauTua text-sm">{item.date}</p>
                                     <h3 className="text-xl font-semibold">{item.title}</h3>
                                 </div>
                             </div>
@@ -37,10 +47,10 @@ const history = ({ id }) => {
                     </div>
                 </div>
 
-        {/* --- Tombol Aksi Footer --- */}
-                <div className="w-full flex justify-end">
+                {/* Tombol Kembali (tetap ada untuk navigasi) */}
+                <div className="w-full flex justify-end mt-10"> 
                     <Link href="../" className="bg-primary-hijauTua text-white font-semibold py-2 px-5 rounded-full flex items-center gap-2 text-sm shadow">
-                    <ChevronsLeft size={18} />
+                        <ChevronsLeft size={18} />
                         Kembali
                     </Link>
                 </div>
