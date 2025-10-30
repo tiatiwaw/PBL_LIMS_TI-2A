@@ -4,7 +4,6 @@ import { Link } from '@inertiajs/react';
 import { ChevronsLeft, Info, X } from 'lucide-react';
 const SampleInfoModal = ({ sample, onClose }) => {
 
-    // Data ini akan digunakan di dalam modal
     const modalData = [
         { label: 'Kategori Sampel', value: sample.kategori },
         { label: 'Wujud', value: sample.wujud },
