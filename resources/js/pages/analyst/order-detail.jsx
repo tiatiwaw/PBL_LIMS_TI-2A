@@ -8,6 +8,7 @@ import SampleDetailsDialog from "@/components/shared/dialog/sample-detail-dialog
 import { Button } from '@/components/ui/button';
 import SampleConfirmDialog from "@/components/shared/dialog/sample-confirm-dialog";
 import SampleUnConfirmDialog from "@/components/shared/dialog/sample-unconfirm-dialog";
+import { FileDown, FileUp } from "lucide-react";
 
 
 const details = () => {
@@ -22,14 +23,15 @@ const details = () => {
     const orderDetails = [
         { label: 'ID Pemesanan', value: 'M - 10' },
         { label: 'ID klien', value: '1234' },
-        { label: 'Metode Analisis', value: 'Basah' },
         { label: 'Judul', value: 'Gas Metabolisme Tubuh' },
-        { label: 'Nilai Hasil', value: '98' },
+        { label: 'Tipe Pemesanan', value: 'Urgent' },
+        { label: 'Metode Analisis', value: 'Basah' },
         { label: 'Tanggal Order', value: '10/10/2000' },
-        { label: 'Tanggal Estimasi', value: '23/10/2000' },
+        { label: 'Estimasi Selesai', value: '23/10/2000' },
+        { label: 'Nilai Hasil', value: '98' },
         { label: 'Waktu Laporan', value: '10/10/2000 11:14:45' },
         { label: 'Catatan', value: 'Cukup baik' },
-        { label: 'Tipe Pemesanan', value: 'Urgent' },
+        { label: 'Status', value: 'Completed' },
     ];
 
     const filterData = [
@@ -91,6 +93,48 @@ const details = () => {
                     </div>
                 </div>
 
+                {/* Unduh Laporan */}
+                <div className="bg-white rounded-xl shadow-md p-5 flex items-center justify-between ">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary-hijauMuda/30">
+                    <FileDown className="text-primary-hijauTua" size={20} />
+                    </div>
+                    <div>
+                    <p className="text-sm font-semibold text-gray-800">Laporan Pengujian</p>
+                    <p className="text-xs text-gray-500">File PDF tersedia</p>
+                    </div>
+                </div>
+
+                <a
+                    href="/files/laporan.pdf"
+                    download
+                    className="px-3 py-1.5 rounded-lg bg-primary-hijauTua text-white text-sm hover:bg-primary-hijauTua/90"
+                >
+                    Download
+                </a>
+                </div>
+
+                {/* Upload / Ganti Laporan */}
+                <div className="bg-white rounded-xl shadow-md p-5 flex items-center justify-between mt-4">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary-hijauMuda/30">
+                    <FileUp className="text-primary-hijauTua" size={20} />
+                    </div>
+                    <div>
+                    <label className="text-sm font-semibold text-gray-800">
+                        Upload / Ganti Laporan
+                    </label>
+                    <p className="text-xs text-gray-500">Format PDF</p>
+                    </div>
+                </div>
+
+                <label className="px-3 py-1.5 rounded-lg bg-gray-200 text-sm text-gray-700 cursor-pointer hover:bg-gray-300">
+                    Pilih File
+                    <input type="file" accept="application/pdf" className="hidden" />
+                </label>
+                </div>
+
+
                 <ManagedDataTable
                     data={samples}
                     columns={columns}
@@ -123,7 +167,7 @@ const details = () => {
                 <div className="w-full flex justify-end mt-4">
                     <Button className="bg-primary-hijauTua">
                         <Link
-                            href="/client/dashboard"
+                            href="/analyst/order"
                             >
                             Kembali
                         </Link>

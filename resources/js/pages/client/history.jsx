@@ -4,8 +4,9 @@ import { Link } from '@inertiajs/react';
 import {
     ChevronsLeft,
     FlaskConical,
-    UserCheck,
-    Box,
+    ClipboardCheck,
+    RotateCw,
+    PackageCheck,
     Clock,
     CalendarDays
 } from 'lucide-react';
@@ -19,33 +20,40 @@ const history = ({ id }) => {
 
     const timelineData = [
         {
-            title: 'Uji Lab 2',
+            title: 'Sample 1 selesai diuji',
             date: 'Senin, 20 Okt 2025',
             estimateTime: 2,
             icon: FlaskConical,
             status: 'active'
         },
         {
-            title: 'Persetujuan Supervisor',
+            title: 'Sample 2 selesai diuji',
             date: 'Jumat, 17 Okt 2025',
             estimateTime: 3,
-            icon: UserCheck,
-            status: 'completed'
-        },
-        {
-            title: 'Uji Lab 1',
-            date: 'Kamis, 16 Okt 2025',
-            estimateTime: 1,
             icon: FlaskConical,
             status: 'completed'
         },
         {
-            title: 'Penyerahan Sampel Uji',
+            title: 'Sample 1 diuji ulang',
             date: 'Kamis, 16 Okt 2025',
             estimateTime: 1,
-            icon: Box,
+            icon: RotateCw,
             status: 'completed'
-        }
+        },
+        {
+            title: 'Sample 1 selesai diproses & siap',
+            date: 'Kamis, 16 Okt 2025',
+            estimateTime: 1,
+            icon: PackageCheck,
+            status: 'completed'
+        },
+        {
+            title: 'Pesanan diselesaikan',
+            date: 'Kamis, 16 Okt 2025',
+            estimateTime: 1,
+            icon: ClipboardCheck,
+            status: 'completed'
+        },
     ];
 
     const totalEstimate = timelineData.reduce((acc, item) => acc + item.estimateTime, 0);
@@ -54,7 +62,7 @@ const history = ({ id }) => {
         <DashboardLayout title={`Riwayat ${id || ''}`} user={user} header='Selamat Datang, Sangwon!'>
 
             {/* --- 1. MODIFIKASI CARD UTAMA --- */}
-            <div className="w-full flex flex-col text-primary-hijauTua px-6 pt-6 bg-cyan-100 rounded-2xl shadow-lg min-h-[75vh]">
+            <div className="w-full flex flex-col text-primary-hijauTua px-6 pt-6 bg-cyan-100 overflow-auto rounded-2xl shadow-lg min-h-[75vh]">
 
                 {/* --- 2. BAGIAN HEADER CARD (Kode Order) --- */}
                 <div className="flex-shrink-0">
@@ -64,57 +72,52 @@ const history = ({ id }) => {
                 </div>
 
                 {/* --- 3. KONTEN TENGAH (TIMELINE) --- */}
-                <div className="flex-grow flex flex-col justify-center">
+                <div className="flex-grow flex flex-col justify-center w-full">
 
-                    {/* Kontainer Timeline (relative) */}
-                    <div className="relative flex flex-col lg:flex-row w-full justify-between py-8">
+                    {/* Wrapper scroll */}
+<div className="relative w-full py-8 overflow-x-auto">
 
-                        {/* Garis Penghubung (Horizontal) */}
-                        <div className="hidden lg:block absolute bg-primary-hijauTua"
-                             style={{
-                                 top: '72px',
-                                 left: '50px',
-                                 width: 'calc(100% - 100px)',
-                                 height: '8px',
-                                 borderRadius: '9999px'
-                             }}
-                        />
-                        {/* Garis Vertikal (Mobile) */}
-                        <div className="lg:hidden absolute bg-primary-hijauTua"
-                             style={{
-                                 left: 'calc(50% - 4px)',
-                                 top: '50px',
-                                 height: 'calc(100% - 100px)',
-                                 width: '8px',
-                                 borderRadius: '9999px'
-                             }}
-                        />
+    {/* Timeline Container */}
+    <div className="relative flex flex-col lg:flex-row items-center gap-12 min-w-max px-6">
 
-                        {/* Looping Item Timeline */}
-                        {timelineData.map((item, index) => (
-                            <div
-                                key={index}
-                                className="relative z-10 flex flex-col items-center text-center p-4 w-full lg:w-1/4"
-                            >
-                                <div className={`w-16 h-16 rounded-full flex items-center justify-center shrink-0 bg-cyan-100
-                                    ${item.status === 'active'
-                                        ? 'bg-white border-4 border-primary-hijauTua'
-                                        : 'bg-primary-hijauTua text-white'
-                                    }
-                                `}>
-                                    <item.icon size={32} />
-                                </div>
-                                <h3 className="text-xl font-semibold mt-4 mb-2">{item.title}</h3>
-                                <div className="text-sm font-medium space-y-1 text-primary-hijauTua/80">
-                                    <div className="flex items-center gap-2">
-                                        <CalendarDays size={14} />
-                                        <span>{item.date}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+        {/* Garis Horizontal (Desktop) */}
+        <div className="hidden lg:block absolute top-[48px] left-0 right-0 h-1 bg-primary-hijauTua rounded-full" />
+
+        {/* Garis Vertikal (Mobile) */}
+        <div className="lg:hidden absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-primary-hijauTua rounded-full" />
+
+        {/* Timeline Items */}
+        {timelineData.map((item, index) => (
+            <div
+                key={index}
+                className="relative z-10 flex flex-col items-center text-center p-4 flex-shrink-0"
+            >
+                <div className={`
+                    w-16 h-16 rounded-full flex items-center justify-center shrink-0
+                    ${item.status === 'active'
+                        ? 'bg-white border-4 border-primary-hijauTua text-primary-hijauTua'
+                        : 'bg-primary-hijauTua text-white'
+                    }
+                `}>
+                    <item.icon size={32} />
                 </div>
+
+                <h3 className="text-base font-semibold mt-4 mb-1 whitespace-nowrap">
+                    {item.title}
+                </h3>
+
+                <div className="text-xs font-medium flex items-center gap-2 text-primary-hijauTua/80 whitespace-nowrap">
+                    <CalendarDays size={14} />
+                    <span>{item.date}</span>
+                </div>
+            </div>
+        ))}
+
+    </div>
+</div>
+
+                </div>
+
 
                 {/* --- 4. FOOTER CARD (Estimasi & Kembali) --- */}
                 <div className="flex-shrink-0 w-full flex justify-between items-end py-6">
