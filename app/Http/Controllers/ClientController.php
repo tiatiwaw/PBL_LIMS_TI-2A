@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ClientController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $clients = Client::all();
-        return view('client.index', compact('clients'));
+        return Inertia::render('Client/Index', [
+            'data' => $clients,
+            'resource' => 'client',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('client.create');
+        return Inertia::render('Client/Create', [
+            'fields' => (new Client())->getFillable(),
+            'resource' => 'client',
+        ]);
     }
 
     public function store(Request $request)
@@ -46,14 +54,21 @@ class ClientController extends Controller
         }
     }
 
-    public function show(Client $client)
+    public function show(Client $client): Response
     {
-        return view('client.show', compact('client'));
+        return Inertia::render('Client/Show', [
+            'item' => $client,
+            'resource' => 'client',
+        ]);
     }
 
-    public function edit(Client $client)
+    public function edit(Client $client): Response
     {
-        return view('client.edit', compact('client'));
+        return Inertia::render('Client/Edit', [
+            'item' => $client,
+            'fields' => (new Client())->getFillable(),
+            'resource' => 'client',
+        ]);
     }
 
     public function update(Request $request, Client $client)

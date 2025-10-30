@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\UnitValue;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UnitValueController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $unitValues = UnitValue::all();
-        return view('unit_value.index', compact('unitValues'));
+        return Inertia::render('UnitValue/Index', [
+            'data' => $unitValues,
+            'resource' => 'unit_value',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('unit_value.create');
+        return Inertia::render('UnitValue/Create', [
+            'fields' => (new UnitValue())->getFillable(),
+            'resource' => 'unit_value',
+        ]);
     }
 
     public function store(Request $request)
@@ -33,14 +41,21 @@ class UnitValueController extends Controller
         }
     }
 
-    public function show(UnitValue $unitValue)
+    public function show(UnitValue $unitValue): Response
     {
-        return view('unit_value.show', compact('unitValue'));
+        return Inertia::render('UnitValue/Show', [
+            'item' => $unitValue,
+            'resource' => 'unit_value',
+        ]);
     }
 
-    public function edit(UnitValue $unitValue)
+    public function edit(UnitValue $unitValue): Response
     {
-        return view('unit_value.edit', compact('unitValue'));
+        return Inertia::render('UnitValue/Edit', [
+            'item' => $unitValue,
+            'fields' => (new UnitValue())->getFillable(),
+            'resource' => 'unit_value',
+        ]);
     }
 
     public function update(Request $request, UnitValue $unitValue)

@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\NParameterMethod;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class NParameterMethodController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $nParameterMethods = NParameterMethod::all();
-        return view('n_parameter_method.index', compact('nParameterMethods'));
+        return Inertia::render('NParameterMethod/Index', [
+            'data' => $nParameterMethods,
+            'resource' => 'n_parameter_method',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('n_parameter_method.create');
+        return Inertia::render('NParameterMethod/Create', [
+            'fields' => (new NParameterMethod())->getFillable(),
+            'resource' => 'n_parameter_method',
+        ]);
     }
 
     public function store(Request $request)
@@ -37,14 +45,21 @@ class NParameterMethodController extends Controller
         }
     }
 
-    public function show(NParameterMethod $nParameterMethod)
+    public function show(NParameterMethod $nParameterMethod): Response
     {
-        return view('n_parameter_method.show', compact('nParameterMethod'));
+        return Inertia::render('NParameterMethod/Show', [
+            'item' => $nParameterMethod,
+            'resource' => 'n_parameter_method',
+        ]);
     }
 
-    public function edit(NParameterMethod $nParameterMethod)
+    public function edit(NParameterMethod $nParameterMethod): Response
     {
-        return view('n_parameter_method.edit', compact('nParameterMethod'));
+        return Inertia::render('NParameterMethod/Edit', [
+            'item' => $nParameterMethod,
+            'fields' => (new NParameterMethod())->getFillable(),
+            'resource' => 'n_parameter_method',
+        ]);
     }
 
     public function update(Request $request, NParameterMethod $nParameterMethod)

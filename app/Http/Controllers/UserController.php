@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $users = User::all();
-        return view('user.index', compact('users'));
+        return Inertia::render('User/Index', [
+            'data' => $users,
+            'resource' => 'user',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('user.create');
+        return Inertia::render('User/Create', [
+            'fields' => (new User())->getFillable(),
+            'resource' => 'user',
+        ]);
     }
 
     public function store(Request $request)
@@ -36,14 +44,21 @@ class UserController extends Controller
         }
     }
 
-    public function show(User $user)
+    public function show(User $user): Response
     {
-        return view('user.show', compact('user'));
+        return Inertia::render('User/Show', [
+            'item' => $user,
+            'resource' => 'user',
+        ]);
     }
 
-    public function edit(User $user)
+    public function edit(User $user): Response
     {
-        return view('user.edit', compact('user'));
+        return Inertia::render('User/Edit', [
+            'item' => $user,
+            'fields' => (new User())->getFillable(),
+            'resource' => 'user',
+        ]);
     }
 
     public function update(Request $request, User $user)

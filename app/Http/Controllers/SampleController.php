@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Sample;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class SampleController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $samples = Sample::all();
-        return view('sample.index', compact('samples'));
+        return Inertia::render('Sample/Index', [
+            'data' => $samples,
+            'resource' => 'sample',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('sample.create');
+        return Inertia::render('Sample/Create', [
+            'fields' => (new Sample())->getFillable(),
+            'resource' => 'sample',
+        ]);
     }
 
     public function store(Request $request)
@@ -40,14 +48,21 @@ class SampleController extends Controller
         }
     }
 
-    public function show(Sample $sample)
+    public function show(Sample $sample): Response
     {
-        return view('sample.show', compact('sample'));
+        return Inertia::render('Sample/Show', [
+            'item' => $sample,
+            'resource' => 'sample',
+        ]);
     }
 
-    public function edit(Sample $sample)
+    public function edit(Sample $sample): Response
     {
-        return view('sample.edit', compact('sample'));
+        return Inertia::render('Sample/Edit', [
+            'item' => $sample,
+            'fields' => (new Sample())->getFillable(),
+            'resource' => 'sample',
+        ]);
     }
 
     public function update(Request $request, Sample $sample)

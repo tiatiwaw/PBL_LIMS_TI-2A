@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Training;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class TrainingController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $trainings = Training::all();
-        return view('training.index', compact('trainings'));
+        return Inertia::render('Training/Index', [
+            'data' => $trainings,
+            'resource' => 'training',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('training.create');
+        return Inertia::render('Training/Create', [
+            'fields' => (new Training())->getFillable(),
+            'resource' => 'training',
+        ]);
     }
 
     public function store(Request $request)
@@ -36,14 +44,21 @@ class TrainingController extends Controller
         }
     }
 
-    public function show(Training $training)
+    public function show(Training $training): Response
     {
-        return view('training.show', compact('training'));
+        return Inertia::render('Training/Show', [
+            'item' => $training,
+            'resource' => 'training',
+        ]);
     }
 
-    public function edit(Training $training)
+    public function edit(Training $training): Response
     {
-        return view('training.edit', compact('training'));
+        return Inertia::render('Training/Edit', [
+            'item' => $training,
+            'fields' => (new Training())->getFillable(),
+            'resource' => 'training',
+        ]);
     }
 
     public function update(Request $request, Training $training)

@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\AnalysesMethod;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AnalysesMethodController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $analysesMethods = AnalysesMethod::all();
-        return view('analyses_method.index', compact('analysesMethods'));
+        return Inertia::render('AnalysesMethod/Index', [
+            'data' => $analysesMethods,
+            'resource' => 'analyses_method',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('analyses_method.create');
+        return Inertia::render('AnalysesMethod/Create', [
+            'fields' => (new AnalysesMethod())->getFillable(),
+            'resource' => 'analyses_method',
+        ]);
     }
 
     public function store(Request $request)
@@ -34,14 +42,21 @@ class AnalysesMethodController extends Controller
         }
     }
 
-    public function show(AnalysesMethod $analysesMethod)
+    public function show(AnalysesMethod $analysesMethod): Response
     {
-        return view('analyses_method.show', compact('analysesMethod'));
+        return Inertia::render('AnalysesMethod/Show', [
+            'item' => $analysesMethod,
+            'resource' => 'analyses_method',
+        ]);
     }
 
-    public function edit(AnalysesMethod $analysesMethod)
+    public function edit(AnalysesMethod $analysesMethod): Response
     {
-        return view('analyses_method.edit', compact('analysesMethod'));
+        return Inertia::render('AnalysesMethod/Edit', [
+            'item' => $analysesMethod,
+            'fields' => (new AnalysesMethod())->getFillable(),
+            'resource' => 'analyses_method',
+        ]);
     }
 
     public function update(Request $request, AnalysesMethod $analysesMethod)

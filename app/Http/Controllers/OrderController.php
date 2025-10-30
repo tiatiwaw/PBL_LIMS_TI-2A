@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $orders = Order::all();
-        return view('order.index', compact('orders'));
+        return Inertia::render('Order/Index', [
+            'data' => $orders,
+            'resource' => 'order',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('order.create');
+        return Inertia::render('Order/Create', [
+            'fields' => (new Order())->getFillable(),
+            'resource' => 'order',
+        ]);
     }
 
     public function store(Request $request)
@@ -43,14 +51,21 @@ class OrderController extends Controller
         }
     }
 
-    public function show(Order $order)
+    public function show(Order $order): Response
     {
-        return view('order.show', compact('order'));
+        return Inertia::render('Order/Show', [
+            'item' => $order,
+            'resource' => 'order',
+        ]);
     }
 
-    public function edit(Order $order)
+    public function edit(Order $order): Response
     {
-        return view('order.edit', compact('order'));
+        return Inertia::render('Order/Edit', [
+            'item' => $order,
+            'fields' => (new Order())->getFillable(),
+            'resource' => 'order',
+        ]);
     }
 
     public function update(Request $request, Order $order)

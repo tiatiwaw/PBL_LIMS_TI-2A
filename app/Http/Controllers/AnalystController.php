@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Analyst;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AnalystController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $analysts = Analyst::all();
-        return view('analyst.index', compact('analysts'));
+        return Inertia::render('Analyst/Index', [
+            'data' => $analysts,
+            'resource' => 'analyst',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('analyst.create');
+        return Inertia::render('Analyst/Create', [
+            'fields' => (new Analyst())->getFillable(),
+            'resource' => 'analyst',
+        ]);
     }
 
     public function store(Request $request)
@@ -35,14 +43,21 @@ class AnalystController extends Controller
         }
     }
 
-    public function show(Analyst $analyst)
+    public function show(Analyst $analyst): Response
     {
-        return view('analyst.show', compact('analyst'));
+        return Inertia::render('Analyst/Show', [
+            'item' => $analyst,
+            'resource' => 'analyst',
+        ]);
     }
 
-    public function edit(Analyst $analyst)
+    public function edit(Analyst $analyst): Response
     {
-        return view('analyst.edit', compact('analyst'));
+        return Inertia::render('Analyst/Edit', [
+            'item' => $analyst,
+            'fields' => (new Analyst())->getFillable(),
+            'resource' => 'analyst',
+        ]);
     }
 
     public function update(Request $request, Analyst $analyst)

@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class SupplierController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $suppliers = Supplier::all();
-        return view('supplier.index', compact('suppliers'));
+        return Inertia::render('Supplier/Index', [
+            'data' => $suppliers,
+            'resource' => 'supplier',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('supplier.create');
+        return Inertia::render('Supplier/Create', [
+            'fields' => (new Supplier())->getFillable(),
+            'resource' => 'supplier',
+        ]);
     }
 
     public function store(Request $request)
@@ -36,14 +44,21 @@ class SupplierController extends Controller
         }
     }
 
-    public function show(Supplier $supplier)
+    public function show(Supplier $supplier): Response
     {
-        return view('supplier.show', compact('supplier'));
+        return Inertia::render('Supplier/Show', [
+            'item' => $supplier,
+            'resource' => 'supplier',
+        ]);
     }
 
-    public function edit(Supplier $supplier)
+    public function edit(Supplier $supplier): Response
     {
-        return view('supplier.edit', compact('supplier'));
+        return Inertia::render('Supplier/Edit', [
+            'item' => $supplier,
+            'fields' => (new Supplier())->getFillable(),
+            'resource' => 'supplier',
+        ]);
     }
 
     public function update(Request $request, Supplier $supplier)

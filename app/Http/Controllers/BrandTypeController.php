@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\BrandType;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class BrandTypeController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $brandTypes = BrandType::all();
-        return view('brand_type.index', compact('brandTypes'));
+        return Inertia::render('BrandType/Index', [
+            'data' => $brandTypes,
+            'resource' => 'brand_type',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('brand_type.create');
+        return Inertia::render('BrandType/Create', [
+            'fields' => (new BrandType())->getFillable(),
+            'resource' => 'brand_type',
+        ]);
     }
 
     public function store(Request $request)
@@ -33,14 +41,21 @@ class BrandTypeController extends Controller
         }
     }
 
-    public function show(BrandType $brandType)
+    public function show(BrandType $brandType): Response
     {
-        return view('brand_type.show', compact('brandType'));
+        return Inertia::render('BrandType/Show', [
+            'item' => $brandType,
+            'resource' => 'brand_type',
+        ]);
     }
 
-    public function edit(BrandType $brandType)
+    public function edit(BrandType $brandType): Response
     {
-        return view('brand_type.edit', compact('brandType'));
+        return Inertia::render('BrandType/Edit', [
+            'item' => $brandType,
+            'fields' => (new BrandType())->getFillable(),
+            'resource' => 'brand_type',
+        ]);
     }
 
     public function update(Request $request, BrandType $brandType)

@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Grade;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class GradeController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $grades = Grade::all();
-        return view('grade.index', compact('grades'));
+        return Inertia::render('Grade/Index', [
+            'data' => $grades,
+            'resource' => 'grade',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('grade.create');
+        return Inertia::render('Grade/Create', [
+            'fields' => (new Grade())->getFillable(),
+            'resource' => 'grade',
+        ]);
     }
 
     public function store(Request $request)
@@ -33,14 +41,21 @@ class GradeController extends Controller
         }
     }
 
-    public function show(Grade $grade)
+    public function show(Grade $grade): Response
     {
-        return view('grade.show', compact('grade'));
+        return Inertia::render('Grade/Show', [
+            'item' => $grade,
+            'resource' => 'grade',
+        ]);
     }
 
-    public function edit(Grade $grade)
+    public function edit(Grade $grade): Response
     {
-        return view('grade.edit', compact('grade'));
+        return Inertia::render('Grade/Edit', [
+            'item' => $grade,
+            'fields' => (new Grade())->getFillable(),
+            'resource' => 'grade',
+        ]);
     }
 
     public function update(Request $request, Grade $grade)

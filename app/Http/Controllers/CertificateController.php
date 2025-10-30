@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Certificate;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CertificateController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $certificates = Certificate::all();
-        return view('certificate.index', compact('certificates'));
+        return Inertia::render('Certificate/Index', [
+            'data' => $certificates,
+            'resource' => 'certificate',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('certificate.create');
+        return Inertia::render('Certificate/Create', [
+            'fields' => (new Certificate())->getFillable(),
+            'resource' => 'certificate',
+        ]);
     }
 
     public function store(Request $request)
@@ -45,14 +53,21 @@ class CertificateController extends Controller
         }
     }
 
-    public function show(Certificate $certificate)
+    public function show(Certificate $certificate): Response
     {
-        return view('certificate.show', compact('certificate'));
+        return Inertia::render('Certificate/Show', [
+            'item' => $certificate,
+            'resource' => 'certificate',
+        ]);
     }
 
-    public function edit(Certificate $certificate)
+    public function edit(Certificate $certificate): Response
     {
-        return view('certificate.edit', compact('certificate'));
+        return Inertia::render('Certificate/Edit', [
+            'item' => $certificate,
+            'fields' => (new Certificate())->getFillable(),
+            'resource' => 'certificate',
+        ]);
     }
 
     public function update(Request $request, Certificate $certificate)

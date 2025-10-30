@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\TestMethod;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class TestMethodController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $testMethods = TestMethod::all();
-        return view('test_method.index', compact('testMethods'));
+        return Inertia::render('TestMethod/Index', [
+            'data' => $testMethods,
+            'resource' => 'test_method',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('test_method.create');
+        return Inertia::render('TestMethod/Create', [
+            'fields' => (new TestMethod())->getFillable(),
+            'resource' => 'test_method',
+        ]);
     }
 
     public function store(Request $request)
@@ -37,14 +45,21 @@ class TestMethodController extends Controller
         }
     }
 
-    public function show(TestMethod $testMethod)
+    public function show(TestMethod $testMethod): Response
     {
-        return view('test_method.show', compact('testMethod'));
+        return Inertia::render('TestMethod/Show', [
+            'item' => $testMethod,
+            'resource' => 'test_method',
+        ]);
     }
 
-    public function edit(TestMethod $testMethod)
+    public function edit(TestMethod $testMethod): Response
     {
-        return view('test_method.edit', compact('testMethod'));
+        return Inertia::render('TestMethod/Edit', [
+            'item' => $testMethod,
+            'fields' => (new TestMethod())->getFillable(),
+            'resource' => 'test_method',
+        ]);
     }
 
     public function update(Request $request, TestMethod $testMethod)

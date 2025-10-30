@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\SampleCategory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class SampleCategoryController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $sampleCategories = SampleCategory::all();
-        return view('sample_category.index', compact('sampleCategories'));
+        return Inertia::render('SampleCategory/Index', [
+            'data' => $sampleCategories,
+            'resource' => 'sample_category',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('sample_category.create');
+        return Inertia::render('SampleCategory/Create', [
+            'fields' => (new SampleCategory())->getFillable(),
+            'resource' => 'sample_category',
+        ]);
     }
 
     public function store(Request $request)
@@ -33,14 +41,21 @@ class SampleCategoryController extends Controller
         }
     }
 
-    public function show(SampleCategory $sampleCategory)
+    public function show(SampleCategory $sampleCategory): Response
     {
-        return view('sample_category.show', compact('sampleCategory'));
+        return Inertia::render('SampleCategory/Show', [
+            'item' => $sampleCategory,
+            'resource' => 'sample_category',
+        ]);
     }
 
-    public function edit(SampleCategory $sampleCategory)
+    public function edit(SampleCategory $sampleCategory): Response
     {
-        return view('sample_category.edit', compact('sampleCategory'));
+        return Inertia::render('SampleCategory/Edit', [
+            'item' => $sampleCategory,
+            'fields' => (new SampleCategory())->getFillable(),
+            'resource' => 'sample_category',
+        ]);
     }
 
     public function update(Request $request, SampleCategory $sampleCategory)

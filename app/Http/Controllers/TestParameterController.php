@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\TestParameter;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class TestParameterController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $testParameters = TestParameter::all();
-        return view('test_parameter.index', compact('testParameters'));
+        return Inertia::render('TestParameter/Index', [
+            'data' => $testParameters,
+            'resource' => 'test_parameter',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('test_parameter.create');
+        return Inertia::render('TestParameter/Create', [
+            'fields' => (new TestParameter())->getFillable(),
+            'resource' => 'test_parameter',
+        ]);
     }
 
     public function store(Request $request)
@@ -38,14 +46,21 @@ class TestParameterController extends Controller
         }
     }
 
-    public function show(TestParameter $testParameter)
+    public function show(TestParameter $testParameter): Response
     {
-        return view('test_parameter.show', compact('testParameter'));
+        return Inertia::render('TestParameter/Show', [
+            'item' => $testParameter,
+            'resource' => 'test_parameter',
+        ]);
     }
 
-    public function edit(TestParameter $testParameter)
+    public function edit(TestParameter $testParameter): Response
     {
-        return view('test_parameter.edit', compact('testParameter'));
+        return Inertia::render('TestParameter/Edit', [
+            'item' => $testParameter,
+            'fields' => (new TestParameter())->getFillable(),
+            'resource' => 'test_parameter',
+        ]);
     }
 
     public function update(Request $request, TestParameter $testParameter)

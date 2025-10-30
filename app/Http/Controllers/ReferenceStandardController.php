@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\ReferenceStandard;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ReferenceStandardController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $referenceStandards = ReferenceStandard::all();
-        return view('reference_standard.index', compact('referenceStandards'));
+        return Inertia::render('ReferenceStandard/Index', [
+            'data' => $referenceStandards,
+            'resource' => 'reference_standard',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('reference_standard.create');
+        return Inertia::render('ReferenceStandard/Create', [
+            'fields' => (new ReferenceStandard())->getFillable(),
+            'resource' => 'reference_standard',
+        ]);
     }
 
     public function store(Request $request)
@@ -33,14 +41,21 @@ class ReferenceStandardController extends Controller
         }
     }
 
-    public function show(ReferenceStandard $referenceStandard)
+    public function show(ReferenceStandard $referenceStandard): Response
     {
-        return view('reference_standard.show', compact('referenceStandard'));
+        return Inertia::render('ReferenceStandard/Show', [
+            'item' => $referenceStandard,
+            'resource' => 'reference_standard',
+        ]);
     }
 
-    public function edit(ReferenceStandard $referenceStandard)
+    public function edit(ReferenceStandard $referenceStandard): Response
     {
-        return view('reference_standard.edit', compact('referenceStandard'));
+        return Inertia::render('ReferenceStandard/Edit', [
+            'item' => $referenceStandard,
+            'fields' => (new ReferenceStandard())->getFillable(),
+            'resource' => 'reference_standard',
+        ]);
     }
 
     public function update(Request $request, ReferenceStandard $referenceStandard)

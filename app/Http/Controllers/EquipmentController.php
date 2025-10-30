@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Equipment;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class EquipmentController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $equipments = Equipment::all();
-        return view('equipment.index', compact('equipments'));
+        return Inertia::render('Equipment/Index', [
+            'data' => $equipments,
+            'resource' => 'equipment',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('equipment.create');
+        return Inertia::render('Equipment/Create', [
+            'fields' => (new Equipment())->getFillable(),
+            'resource' => 'equipment',
+        ]);
     }
 
     public function store(Request $request)
@@ -39,14 +47,21 @@ class EquipmentController extends Controller
         }
     }
 
-    public function show(Equipment $equipment)
+    public function show(Equipment $equipment): Response
     {
-        return view('equipment.show', compact('equipment'));
+        return Inertia::render('Equipment/Show', [
+            'item' => $equipment,
+            'resource' => 'equipment',
+        ]);
     }
 
-    public function edit(Equipment $equipment)
+    public function edit(Equipment $equipment): Response
     {
-        return view('equipment.edit', compact('equipment'));
+        return Inertia::render('Equipment/Edit', [
+            'item' => $equipment,
+            'fields' => (new Equipment())->getFillable(),
+            'resource' => 'equipment',
+        ]);
     }
 
     public function update(Request $request, Equipment $equipment)

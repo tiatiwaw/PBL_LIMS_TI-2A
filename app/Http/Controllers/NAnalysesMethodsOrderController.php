@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\NAnalysesMethodsOrder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class NAnalysesMethodsOrderController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $nAnalysesMethodsOrders = NAnalysesMethodsOrder::all();
-        return view('n_analyses_methods_order.index', compact('nAnalysesMethodsOrders'));
+        return Inertia::render('NAnalysesMethodsOrder/Index', [
+            'data' => $nAnalysesMethodsOrders,
+            'resource' => 'n_analyses_methods_order',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('n_analyses_methods_order.create');
+        return Inertia::render('NAnalysesMethodsOrder/Create', [
+            'fields' => (new NAnalysesMethodsOrder())->getFillable(),
+            'resource' => 'n_analyses_methods_order',
+        ]);
     }
 
     public function store(Request $request)
@@ -42,14 +50,21 @@ class NAnalysesMethodsOrderController extends Controller
         }
     }
 
-    public function show(NAnalysesMethodsOrder $nAnalysesMethodsOrder)
+    public function show(NAnalysesMethodsOrder $nAnalysesMethodsOrder): Response
     {
-        return view('n_analyses_methods_order.show', compact('nAnalysesMethodsOrder'));
+        return Inertia::render('NAnalysesMethodsOrder/Show', [
+            'item' => $nAnalysesMethodsOrder,
+            'resource' => 'n_analyses_methods_order',
+        ]);
     }
 
-    public function edit(NAnalysesMethodsOrder $nAnalysesMethodsOrder)
+    public function edit(NAnalysesMethodsOrder $nAnalysesMethodsOrder): Response
     {
-        return view('n_analyses_methods_order.edit', compact('nAnalysesMethodsOrder'));
+        return Inertia::render('NAnalysesMethodsOrder/Edit', [
+            'item' => $nAnalysesMethodsOrder,
+            'fields' => (new NAnalysesMethodsOrder())->getFillable(),
+            'resource' => 'n_analyses_methods_order',
+        ]);
     }
 
     public function update(Request $request, NAnalysesMethodsOrder $nAnalysesMethodsOrder)

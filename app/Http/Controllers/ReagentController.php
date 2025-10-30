@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Reagent;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ReagentController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $reagents = Reagent::all();
-        return view('reagent.index', compact('reagents'));
+        return Inertia::render('Reagent/Index', [
+            'data' => $reagents,
+            'resource' => 'reagent',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('reagent.create');
+        return Inertia::render('Reagent/Create', [
+            'fields' => (new Reagent())->getFillable(),
+            'resource' => 'reagent',
+        ]);
     }
 
     public function store(Request $request)
@@ -38,14 +46,21 @@ class ReagentController extends Controller
         }
     }
 
-    public function show(Reagent $reagent)
+    public function show(Reagent $reagent): Response
     {
-        return view('reagent.show', compact('reagent'));
+        return Inertia::render('Reagent/Show', [
+            'item' => $reagent,
+            'resource' => 'reagent',
+        ]);
     }
 
-    public function edit(Reagent $reagent)
+    public function edit(Reagent $reagent): Response
     {
-        return view('reagent.edit', compact('reagent'));
+        return Inertia::render('Reagent/Edit', [
+            'item' => $reagent,
+            'fields' => (new Reagent())->getFillable(),
+            'resource' => 'reagent',
+        ]);
     }
 
     public function update(Request $request, Reagent $reagent)

@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\NOrderSample;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class NOrderSampleController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $nOrderSamples = NOrderSample::all();
-        return view('n_order_sample.index', compact('nOrderSamples'));
+        return Inertia::render('NOrderSample/Index', [
+            'data' => $nOrderSamples,
+            'resource' => 'n_order_sample',
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('n_order_sample.create');
+        return Inertia::render('NOrderSample/Create', [
+            'fields' => (new NOrderSample())->getFillable(),
+            'resource' => 'n_order_sample',
+        ]);
     }
 
     public function store(Request $request)
@@ -40,14 +48,21 @@ class NOrderSampleController extends Controller
         }
     }
 
-    public function show(NOrderSample $nOrderSample)
+    public function show(NOrderSample $nOrderSample): Response
     {
-        return view('n_order_sample.show', compact('nOrderSample'));
+        return Inertia::render('NOrderSample/Show', [
+            'item' => $nOrderSample,
+            'resource' => 'n_order_sample',
+        ]);
     }
 
-    public function edit(NOrderSample $nOrderSample)
+    public function edit(NOrderSample $nOrderSample): Response
     {
-        return view('n_order_sample.edit', compact('nOrderSample'));
+        return Inertia::render('NOrderSample/Edit', [
+            'item' => $nOrderSample,
+            'fields' => (new NOrderSample())->getFillable(),
+            'resource' => 'n_order_sample',
+        ]);
     }
 
     public function update(Request $request, NOrderSample $nOrderSample)
