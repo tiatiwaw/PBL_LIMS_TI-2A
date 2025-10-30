@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from '@inertiajs/react';
-import { FileText, History } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 const statusVariantMap = {
     Completed: "success",
@@ -23,6 +23,21 @@ export const getOrdersColumns = () => [
     { accessorKey: "title", header: "Judul Pesanan" },
     { accessorKey: "estimate_date", header: "Estimasi Selesai" },
     {
+        accessorKey: "tipe",
+        header: "Tipe Pesanan",
+        cell: ({ row }) => {
+            const value = row.tipe;
+            return (
+                <Badge
+                    variant={tipeVariantMap[value] || "outline"}
+                    className="capitalize"
+                >
+                    {value}
+                </Badge>
+            );
+        },
+    },
+    {
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => {
@@ -38,24 +53,14 @@ export const getOrdersColumns = () => [
         id: "aksi",
         header: "Aksi",
         cell: ({ row }) => (
-            <div className="flex gap-2">
+            <Link href="/analyst/order/details">
                 <Button
                 variant="outline"
                 size="sm"
                 >
-                    <Link href="/client/order/details">
-                        <FileText/>
-                    </Link>
+                        <AlertCircle/>
                 </Button>
-                <Button
-                variant="outline"
-                size="sm"
-                >
-                    <Link href="/client/order/history">
-                        <History/>
-                    </Link>
-                </Button>
-            </div>
+            </Link>
         ),
     },
 ];

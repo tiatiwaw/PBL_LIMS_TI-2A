@@ -18,17 +18,20 @@ const tipeVariantMap = {
     Urgent: "error",
 };
 
-export const getOrdersColumns = () => [
+export const getOrdersColumns = ({setSelectedTest}) => [
     { accessorKey: "order_number", header: "Kode Pesanan" },
     { accessorKey: "title", header: "Judul Pesanan" },
     { accessorKey: "estimate_date", header: "Estimasi Selesai" },
     {
-        accessorKey: "status",
-        header: "Status",
+        accessorKey: "tipe",
+        header: "Tipe Pesanan",
         cell: ({ row }) => {
-            const value = row.status;
+            const value = row.tipe;
             return (
-                <Badge variant={statusVariantMap[value] || "outline"}>
+                <Badge
+                    variant={tipeVariantMap[value] || "outline"}
+                    className="capitalize"
+                >
                     {value}
                 </Badge>
             );
@@ -38,24 +41,13 @@ export const getOrdersColumns = () => [
         id: "aksi",
         header: "Aksi",
         cell: ({ row }) => (
-            <div className="flex gap-2">
-                <Button
-                variant="outline"
-                size="sm"
-                >
-                    <Link href="/client/order/details">
-                        <FileText/>
-                    </Link>
-                </Button>
-                <Button
-                variant="outline"
-                size="sm"
-                >
-                    <Link href="/client/order/history">
-                        <History/>
-                    </Link>
-                </Button>
-            </div>
+            <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSelectedTest(row)}
+            >
+                Terima
+            </Button>
         ),
     },
 ];

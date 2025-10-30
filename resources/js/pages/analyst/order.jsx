@@ -2,6 +2,9 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { Link } from "@inertiajs/react";
 import { CircleAlert } from "lucide-react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
+import { getOrdersColumns } from "@/components/shared/analyst/order-columns";
+import { orders } from "@/data/analyst/orders";
+import { useMemo } from "react";
 
 const OrderPage = () => {
   const user = {
@@ -10,45 +13,28 @@ const OrderPage = () => {
     avatar: "https://i.pravatar.cc/150?img=3",
   };
 
-  // Dummy data order
-  const data = Array.from({ length: 27 }, (_, i) => ({
-    id: `ORDER-${i + 1}`,
-    status: i % 2 === 0 ? "In Progress" : "Pending",
-  }));
+  const filterData = [
+    { value: "all", label: "All Status" },
+    { value: "Completed", label: "Completed" },
+    { value: "In Progress", label: "In Progress" },
+    { value: "Pending", label: "Pending" },
+    { value: "Disapproved", label: "Disapproved" },
+    { value: "Approved", label: "Approved" },
+    { value: "Received", label: "Received" },
+  ]
 
-  // Definisi kolom tampilan
-  const columns = [
-    {
-      header: "ID Order",
-      accessorKey: "id",
-    },
-    {
-      header: "Status",
-      accessorKey: "status",
-    },
-    {
-      header: "Aksi",
-      accessorKey: "id",
-      cell: (row) => (
-        <div className="bg-primary-hijauTua w-max p-1 rounded-full text-white hover:opacity-70">
-          <Link href={`/analyst/order/details/`}>
-            <CircleAlert size={18} />
-          </Link>
-        </div>
-      ),
-    },
-  ];
+  const columns = useMemo(() => getOrdersColumns(), []);
+
 
   return (
     <DashboardLayout title="Analyst" user={user} header="Selamat Datang Analyst!">
       <ManagedDataTable
-        data={data}
+        data={orders}
         columns={columns}
-        pageSize={5}          // ✅ pagination per 5
-        showSearch={false}    // ❌ matikan search agar tidak ngefilter id "user"
-        showFilter={false}    // ❌ matikan filter
-        searchColumn="id"     // ✅ pastikan tidak error
-        filterColumn="status" // ✅ masih aman
+        filterOptions={filterData}
+        searchColumn="title"
+        showFilter={true}
+        filterColumn="status"
       />
     </DashboardLayout>
   );

@@ -1,14 +1,14 @@
 import DetailDialog from "../dialog/detail-dialog";
 
 const statusVariantMap = {
-    Done: "done",
-    "In Progress": "inProgress",
+    Done: "success",
+    "In Progress": "warning",
 };
 
 const conditionVariantMap = {
-    Good: "good",
-    Damaged: "damaged",
-    Expired: "expired",
+    Good: "success",
+    Damaged: "error",
+    Expired: "error",
 };
 
 export default function SampleDetailsDialog({ sample, isOpen, onOpenChange }) {

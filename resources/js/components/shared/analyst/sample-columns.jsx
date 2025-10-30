@@ -1,20 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from '@inertiajs/react';
-import { FileText, History } from "lucide-react";
+import { FileText, Check, Ban } from "lucide-react";
 
 const statusVariantMap = {
     Done: "success",
     "In Progress": "warning",
 };
 
-const conditionVariantMap = {
-    Eksternal: "warning",
-    Internal: "info",
-    Urgent: "error",
-};
-
-export const getSampleColumns = ({ onShowDetail }) => [
+export const getSampleColumns = ({ onShowDetail, onShowConfirm, onShowUnConfirm }) => [
     { accessorKey: "name", header: "Nama Sampel" },
     { accessorKey: "cathegory", header: "Kategori Sampel" },
     {
@@ -41,6 +35,24 @@ export const getSampleColumns = ({ onShowDetail }) => [
                 >
                     <FileText/>
                 </Button>
+                {row.status === 'In Progress' && (
+                    <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onShowConfirm(row)}
+                    >
+                        <Check/>
+                    </Button>
+                )}
+                {row.status === 'Done' && (
+                    <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onShowUnConfirm(row)}
+                    >
+                        <Ban className="text-red-600"/>
+                    </Button>
+                )}
             </div>
         ),
     },
