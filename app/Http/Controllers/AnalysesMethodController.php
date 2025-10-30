@@ -4,62 +4,68 @@ namespace App\Http\Controllers;
 
 use App\Models\AnalysesMethod;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AnalysesMethodController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $analysesMethods = AnalysesMethod::all();
+        return view('analyses_method.index', compact('analysesMethods'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('analyses_method.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'analyses_method' => ['required', 'string', 'max:255'],
+            'price' => ['required', 'numeric', 'min:0'],
+        ]);
+
+        try {
+            AnalysesMethod::create($validated);
+            return redirect()->route('analyses_method.index')->with('success', 'Analyses Method created successfully.');
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', 'Failed to create Analyses Method.');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(AnalysesMethod $analysesMethod)
     {
-        //
+        return view('analyses_method.show', compact('analysesMethod'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(AnalysesMethod $analysesMethod)
     {
-        //
+        return view('analyses_method.edit', compact('analysesMethod'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, AnalysesMethod $analysesMethod)
     {
-        //
+        $validated = $request->validate([
+            'analyses_method' => ['required', 'string', 'max:255'],
+            'price' => ['required', 'numeric', 'min:0'],
+        ]);
+
+        try {
+            $analysesMethod->update($validated);
+            return redirect()->route('analyses_method.index')->with('success', 'Analyses Method updated successfully.');
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', 'Failed to update Analyses Method.');
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(AnalysesMethod $analysesMethod)
     {
-        //
+        try {
+            $analysesMethod->delete();
+            return redirect()->route('analyses_method.index')->with('success', 'Analyses Method deleted successfully.');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Failed to delete Analyses Method.');
+        }
     }
 }
