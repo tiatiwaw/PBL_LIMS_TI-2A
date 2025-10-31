@@ -4,18 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class SampleCategory extends Model
+class NOrderSample extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'sample_volume'
     ];
 
+    public function orders()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
+    }
     public function samples()
     {
-        return $this->hasMany(Sample::class, 'sample_category_id');
+        return $this->belongsTo(Sample::class, 'sample_id');
     }
 }

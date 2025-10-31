@@ -19,6 +19,6 @@ class Grade extends Model
 
     public function reagents()
     {
-        return $this->hasMany(Reagent::class, 'reagent_id');
+        return $this->hasMany(Reagent::class, 'grade_id');
     }
 }

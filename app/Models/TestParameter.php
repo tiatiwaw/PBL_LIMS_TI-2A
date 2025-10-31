@@ -20,12 +20,12 @@ class TestParameter extends Model
 
     public function unit_values()
     {
-        return $this->hasMany(UnitValue::class, 'unit_value_id');
+        return $this->belongsTo(UnitValue::class, 'unit_value_id');
     }
 
     public function reference_standards()
     {
-        return $this->hasMany(ReferenceStandard::class, 'reference_id');
+        return $this->belongsTo(ReferenceStandard::class, 'reference_id');
     }
 
     public function n_parameter_methods()
