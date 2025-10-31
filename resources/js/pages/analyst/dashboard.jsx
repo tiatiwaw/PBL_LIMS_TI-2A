@@ -15,7 +15,7 @@ const dashboard = () => {
 
   const user = {
     name: "Puff",
-    role: "Analis",
+    role: "analyst",
     avatar: "https://i.pravatar.cc/150?img=3",
   };
 

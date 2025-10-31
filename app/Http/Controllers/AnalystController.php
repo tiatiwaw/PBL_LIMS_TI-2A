@@ -22,4 +22,8 @@ class AnalystController extends Controller
     public function dashboard() {
         return Inertia::render('analyst/dashboard');
     }
+
+    public function profile() {
+        return Inertia::render('analyst/profile');
+    }
 }

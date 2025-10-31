@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { Link } from '@inertiajs/react';
-import { ChevronsLeft } from 'lucide-react';
+import { FileDown } from 'lucide-react';
 import { samples } from "@/data/client/samples";
 import { getSampleColumns } from "@/components/shared/client/sample-columns";
 import SampleDetailsDialog from "@/components/shared/dialog/sample-detail-dialog";
@@ -61,6 +61,27 @@ const details = () => {
                             </React.Fragment>
                         ))}
                     </div>
+                </div>
+
+                 {/* Unduh Laporan */}
+                <div className="bg-white rounded-xl shadow-md p-5 flex items-center justify-between ">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary-hijauMuda/30">
+                    <FileDown className="text-primary-hijauTua" size={20} />
+                    </div>
+                    <div>
+                    <p className="text-sm font-semibold text-gray-800">Laporan Pengujian</p>
+                    <p className="text-xs text-gray-500">File PDF tersedia</p>
+                    </div>
+                </div>
+
+                <a
+                    href="/files/laporan.pdf"
+                    download
+                    className="px-3 py-1.5 rounded-lg bg-primary-hijauTua text-white text-sm hover:bg-primary-hijauTua/90"
+                >
+                    Download
+                </a>
                 </div>
 
                 <ManagedDataTable

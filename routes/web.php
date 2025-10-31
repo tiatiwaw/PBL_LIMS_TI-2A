@@ -49,6 +49,7 @@ Route::prefix('analyst')->name('analyst')->group(function () {
     Route::get('/order', [AnalystController::class, 'order'])->name('.order');
     Route::get('/order/details', [AnalystController::class, 'detail'])->name('.order.detail');
     Route::get('/dashboard', [AnalystController::class, 'dashboard'])->name('.dashboard');
+    Route::get('/profile', [AnalystController::class, 'profile'])->name('.profile');
 
 });
 
