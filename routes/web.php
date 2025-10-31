@@ -9,6 +9,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\AnalystController;
 use App\Http\Controllers\ManagerController;
+use App\Models\Analyst;
 
 // Home
 Route::controller(HomeController::class)->name('index')->group(function () {
@@ -47,9 +48,10 @@ Route::prefix('analyst')->name('analyst')->group(function () {
     Route::get('/inbox', [AnalystController::class, 'inbox'])->name('.inbox');
     Route::get('/inbox/details', [AnalystController::class, 'show'])->name('.inbox.show');
     Route::get('/order', [AnalystController::class, 'order'])->name('.order');
-    Route::get('/order/details', [AnalystController::class, 'detail'])->name('.order.detail');
-    Route::get('/dashboard', [AnalystController::class, 'dashboard'])->name('.dashboard');
-
+    Route::get('/dashboard', [AnalystController::class, 'index'])->name('.dashboard');
+    Route::get('/dashboard', [AnalystController::class, 'index'])->name('dashboard');
+    Route::put('/orders/{order}/accept', [AnalystController::class, 'accept'])->name('.orders.accept');
+    Route::get('/order/{order}/detail', [AnalystController::class, 'detail'])->name('.order.detail');
 });
 
 // Client
