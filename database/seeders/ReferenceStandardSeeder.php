@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Reference_Standard;
+use App\Models\ReferenceStandard;
 
 class ReferenceStandardSeeder extends Seeder
 {
@@ -21,7 +21,7 @@ class ReferenceStandardSeeder extends Seeder
         ];
 
         foreach ($standards as $standard) {
-            Reference_Standard::create([
+            ReferenceStandard::create([
                 'name' => $standard,
             ]);
         }
