@@ -65,13 +65,13 @@ export default function OrdersForm2() {
 
     const handleOpenDialog = () => {
         // clone supaya tidak referensi langsung
-        setSelectedSamples((formData.samples || []).map(s => ({ ...s })));
+        setSelectedSamples((formData.samples || []).map((s) => ({ ...s })));
         setIsSampleDialogOpen(true);
     };
 
     const handleDialogChange = (open) => {
         if (!open) {
-            setSelectedSamples((formData.samples || []).map(s => ({ ...s })));
+            setSelectedSamples((formData.samples || []).map((s) => ({ ...s })));
         }
         setIsSampleDialogOpen(open);
     };
@@ -84,7 +84,7 @@ export default function OrdersForm2() {
             ...prev,
             samples: updatedSamples,
         }));
-        setSelectedSamples(updatedSamples.map(s => ({ ...s })));
+        setSelectedSamples(updatedSamples.map((s) => ({ ...s })));
     };
 
     // update value/volume untuk sample yang dipilih
@@ -278,7 +278,9 @@ export default function OrdersForm2() {
                                             <button
                                                 type="button"
                                                 onClick={() =>
-                                                    handleRemoveSample(sample.id)
+                                                    handleRemoveSample(
+                                                        sample.id
+                                                    )
                                                 }
                                                 className="text-red-500 hover:text-red-700 text-xs font-medium"
                                             >

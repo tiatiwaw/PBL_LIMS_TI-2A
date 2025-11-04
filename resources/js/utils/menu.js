@@ -21,6 +21,9 @@ import {
     Pipette,
     ListCheck,
     ChartArea,
+    Pipette,
+    ListCheck,
+    ChartArea,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -44,6 +47,7 @@ const getRoleFromUrl = (url) => {
     if (url.startsWith("/analyst")) return "analyst";
     if (url.startsWith("/admin")) return "admin";
     if (url.startsWith("/manager")) return "manager";
+    if (url.startsWith("/staff")) return "staff";
     if (url.startsWith("/staff")) return "staff";
     return null;
 };
