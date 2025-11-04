@@ -51,6 +51,9 @@ Route::prefix('analyst')->name('analyst')->group(function () {
     Route::get('/dashboard', [AnalystController::class, 'index'])->name('.dashboard');
     Route::put('/orders/{order}/accept', [AnalystController::class, 'accept'])->name('.orders.accept');
     Route::get('/order/{order}/detail', [AnalystController::class, 'detail'])->name('.order.detail');
+    Route::post('/samples/{sample}/confirm', [AnalystController::class, 'confirm'])->name('.sample.confirm');
+    Route::post('/samples/{sample}/unconfirm', [AnalystController::class, 'unconfirm'])->name('.sample.unconfirm');
+    Route::post('/order/{order}/upload', [AnalystController::class, 'uploadReport'])->name('.order.upload');
 });
 
 

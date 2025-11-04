@@ -9,9 +9,9 @@ import { Button } from '@/components/ui/button';
 import SampleConfirmDialog from "@/components/shared/dialog/sample-confirm-dialog";
 import SampleUnConfirmDialog from "@/components/shared/dialog/sample-unconfirm-dialog";
 import { FileDown, FileUp } from "lucide-react";
+import { router } from "@inertiajs/react";
 
-
-const details = () => {
+const details = ({order, samples}) => {
 
     const user = {
         name: 'Nardo',
@@ -55,16 +55,13 @@ const details = () => {
     };
 
     const handleConfirmAction = (sample) => {
-        console.log("Sampel diselesaikan:", sample);
-        sample.status = "Done";
-        setIsConfirmDialogOpen(false);
+        router.post(`/analyst/samples/${sample.id}/confirm`);
     };
 
     const [isUnConfirmDialogOpen, setIsUnConfirmDialogOpen] = useState(false);
 
     const handleShowUnConfirm = (sample) => {
-        setSelectedSample(sample);
-        setIsUnConfirmDialogOpen(true);
+        router.post(`/analyst/samples/${sample.id}/unconfirm`);
     };
 
     const handleUnConfirmAction = (sample) => {
@@ -128,11 +125,29 @@ const details = () => {
                     </div>
                 </div>
 
+                {/* Bagian input file */}
                 <label className="px-3 py-1.5 rounded-lg bg-gray-200 text-sm text-gray-700 cursor-pointer hover:bg-gray-300">
                     Pilih File
-                    <input type="file" accept="application/pdf" className="hidden" />
+                    <input
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    onChange={(e) => {
+                        if (!e.target.files.length) return;
+
+                        const formData = new FormData();
+                        formData.append("laporan", e.target.files[0]);
+
+                        router.post(`/analyst/order/${order.id}/upload`, formData, {
+                        onSuccess: () => {
+                            alert("Laporan berhasil diupload!");
+                        },
+                        });
+                    }}
+                    />
                 </label>
                 </div>
+
 
 
                 <ManagedDataTable

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Sample;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,7 @@ class AnalystController extends Controller
 {
     public function index()
     {
-        $order = Order::where('status', 'approved')
+        $order = Order::where('status', 'pending')
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
@@ -29,7 +30,7 @@ class AnalystController extends Controller
 
     public function accept(Order $order)
     {
-        if ($order->status === 'approved') {
+        if ($order->status === 'pending') {
             $order->update(['status' => 'in_progress']);
         }
 
@@ -44,10 +45,42 @@ class AnalystController extends Controller
         ]);
     }
 
-    public function detail(Order $orders) {
+    public function detail(Order $orders)
+    {
+        $order = $orders->load('samples');
+
         return Inertia::render('analyst/order-detail', [
-            'order' => $orders
+            'order' => $order,
+            'samples' => $order->samples,
         ]);
+    }
+
+    public function uploadReport(Request $request, Order $order)
+{
+    $request->validate([
+        'laporan' => 'required|mimes:pdf|max:5120'
+    ]);
+
+    $path = $request->file('laporan')->store('public/reports');
+
+    $order->update([
+        'laporan_path' => $path,
+        'waktu_laporan' => now(),
+    ]);
+
+    return back()->with('success', 'Laporan berhasil diupload.');
+}
+
+    public function confirm(Sample $sample)
+    {
+        $sample->update(['status' => 'Done']);
+        return back()->with('success', 'Sampel telah dikonfirmasi selesai.');
+    }
+
+    public function unconfirm(Sample $sample)
+    {
+        $sample->update(['status' => 'In Progress']);
+        return back()->with('success', 'Sampel dibatalkan statusnya.');
     }
 
     public function dashboard() {
