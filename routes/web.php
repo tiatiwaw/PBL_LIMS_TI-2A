@@ -49,10 +49,10 @@ Route::prefix('analyst')->name('analyst')->group(function () {
     Route::get('/inbox/details', [AnalystController::class, 'show'])->name('.inbox.show');
     Route::get('/order', [AnalystController::class, 'order'])->name('.order');
     Route::get('/dashboard', [AnalystController::class, 'index'])->name('.dashboard');
-    Route::get('/dashboard', [AnalystController::class, 'index'])->name('dashboard');
     Route::put('/orders/{order}/accept', [AnalystController::class, 'accept'])->name('.orders.accept');
     Route::get('/order/{order}/detail', [AnalystController::class, 'detail'])->name('.order.detail');
 });
+
 
 // Client
 Route::prefix('client')->name('client')->group(function () {

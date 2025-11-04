@@ -21,7 +21,7 @@ class AnalystController extends Controller
             'finished' => Order::where('status', 'completed')->count(),
         ];
 
-        return Inertia::render('Analyst/Dashboard', [
+        return Inertia::render('analyst/dashboard', [
             'orders' => $order,
             'stats' => $stats,
         ]);
@@ -37,7 +37,11 @@ class AnalystController extends Controller
     }
 
     public function order() {
-        return Inertia::render('analyst/order');
+        $order = Order::orderBy('created_at', 'desc')->get();
+
+        return Inertia::render('analyst/order', [
+            'orders' => $order
+        ]);
     }
 
     public function detail(Order $orders) {
