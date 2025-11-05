@@ -1,6 +1,9 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import StatCard from "@/components/shared/card/stat-card";
-import { stats } from "@/data/manager/beranda";
+import { stats, Pendapatan } from "@/data/manager/beranda";
+import React from 'react';
+import { TrendingUp, Activity, AlertCircle } from "lucide-react";
+import { Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label , Area, AreaChart } from 'recharts';
 
 export default function ManagerPage() {
     const user = {
@@ -18,15 +21,37 @@ export default function ManagerPage() {
                     ))}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
-                        <h2 className="text-xl font-bold text-primary-hijauTua text-center mb-4">Times</h2> 
-                        <p className="text-center text-gray-400 py-16">
-                            [Komponen Grafik Akan Ditampilkan Di Sini]
-                        </p>
-                    </div>
+                <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                            <div className="flex items-center justify-between mb-6">
+                              <div className="flex-1 text-center">
+                                <h2 className="text-xl font-bold text-gray-900">Pendapatan</h2>
+                                <p className="text-sm text-gray-500 mt-1">Data 6 bulan terakhir</p>
+                              </div>
+                              <Activity className="w-6 h-6 text-emerald-600" />
+                            </div>
+                            <ResponsiveContainer width="100%" height={300}>
+                              <AreaChart data={Pendapatan}>
+                                <defs>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 8" stroke="#f0f0f0" />
+                                <XAxis dataKey="month" stroke="#9ca3af" />
+                                <YAxis stroke="#9ca3af" />
+                                <Tooltip
+                                  contentStyle={{
+                                    backgroundColor: 'white',
+                                    border: '1px solid #e5e7eb',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                                  }}
+                                />
+                                <Legend />
+                                <Line type="monotone" dataKey="penjualan" stroke="#8b5cf6"  strokeWidth={2} name="Penjualan" dot={{ fill: '#8b5cf6', r: 4 }} />
+                              </AreaChart>
+                            </ResponsiveContainer>
                 </div>
+
             </div>
+            
         </DashboardLayout>
     );
 }
