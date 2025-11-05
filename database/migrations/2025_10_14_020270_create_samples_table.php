@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('samples', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
-            $table->foreignId('sample_category_id')->constrained('sample_categories')->onDelete('cascade');
+            $table->foreignId('sample_category_id')->constrained('sample_categories')->cascadeOnDelete();
             $table->string('name');
             $table->enum('form', ['solid', 'liquid', 'gas'])->default('solid');
             $table->string('preservation_method');
+            $table->float('sample_volume');
             $table->enum('condition', ['good', 'damages', 'expired'])->default('good');
-            $table->string('temperature');
+            $table->string('storage_condition');
+            $table->enum('temperature',['temperature','time']);
             $table->timestamps();
         });
     }

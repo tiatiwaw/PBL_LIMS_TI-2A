@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('test_methods', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('reference_id')->constrained('reference_standards')->cascadeOnDelete();
             $table->string('name');
+            $table->string('applicable_parameter');
+            $table->integer('duration');
+            $table->date('validity_period');
             $table->timestamps();
         });
     }
