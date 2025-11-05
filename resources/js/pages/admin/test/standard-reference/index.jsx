@@ -21,9 +21,9 @@ export default function StandardsPage({ auth, standardsData }) {
                 data={parameters}
                 columns={columns}
                 editFields={editStandardFields}
+                createUrl="admin.test.standard.create"
                 editUrl="admin.test.standard.update"
                 deleteUrl="admin.test.standard.destroy"
-                searchColumn="name" 
                 editTitle="Edit Pengguna"
                 deleteTitle="Hapus Pengguna"
             />

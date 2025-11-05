@@ -21,9 +21,9 @@ export default function BrandsPage({ auth, brandsData }) {
                 data={parameters}
                 columns={columns}
                 editFields={editBrandFields}
+                createUrl="admin.test.standard.create"
                 editUrl="admin.test.standard.update"
                 deleteUrl="admin.test.standard.destroy"
-                searchColumn="name"
                 editTitle="Edit Pengguna"
                 deleteTitle="Hapus Pengguna"
             />

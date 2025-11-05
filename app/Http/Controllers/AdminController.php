@@ -101,16 +101,6 @@ class AdminController extends Controller
         return Inertia::render('admin/materials/suppliers/index');
     }
 
-    public function sample()
-    {
-        return Inertia::render('admin/sampling/sample/index');
-    }
-
-    public function category()
-    {
-        return Inertia::render('admin/sampling/category/index');
-    }
-
     public function parameter()
     {
         return Inertia::render('admin/test/parameter/index');
@@ -129,6 +119,11 @@ class AdminController extends Controller
     public function standardReference()
     {
         return Inertia::render('admin/test/standard-reference/index');
+    }
+
+    public function category()
+    {
+        return Inertia::render('admin/test/category/index');
     }
 
     public function logActivity()

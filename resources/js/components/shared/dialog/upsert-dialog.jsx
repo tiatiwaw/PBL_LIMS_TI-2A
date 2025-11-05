@@ -12,20 +12,31 @@ import InputField from "../form/input-field";
 import { ChevronRight } from "lucide-react";
 import SelectField from "../form/select-field";
 
-export default function EditDialog({
+// Up = Update, Sert = Insert ==> dadine Upsert
+export default function UpsertDialog({
     open,
     onOpenChange,
     data,
     onSave,
     fields = [],
-    title = "Edit Data",
-    description = "Ubah informasi di bawah ini. Klik simpan untuk menyimpan perubahan.",
+    title,
+    description,
 }) {
     const [formData, setFormData] = useState({});
 
     useEffect(() => {
-        if (data) setFormData(data);
-    }, [data]);
+        if (open) {
+            if (data) {
+                setFormData(data);
+            } else {
+                const emptyForm = fields.reduce((acc, field) => {
+                    acc[field.name] = "";
+                    return acc;
+                }, {});
+                setFormData(emptyForm);
+            }
+        }
+    }, [data, fields, open]);
 
     const handleChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));

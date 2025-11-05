@@ -17,19 +17,27 @@ class ManagerController extends Controller
         return Inertia::render('manager/report-validation/index');
     }
 
+    public function detailValidation()
+    {
+        return Inertia::render('manager/detail/index', [
+            'canValidate' => true,
+        ]);
+    }
+
     public function orders()
     {
-
         return Inertia::render('manager/orders/index');
+    }
+
+    public function detailOrder()
+    {
+        return Inertia::render('manager/detail/index', [
+            'canValidate' => false,
+        ]);
     }
 
     public function users()
     {
         return Inertia::render('manager/users/index');
-    }
-
-    public function detailOrder()
-    {
-        return Inertia::render('manager/report-validation/detail/index');
     }
 }
