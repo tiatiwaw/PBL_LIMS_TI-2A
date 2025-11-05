@@ -18,12 +18,8 @@ import {
     FileText,
     ClipboardList,
     TestTube2,
-    Pipette,
-    ListCheck,
     ChartArea,
-    Pipette,
     ListCheck,
-    ChartArea,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {

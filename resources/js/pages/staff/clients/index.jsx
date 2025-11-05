@@ -18,6 +18,14 @@ export default function ClientPage({ auth, clientData }) {
     const currentUser = auth?.user || { name: "King Akbar", role: "Staff" };
     const parameters = clientData || Clients;
 
+    const processedParameters = useMemo(
+        () =>
+            parameters.map((client) => ({
+                ...client,
+            })),
+        [parameters]
+    );
+
     const columns = useMemo(
         () => getClientColumns({ onShowDetail: handleShowDetail }),
         []
@@ -30,10 +38,10 @@ export default function ClientPage({ auth, clientData }) {
             header="Manajemen Client"
         >
             <ManagedDataTable
-                data={parameters}
+                data={processedParameters}
                 columns={columns}
                 editFields={editClientFields}
-                createUrl="staff.client.create"
+                createUrl="staff.client.store"
                 editUrl="staff.client.update"
                 deleteUrl="staff.client.destroy"
                 editTitle="Edit Client"
