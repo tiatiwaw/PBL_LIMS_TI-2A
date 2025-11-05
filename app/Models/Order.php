@@ -13,7 +13,6 @@ class Order extends Model
 
     protected $fillable = [
         'client_id',
-        'analyses_method_id',
         'order_number',
         'title',
         'result_value',
@@ -31,17 +30,15 @@ class Order extends Model
         return $this->belongsTo(Client::class, 'client_id');
     }
 
-    public function samples()
+    public function n_order_samples()
     {
-        return $this->belongsToMany(Sample::class, 'n_order_samples', 'order_id', 'sample_id');
+        return $this->hasMany(NOrderSample::class, 'order_id');
     }
 
-
-    public function analyses_methods()
+    public function n_analyses_methods_orders()
     {
-        return $this->belongsTo(AnalysesMethod::class, 'analyses_method_id');
+        return $this->hasMany(NAnalysesMethodsOrder::class, 'order_id');
     }
-
 
     public function n_parameter_methods()
     {
