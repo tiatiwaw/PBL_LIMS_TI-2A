@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
-class LoginController extends Controller
+class AuthController extends Controller
 {
     public function login(LoginRequest $request)
     {
@@ -35,5 +34,15 @@ class LoginController extends Controller
             return redirect()->intended('/profile'); // Arahkan ke halaman profil
         }
         return back()->with('error', 'Login gagal, pastikan email dan password benar.');
+    }
+
+    public function logout(Request $request)
+    {
+        auth()->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return to_route('auth.login');
     }
 }
