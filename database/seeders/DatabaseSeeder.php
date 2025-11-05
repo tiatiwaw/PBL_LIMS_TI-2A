@@ -11,8 +11,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seeder User
-        $this->call(UserRoleSeeder::class);
+        $this->call([
+            UserRoleSeeder::class,
+            UserRoleSeeder::class,
+        ]);
 
         // Master Data Independen
         $this->call([

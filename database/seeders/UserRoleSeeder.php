@@ -2,30 +2,28 @@
 
 namespace Database\Seeders;
 
+
 use Illuminate\Database\Seeder;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserRoleSeeder extends Seeder
 {
     public function run()
     {
-        // 1️⃣ Buat user khusus untuk admin (hanya 1)
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('admin123'), // password bisa disesuaikan
-            'role' => 'admin',
-            'email_verified_at' => now(),
-        ]);
+        $roles = [
+            'admin',      // 1 untuk admin
+            'manager',    // 2 untuk manager  
+            'supervisor', // 3 untuk supervisor
+            'staff',      // 4 untuk staff
+            'analyst',    // 5 untuk analyst
+            'client'      // 6 untuk client
+        ];
 
-        // 2️⃣ Buat user random untuk setiap role lainnya
-        $roles = ['client', 'staff', 'analyst', 'supervisor', 'manager'];
-
-        foreach ($roles as $role) {
-            User::factory(5)->create([
-                'role' => $role,
-            ]);
+        foreach ($roles as $roleName) {
+            Role::updateOrCreate(
+                ['name' => $roleName, 'guard_name' => 'web'],
+                ['name' => $roleName, 'guard_name' => 'web']
+            );
         }
     }
 }
