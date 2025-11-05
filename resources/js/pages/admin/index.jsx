@@ -3,7 +3,7 @@ import axios from 'axios';
 import { TrendingUp, Activity, AlertCircle } from "lucide-react";
 import { Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import StatCard from '@/components/shared/card/stat-card';
-import { recentActivity, stats } from '@/data/admin/beranda';
+import { stats } from '@/data/admin/beranda';
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 import { usePage } from '@inertiajs/react';
 
@@ -25,6 +25,8 @@ export default function AdminDashboard() {
     totalMethod, 
     monthlyTrendData,
     resourceDistribution,
+    quickSummary,
+    weeklyActivity
   } = usePage().props;
 
   stats[0].value = totalUser
@@ -137,7 +139,7 @@ export default function AdminDashboard() {
               <TrendingUp className="w-6 h-6 text-emerald-600" />
             </div>
             <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={recentActivity}>
+              <BarChart data={weeklyActivity}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="day" stroke="#9ca3af" />
                 <YAxis stroke="#9ca3af" />
@@ -166,25 +168,25 @@ export default function AdminDashboard() {
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <div className="flex items-center justify-between">
                   <span className="text-emerald-100">Total Resources</span>
-                  <span className="text-2xl font-bold">200</span>
+                  <span className="text-2xl font-bold">{quickSummary.totalResources}</span>
                 </div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <div className="flex items-center justify-between">
                   <span className="text-emerald-100">Pengujian Bulan Ini</span>
-                  <span className="text-2xl font-bold">45</span>
+                  <span className="text-2xl font-bold">{quickSummary.pengujianBulanIni}</span>
                 </div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <div className="flex items-center justify-between">
                   <span className="text-emerald-100">Rata-rata Harian</span>
-                  <span className="text-2xl font-bold">12</span>
+                  <span className="text-2xl font-bold">{quickSummary.rataRataHarian}</span>
                 </div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <div className="flex items-center justify-between">
                   <span className="text-emerald-100">Tingkat Efisiensi</span>
-                  <span className="text-2xl font-bold">92%</span>
+                  <span className="text-2xl font-bold">{quickSummary.efisiensi}%</span>
                 </div>
               </div>
             </div>

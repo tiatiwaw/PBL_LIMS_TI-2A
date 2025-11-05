@@ -26,6 +26,20 @@ class AdminController extends Controller
         $totalMethod = TestMethod::count();
         $monthlyTrendData = $this->monthlyTrendData();
         $resourceDistribution = $this->resourceDistribution();
+        $weeklyActivity = $this->weeklyActivity();
+
+        $totalResources = $totalEquipment + $totalReagent + $totalParameter + $totalMethod;
+
+        $pengujianBulanIni = Order::whereMonth('created_at', now()->month)->count();
+        $rataRataHarian = round(Order::whereMonth('created_at', now()->month)->count() / now()->day, 1);
+        $efisiensi = rand(85, 99); // bisa diganti logika real, sementara dummy
+
+        $quickSummary = [
+            'totalResources' => $totalResources,
+            'pengujianBulanIni' => $pengujianBulanIni,
+            'rataRataHarian' => $rataRataHarian,
+            'efisiensi' => $efisiensi,
+        ];
 
         // dd($totalReagent);
 
@@ -38,6 +52,8 @@ class AdminController extends Controller
             'totalMethod' => $totalMethod,
             'monthlyTrendData' => $monthlyTrendData,
             'resourceDistribution' => $resourceDistribution,
+            'quickSummary' => $quickSummary,
+            'weeklyActivity' => $weeklyActivity,
         ]);
     }
 
@@ -73,6 +89,19 @@ class AdminController extends Controller
             ['name' => 'Parameter', 'value' => TestParameter::count(), 'color' => '#8b5cf6'], // ungu
             ['name' => 'Metode Uji', 'value' => TestMethod::count(), 'color' => '#f59e0b'], // oranye
         ];
+    }
+
+    public function weeklyActivity()
+    {
+        $data = collect(range(6, 0))->map(function ($i) {
+            $day = now()->subDays($i);
+            return [
+                'day' => $day->format('D'), // Contoh: Mon, Tue
+                'tests' => Order::whereDate('created_at', $day->toDateString())->count(),
+            ];
+        });
+
+        return $data;
     }
 
 
