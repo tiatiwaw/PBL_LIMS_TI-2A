@@ -37,8 +37,18 @@ export default function OrdersForm({ clients, methods, formData, setFormData }) 
     return (
         <div className="p-6 rounded-lg">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative">
-                {/* Left Column - Pilih Klien */}
+                {/* Left Column - Nomor Order (pindah ke urutan pertama) & Pilih Klien */}
                 <div className="space-y-6">
+                    <div>
+                        <h2 className="text-2xl font-bold mb-4">Nomor Order</h2>
+                        <div
+                            className="w-full px-4 py-3 bg-gray-300 border border-gray-300 
+                            rounded-lg text-gray-700"
+                        >
+                            {formData.nomorOrder}
+                        </div>
+                    </div>
+
                     <div>
                         <h2 className="text-2xl font-bold mb-4">Pilih Klien</h2>
                         <input
@@ -135,16 +145,6 @@ export default function OrdersForm({ clients, methods, formData, setFormData }) 
                                 ))}
 
                             </select>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h2 className="text-2xl font-bold mb-4">Nomor Order</h2>
-                        <div
-                            className="w-full px-4 py-3 bg-gray-300 border border-gray-300 
-                            rounded-lg text-gray-700"
-                        >
-                            {formData.nomorOrder}
                         </div>
                     </div>
                 </div>

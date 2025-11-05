@@ -29,6 +29,8 @@ export function DataTableHeader({
     onSearchChange,
     filterValue,
     onFilterChange,
+    showCreate,
+    onCreate
 }) {
     return (
         <CardHeader className="pb-0">
@@ -40,6 +42,8 @@ export function DataTableHeader({
                 onSearchChange={onSearchChange}
                 filterValue={filterValue}
                 onFilterChange={onFilterChange}
+                onCreate={onCreate}
+                showCreate={showCreate}
             />
         </CardHeader>
     );

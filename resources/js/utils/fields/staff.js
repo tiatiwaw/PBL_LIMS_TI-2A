@@ -20,12 +20,12 @@ export const editClientFields = [
         placeholder: "Masukkan alamat client",
     },
     {
-        name: "role",
+        name: "phone_number",
         label: "Nomor Telepon Client",
         placeholder: "Masukkan Nomor Telepon client",
     },
     {
-        name: "role",
+        name: "npwp_number",
         label: "NPWP Client",
         placeholder: "Masukkan NPWP client",
     },

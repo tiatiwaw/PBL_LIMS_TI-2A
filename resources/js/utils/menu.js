@@ -9,7 +9,6 @@ import {
     FileCheck2,
     TrendingUp,
     Users,
-    Database,
     ShoppingCart,
     Inbox,
     History,
@@ -18,9 +17,10 @@ import {
     Ruler,
     FileText,
     ClipboardList,
-    TestTubes,
-    TestTube,
     TestTube2,
+    Pipette,
+    ListCheck,
+    ChartArea,
     Pipette,
     ListCheck,
     ChartArea,
@@ -47,6 +47,7 @@ const getRoleFromUrl = (url) => {
     if (url.startsWith("/analyst")) return "analyst";
     if (url.startsWith("/admin")) return "admin";
     if (url.startsWith("/manager")) return "manager";
+    if (url.startsWith("/staff")) return "staff";
     if (url.startsWith("/staff")) return "staff";
     return null;
 };
@@ -109,22 +110,6 @@ const MENU_CONFIG = {
             ],
         },
         {
-            name: "Sampling",
-            icon: TestTubes,
-            subItems: [
-                {
-                    name: "Sampel",
-                    icon: TestTube,
-                    href: "/admin/sampling/sample",
-                },
-                {
-                    name: "Kategori Sampel",
-                    icon: TestTube2,
-                    href: "/admin/sampling/category",
-                },
-            ],
-        },
-        {
             name: "Pengujian",
             icon: ClipboardList,
             subItems: [
@@ -147,6 +132,11 @@ const MENU_CONFIG = {
                     name: "Standard Referensi",
                     icon: FileText,
                     href: "/admin/test/standard-reference",
+                },
+                {
+                    name: "Kategori Sampel",
+                    icon: TestTube2,
+                    href: "/admin/test/category",
                 },
             ],
         },
@@ -186,20 +176,20 @@ const MENU_CONFIG = {
     ],
     staff: [
         {
-            name: "Manajemen Klien",
-            icon: ListCheck,
-            href: "/staff/manage-clients",
-        },
-        {
-            name: "Sample",
-            icon: Pipette,
-            href: "/staff/samples",
-        },
-        {
             name: "Orders",
             icon: ChartArea,
             href: "/staff/orders",
         },
+        {
+            name: "Manajemen Klien",
+            icon: ListCheck,
+            href: "/staff/manage-clients",
+        },
+        // {
+        //     name: "Sample",
+        //     icon: Pipette,
+        //     href: "/staff/samples",
+        // },
     ],
 };
 
