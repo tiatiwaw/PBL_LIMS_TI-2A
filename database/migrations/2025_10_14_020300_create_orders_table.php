@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('report_file_path')->nullable();
             $table->string('notes')->nullable();
             $table->enum('order_type', ['internal','regular', 'external', 'urgent'])->default('internal');
-            $table->enum('status', ['received', 'in_progress', 'pending', 'disapproved', 'approved', 'completed'])->default('received');
+            $table->enum('status', ['received', 'in_progress', 'received_test', 'revision_test' ,'pending', 'disapproved', 'approved', 'completed'])->default('received');
             $table->timestamps();
         });
     }
