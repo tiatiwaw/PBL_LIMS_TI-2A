@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
             $table->foreignId('sample_id')->constrained('samples')->cascadeOnDelete();
+            $table->string('sample_volume');
             $table->timestamps();
         });
     }
