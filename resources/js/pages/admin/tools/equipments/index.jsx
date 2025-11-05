@@ -27,9 +27,9 @@ export default function EquipmentsPage({ auth, toolsData }) {
                 data={parameters}
                 columns={columns}
                 editFields={editEquipmentFields}
+                createUrl="admin.tools.equipment.create"
                 editUrl="admin.tools.equipment.update"
                 deleteUrl="admin.tools.equipment.destroy"
-                searchColumn="name"
                 showFilter={true}
                 filterColumn="status"
                 filterOptions={filterData}

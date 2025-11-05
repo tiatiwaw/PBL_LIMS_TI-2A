@@ -33,7 +33,6 @@ export default function ManagerUsersPage({ auth, usersData }) {
             <ManagedDataTable
                 data={parameters}
                 columns={columns}
-                searchColumn="name"
                 showFilter={true}
                 filterColumn="role"
                 filterOptions={filterData}
