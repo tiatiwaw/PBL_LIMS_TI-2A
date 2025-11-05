@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Analyses_Method;
+use App\Models\AnalysesMethod;
 
 class AnalysesMethodSeeder extends Seeder
 {
@@ -13,15 +13,15 @@ class AnalysesMethodSeeder extends Seeder
     public function run(): void
     {
         $methods = [
-            ['analyses_method' => 'Gravimetri'],
-            ['analyses_method' => 'Spektrofotometri UV-Vis'],
-            ['analyses_method' => 'Kromatografi Cair (HPLC)'],
-            ['analyses_method' => 'Titrasi Asam-Basa'],
-            ['analyses_method' => 'Spektrometri Serapan Atom (AAS)'],
+            ['analyses_method' => 'Gravimetri', 'price' => 0],
+            ['analyses_method' => 'Spektrofotometri UV-Vis', 'price' => 0],
+            ['analyses_method' => 'Kromatografi Cair (HPLC)', 'price' => 0],
+            ['analyses_method' => 'Titrasi Asam-Basa', 'price' => 0],
+            ['analyses_method' => 'Spektrometri Serapan Atom (AAS)', 'price' => 0],
         ];
 
         foreach ($methods as $method) {
-            Analyses_Method::create($method);
+            AnalysesMethod::create($method);
         }
     }
 }

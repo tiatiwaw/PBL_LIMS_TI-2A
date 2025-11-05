@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 
 
+
 class Order extends Model
 {
     use HasFactory;
@@ -48,5 +49,17 @@ class Order extends Model
     public function analysts()
     {
         return $this->belongsToMany(Analyst::class, 'n_analysts', 'order_id', 'analyst_id');
+    }
+
+    public function analyses_methods()
+    {
+        return $this->hasManyThrough(
+            AnalysesMethod::class,          // model tujuan
+            NAnalysesMethodsOrder::class,   // model pivot / penghubung
+            'order_id',                     // foreign key di tabel pivot
+            'id',                           // foreign key di tabel target
+            'id',                           // local key di tabel orders
+            'analyses_method_id'            // foreign key di tabel pivot ke analyses_methods
+        );
     }
 }

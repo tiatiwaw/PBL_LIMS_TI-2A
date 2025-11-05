@@ -3,7 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Test_Method;
+use App\Models\TestMethod;
+use App\Models\ReferenceStandard;
 
 class TestMethodSeeder extends Seeder
 {
@@ -12,21 +13,27 @@ class TestMethodSeeder extends Seeder
      */
     public function run(): void
     {
-        $methods = [
-            ['name' => 'Spektrofotometri UV-Vis'],
-            ['name' => 'Kromatografi Gas (GC)'],
-            ['name' => 'Kromatografi Cair Kinerja Tinggi (HPLC)'],
-            ['name' => 'Titrasi Asam Basa'],
-            ['name' => 'Gravimetri'],
-            ['name' => 'Spektrofotometri Serapan Atom (AAS)'],
-            ['name' => 'Enzimatik'],
-            ['name' => 'PCR (Polymerase Chain Reaction)'],
-            ['name' => 'Elektroforesis'],
-            ['name' => 'Mikrobiologi Plate Count'],
+        $names = [
+            'Spektrofotometri UV-Vis',
+            'Kromatografi Gas (GC)',
+            'Kromatografi Cair Kinerja Tinggi (HPLC)',
+            'Titrasi Asam Basa',
+            'Gravimetri',
+            'Spektrofotometri Serapan Atom (AAS)',
+            'Enzimatik',
+            'PCR (Polymerase Chain Reaction)',
+            'Elektroforesis',
+            'Mikrobiologi Plate Count',
         ];
 
-        foreach ($methods as $method) {
-            Test_Method::create($method);
+        foreach ($names as $name) {
+            TestMethod::create([
+                'reference_id' => ReferenceStandard::inRandomOrder()->value('id'),
+                'name' => $name,
+                'applicable_parameter' => 'General',
+                'duration' => rand(30, 180),
+                'validity_period' => now()->addYears(2),
+            ]);
         }
     }
 }

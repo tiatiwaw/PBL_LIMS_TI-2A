@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\BrandType;
 
 class EquipmentSeeder extends Seeder
 {
@@ -15,7 +16,7 @@ class EquipmentSeeder extends Seeder
         DB::table('equipments')->insert([
             [
                 'name' => 'Micropipette',
-                'brand_type' => 'Eppendorf Research Plus',
+                'brand_type_id' => BrandType::inRandomOrder()->value('id'),
                 'serial_number' => 'EPD-001',
                 'purchase_year' => '2022-01-15',
                 'calibration_schedule' => 'internal',
@@ -26,7 +27,7 @@ class EquipmentSeeder extends Seeder
             ],
             [
                 'name' => 'Centrifuge',
-                'brand_type' => 'Thermo Scientific SL16',
+                'brand_type_id' => BrandType::inRandomOrder()->value('id'),
                 'serial_number' => 'THM-045',
                 'purchase_year' => '2021-07-10',
                 'calibration_schedule' => 'eksternal',
@@ -37,7 +38,7 @@ class EquipmentSeeder extends Seeder
             ],
             [
                 'name' => 'pH Meter',
-                'brand_type' => 'Hanna HI2211',
+                'brand_type_id' => BrandType::inRandomOrder()->value('id'),
                 'serial_number' => 'HAN-123',
                 'purchase_year' => '2023-03-05',
                 'calibration_schedule' => 'internal',
@@ -48,7 +49,7 @@ class EquipmentSeeder extends Seeder
             ],
             [
                 'name' => 'Spectrophotometer',
-                'brand_type' => 'Shimadzu UV-1800',
+                'brand_type_id' => BrandType::inRandomOrder()->value('id'),
                 'serial_number' => 'SHM-789',
                 'purchase_year' => '2020-11-20',
                 'calibration_schedule' => 'eksternal',

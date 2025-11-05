@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Order;
 use App\Models\User;
+
 use Carbon\Carbon;
 
 class ManagerController extends Controller
@@ -14,6 +15,10 @@ class ManagerController extends Controller
     {
         // Dashboard snapshot metrics
         $totalOrders = Order::count();
+        // $data = Order::with('n_analyses_methods_orders')->get();
+        $totalPrice = Order::withSum('n_analyses_methods_orders', 'price')->get();
+        $grandTotal = $totalPrice->sum('n_analyses_methods_orders_sum_price');
+        // dd( $totalPrice );
         $totalUsers = User::count();
         $ordersToday = Order::whereDate('created_at', Carbon::today())->count();
         $pendingReports = Order::where('status', 'pending')->count();
@@ -33,7 +38,7 @@ class ManagerController extends Controller
                     'tipe' => $this->mapOrderType($o->order_type),
                     'status' => $this->mapStatusLabel($o->status),
                     'order_number' => $o->order_number,
-                    'analyses_method' => optional($o->analyses_methods)->analyses_method,
+                    'analyses_method' => $o->analyses_methods->pluck('analyses_method')->join(', '),
                 ];
             });
 
@@ -43,6 +48,8 @@ class ManagerController extends Controller
             'ordersToday' => $ordersToday,
             'pendingReports' => $pendingReports,
             'recentOrders' => $recentOrders,
+            'totalPrice' => $totalPrice,
+            'grandTotal' => $grandTotal,
         ]);
     }
 

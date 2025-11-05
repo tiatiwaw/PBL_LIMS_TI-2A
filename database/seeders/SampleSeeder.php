@@ -17,7 +17,7 @@ class SampleSeeder extends Seeder
                 'preservation_method' => 'Pendinginan 4°C',
                 'sample_volume' => 500.0,
                 'condition' => 'good',
-                'temperature' => 'temperature',
+                'storage_condition' => 'Cool, 4°C',
             ],
             [
                 'sample_category_id' => 2,
@@ -26,7 +26,7 @@ class SampleSeeder extends Seeder
                 'preservation_method' => 'Disimpan dalam wadah tertutup',
                 'sample_volume' => 300.5,
                 'condition' => 'good',
-                'temperature' => 'temperature',
+                'storage_condition' => 'Dry, room temperature',
             ],
             [
                 'sample_category_id' => 3,
@@ -35,7 +35,7 @@ class SampleSeeder extends Seeder
                 'preservation_method' => 'Sampel dalam tabung khusus',
                 'sample_volume' => 2.5,
                 'condition' => 'good',
-                'temperature' => 'time',
+                'storage_condition' => 'Pressurized container',
             ],
             [
                 'sample_category_id' => 4,
@@ -44,7 +44,7 @@ class SampleSeeder extends Seeder
                 'preservation_method' => 'Pendinginan 4°C',
                 'sample_volume' => 450.0,
                 'condition' => 'damages',
-                'temperature' => 'temperature',
+                'storage_condition' => 'Cool, 4°C',
             ],
             [
                 'sample_category_id' => 5,
@@ -53,7 +53,7 @@ class SampleSeeder extends Seeder
                 'preservation_method' => 'Keringkan dan simpan di wadah kedap udara',
                 'sample_volume' => 600.0,
                 'condition' => 'expired',
-                'temperature' => 'time',
+                'storage_condition' => 'Dry, desiccator',
             ],
         ]);
     }

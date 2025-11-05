@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\UnitValue;
+use App\Models\ReferenceStandard;
 
 class TestParameterSeeder extends Seeder
 {
@@ -14,7 +16,8 @@ class TestParameterSeeder extends Seeder
     {
         DB::table('test_parameters')->insert([
             [
-                'unit_value_id' => 1,
+                'unit_value_id' => UnitValue::inRandomOrder()->value('id'),
+                'reference_id' => ReferenceStandard::inRandomOrder()->value('id'),
                 'name' => 'Kadar Air',
                 'category' => 'kimia',
                 'detection_limit' => 'LOD',
@@ -23,7 +26,8 @@ class TestParameterSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'unit_value_id' => 2,
+                'unit_value_id' => UnitValue::inRandomOrder()->value('id'),
+                'reference_id' => ReferenceStandard::inRandomOrder()->value('id'),
                 'name' => 'Total Plate Count',
                 'category' => 'mikrobiologi',
                 'detection_limit' => 'LOQ',
@@ -32,7 +36,8 @@ class TestParameterSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'unit_value_id' => 3,
+                'unit_value_id' => UnitValue::inRandomOrder()->value('id'),
+                'reference_id' => ReferenceStandard::inRandomOrder()->value('id'),
                 'name' => 'Kekeruhan',
                 'category' => 'fisika',
                 'detection_limit' => 'LOD',
@@ -41,7 +46,8 @@ class TestParameterSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'unit_value_id' => 4,
+                'unit_value_id' => UnitValue::inRandomOrder()->value('id'),
+                'reference_id' => ReferenceStandard::inRandomOrder()->value('id'),
                 'name' => 'pH',
                 'category' => 'kimia',
                 'detection_limit' => 'LOQ',
@@ -50,7 +56,8 @@ class TestParameterSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'unit_value_id' => 5,
+                'unit_value_id' => UnitValue::inRandomOrder()->value('id'),
+                'reference_id' => ReferenceStandard::inRandomOrder()->value('id'),
                 'name' => 'Glukosa Darah',
                 'category' => 'klinik',
                 'detection_limit' => 'LOD',
