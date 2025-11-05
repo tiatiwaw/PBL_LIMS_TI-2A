@@ -34,6 +34,6 @@ class Equipment extends Model
 
     public function n_parameter_methods()
     {
-        return $this->belongsToMany(NParameterMethod::class, 'n_equipments', 'n_parameter_method_id', 'equipment_id');
+        return $this->belongsToMany(NParameterMethod::class, 'n_equipments', 'equipment_id', 'n_parameter_method_id');
     }
-} 
+}

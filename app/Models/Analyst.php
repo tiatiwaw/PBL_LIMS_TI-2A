@@ -34,4 +34,9 @@ class Analyst extends Model
     {
         return $this->belongsToMany(Training::class, 'n_training_analysts', 'analyst_id', 'training_id');
     }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'n_analysts', 'analyst_id', 'order_id');
+    }
 }

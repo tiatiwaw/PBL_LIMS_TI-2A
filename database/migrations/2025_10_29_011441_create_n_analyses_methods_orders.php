@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('analyses_methods', function (Blueprint $table) {
+        Schema::create('n_analyses_methods_orders', function (Blueprint $table) {
             $table->id();
-            $table->string('analyses_method');
+            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
+            $table->foreignId('analyses_method_id')->constrained('analyses_methods')->cascadeOnDelete();
+            $table->string('description');
             $table->float('price');
             $table->timestamps();
+            
         });
     }
 
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('analyses_methods');
+        Schema::dropIfExists('n_analyses_methods_orders');
     }
 };

@@ -3,30 +3,41 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Test_Method;
+use App\Models\TestMethod;
+use App\Models\ReferenceStandard;
 
 class TestMethodSeeder extends Seeder
 {
-    /**
-     * Jalankan seeder untuk tabel test_methods.
-     */
     public function run(): void
     {
+        $ref1 = ReferenceStandard::firstOrCreate(['name' => 'SNI Metodologi']);
+
         $methods = [
-            ['name' => 'Spektrofotometri UV-Vis'],
-            ['name' => 'Kromatografi Gas (GC)'],
-            ['name' => 'Kromatografi Cair Kinerja Tinggi (HPLC)'],
-            ['name' => 'Titrasi Asam Basa'],
-            ['name' => 'Gravimetri'],
-            ['name' => 'Spektrofotometri Serapan Atom (AAS)'],
-            ['name' => 'Enzimatik'],
-            ['name' => 'PCR (Polymerase Chain Reaction)'],
-            ['name' => 'Elektroforesis'],
-            ['name' => 'Mikrobiologi Plate Count'],
+            [
+                'reference_id' => $ref1->id,
+                'name' => 'Spektrofotometri UV-Vis',
+                'applicable_parameter' => 'Nitrat, Nitrit',
+                'duration' => 60, // Durasi dalam menit
+                'validity_period' => '2026-12-31'
+            ],
+            [
+                'reference_id' => $ref1->id,
+                'name' => 'Titrasi Asam Basa',
+                'applicable_parameter' => 'Alkalinitas',
+                'duration' => 30,
+                'validity_period' => '2026-12-31'
+            ],
+            [
+                'reference_id' => $ref1->id,
+                'name' => 'Gravimetri',
+                'applicable_parameter' => 'TSS, TDS',
+                'duration' => 240,
+                'validity_period' => '2026-12-31'
+            ],
         ];
 
         foreach ($methods as $method) {
-            Test_Method::create($method);
+            TestMethod::create($method);
         }
     }
 }

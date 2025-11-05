@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Sample extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'samples';
 
@@ -19,7 +19,8 @@ class Sample extends Model
         'preservation_method',
         'sample_volume',
         'condition',
-        'temperature',
+        'status',
+        'storage_condition',
     ];
 
     function sample_categories()
@@ -27,8 +28,13 @@ class Sample extends Model
         return $this->belongsTo(SampleCategory::class, 'sample_category_id');
     }
 
-    function orders()
+    function n_order_samples()
     {
-        return $this->belongsToMany(Order::class, 'n_order_samples', 'sample_id', 'order_id');
+        return $this->hasMany(NOrderSample::class, 'sample_id');
+    }
+
+    public function n_parameter_methods()
+    {
+        return $this->hasOne(NParameterMethod::class, 'sample_id');
     }
 }

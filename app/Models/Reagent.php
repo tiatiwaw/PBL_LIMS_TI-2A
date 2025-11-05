@@ -28,7 +28,7 @@ class Reagent extends Model
 
     public function suppliers()
     {
-        return $this->belongsTo (Supplier::class, 'supplier_id');
+        return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 
     public function grades()
@@ -38,6 +38,6 @@ class Reagent extends Model
 
     public function n_parameter_methods()
     {
-        return $this->belongsToMany(NParameterMethod::class, 'n_reagents', 'n_parameter_method_id', 'reagent_id');
+        return $this->belongsToMany(NParameterMethod::class, 'n_reagents', 'reagent_id', 'n_parameter_method_id');
     }
 }

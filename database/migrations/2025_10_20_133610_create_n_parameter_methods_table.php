@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('n_parameter_methods', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
+            $table->foreignId('sample_id')->constrained('samples')->cascadeOnDelete();
             $table->foreignId('test_parameter_id')->constrained('test_parameters')->cascadeOnDelete();
             $table->foreignId('test_method_id')->constrained('test_methods')->cascadeOnDelete();
-            $table->string('result');
+            $table->string('result')->nullable();
+            $table->enum('status', ['failed', 'success']);
             $table->timestamps();
         });
-
-        
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\AnalystController;
 use App\Http\Controllers\ManagerController;
+use App\Models\Analyst;
 
 // Home
 Route::controller(HomeController::class)->name('index')->group(function () {
@@ -47,11 +48,15 @@ Route::prefix('analyst')->name('analyst')->group(function () {
     Route::get('/inbox', [AnalystController::class, 'inbox'])->name('.inbox');
     Route::get('/inbox/details', [AnalystController::class, 'show'])->name('.inbox.show');
     Route::get('/order', [AnalystController::class, 'order'])->name('.order');
-    Route::get('/order/details', [AnalystController::class, 'detail'])->name('.order.detail');
-    Route::get('/dashboard', [AnalystController::class, 'dashboard'])->name('.dashboard');
     Route::get('/profile', [AnalystController::class, 'profile'])->name('.profile');
-
+    Route::get('/dashboard', [AnalystController::class, 'index'])->name('.dashboard');
+    Route::put('/orders/{order}/accept', [AnalystController::class, 'accept'])->name('.orders.accept');
+    Route::get('/order/{order}/detail', [AnalystController::class, 'detail'])->name('.order.detail');
+    Route::post('/samples/{sample}/confirm', [AnalystController::class, 'confirm'])->name('.sample.confirm');
+    Route::post('/samples/{sample}/unconfirm', [AnalystController::class, 'unconfirm'])->name('.sample.unconfirm');
+    Route::post('/order/{order}/upload', [AnalystController::class, 'uploadReport'])->name('.order.upload');
 });
+
 
 // Client
 Route::prefix('client')->name('client')->group(function () {
