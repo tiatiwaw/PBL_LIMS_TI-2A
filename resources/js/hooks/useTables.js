@@ -20,11 +20,12 @@ export function useTable({
             );
         }
         if (showSearch && searchTerm) {
-            result = result.filter((item) =>
-                item[searchColumn]
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase())
-            );
+            result = result.filter((item) => {
+                const lowerSearch = searchTerm.toLowerCase();
+                return Object.values(item).some((val) =>
+                    String(val).toLowerCase().includes(lowerSearch)
+                );
+            });
         }
         return result;
     }, [

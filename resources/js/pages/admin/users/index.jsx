@@ -26,9 +26,9 @@ export default function AdminUsersPage({ auth, usersData }) {
                 data={parameters}
                 columns={columns}
                 editFields={editUsersFields}
+                createUrl="admin.user.create"
                 editUrl="admin.user.update"
                 deleteUrl="admin.user.destroy"
-                searchColumn="name"
                 showFilter={true}
                 filterColumn="role"
                 filterOptions={filterData}
