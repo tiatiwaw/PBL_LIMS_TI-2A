@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import { getReportsColumns } from "@/components/shared/manager/report-columns";
 import { reports } from "@/data/manager/reports";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import ReportDetailsDialog from "@/components/shared/manager/report-validation-dialog";
 import { router } from "@inertiajs/react";
 
 const filterData = [
