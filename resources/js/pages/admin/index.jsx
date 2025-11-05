@@ -1,17 +1,39 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import axios from 'axios';
 import { TrendingUp, Activity, AlertCircle } from "lucide-react";
 import { Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import StatCard from '@/components/shared/card/stat-card';
-import { equipmentUsage, monthlyTrend, recentActivity, stats } from '@/data/admin/beranda';
+import { recentActivity, stats } from '@/data/admin/beranda';
 import DashboardLayout from '@/components/layouts/dashboard-layout';
+import { usePage } from '@inertiajs/react';
 
 export default function AdminDashboard() {
+  const [monthlyTrend, setMonthlyTrend] = useState([]);
   const user = {
     name: 'Yapi',
     role: 'Manager',
     avatar: 'https://i.pravatar.cc/150?img=3',
   };
 
+
+  const {
+    totalUser, 
+    totalEquipment, 
+    totalReagent, 
+    totalSample, 
+    totalParameter, 
+    totalMethod, 
+    monthlyTrendData,
+    resourceDistribution,
+  } = usePage().props;
+
+  stats[0].value = totalUser
+  stats[1].value = totalEquipment;
+  stats[2].value = totalReagent;
+  stats[3].value = totalSample;
+  stats[4].value = totalParameter;
+  stats[5].value = totalMethod;
+  
   return (
     <DashboardLayout title="Dashboard Admin" user={user} header="Selamat Datang, Admin!">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -32,7 +54,7 @@ export default function AdminDashboard() {
               <Activity className="w-6 h-6 text-emerald-600" />
             </div>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={monthlyTrend}>
+              <AreaChart data={monthlyTrendData}>
                 <defs>
                   <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
@@ -55,7 +77,7 @@ export default function AdminDashboard() {
                   }}
                 />
                 <Legend />
-                <Area type="monotone" dataKey="users" stroke="#10b981" fillOpacity={1} fill="url(#colorUsers)" name="Users" strokeWidth={2} />
+                <Area type="monotone" dataKey="clients" stroke="#10b981" fillOpacity={1} fill="url(#colorUsers)" name="Clients" strokeWidth={2} />
                 <Area type="monotone" dataKey="sampel" stroke="#3b82f6" fillOpacity={1} fill="url(#colorSampel)" name="Sampel" strokeWidth={2} />
                 <Line type="monotone" dataKey="pengujian" stroke="#8b5cf6" strokeWidth={2} name="Pengujian" dot={{ fill: '#8b5cf6', r: 4 }} />
               </AreaChart>
@@ -72,7 +94,7 @@ export default function AdminDashboard() {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={equipmentUsage}
+                  data={resourceDistribution}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -80,7 +102,7 @@ export default function AdminDashboard() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {equipmentUsage.map((entry, index) => (
+                  {resourceDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -95,7 +117,7 @@ export default function AdminDashboard() {
               </PieChart>
             </ResponsiveContainer>
             <div className="grid grid-cols-2 gap-2 mt-4">
-              {equipmentUsage.map((item, index) => (
+              {resourceDistribution.map((item, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
                   <span className="text-xs text-gray-600">{item.name}</span>
