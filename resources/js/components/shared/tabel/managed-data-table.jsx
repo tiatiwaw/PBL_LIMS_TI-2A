@@ -16,7 +16,6 @@ export default function ManagedDataTable({
 
     // Props buat Konfigurasi
     filterOptions = [],
-    searchColumn = "name",
     filterColumn = "status",
     showSearch = true,
     showFilter = false,
@@ -37,7 +36,6 @@ export default function ManagedDataTable({
         data,
         defaultPageSize: pageSize,
         filterColumn,
-        searchColumn,
         showFilter,
         showSearch,
     });
@@ -49,7 +47,7 @@ export default function ManagedDataTable({
     });
     const [deleteDialog, setDeleteDialog] = useState({ open: false, data: null });
 
-    const handleOpenCreate = (row) => {
+    const handleOpenCreate = () => {
         setFormDialog({ open: true, data: null, mode: 'create' });
     };
 

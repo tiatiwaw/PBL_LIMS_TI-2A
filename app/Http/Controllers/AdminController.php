@@ -62,6 +62,18 @@ class AdminController extends Controller
         return Inertia::render('admin/test/category/index');
     }
 
+    public function orders()
+    {
+        return Inertia::render('admin/orders/index');
+    }
+
+    public function detailOrder()
+    {
+        return Inertia::render('admin/detail/index', [
+            'canValidate' => false,
+        ]);
+    }
+
     public function logActivity()
     {
         return Inertia::render('admin/log-activity/index');

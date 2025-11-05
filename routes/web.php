@@ -15,56 +15,60 @@ Route::controller(HomeController::class)->name('index')->group(function () {
 });
 
 // Admin
-Route::prefix('admin')->name('admin')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('.index');
-    Route::prefix('tools')->name('.tools')->group(function () {
-        Route::get('/equipments', [AdminController::class, 'equipment'])->name('.equipments');
-        Route::get('/brands', [AdminController::class, 'brands'])->name('.brands');
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('index');
+    Route::prefix('tools')->name('tools.')->group(function () {
+        Route::get('/equipments', [AdminController::class, 'equipment'])->name('equipments');
+        Route::get('/brands', [AdminController::class, 'brands'])->name('brands');
     });
-    Route::prefix('materials')->name('.materials')->group(function () {
-        Route::get('/reagents', [AdminController::class, 'reagents'])->name('.reagents');
-        Route::get('/grades', [AdminController::class, 'grades'])->name('.grades');
-        Route::get('/suppliers', [AdminController::class, 'suppliers'])->name('.suppliers');
+    Route::prefix('materials')->name('materials.')->group(function () {
+        Route::get('/reagents', [AdminController::class, 'reagents'])->name('reagents');
+        Route::get('/grades', [AdminController::class, 'grades'])->name('grades');
+        Route::get('/suppliers', [AdminController::class, 'suppliers'])->name('suppliers');
     });
-    Route::prefix('test')->name('.test')->group(function () {
-        Route::get('/parameter', [AdminController::class, 'parameter'])->name('.parameter');
-        Route::get('/test-method', [AdminController::class, 'method'])->name('.method');
-        Route::get('/unit-value', [AdminController::class, 'unitValue'])->name('.unit');
-        Route::get('/standard-reference', [AdminController::class, 'standardReference'])->name('.standard');
-        Route::get('/category', [AdminController::class, 'category'])->name('.category');
+    Route::prefix('tests')->name('tests.')->group(function () {
+        Route::get('/parameters', [AdminController::class, 'parameter'])->name('parameters');
+        Route::get('/methods', [AdminController::class, 'method'])->name('methods');
+        Route::get('/units', [AdminController::class, 'unitValue'])->name('units');
+        Route::get('/references', [AdminController::class, 'standardReference'])->name('standards');
+        Route::get('/categories', [AdminController::class, 'category'])->name('categories');
     });
-    Route::get('/log-activity', [AdminController::class, 'logActivity'])->name('.log');
-    Route::get('/users', [AdminController::class, 'users'])->name('.users');
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [AdminController::class, 'orders'])->name('index');
+        Route::get('/detail', [AdminController::class, 'detailOrder'])->name('detail');
+    });
+    Route::get('/activities', [AdminController::class, 'logActivity'])->name('activities');
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
 });
 
 // Analyst
 Route::prefix('analyst')->name('analyst')->group(function () {
-    Route::get('/', [AnalystController::class, 'index'])->name('.index');
-    Route::get('/inbox', [AnalystController::class, 'inbox'])->name('.inbox');
-    Route::get('/history', [AnalystController::class, 'history'])->name('.history');
+    Route::get('/', [AnalystController::class, 'index'])->name('index');
+    Route::get('/inbox', [AnalystController::class, 'inbox'])->name('inbox');
+    Route::get('/history', [AnalystController::class, 'history'])->name('history');
 });
 
 //Manager
-Route::prefix('manager')->name('manager')->group(function () {
-    Route::get('/', [ManagerController::class, 'index'])->name('.index');
-    Route::prefix('report-validation')->name('.report')->group(function () {
-        Route::get('/', [ManagerController::class, 'reportValidation'])->name('.index');
-        Route::get('/detail', [ManagerController::class, 'detailValidation'])->name('.detail');
+Route::prefix('manager')->name('manager.')->group(function () {
+    Route::get('/', [ManagerController::class, 'index'])->name('index');
+    Route::prefix('report-validation')->name('report.')->group(function () {
+        Route::get('/', [ManagerController::class, 'reportValidation'])->name('index');
+        Route::get('/detail', [ManagerController::class, 'detailValidation'])->name('detail');
     });
-    Route::prefix('orders')->name('.orders')->group(function () {
-        Route::get('/', [ManagerController::class, 'orders'])->name('.index');
-        Route::get('/detail', [ManagerController::class, 'detailOrder'])->name('.detail');
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [ManagerController::class, 'orders'])->name('index');
+        Route::get('/detail', [ManagerController::class, 'detailOrder'])->name('detail');
     });
-    Route::get('/users', [ManagerController::class, 'users'])->name('.users');
+    Route::get('/users', [ManagerController::class, 'users'])->name('users');
 });
 
 // Staff
 Route::prefix('staff')->name('staff')->group(function () {
     Route::redirect('/', '/staff/manage-clients');
 
-    Route::get('/manage-clients', [StaffController::class, 'managementClient'])->name('.clients');
-    Route::get('/samples', [StaffController::class, 'sample'])->name('.sample');
-    Route::get('/orders', [StaffController::class, 'order'])->name('.order');
+    Route::get('/manage-clients', [StaffController::class, 'managementClient'])->name('clients');
+    Route::get('/samples', [StaffController::class, 'sample'])->name('sample');
+    Route::get('/orders', [StaffController::class, 'order'])->name('order');
 });
 
 // Login
