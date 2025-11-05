@@ -2,8 +2,8 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import UserDetailsDialog from "@/components/shared/dialog/user-dialog";
 import { getUsersColumns } from "@/components/shared/manager/user-columns";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { users } from "@/data/admin/users";
 import { useMemo, useState } from "react";
+import { usePage } from "@inertiajs/react";
 
 const filterData = [
     { value: "all", label: "All Role" },
@@ -23,8 +23,9 @@ export default function ManagerUsersPage({ auth, usersData }) {
         setIsDialogOpen(true);
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = usersData || users;
+    const page = usePage();
+    const currentUser = auth?.user || page?.props?.auth?.user || { name: "Manager", role: "Manager" };
+    const parameters = usersData || page?.props?.usersData || [];
 
     const columns = useMemo(() => getUsersColumns({ onShowDetail: handleShowDetail }), []);
 

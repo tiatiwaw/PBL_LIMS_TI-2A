@@ -32,10 +32,12 @@ import {
     ArrowDown,
     Pencil,
 } from "lucide-react";
-import { detailOrder } from "@/data/manager/detail";
+import { detailOrder as mockDetail } from "@/data/manager/detail";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 
-export default function DetailOrder({ auth }) {
+export default function DetailOrder({ auth, detailData }) {
+    // Prefer data from server if provided; fallback to mock
+    const detailOrder = detailData || mockDetail;
     const [selectedSampleId, setSelectedSampleId] = useState(
         detailOrder.samples[0].id.toString()
     );

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { orders } from "@/data/manager/orders";
+import { usePage } from "@inertiajs/react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
@@ -24,8 +24,9 @@ export default function OrdersPage({ auth, ordersData }) {
         setIsDialogOpen(true);
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = ordersData || orders;
+    const page = usePage();
+    const currentUser = auth?.user || page?.props?.auth?.user || { name: "Manager", role: "Manager" };
+    const parameters = ordersData || page?.props?.ordersData || [];
 
     const columns = useMemo(() => getOrdersColumns({  onShowDetail: handleShowDetail}), []);
 

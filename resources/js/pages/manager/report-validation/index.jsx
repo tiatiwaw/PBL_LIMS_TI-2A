@@ -1,7 +1,7 @@
 import DashboardLayout from "../../../components/layouts/dashboard-layout";
 import { useMemo, useState } from "react";
+import { usePage } from "@inertiajs/react";
 import { getReportsColumns } from "@/components/shared/manager/report-columns";
-import { reports } from "@/data/manager/reports";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import ReportDetailsDialog from "@/components/shared/dialog/report-validation-dialog";
 
@@ -26,8 +26,9 @@ export default function ReportValidationPage({ auth, reportData }) {
 
     const columns = useMemo(() => getReportsColumns({ onShowDetail: handleShowDetail }), []);
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = reportData || reports;
+    const page = usePage();
+    const currentUser = auth?.user || page?.props?.auth?.user || { name: "Manager", role: "Manager" };
+    const parameters = reportData || page?.props?.reportData || [];
 
     return (
         <DashboardLayout
@@ -38,7 +39,7 @@ export default function ReportValidationPage({ auth, reportData }) {
             <ManagedDataTable
                 data={parameters}
                 columns={columns}
-                searchColumn="name"
+                searchColumn="sample"
                 showFilter={true}
                 filterColumn="status"
                 filterOptions={filterData}
