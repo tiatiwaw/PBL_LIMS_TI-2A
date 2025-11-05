@@ -75,15 +75,22 @@ Route::middleware(['auth', 'analyst'])
     });
 
 //Manager
-Route::prefix('manager')->name('manager')->group(function () {
-    Route::get('/', [ManagerController::class, 'index'])->name('.index');
-    Route::prefix('report-validation')->name('.report')->group(function () {
-        Route::get('/', [ManagerController::class, 'reportValidation'])->name('.index');
-        Route::get('/detail', [ManagerController::class, 'detailOrder'])->name('.detail');
+Route::middleware(['auth', 'manager'])
+    ->prefix('manager')
+    ->name('manager.')
+    ->group(function () {
+        Route::get('/', [ManagerController::class, 'index'])->name('index');
+
+        Route::prefix('report-validation')
+            ->name('report.validation.')
+            ->group(function () {
+                Route::get('/', [ManagerController::class, 'reportValidation'])->name('index');
+                Route::get('/detail', [ManagerController::class, 'detailOrder'])->name('detail');
+        });
+
+        Route::get('/orders', [ManagerController::class, 'orders'])->name('orders');
+        Route::get('/users', [ManagerController::class, 'users'])->name('users');
     });
-    Route::get('/orders', [ManagerController::class, 'orders'])->name('.orders');
-    Route::get('/users', [ManagerController::class, 'users'])->name('.users');
-});
 
 // Staff
 Route::middleware(['auth', 'staff'])
