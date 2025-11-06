@@ -27,12 +27,25 @@ const dashboard = () => {
 
     const columns = useMemo(() => getOrdersColumns(), []);
 
+    const statCardsData = [
+        { title: 'Total Sampel', value: 20, subtitle: 'Berdasarkan Bulan Terakhir', IconComponent: ClipboardList },
+        { title: 'Sedang Diuji', value: 20, subtitle: 'Berdasarkan Bulan Terakhir', IconComponent: Clock10Icon },
+        { title: 'Selesai', value: 20, subtitle: 'Berdasarkan Bulan Terakhir', IconComponent: CheckIcon },
+    ];
+
+    const tableData = [
+        { kode: 'M-10', status: 'Sedang Diuji', tanggal: '12/10/25' },
+        { kode: 'M-09', status: 'Sedang Diuji', tanggal: '10/10/25' },
+        { kode: 'M-08', status: 'Selesai', tanggal: '07/10/25' },
+        { kode: 'M-07', status: 'Selesai', tanggal: '12/10/25' },
+        { kode: 'M-02', status: 'Selesai', tanggal: '12/10/25' },
+    ];
 
     return (
         <DashboardLayout title="Client" user={user} header='Selamat Datang Client!'>
             <div className="w-full max-w-5xl mx-auto flex flex-col gap-8">
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> 
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {stats.map((stat, index) => (
                         <StatCard key={index} stat={stat} />
                     ))}
