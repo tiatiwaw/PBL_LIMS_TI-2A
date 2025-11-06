@@ -2,22 +2,27 @@
 
 namespace App\Http\Controllers;
 
-// --- Impor Model ---
 use App\Models\Client;
 use App\Models\User;
 use App\Models\Sample;
 use App\Models\SampleCategory;
-
-// --- Impor Bawaan Laravel ---
+use App\Models\NOrderSample;
+use App\Models\Order;
+use App\Models\AnalysesMethod;
+use App\Models\NAnalysesMethodsOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class StaffController extends Controller
 {
-
+    // ================================
+    // KLIEN
+    // ================================
     public function clientIndex()
     {
         $clients = Client::with('users')->get();
@@ -29,13 +34,11 @@ class StaffController extends Controller
 
     public function clientStore(Request $request)
     {
-        // 1. Validasi data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string',
             'phone_number' => 'required|string',
             'npwp_number' => 'required|string',
-            'pic_name' => 'required|string|max:255',
             'email' => [
                 'required',
                 'email',
@@ -45,15 +48,13 @@ class StaffController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        // 2. Buat USER 
         $user = User::create([
-            'name' => $validatedData['pic_name'],
+            'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
             'role' => 'client',
         ]);
 
-        // 3. Buat CLIENT dan hubungkan user_id-nya
         Client::create([
             'user_id' => $user->id,
             'name' => $validatedData['name'],
@@ -74,7 +75,6 @@ class StaffController extends Controller
             'address' => 'required|string',
             'phone_number' => 'required|string',
             'npwp_number' => 'required|string',
-            'pic_name' => 'required|string|max:255',
             'email' => [
                 'required',
                 'email',
@@ -85,7 +85,7 @@ class StaffController extends Controller
 
         // 2. Update data di tabel User
         $client->users->update([
-            'name' => $validatedData['pic_name'],
+            'name' => $validatedData['name'],
             'email' => $validatedData['email'],
         ]);
 
@@ -111,96 +111,116 @@ class StaffController extends Controller
         return Redirect::route('staff.client.index')->with('success', 'Klien berhasil dihapus.');
     }
 
-
-    // =========================================================================
-    // --- MANAJEMEN SAMPLE 
-    // =========================================================================
-
-    public function sampleIndex()
-    {
-        $samples = Sample::with('sample_categories')->get();
-
-        return Inertia::render('staff/samples/index', [
-            'samplesData' => $samples,
-        ]);
-    }
-
-    public function sampleCreate()
-    {
-        $categories = SampleCategory::all();
-
-        return Inertia::render('staff/samples/create', [
-            'categories' => $categories,
-        ]);
-    }
+    // ================================
+    // SAMPLE
+    // ================================
 
     public function sampleStore(Request $request)
     {
         $validatedData = $request->validate([
-            'sample_category_id' => 'required|exists:sample_categories,id',
-            'name' => 'required|string|max:255',
-            'form' => 'required|string',
-            'preservation_method' => 'required|string',
-            'sample_volume' => 'required|numeric',
-            'condition' => 'required|string',
-            'storage_condition' => 'required|string',
-            'temperature' => 'required|string',
+            'sample_category_id' => ['required', 'exists:sample_categories,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'form' => ['required', 'string'],
+            'preservation_method' => ['required', 'string'],
+            'condition' => ['required', 'string'],
+            'storage_condition' => ['required', 'string'],
         ]);
 
-        Sample::create($validatedData);
-
-        return Redirect::route('staff.sample.index')->with('success', 'Sample baru berhasil dibuat.');
-    }
-
-    public function sampleEdit(Sample $sample)
-    {
-        $categories = SampleCategory::all();
-
-        return Inertia::render('staff/samples/edit', [
-            'sample' => $sample,
-            'categories' => $categories,
-        ]);
-    }
-
-    public function sampleUpdate(Request $request, Sample $sample)
-    {
-        $validatedData = $request->validate([
-            'sample_category_id' => 'required|exists:sample_categories,id',
-            'name' => 'required|string|max:255',
-            'form' => 'required|string',
-            'preservation_method' => 'required|string',
-            'sample_volume' => 'required|numeric',
-            'condition' => 'required|string',
-            'storage_condition' => 'required|string',
-            'temperature' => 'required|string',
+        $newSample = Sample::create([
+            'sample_category_id' => $validatedData['sample_category_id'],
+            'name' => $validatedData['name'],
+            'form' => $validatedData['form'],
+            'preservation_method' => $validatedData['preservation_method'],
+            'condition' => $validatedData['condition'],
+            'storage_condition' =>  $validatedData['storage_condition'],
         ]);
 
-        $sample->update($validatedData);
-
-        return Redirect::route('staff.sample.index')->with('success', 'Data sample berhasil diperbarui.');
+        return back();
     }
 
-    public function sampleDestroy(Sample $sample)
-    {
-        $sample->delete();
-        return Redirect::route('staff.sample.index')->with('success', 'Sample berhasil dihapus.');
-    }
-
-
-    // =========================================================================
-    // --- MANAJEMEN ORDER 
-    // =========================================================================
-
+    // ================================
+    // ORDER
+    // ================================
     public function order()
     {
-        $samples = \App\Models\Sample::all();
-        $methods = \App\Models\AnalysesMethod::all();
-        $clients = \App\Models\Client::all();
+        $samples = Sample::with('sample_categories')->get();
+        $methods = AnalysesMethod::all();
+        $clients = Client::all();
+        $categories = SampleCategory::all();
+        // 🔹 Buat nomor order otomatis
+        $lastOrder = Order::latest('id')->first();
+        $nextNumber = str_pad(($lastOrder ? $lastOrder->id + 1 : 1), 4, '0', STR_PAD_LEFT);
+        $orderNumber = 'ORD-' . now('Asia/Jakarta')->format('Ymd') . '-' . $nextNumber;
 
         return Inertia::render('staff/orders/index', [
-        'samples' => $samples,
-        'methods' => $methods,
-        'clients' => $clients,
+            'samples' => $samples,
+            'methods' => $methods,
+            'clients' => $clients,
+            'categories' => $categories,
+            'orderNumber' => $orderNumber,
         ]);
+    }
+
+    public function storeOrder(Request $request)
+    {
+        $data = $request->validate([
+            'selectedKlien.id' => ['required', 'exists:clients,id'],
+            'nomorOrder' => ['required', 'string'],
+            'judulOrder' => ['required', 'string'],
+            'metodeAnalisis' => ['array'],
+            'metodeAnalisis.*.id' => ['nullable', 'integer'],
+            'metodeAnalisis.*.price' => ['nullable', 'integer'],
+            'metodeAnalisis.*.description' => ['nullable', 'string'],
+            'tipeOrder' => ['required', 'string', 'in:internal,regular,external,urgent'],
+            'tanggalOrder' => ['nullable', 'date'],
+            'estimasiSelesai' => ['nullable', 'date'],
+            'catatan' => ['nullable', 'string'],
+            'totalHarga' => ['required', 'integer'],
+            'samples' => ['array'],
+            'samples.*.id' => ['nullable', 'integer'],
+            'samples.*.name' => ['nullable', 'string'],
+            'samples.*.form' => ['nullable', 'string'],
+            'samples.*.condition' => ['nullable', 'string'],
+            'samples.*.sample_category_id' => ['nullable', 'integer'],
+            'samples.*.sample_volume' => ['nullable', 'string'],
+        ]);
+
+        DB::transaction(function () use ($data) {
+            // 🔹 Simpan order utama
+            $order = Order::create([
+                'client_id' => $data['selectedKlien']['id'],
+                'order_number' => $data['nomorOrder'],
+                'title' => $data['judulOrder'],
+                'result_value' => '-',
+                'order_date' => now('Asia/Jakarta')->toDateString(),
+                'estimate_date' => $data['estimasiSelesai'] ?? null,
+                'report_issued_at' => null,
+                'report_file_path' => '-',
+                'notes' => $data['catatan'] ?? '-',
+                'order_type' => $data['tipeOrder'],
+                'status' => 'received',
+            ]);
+
+            // 🔹 Simpan sample order
+            foreach ($data['samples'] as $sampleData) {
+                NOrderSample::create([
+                    'order_id' => $order->id,
+                    'sample_id' => $sampleData['id'],
+                    'sample_volume' => $sampleData['sample_volume'] ?? null,
+                ]);
+            }
+
+            // simpan analyses method order
+            foreach ($data['metodeAnalisis'] as $methodData) {
+                NAnalysesMethodsOrder::create([
+                    'order_id' => $order->id,
+                    'analyses_method_id' => $methodData['id'],
+                    'price' => $data['totalHarga'],
+                    'description' => $methodData['description'] ?? '-',
+                ]);
+            }
+        });
+
+        return redirect()->route('staff.order.index')->with('success', 'Order berhasil dibuat!');
     }
 }
