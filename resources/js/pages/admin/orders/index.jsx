@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { orders } from "@/data/manager/orders";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
-import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { router } from "@inertiajs/react";
+import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -15,7 +15,7 @@ const filterData = [
     { value: "Received", label: "Received" },
 ];
 
-export default function OrdersPage({ auth, ordersData }) {
+export default function AdminOrdersPage({ auth, ordersData }) {
     const handleShowDetail = () => {
         router.visit(route("manager.orders.detail"));
     };
@@ -26,11 +26,12 @@ export default function OrdersPage({ auth, ordersData }) {
     const columns = useMemo(() => getOrdersColumns({ onShowDetail: handleShowDetail }), []);
 
     return (
-        <DashboardLayout title="Orders" user={currentUser} header="Orders">
+        <DashboardLayout title="Manajemen Orderan" user={currentUser} header="Manajemen Orderan">
             <ManagedDataTable
                 data={parameters}
                 columns={columns}
                 showFilter={true}
+                showCreate={false}
                 filterColumn="status"
                 filterOptions={filterData}
             />

@@ -24,7 +24,6 @@ export default function UnitsPage({ auth, unitsData }) {
                 createUrl="admin.test.unit.create"
                 editUrl="admin.test.unit.update"
                 deleteUrl="admin.test.unit.destroy"
-                searchColumn="value"
                 editTitle="Edit Nilai Satuan"
                 deleteTitle="Hapus Nilai Satuan"
             />

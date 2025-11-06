@@ -4,7 +4,6 @@ export function useTable({
     data,
     defaultPageSize = 10,
     filterColumn = "status",
-    searchColumn = "user",
     showFilter = false,
     showSearch = false,
 }) {
@@ -35,7 +34,6 @@ export function useTable({
         showFilter,
         showSearch,
         filterColumn,
-        searchColumn,
     ]);
 
     const totalPages = Math.ceil(filteredData.length / defaultPageSize) || 1;

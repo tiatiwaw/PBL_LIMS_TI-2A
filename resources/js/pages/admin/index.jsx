@@ -58,7 +58,7 @@ export default function AdminDashboard() {
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={monthlyTrendData}>
                 <defs>
-                  <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id="colorClient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
@@ -79,7 +79,7 @@ export default function AdminDashboard() {
                   }}
                 />
                 <Legend />
-                <Area type="monotone" dataKey="clients" stroke="#10b981" fillOpacity={1} fill="url(#colorUsers)" name="Clients" strokeWidth={2} />
+                <Area type="monotone" dataKey="client" stroke="#10b981" fillOpacity={1} fill="url(#colorClient)" name="Client" strokeWidth={2} />
                 <Area type="monotone" dataKey="sampel" stroke="#3b82f6" fillOpacity={1} fill="url(#colorSampel)" name="Sampel" strokeWidth={2} />
                 <Line type="monotone" dataKey="pengujian" stroke="#8b5cf6" strokeWidth={2} name="Pengujian" dot={{ fill: '#8b5cf6', r: 4 }} />
               </AreaChart>

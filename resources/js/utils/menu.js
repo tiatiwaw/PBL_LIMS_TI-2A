@@ -112,34 +112,39 @@ const MENU_CONFIG = {
                 {
                     name: "Parameter",
                     icon: Gauge,
-                    href: "/admin/test/parameter",
+                    href: "/admin/tests/parameters",
                 },
                 {
                     name: "Metode Uji",
                     icon: Microscope,
-                    href: "/admin/test/test-method",
+                    href: "/admin/tests/methods",
                 },
                 {
                     name: "Nilai Satuan",
                     icon: Ruler,
-                    href: "/admin/test/unit-value",
+                    href: "/admin/tests/units",
                 },
                 {
                     name: "Standard Referensi",
                     icon: FileText,
-                    href: "/admin/test/standard-reference",
+                    href: "/admin/tests/references",
                 },
                 {
                     name: "Kategori Sampel",
                     icon: TestTube2,
-                    href: "/admin/test/category",
+                    href: "/admin/tests/categories",
                 },
             ],
         },
         {
+            name: "Order",
+            icon: ShoppingCart,
+            href: "/admin/orders",
+        },
+        {
             name: "Aktivitas Log",
             icon: TrendingUp,
-            href: "/admin/log-activity",
+            href: "/admin/activities",
         },
         {
             name: "Pengguna",
@@ -160,12 +165,12 @@ const MENU_CONFIG = {
             href: "/manager/report-validation",
         },
         {
-            name: "Orders",
+            name: "Order",
             icon: ShoppingCart,
             href: "/manager/orders",
         },
         {
-            name: "Users",
+            name: "Karyawan",
             icon: Users,
             href: "/manager/users",
         },
