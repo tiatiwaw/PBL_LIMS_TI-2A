@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { orders } from "@/data/manager/orders";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
 import { router } from "@inertiajs/react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
+import { orders } from "@/data/manager/detail";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -16,8 +16,8 @@ const filterData = [
 ];
 
 export default function AdminOrdersPage({ auth, ordersData }) {
-    const handleShowDetail = () => {
-        router.visit(route("manager.orders.detail"));
+    const handleShowDetail = (data) => {
+        router.visit(route("admin.orders.detail", data.id));
     };
 
     const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };

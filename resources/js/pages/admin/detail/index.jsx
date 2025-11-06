@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { detailOrder } from "@/data/manager/detail";
+import { detailOrder, orders } from "@/data/manager/detail";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { ClientInfoCard, OrderDetailHeader, SampleSelector, AnalysisMethodCard, AnalystTeamCard, EquipmentCard, MethodInfoCard, NotesCard, ParameterInfoCard, ReagentCard, SampleInfoCard } from "@/components/shared/manager/detail";
 
 export default function DetailOrder({ auth, canValidate }) {
+    const { id } = useParams();
+    const order = useMemo(
+        () => orders.find((o) => o.id.toString() === id.toString()),
+        [id]
+    );
+
     const [loading, setLoading] = useState(false);
     const [selectedSampleId, setSelectedSampleId] = useState(
         detailOrder.parameter_methods[0].id.toString()

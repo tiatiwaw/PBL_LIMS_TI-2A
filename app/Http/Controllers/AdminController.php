@@ -160,12 +160,20 @@ class AdminController extends Controller
         return Inertia::render('admin/orders/index');
     }
 
-    public function detailOrder()
+    public function showOrder($id)
     {
-        return Inertia::render('admin/detail/index', [
+        $order = Order::with(['client', 'analysts', 'parameter_methods.parameter', 'parameter_methods.method'])
+            ->findOrFail($id);
+
+        return inertia('admin/orders/detail', [
+            'auth' => [
+                'user' => auth()->user(),
+            ],
+            'order' => $order,
             'canValidate' => false,
         ]);
     }
+
 
     public function logActivity()
     {

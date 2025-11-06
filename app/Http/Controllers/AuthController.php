@@ -35,6 +35,9 @@ class AuthController extends Controller
             if ($user->hasRole('manager')) {
                 return redirect()->intended('/manager'); // Arahkan ke halaman manager
             }
+            if ($user->hasRole('client')) {
+                return redirect()->intended('/client'); // Arahkan ke halaman manager
+            }
 
             return redirect()->intended('/profile'); // Arahkan ke halaman profil
         }

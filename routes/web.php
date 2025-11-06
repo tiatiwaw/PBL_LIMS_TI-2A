@@ -105,8 +105,13 @@ Route::controller(AdminController::class)
             Route::delete('/{id}', 'destroyUser')->name('destroy');
         });
 
+        // Orders
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', 'orders')->name('index');
+            Route::get('/{id}', 'detailOrder')->name('detail');
+        });
+        
         // Additional Routes
-        Route::get('/orders', 'orders')->name('orders');
         Route::get('/activities', 'activities')->name('activities');
         Route::get('/log-activity', 'logActivity')->name('log');
     });
