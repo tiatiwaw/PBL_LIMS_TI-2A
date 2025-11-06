@@ -10,8 +10,6 @@ import {
     TrendingUp,
     Users,
     ShoppingCart,
-    Mail,
-    History,
     Factory,
     Building2,
     Ruler,
@@ -20,7 +18,6 @@ import {
     TestTube2,
     ChartArea,
     ListCheck,
-    ChartArea,
     Inbox,
     ScrollText,
 } from "lucide-react";

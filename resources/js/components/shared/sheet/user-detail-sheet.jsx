@@ -1,18 +1,18 @@
 import DetailSheet from "@/components/layouts/detail-sheet";
 
-export default function UserDetailSheet({ user, isOpen, onOpenChange }) {
-    if (!user) return null;
+export default function UserDetailSheet({ data, isOpen, onOpenChange }) {
+    if (!data) return null;
 
     return (
         <DetailSheet
             open={isOpen}
             onOpenChange={onOpenChange}
-            title={`Detail User #${user.id}`}
-            description={`Detail user dari ${user.name}.`}
+            title={`Detail User #${data.id}`}
+            description={`Detail user dari ${data.name}.`}
             fields={[
-                { label: "Nama", value: user.name },
-                { label: "Role", value: user.role },
-                { label: "Email", value: user.email },
+                { label: "Nama", value: data.name },
+                { label: "Role", value: data.role },
+                { label: "Email", value: data.email },
             ]}
         />
     );

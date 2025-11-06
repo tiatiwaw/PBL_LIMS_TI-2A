@@ -35,6 +35,6 @@ class ClientController extends Controller
             ->limit(10)
             ->get(['id', 'name', 'email', 'phone']);
 
-        return response()->json($clients);
+        return $clients;
     }
 }

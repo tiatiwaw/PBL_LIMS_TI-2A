@@ -49,7 +49,7 @@ export default function ClientPage({ auth, clientData }) {
                 deleteTitle="Hapus Client"
             />
             <ClientDetailSheet
-                client={selectedClient}
+                data={selectedClient}
                 isOpen={isOpen}
                 onOpenChange={setIsOpen}
             />

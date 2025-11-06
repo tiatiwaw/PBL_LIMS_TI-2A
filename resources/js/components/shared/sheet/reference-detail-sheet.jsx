@@ -16,7 +16,7 @@ export default function ReferenceDetailSheet({ data, isOpen, onOpenChange }) {
             title={`Detail Referensi #${data.id}`}
             description={`Detail Referensi ${data.name}.`}
             fields={[
-                { label: "Nama Alat", value: data.name },
+                { label: "Nama Referensi", value: data.name },
             ]}
         />
 

@@ -45,7 +45,7 @@ export default function EquipmentsPage({ auth, toolsData }) {
                 editTitle="Edit Peralatan"
                 deleteTitle="Hapus Peralatan"
             />
-            <EquipmentDetailSheet equipment={selectedEquipment} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <EquipmentDetailSheet data={selectedEquipment} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }

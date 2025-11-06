@@ -1,20 +1,20 @@
 import DetailSheet from "@/components/layouts/detail-sheet";
 
-export default function ClientDetailSheet({ client, isOpen, onOpenChange }) {
-    if (!client) return null;
+export default function ClientDetailSheet({ data, isOpen, onOpenChange }) {
+    if (!data) return null;
 
     return (
         <DetailSheet
             open={isOpen}
             onOpenChange={onOpenChange}
-            title={`Detail Client #${client.id}`}
-            description={`Detail Client dari ${client.name}.`}
+            title={`Detail Client #${data.id}`}
+            description={`Detail Client dari ${data.name}.`}
             fields={[
-                { label: "Nama Client", value: client.name },
-                { label: "Email", value: client.email },
-                { label: "Alamat", value: client.address },
-                { label: "Nomor Telepon", value: client.phone_number },
-                { label: "NPWP", value: client.npwp_number },
+                { label: "Nama Client", value: data.name },
+                { label: "Email", value: data.email },
+                { label: "Alamat", value: data.address },
+                { label: "Nomor Telepon", value: data.phone_number },
+                { label: "NPWP", value: data.npwp_number },
             ]}
         />
     );

@@ -37,7 +37,7 @@ export default function BrandsPage({ auth, brandsData }) {
                 editTitle="Edit Pengguna"
                 deleteTitle="Hapus Pengguna"
             />
-            <BrandDetailSheet equipment={selectedEquipment} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <BrandDetailSheet data={selectedEquipment} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }

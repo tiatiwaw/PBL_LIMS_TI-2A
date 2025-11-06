@@ -41,7 +41,7 @@ Route::controller(AdminController::class)
 
         // Tools
         Route::prefix('tools')->name('tools.')->group(function () {
-            Route::get('/equipments', 'equipment')->name('equipments');
+            Route::get('/equipments', 'equipments')->name('equipments');
             Route::post('/equipments', 'storeEquipment')->name('equipments.store');
             Route::put('/equipments/{id}', 'updateEquipment')->name('equipments.update');
             Route::delete('/equipments/{id}', 'destroyEquipment')->name('equipments.destroy');
@@ -86,10 +86,10 @@ Route::controller(AdminController::class)
             Route::put('/units/{id}', 'updateUnit')->name('units.update');
             Route::delete('/units/{id}', 'destroyUnit')->name('units.destroy');
 
-            Route::get('/standards', 'standards')->name('standards');
-            Route::post('/standards', 'storeStandard')->name('standards.store');
-            Route::put('/standards/{id}', 'updateStandard')->name('standards.update');
-            Route::delete('/standards/{id}', 'destroyStandard')->name('standards.destroy');
+            Route::get('/references', 'references')->name('references');
+            Route::post('/references', 'storeStandard')->name('references.store');
+            Route::put('/references/{id}', 'updateStandard')->name('references.update');
+            Route::delete('/references/{id}', 'destroyStandard')->name('references.destroy');
 
             Route::get('/categories', 'categories')->name('categories');
             Route::post('/categories', 'storeCategory')->name('categories.store');
@@ -111,9 +111,8 @@ Route::controller(AdminController::class)
             Route::get('/{id}', 'detailOrder')->name('detail');
         });
 
-        // Additional Routes
+        // Log Activity
         Route::get('/activities', 'activities')->name('activities');
-        Route::get('/log-activity', 'logActivity')->name('log');
     });
 
 // Manager

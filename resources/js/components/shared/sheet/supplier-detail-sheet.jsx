@@ -17,7 +17,7 @@ export default function SupplierDetailSheet({ data, isOpen, onOpenChange }) {
             description={`Detail Supplier ${data.name}.`}
             fields={[
                 { label: "Nama Supplier", value: data.name },
-                { label: "Telephone", value: data.phone },
+                { label: "Telephone", value: data.phone_number },
                 { label: "alamat", value: data.address },
 
             ]}

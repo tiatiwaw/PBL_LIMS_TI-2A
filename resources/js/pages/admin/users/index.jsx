@@ -45,7 +45,7 @@ export default function AdminUsersPage({ auth, usersData }) {
                 deleteTitle="Hapus Pengguna"
             />
             <UserDetailSheet
-                user={selectedUser}
+                data={selectedUser}
                 isOpen={isOpen}
                 onOpenChange={setIsOpen}
             />

@@ -38,7 +38,7 @@ export default function AdminActivitiesPage({ auth, activityData }) {
                 filterColumn="role"
                 filterOptions={filterData}
             />
-            <ActivityDetailSheet isOpen={isOpen} onOpenChange={setIsOpen} activity={selectedActivity} />
+            <ActivityDetailSheet isOpen={isOpen} onOpenChange={setIsOpen} data={selectedActivity} />
         </DashboardLayout>
     );
 }

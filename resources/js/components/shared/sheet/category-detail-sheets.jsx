@@ -1,11 +1,5 @@
 import DetailSheet from "@/components/layouts/detail-sheet";
 
-const statusVariantMap = {
-    active: "success",
-    maintenance: "warning",
-    broken: "error",
-};
-
 export default function CategoryDetailSheet({ data, isOpen, onOpenChange }) {
     if (!data) return null;
 

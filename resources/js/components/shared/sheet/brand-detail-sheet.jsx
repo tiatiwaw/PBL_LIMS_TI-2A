@@ -1,22 +1,16 @@
 import DetailSheet from "@/components/layouts/detail-sheet";
 
-const statusVariantMap = {
-    active: "success",
-    maintenance: "warning",
-    broken: "error",
-};
-
-export default function BrandDetailSheet({ equipment, isOpen, onOpenChange }) {
-    if (!equipment) return null;
+export default function BrandDetailSheet({ data, isOpen, onOpenChange }) {
+    if (!data) return null;
 
     return (
         <DetailSheet
             open={isOpen}
             onOpenChange={onOpenChange}
-            title={`Detail brand #${equipment.id}`}
-            description={`Detail brand ${equipment.name}.`}
+            title={`Detail brand #${data.id}`}
+            description={`Detail brand ${data.name}.`}
             fields={[
-                { label: "Nama Alat", value: equipment.name },
+                { label: "Nama Brand", value: data.name },
             ]}
         />
 

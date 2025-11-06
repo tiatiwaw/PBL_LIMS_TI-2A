@@ -38,7 +38,7 @@ export default function ManagerUsersPage({ auth, usersData }) {
                 showCreate={false}
             />
             <UserDetailSheet
-                user={selectedUser}
+                data={selectedUser}
                 isOpen={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
             />

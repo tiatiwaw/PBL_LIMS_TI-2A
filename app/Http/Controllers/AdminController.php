@@ -105,7 +105,7 @@ class AdminController extends Controller
     }
 
 
-    public function equipment()
+    public function equipments()
     {
         return Inertia::render('admin/tools/equipments/index');
     }
@@ -130,27 +130,27 @@ class AdminController extends Controller
         return Inertia::render('admin/materials/suppliers/index');
     }
 
-    public function parameter()
+    public function parameters()
     {
         return Inertia::render('admin/test/parameter/index');
     }
 
-    public function method()
+    public function methods()
     {
         return Inertia::render('admin/test/method/index');
     }
 
-    public function unitValue()
+    public function units()
     {
         return Inertia::render('admin/test/unit-value/index');
     }
 
-    public function standardReference()
+    public function references()
     {
         return Inertia::render('admin/test/standard-reference/index');
     }
 
-    public function category()
+    public function categories()
     {
         return Inertia::render('admin/test/category/index');
     }
@@ -167,7 +167,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function logActivity()
+    public function activities()
     {
         return Inertia::render('admin/log-activity/index');
     }
