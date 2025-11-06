@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->date('issued_date');
             $table->date('expired_date');
-            $table->string('filed_path');
+            $table->string('file_path');
             $table->timestamps();
         });
     }
