@@ -9,6 +9,8 @@ class NAnalysesMethodsOrder extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'order_id',
+        'analyses_method_id',
         'description',
         'price'
     ];

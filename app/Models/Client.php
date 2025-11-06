@@ -18,7 +18,7 @@ class Client extends Model
         "npwp_number"
     ];
 
-    public function user()
+    public function users()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
