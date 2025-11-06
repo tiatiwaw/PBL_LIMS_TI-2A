@@ -2,74 +2,72 @@ import React from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { UserCog, Users, BarChart3, ClipboardList, User } from "lucide-react";
+import { User } from "lucide-react";
 
 export default function ProfileLayout({ user }) {
-  // Map ikon dan warna berdasarkan role
+  // Role config dengan ikon sudah diberi warna agar muncul
   const roleConfig = {
-    Manager: { icon: <UserCog size={60} className="text-blue-500" />, color: "from-blue-500 to-blue-700", description: "Bertanggung jawab atas pengelolaan tim dan pengambilan keputusan strategis." },
-    Staff: { icon: <Users size={60} className="text-green-500" />, color: "from-green-500 to-green-700", description: "Melaksanakan tugas operasional sesuai dengan instruksi atasan." },
-    Supervisor: { icon: <ClipboardList size={60} className="text-yellow-500" />, color: "from-yellow-500 to-yellow-700", description: "Mengawasi dan memastikan kualitas kerja anggota tim." },
-    Analyst: { icon: <BarChart3 size={60} className="text-purple-500" />, color: "from-purple-500 to-purple-700", description: "Menganalisis data dan memberikan laporan untuk mendukung pengambilan keputusan." },
-    Client: { icon: <User size={60} className="text-teal-500" />, color: "from-teal-500 to-teal-700", description: "Menggunakan layanan dan menerima hasil analisis dari tim laboratorium." },
+    Manager: { icon: <User size={60} className="text-[#024D60]" />, description: "Bertanggung jawab atas pengelolaan tim dan pengambilan keputusan strategis." },
+    Staff: { icon: <User size={60} className="text-[#024D60]" />, description: "Melaksanakan tugas operasional sesuai instruksi atasan." },
+    Supervisor: { icon: <User size={60} className="text-[#024D60]" />, description: "Mengawasi kualitas kerja anggota tim." },
+    Analyst: { icon: <User size={60} className="text-[#024D60]" />, description: "Menganalisis data dan memberi laporan." },
+    Client: { icon: <User size={60} className="text-[#024D60]" />, description: "Menggunakan layanan dan menerima hasil analisis dari tim laboratorium." },
   };
 
-  const { icon, color, description } = roleConfig[user.role] || roleConfig["Client"];
-
-  // Properti tambahan selain name, email, role
+  const { icon, description } = roleConfig[user.role] || roleConfig["Client"];
   const baseKeys = ["name", "email", "role"];
   const extraKeys = Object.keys(user).filter((key) => !baseKeys.includes(key));
 
   return (
     <DashboardLayout title="Profil Pengguna" user={user}>
-      <div className="max-w-3xl mx-auto space-y-6">
-        {/* Header Profil */}
-        <Card className={`bg-gradient-to-r ${color} text-white shadow-lg rounded-2xl border-none`}>
-          <CardHeader className="flex flex-col items-center text-center space-y-4">
-            {icon}
-            <CardTitle className="text-2xl font-bold">{user.name}</CardTitle>
-            <p className="text-sm opacity-90">{user.role}</p>
-          </CardHeader>
-          <CardContent className="text-center pb-6">
-            <p className="text-white/90 text-sm max-w-md mx-auto">{description}</p>
-          </CardContent>
-        </Card>
+      <div className="w-full flex justify-center py-6">
+        <div className="w-full max-w-5xl bg-[#E8F5FF] p-6 rounded-lg">
 
-        {/* Informasi Akun */}
-        <Card className="bg-white shadow-lg rounded-2xl border border-gray-200">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-gray-800">Informasi Akun</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <p className="text-sm text-gray-500">Nama Lengkap</p>
-              <p className="text-base font-medium text-gray-800">{user.name}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p className="text-base font-medium text-gray-800">{user.email || "user@example.com"}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Peran</p>
-              <p className="text-base font-medium text-gray-800">{user.role}</p>
-            </div>
+          {/* Layout kiri & kanan */}
+          <div className="flex flex-col md:flex-row gap-6">
 
-            {/* Render properti tambahan secara dinamis */}
-            {extraKeys.map((key) => (
-              <div key={key}>
-                <p className="text-sm text-gray-500">{key.charAt(0).toUpperCase() + key.slice(1)}</p>
-                <p className="text-base font-medium text-gray-800">
-                  {Array.isArray(user[key]) ? user[key].join(", ") : user[key]}
-                </p>
+            {/* === KIRI: CARD FOTO & ROLE === */}
+            <div className="bg-[#024D60] text-white rounded-xl w-full md:w-1/3 p-6 flex flex-col items-center shadow-md">
+              <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center">
+                {icon}
               </div>
-            ))}
-          </CardContent>
-        </Card>
+              <h3 className="mt-4 text-lg font-bold uppercase">{user.role || "Client"}</h3>
+              <p className="text-xs text-center mt-2 opacity-80">{description}</p>
+            </div>
 
-        {/* Tombol Aksi */}
-        <div className="flex justify-end gap-3">
-          <Button className="bg-primary-hijauTua hover:bg-primary-hijauTerang text-white">Edit Profil</Button>
-          <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-100">Kembali</Button>
+            {/* === KANAN: INFORMASI AKUN === */}
+            <Card className="w-full md:w-2/3 rounded-xl shadow-md border border-gray-200">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold text-gray-800">Informasi Akun</CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-2 gap-y-4 text-sm">
+                <p className="text-gray-600">Nama</p>
+                <p className="font-medium text-gray-800">: {user.name}</p>
+
+                <p className="text-gray-600">Email</p>
+                <p className="font-medium text-gray-800">: {user.email}</p>
+
+                <p className="text-gray-600">Peran</p>
+                <p className="font-medium text-gray-800">: {user.role}</p>
+
+                {extraKeys.map((key) => (
+                  <React.Fragment key={key}>
+                    <p className="text-gray-600">
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                    </p>
+                    <p className="font-medium text-gray-800">: {user[key]}</p>
+                  </React.Fragment>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* === TOMBOL BAWAH === */}
+          <div className="flex justify-end gap-3 mt-6">
+            <Button className="bg-[#024D60] hover:bg-[#036377] text-white">Edit Profil</Button>
+            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-100">Kembali</Button>
+          </div>
+
         </div>
       </div>
     </DashboardLayout>

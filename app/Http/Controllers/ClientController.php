@@ -11,12 +11,18 @@ class ClientController extends Controller
     {
         return redirect()->route('client.dashboard');
     }
+    public function profile()
+    {
+        // Logic for displaying the client dashboard
+        return Inertia::render('client/profile');
+    }
 
     public function dashboard()
     {
         // Logic for displaying the client dashboard
         return Inertia::render('client/dashboard');
     }
+    
 
     public function show()
     {

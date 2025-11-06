@@ -59,6 +59,7 @@ Route::prefix('client')->name('client')->group(function () {
     Route::get('/dashboard', [ClientController::class, 'dashboard'])->name('.dashboard');
     Route::get('/order/details', [ClientController::class, 'show'])->name('.show');
     Route::get('/order/history', [ClientController::class, 'history'])->name('.history');
+    Route::get('profile', [ClientController::class, 'profile'])->name('.profile');
 });
 
 //Manager
