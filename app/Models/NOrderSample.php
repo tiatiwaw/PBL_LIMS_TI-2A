@@ -10,7 +10,9 @@ class NOrderSample extends Model
     use HasFactory;
 
     protected $fillable = [
-        'sample_volume'
+        'order_id',
+        'sample_id',
+        'sample_volume',
     ];
 
     public function orders()
