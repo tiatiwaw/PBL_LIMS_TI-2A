@@ -35,6 +35,11 @@ class Order extends Model
         return $this->belongsToMany(Sample::class, 'n_order_samples');
     }
 
+    public function n_order_samples()
+    {
+        return $this->hasMany(NOrderSample::class, 'order_id');
+    }
+
     public function n_analyses_methods_orders()
     {
         return $this->hasMany(NAnalysesMethodsOrder::class, 'order_id');

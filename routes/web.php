@@ -97,22 +97,18 @@ Route::controller(AdminController::class)
             Route::delete('/categories/{id}', 'destroyCategory')->name('categories.destroy');
         });
 
-        // Users
-        Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/', 'users')->name('index');
-            Route::post('/', 'storeUser')->name('store');
-            Route::put('/{id}', 'updateUser')->name('update');
-            Route::delete('/{id}', 'destroyUser')->name('destroy');
-        });
-
-        // Orders
-        Route::prefix('orders')->name('orders.')->group(function () {
-            Route::get('/', 'orders')->name('index');
-            Route::get('/{id}', 'detailOrder')->name('detail');
-        });
-
-        // Log Activity
-        Route::get('/activities', 'activities')->name('activities');
+        // Additional Routes
+        Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
+        Route::get('/activities', [AdminController::class, 'activities'])->name('activities');
+        
+        // Users Routes
+        Route::get('/users', [AdminController::class, 'users'])->name('users');
+        Route::post('/users', [AdminController::class, 'storeUser'])->name('users.store');
+        Route::put('/users/{id}', [AdminController::class, 'updateUser'])->name('users.update');
+        Route::delete('/users/{id}', [AdminController::class, 'destroyUser'])->name('users.destroy');
+        
+        // Log Activity (tetap seperti semula)
+        Route::get('/log-activity', [AdminController::class, 'logActivity'])->name('log');
     });
 
 // Manager
@@ -237,8 +233,8 @@ Route::controller(ClientController::class)
             Route::inertia('/detail', 'client/detail/index')->name('client.orders.detail');
         });
 
-        // History
-        Route::get('/history', 'history')->name('history');
+    // History
+    Route::get('/history', 'history')->name('history');
     });
 
 require __DIR__ . '/auth.php';

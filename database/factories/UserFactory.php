@@ -20,7 +20,6 @@ class UserFactory extends Factory
      * Define the model's default state.
      *
      * @return array<string, mixed>
-     * 
      */
     public function definition(): array
     {
@@ -28,7 +27,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => '$2y$12$goR7WOjMAXvJgIhWgi9sx.WhhwXcG6oxolpXXbZpy7aIRFN4U9Uji', //(PBLLMS)static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'signature' => fake()->filePath(),
         ];

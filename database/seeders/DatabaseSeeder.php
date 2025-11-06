@@ -24,6 +24,16 @@ class DatabaseSeeder extends Seeder
         //     ReferenceStandardSeeder::class,
         //     AnalysesMethodSeeder::class,
         // ]);
+        // // Master Data Independen
+        // $this->call([
+        //     BrandTypeSeeder::class,
+        //     GradeSeeder::class,
+        //     SupplierSeeder::class,
+        //     SampleCategorySeeder::class,
+        //     UnitValueSeeder::class,
+        //     ReferenceStandardSeeder::class,
+        //     AnalysesMethodSeeder::class,
+        // ]);
 
         // // Master Data Dependen
         // $this->call([
