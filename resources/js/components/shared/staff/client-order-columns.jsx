@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 
 export const getClientOrderColumns = ({ onSelectClient }) => [
-    { accessorKey: "id", header: "ID" },
+    { accessorKey: "no", header: "No." },
     { accessorKey: "name", header: "Nama Client" },
     { accessorKey: "email", header: "Email" },
     { accessorKey: "phone_number", header: "Nomor Telepon" },

@@ -19,7 +19,7 @@ export default function OrdersPage({
     const [isSaved, setIsSaved] = useState(false); // Menandakan form sudah disimpan
     const currentUser = auth?.user || { name: "King Akbar", role: "Staff" };
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         // Step 1 data
         selectedKlien: null,
         judulOrder: "",
@@ -37,20 +37,23 @@ export default function OrdersPage({
         totalHarga: null,
     });
 
-    // 1. Buat ref yang akan kita pasang ke kontainer form
     const formTopRef = useRef(null);
-
-    // 2. Buat useEffect yang akan berjalan setiap kali 'step' berubah
     useEffect(() => {
-        // Cek jika ref sudah terpasang
         if (formTopRef.current) {
-            // Perintahkan browser untuk scroll ke elemen tersebut
             formTopRef.current.scrollIntoView({
-                behavior: "smooth", // Agar scroll-nya halus
-                block: "start", // Sejajarkan ke bagian atas
+                block: "start",
             });
         }
-    }, [step]); // <-- 'Dependencies': jalankan HANYA saat 'step' berubah
+    }, [step]);
+
+    useEffect(() => {
+        if (isSaved && formTopRef.current) {
+            formTopRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        }
+    }, [isSaved]);
 
     const handleNext = () => {
         setStep((prev) => prev + 1);

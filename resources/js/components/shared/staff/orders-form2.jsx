@@ -10,9 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import ManagedDataTable from "../tabel/managed-data-table";
 import { getSampleColumnsOrder } from "./sample-order-colums";
-import TableSamplesOrd from "@/components/shared/staff/table-samplesord";
 import { Button } from "@/components/ui/button";
-// import { samples } from "@/data/staff/sample"; //ngga dipake
 import { DatePicker } from "@/components/ui/date-picker";
 import { editSampleFields } from "@/utils/fields/staff";
 
@@ -45,11 +43,9 @@ export default function OrdersForm2({ samples, categories, data, setData }) {
             return exists
                 ? prev.filter((s) => s.id !== sample.id)
                 : [...prev, { ...sample, value: sample.value ?? "" }];
-                : [...prev, { ...sample, value: sample.value ?? "" }];
         });
     };
 
-    // saat menambahkan dari dialog, pastikan setiap sample punya field value
     // saat menambahkan dari dialog, pastikan setiap sample punya field value
     const handleTambahSamples = () => {
         const normalized = selectedSamples.map((s) =>
@@ -58,23 +54,19 @@ export default function OrdersForm2({ samples, categories, data, setData }) {
         setData((prev) => ({
             ...prev,
             samples: normalized,
-            samples: normalized,
         }));
-        setSelectedSamples(normalized);
         setSelectedSamples(normalized);
         setIsSampleDialogOpen(false);
     };
 
     const handleOpenDialog = () => {
         // clone supaya tidak referensi langsung
-        setSelectedSamples((formData.samples || []).map((s) => ({ ...s })));
         setSelectedSamples((data.samples || []).map((s) => ({ ...s })));
         setIsSampleDialogOpen(true);
     };
 
     const handleDialogChange = (open) => {
         if (!open) {
-            setSelectedSamples((formData.samples || []).map((s) => ({ ...s })));
             setSelectedSamples((data.samples || []).map((s) => ({ ...s })));
         }
         setIsSampleDialogOpen(open);
@@ -248,7 +240,6 @@ export default function OrdersForm2({ samples, categories, data, setData }) {
                     <div className="border border-gray-300 rounded-lg p-4 bg-white min-h-[400px]">
                         <h3 className="text-sm font-semibold mb-3 text-gray-700">
                             Sampel yang dipilih:
-                            Sampel yang dipilih:
                         </h3>
 
                         {data.samples.length > 0 ? (
@@ -257,9 +248,7 @@ export default function OrdersForm2({ samples, categories, data, setData }) {
                                     <div
                                         key={sample.id}
                                         className="flex items-center gap-3 p-3 bg-gray-100 rounded-md border border-gray-200"
-                                        className="flex items-center gap-3 p-3 bg-gray-100 rounded-md border border-gray-200"
                                     >
-                                        <div className="flex-none w-2/5 text-sm text-gray-700">
                                         <div className="flex-none w-2/5 text-sm text-gray-700">
                                             {index + 1}. {sample.name}
                                         </div>

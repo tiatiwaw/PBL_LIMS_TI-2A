@@ -183,25 +183,10 @@ const MENU_CONFIG = {
             href: "/staff/orders",
         },
         {
-            name: "Orders",
-            icon: ChartArea,
-            href: "/staff/orders",
-        },
-        {
             name: "Manajemen Klien",
             icon: ListCheck,
             href: "/staff/manage-clients",
         },
-        // {
-        //     name: "Sample",
-        //     icon: Pipette,
-        //     href: "/staff/samples",
-        // },
-        // {
-        //     name: "Sample",
-        //     icon: Pipette,
-        //     href: "/staff/samples",
-        // },
     ],
 };
 

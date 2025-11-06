@@ -1,7 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 
 export const getMethodColumns = ({ selectedMethods, onSelectMethod }) => [
-    { accessorKey: "id", header: "ID" },
+    { accessorKey: "no", header: "No." },
     { accessorKey: "analyses_method", header: "Nama Metode Analisis" },
     {
         accessorKey: "price",
@@ -33,7 +33,7 @@ export const getMethodColumns = ({ selectedMethods, onSelectMethod }) => [
 ];
 
 export const getMethodSelectedColumns = [
-    { accessorKey: "id", header: "ID" },
+    { accessorKey: "no", header: "No." },
     { accessorKey: "analyses_method", header: "Nama" },
     { accessorKey: "description", header: "Deskripsi" },
     {

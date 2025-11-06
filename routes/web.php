@@ -65,12 +65,7 @@ Route::prefix('manager')->name('manager')->group(function () {
     Route::get('/users', [ManagerController::class, 'users'])->name('.users');
 });
 
-// Di dalam file: routes/web.php
-
-// Di dalam file: routes/web.php
-
 // Staff
-Route::prefix('staff')->name('staff.')->group(function () {
 Route::prefix('staff')->name('staff.')->group(function () {
     Route::redirect('/', '/staff/manage-clients');
 
@@ -93,11 +88,5 @@ Route::prefix('staff')->name('staff.')->group(function () {
 Route::controller(LoginController::class)->name('login')->group(function () {
     Route::get('/auth/login', 'index')->name('login');
 });
-
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
 
 require __DIR__ . '/auth.php';
