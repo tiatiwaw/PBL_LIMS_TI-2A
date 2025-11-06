@@ -35,7 +35,7 @@ export default function ClientPage({ auth, clientData }) {
         <DashboardLayout
             title="Manajemen Client"
             user={currentUser}
-            header="Manajemen Client"
+            header="Client"
         >
             <ManagedDataTable
                 data={processedParameters}

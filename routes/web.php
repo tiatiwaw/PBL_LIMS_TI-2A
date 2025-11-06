@@ -70,16 +70,13 @@ Route::prefix('staff')->name('staff.')->group(function () {
     Route::put('/manage-clients/{client}', [StaffController::class, 'clientUpdate'])->name('client.update');
     Route::delete('/manage-clients/{client}', [StaffController::class, 'clientDestroy'])->name('client.destroy');
 
-    // --- Manajemen Sample (RUTE BARU DITAMBAHKAN) ---
-    Route::get('/samples', [StaffController::class, 'sampleIndex'])->name('sample.index');
-    Route::get('/samples/create', [StaffController::class, 'sampleCreate'])->name('sample.create');
-    Route::post('/samples', [StaffController::class, 'sampleStore'])->name('sample.store');
-    Route::get('/samples/{sample}/edit', [StaffController::class, 'sampleEdit'])->name('sample.edit');
-    Route::put('/samples/{sample}', [StaffController::class, 'sampleUpdate'])->name('sample.update');
-    Route::delete('/samples/{sample}', [StaffController::class, 'sampleDestroy'])->name('sample.destroy');
+    // // --- Manajemen Sample (RUTE BARU DITAMBAHKAN) ---
+    // Route::post('/samples', [StaffController::class, 'sampleStore'])->name('sample.store');
 
     // --- Rute Lain ---
     Route::get('/orders', [StaffController::class, 'order'])->name('order.index');
+    Route::post('/orders/sample', [StaffController::class, 'sampleStore'])->name('sample.store');
+    Route::post('/orders', [StaffController::class, 'storeOrder'])->name('order.store');
 });
 
 // Login
