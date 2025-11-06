@@ -1,8 +1,8 @@
 import { LogOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { NavItem } from '../shared/dashboard/nav-item';
+import { Link } from '@inertiajs/react';
 
-export const Sidebar = ({ menuItems, onLogout }) => {
+export const Sidebar = ({ menuItems }) => {
     if (!menuItems || menuItems.length === 0) {
         return null;
     }
@@ -25,22 +25,13 @@ export const Sidebar = ({ menuItems, onLogout }) => {
             </nav>
 
             <div className="p-4 border-t border-white/10">
-                <Button
-                    onClick={onLogout}
-                    variant="ghost"
-                    className="
-                        w-full justify-center gap-3 h-12 
-                        text-white font-medium text-lg
-                        bg-red-500/80 hover:bg-red-600
-                        transition-all duration-300
-                        shadow-lg hover:shadow-xl
-                        rounded-xl
-                        disabled:opacity-50 disabled:cursor-not-allowed
-                    "
+                <Link
+                    href={route('auth.logout')}
+                    className="flex justify-center items-center gap-2 px-5 py-3 rounded-lg bg-red-500/80 hover:bg-red-600 hover:text-white transition-all duration-300"
                 >
                     <LogOut size={20} />
-                    <span>Keluar</span>
-                </Button>
+                    Keluar
+                </Link>
             </div>
         </aside>
     );

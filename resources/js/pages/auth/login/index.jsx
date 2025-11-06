@@ -7,6 +7,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import InputField from '@/components/shared/form/input-field';
 import AuthLayout from '@/components/layouts/auth-layout';
 import { Spinner } from '@/components/ui/spinner';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
@@ -19,8 +20,25 @@ export default function LoginPage() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/login', {
-            onFinish: () => reset('password'),
+
+        post("/auth/login", {
+            onSuccess: () => {
+                toast.success("Login berhasil!");
+            },
+            onError: (errors) => {
+                if (errors.email || errors.password) {
+                    toast.error("Email atau password salah!");
+                } else {
+                    toast.error("Terjadi kesalahan, silakan coba lagi.");
+                }
+            },
+            onFinish: () => {
+                reset("password");
+
+                setTimeout(() => {
+                    toast.dismiss('Loggin in...');
+                }, 500);
+            },
         });
     };
 
@@ -93,7 +111,7 @@ export default function LoginPage() {
 
                     <Button
                         onClick={handleSubmit}
-                        className="w-full h-12 bg-primary-hijauMuda text-white font-semibold rounded-lg transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] shadow-md"
+                        className="w-full h-12 bg-primary-hijauMuda hover:bg-primary-hijauMuda/90 text-white font-semibold rounded-lg transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] shadow-md"
                         disabled={processing || !data.email || !data.password}
                     >
                         {processing ? (
