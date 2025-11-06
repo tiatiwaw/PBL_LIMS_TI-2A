@@ -20,7 +20,7 @@ class ManagerMiddleware
             return redirect()->route('auth.login');
         }
 
-        if (!in_array(Auth::user()->role, ['manager', 'admin'])) {
+        if (Auth::user()->role !== 'manager') {
             abort(403, 'Unauthorized access. Manager role required.');
         }
 

@@ -20,7 +20,7 @@ class SupervisorMiddleware
             return redirect()->route('auth.login');
         }
 
-        if (!in_array(Auth::user()->role, ['supervisor', 'manager', 'admin'])) {
+        if (Auth::user()->role !== 'supervisor') {
             abort(403, 'Unauthorized access. Supervisor role required.');
         }
 

@@ -21,7 +21,7 @@ Route::controller(AuthController::class)
     ->name('auth.')
     ->group(function () {
         Route::middleware('guest')->group(function () {
-            Route::inertia('/login', 'auth/login/index')->name('login.form');
+            Route::get('/login', 'index')->name('index');
             Route::post('/login', 'login')->name('login');
         });
 
@@ -166,6 +166,15 @@ Route::controller(StaffController::class)
             Route::get('/', 'indexOrder')->name('index');
             Route::post('/', 'storeOrder')->name('store');
         });
+
+        // Order Routes
+        Route::prefix('orders')
+            ->name('order.')
+            ->group(function () {
+                Route::get('/', 'indexOrder')->name('index');
+                Route::post('/', 'storeOrder')->name('storeOrder');
+                Route::post('/sample', 'storeSample')->name('storeSample');
+            });
     });
 
 // Supervisor
@@ -176,6 +185,7 @@ Route::controller(SupervisorController::class)
     ->group(function () {
         Route::get('/', 'index')->name('index');
     });
+
 
 // Analyst
 Route::controller(AnalystController::class)
