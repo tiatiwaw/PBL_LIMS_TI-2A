@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 
 class AnalystController extends Controller
 {
+    // -------------------- WEB VERSION --------------------
+
     public function index()
     {
         $order = Order::where('status', 'pending')
@@ -54,7 +56,6 @@ class AnalystController extends Controller
             'order' => $order,
             'samples' => $order->samples,
         ]);
-
     }
 
     public function uploadReport(Request $request, Order $order)
@@ -75,15 +76,12 @@ class AnalystController extends Controller
 
     public function downloadReport(Order $order)
     {
-        // Pastikan file report ada
         if (!$order->report_file_path || !Storage::exists($order->report_file_path)) {
             return back()->with('error', 'File laporan tidak ditemukan.');
         }
 
-        // Ambil nama file agar hasil download rapi
         $filename = 'Laporan_' . ($order->order_number ?? $order->id) . '.pdf';
 
-        // Kembalikan file untuk diunduh
         return Storage::download($order->report_file_path, $filename, [
             'Content-Type' => 'application/pdf',
         ]);
@@ -107,5 +105,112 @@ class AnalystController extends Controller
 
     public function profile() {
         return Inertia::render('analyst/profile');
+    }
+
+
+
+    // -------------------- API VERSION --------------------
+
+    public function apiDashboard()
+    {
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'orders' => Order::where('status', 'pending')
+                    ->orderBy('created_at', 'desc')
+                    ->take(5)
+                    ->get(),
+                'stats' => [
+                    'totalOrder' => Order::count(),
+                    'processedOrder' => Order::where('status', 'in_progress')->count(),
+                    'completedOrder' => Order::where('status', 'completed')->count(),
+                ]
+            ]
+        ]);
+    }
+
+    public function apiAccept(Order $order)
+    {
+        if ($order->status === 'pending') {
+            $order->update(['status' => 'in_progress']);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Order diterima.',
+            'data' => $order
+        ]);
+    }
+
+    public function apiOrders()
+    {
+        return response()->json([
+            'status' => true,
+            'data' => Order::orderBy('created_at', 'desc')->get()
+        ]);
+    }
+
+    public function apiOrderDetail($id)
+    {
+        $order = Order::with('samples.sample_categories')->find($id);
+
+        if (!$order) {
+            return response()->json(['status' => false, 'message' => 'Order tidak ditemukan'], 404);
+        }
+
+        return response()->json(['status' => true, 'data' => $order]);
+    }
+
+    public function apiUploadReport(Request $request, Order $order)
+    {
+        $request->validate([
+            'laporan' => 'required|mimes:pdf|max:5120'
+        ]);
+
+        $path = $request->file('laporan')->store('public/reports');
+
+        $order->update([
+            'report_file_path' => $path,
+            'waktu_laporan' => now(),
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Laporan berhasil diupload',
+            'data' => $order
+        ]);
+    }
+
+    public function apiDownloadReport(Order $order)
+    {
+        if (!$order->report_file_path || !Storage::exists($order->report_file_path)) {
+            return response()->json(['status' => false, 'message' => 'File tidak ditemukan'], 404);
+        }
+
+        return response()->download(storage_path("app/" . $order->report_file_path));
+    }
+
+    public function apiConfirm(Sample $sample)
+    {
+        $sample->update(['status' => 'Done']);
+
+        return response()->json(['status' => true, 'message' => 'Sampel dikonfirmasi', 'data' => $sample]);
+    }
+
+    public function apiUnconfirm(Sample $sample)
+    {
+        $sample->update(['status' => 'In Progress']);
+
+        return response()->json(['status' => true, 'message' => 'Konfirmasi dibatalkan', 'data' => $sample]);
+    }
+
+    public function apiDashboardPage()
+    {
+        return response()->json(['status' => true, 'page' => 'dashboard']);
+    }
+
+    public function apiProfile()
+    {
+        return response()->json(['status' => true, 'page' => 'profile']);
     }
 }
