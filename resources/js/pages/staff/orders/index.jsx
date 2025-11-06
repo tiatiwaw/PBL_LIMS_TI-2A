@@ -60,6 +60,14 @@ export default function OrdersPage({
         setStep((prev) => prev - 1);
     };
 
+    // const handleSave = () => {
+    //     if (step === 3) {
+    //         // Simulasi proses penyimpanan
+    //         console.log("Data berhasil disimpan!");
+    //         setIsSaved(true);
+    //         // contoh: Inertia.post("/orders", formData);
+    //     }
+    // };
     const handleSave = () => {
         if (step === 3) {
             post(route("staff.order.store"), {

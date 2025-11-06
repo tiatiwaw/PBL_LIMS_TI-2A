@@ -3,7 +3,6 @@ import ManagedDataTable from "../tabel/managed-data-table";
 import { getSampleSelectedColumnsOrder } from "./sample-order-colums";
 import { getMethodSelectedColumns } from "./analyses-method-colums";
 
-// Komponen pembantu
 const HeaderBar = ({ title }) => (
     <div className="bg-primary-hijauTua hover:bg-primary-hijauTuas rounded-lg p-3 shadow-md mb-4">
         <h2 className="text-xl font-bold text-white">{title}</h2>
@@ -14,7 +13,7 @@ const DetailRow = ({ label, value }) => (
     <div className="flex justify-start items-start py-1">
         <p className="text-gray-700 w-32 font-semibold">{label}</p>
         <span className="mr-4">:</span>
-        <p className="text-gray-800 flex-1">{value}</p>
+        <p className="text-gray-800 flex-1">{value || "-"}</p>
     </div>
 );
 

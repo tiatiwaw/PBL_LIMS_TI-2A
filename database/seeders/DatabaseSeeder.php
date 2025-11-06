@@ -14,16 +14,16 @@ class DatabaseSeeder extends Seeder
                 // Seeder User
                 $this->call(UserRoleSeeder::class);
 
-                // // Master Data Independen
-                // $this->call([
-                //     BrandTypeSeeder::class,
-                //     GradeSeeder::class,
-                //     SupplierSeeder::class,
-                //     SampleCategorySeeder::class,
-                //     UnitValueSeeder::class,
-                //     ReferenceStandardSeeder::class,
-                //     AnalysesMethodSeeder::class,
-                // ]);
+                // Master Data Independen
+                $this->call([
+                        // BrandTypeSeeder::class,
+                        // GradeSeeder::class,
+                        // SupplierSeeder::class,
+                        SampleCategorySeeder::class,
+                        // UnitValueSeeder::class,
+                        // ReferenceStandardSeeder::class,
+                        // AnalysesMethodSeeder::class,
+                ]);
 
                 // // Master Data Dependen
                 // $this->call([
@@ -33,11 +33,11 @@ class DatabaseSeeder extends Seeder
                 //     TestParameterSeeder::class,
                 // ]);
 
-                // // Data Transaksional
-                // $this->call([
-                //     AnalystSeeder::class,
-                //     ClientSeeder::class,
-                //     SampleSeeder::class,
-                // ]);
+                // Data Transaksional
+                $this->call([
+                        // AnalystSeeder::class,
+                        ClientSeeder::class,
+                        SampleSeeder::class,
+                ]);
         }
 }

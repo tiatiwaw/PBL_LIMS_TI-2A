@@ -45,6 +45,7 @@ const getRoleFromUrl = (url) => {
     if (url.startsWith("/manager")) return "manager";
     if (url.startsWith("/staff")) return "staff";
     if (url.startsWith("/staff")) return "staff";
+    if (url.startsWith("/staff")) return "staff";
     return null;
 };
 
@@ -134,6 +135,11 @@ const MENU_CONFIG = {
                     icon: TestTube2,
                     href: "/admin/test/category",
                 },
+                {
+                    name: "Kategori Sampel",
+                    icon: TestTube2,
+                    href: "/admin/test/category",
+                },
             ],
         },
         {
@@ -177,10 +183,20 @@ const MENU_CONFIG = {
             href: "/staff/orders",
         },
         {
+            name: "Orders",
+            icon: ChartArea,
+            href: "/staff/orders",
+        },
+        {
             name: "Manajemen Klien",
             icon: ListCheck,
             href: "/staff/manage-clients",
         },
+        // {
+        //     name: "Sample",
+        //     icon: Pipette,
+        //     href: "/staff/samples",
+        // },
         // {
         //     name: "Sample",
         //     icon: Pipette,

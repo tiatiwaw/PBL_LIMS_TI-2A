@@ -8,6 +8,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AnalystController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ClientController;
 
 // Home
 Route::controller(HomeController::class)->name('index')->group(function () {
@@ -32,6 +34,7 @@ Route::prefix('admin')->name('admin')->group(function () {
         Route::get('/unit-value', [AdminController::class, 'unitValue'])->name('.unit');
         Route::get('/standard-reference', [AdminController::class, 'standardReference'])->name('.standard');
         Route::get('/category', [AdminController::class, 'category'])->name('.category');
+        Route::get('/category', [AdminController::class, 'category'])->name('.category');
     });
     Route::get('/log-activity', [AdminController::class, 'logActivity'])->name('.log');
     Route::get('/users', [AdminController::class, 'users'])->name('.users');
@@ -53,6 +56,10 @@ Route::prefix('manager')->name('manager')->group(function () {
     });
     Route::prefix('orders')->name('.orders')->group(function () {
         Route::get('/', [ManagerController::class, 'orders'])->name('.index');
+        Route::get('/detail', [ManagerController::class, 'detailValidation'])->name('.detail');
+    });
+    Route::prefix('orders')->name('.orders')->group(function () {
+        Route::get('/', [ManagerController::class, 'orders'])->name('.index');
         Route::get('/detail', [ManagerController::class, 'detailOrder'])->name('.detail');
     });
     Route::get('/users', [ManagerController::class, 'users'])->name('.users');
@@ -60,7 +67,10 @@ Route::prefix('manager')->name('manager')->group(function () {
 
 // Di dalam file: routes/web.php
 
+// Di dalam file: routes/web.php
+
 // Staff
+Route::prefix('staff')->name('staff.')->group(function () {
 Route::prefix('staff')->name('staff.')->group(function () {
     Route::redirect('/', '/staff/manage-clients');
 
