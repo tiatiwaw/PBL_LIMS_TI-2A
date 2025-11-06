@@ -245,3 +245,17 @@ export const standards = [
     { id: 9, name: "Water Bath" },
     { id: 10, name: "Analytical Balance" },
 ];
+
+export const sampleCategories = [
+    { id: 1, name: "Water" },
+    { id: 2, name: "Soil" },
+    { id: 3, name: "Air" },
+    { id: 4, name: "Food" },
+    { id: 5, name: "Chemical" },
+    { id: 6, name: "Biological" },
+    { id: 7, name: "Sediment" },
+    { id: 8, name: "Wastewater" },
+    { id: 9, name: "Plant Tissue" },
+    { id: 10, name: "Metal Sample" },
+];
+

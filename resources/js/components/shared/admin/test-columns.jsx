@@ -13,7 +13,7 @@ const detectionVariantMap = {
     LOQ: "success",
 };
 
-export const getParametersColumns = () => [
+export const getParametersColumns = ({ onShowDetail }) => [
     { accessorKey: 'no', header: 'No.' },
     { accessorKey: 'name', header: 'Nama Parameter' },
     { accessorKey: 'unit_value', header: 'Satuan' },
@@ -53,12 +53,12 @@ export const getParametersColumns = () => [
         id: "aksi",
         header: "Aksi",
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
         ),
     },
 ];
 
-export const getMethodsColumns = () => [
+export const getMethodsColumns = ({onShowDetail}) => [
     { accessorKey: 'no', header: 'No.' },
     { accessorKey: 'reference', header: 'Referensi' },
     { accessorKey: 'name', header: 'Nama Metode' },
@@ -69,31 +69,44 @@ export const getMethodsColumns = () => [
         id: "aksi",
         header: "Aksi",
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
         ),
     },
 ];
 
-export const getUnitsColumns = () => [
+export const getUnitsColumns = ({onShowDetail}) => [
     { accessorKey: 'no', header: 'No.' },
     { accessorKey: 'value', header: 'Satuan' },
     {
         id: "aksi",
         header: "Aksi",
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn onDetail={onShowDetail}  onEdit={onEdit} onDelete={onDelete} row={row} />
         ),
     },
 ];
 
-export const getStandardsColumns = () => [
+export const getStandardsColumns = ({onShowDetail}) => [
     { accessorKey: 'no', header: 'No.' },
     { accessorKey: 'name', header: 'Nama Alat' },
     {
         id: "aksi",
         header: "Aksi",
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
         ),
     },
 ];
+
+export const getSampleCategoriesColumns = ({onShowDetail}) => [
+    { accessorKey: 'no', header: 'No.' },
+    { accessorKey: 'name', header: 'Nama Kategori' },
+    {
+        id: "aksi",
+        header: "Aksi",
+        cell: ({ row, onEdit, onDelete }) => (
+            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
+        ),
+    },
+];
+
