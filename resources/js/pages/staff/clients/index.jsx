@@ -5,14 +5,15 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { Clients } from "@/data/staff/clients";
 import { editClientFields } from "@/utils/fields/staff";
 import { useMemo, useState } from "react";
+import ClientDetailSheet from "@/components/shared/sheet/client-detail-sheet";
 
 export default function ClientPage({ auth, clientData }) {
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
 
     const handleShowDetail = (client) => {
         setSelectedClient(client);
-        setIsDialogOpen(true);
+        setIsOpen(true);
     };
 
     const currentUser = auth?.user || { name: "King Akbar", role: "Staff" };
@@ -47,10 +48,10 @@ export default function ClientPage({ auth, clientData }) {
                 editTitle="Edit Client"
                 deleteTitle="Hapus Client"
             />
-            <ClientDetailsDialog
+            <ClientDetailSheet
                 client={selectedClient}
-                isOpen={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
             />
         </DashboardLayout>
     );
