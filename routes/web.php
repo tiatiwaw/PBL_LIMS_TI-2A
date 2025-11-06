@@ -16,9 +16,9 @@ Route::controller(HomeController::class)->name('index')->group(function () {
 });
 
 // Login
-Route::get('/login', function () {
-    return redirect()->route('auth.login.form');
-})->name('login');
+// Route::get('/login', function () {
+//     return redirect()->route('auth.login.form');
+// })->name('login');
 
 Route::middleware('guest')
     ->prefix('auth')
@@ -27,6 +27,10 @@ Route::middleware('guest')
         Route::inertia('/login', 'auth/login/index')->name('login.form');  // GET /auth/login untuk form
         Route::post('/login', [AuthController::class, 'login'])->name('login');  // POST /auth/login untuk proses
     });
+
+Route::get('/login', function () {
+    return redirect()->route('auth.login.form');
+})->name('login');
 
 // Admin
 Route::middleware(['auth', 'admin'])
