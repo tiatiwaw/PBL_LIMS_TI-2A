@@ -120,7 +120,8 @@ class ManagerController extends Controller
                     'tipe' => $this->mapOrderType($o->order_type),
                     'status' => $this->mapStatusLabel($o->status),
                     'order_number' => $o->order_number,
-                    'analyses_method' => optional($o->analyses_methods)->analyses_method,
+                    'analyses_method' => $o->analyses_methods->pluck('analyses_method')->join(', '),
+                    // 'analyses_method' => optional($o->analyses_methods)->analyses_method,
                     'report_file_path' => $o->report_file_path,
                     'result_value' => $o->result_value,
                     'catatan' => $o->notes,
@@ -240,4 +241,55 @@ class ManagerController extends Controller
             default => ucfirst($type),
         };
     }
+
+    public function getOrdersJson()
+    {
+        $orders = Order::with(['clients', 'analyses_methods'])
+            ->latest()
+            ->get()
+            ->map(function ($o) {
+                return [
+                    'id' => $o->id,
+                    'user' => optional($o->clients)->name,
+                    'title' => $o->title,
+                    'order_number' => $o->order_number,
+                    'status' => $o->status,
+                    'analyses_methods' => $o->analyses_methods->pluck('analyses_method'),
+                    'created_at' => $o->created_at,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'total' => $orders->count(),
+            'data' => $orders,
+        ]);
+    }
+
+    public function getUsersJson()
+    {
+        // Users listing (lightweight fields for table)
+        $users = User::orderByDesc('created_at')
+            ->get()
+            ->map(function ($u, $idx) {
+                return [
+                    'no' => $idx + 1,
+                    'id' => $u->id,
+                    'name' => $u->name,
+                    'role' => $u->role,
+                    'email' => $u->email,
+                    'created_at' => $u->created_at,
+                ];
+            });
+
+        // return Inertia::render('manager/users/index', [
+        //     'usersData' => $users,
+        // ]);
+        return response()->json([
+            'success' => true,
+            'total' => $users->count(),
+            'data' => $users,
+        ]);
+    }
+
 }
