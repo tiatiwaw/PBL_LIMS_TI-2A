@@ -10,7 +10,7 @@ const History = () => {
     return (
         <DashboardLayout title="Analyst" user={user} header='Selamat Datang Analyst!'>
             <div className="flex items-center justify-center text-primary-hijauTua font-bold">
-                <h1>Hello World!</h1>
+                <h1>Histories here!</h1>
             </div>
         </DashboardLayout>
     )

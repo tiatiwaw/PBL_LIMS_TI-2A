@@ -3,12 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AnalystController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\StaffController;
-use App\Http\Controllers\SupervisorController;
 
 // Home
 Route::controller(HomeController::class)->group(function () {
@@ -193,50 +193,49 @@ Route::controller(SupervisorController::class)
 
 
 // Analyst
-Route::controller(AnalystController::class)
-    ->middleware(['auth', 'analyst'])
-    ->prefix('analyst')
-    ->name('analyst.')
-    ->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/inbox', 'inbox')->name('inbox');
-        Route::get('/history', 'history')->name('history');
-        Route::get('/dashboard', 'dashboard')->name('dashboard');
+Route::prefix('analyst')->name('analyst')->group(function () {
+    Route::get('/', [AnalystController::class, 'index'])->name('.index');
+    Route::get('/inbox', [AnalystController::class, 'inbox'])->name('.inbox');
+    Route::get('/inbox/details', [AnalystController::class, 'show'])->name('.inbox.show');
+    Route::get('/order', [AnalystController::class, 'order'])->name('.order');
+    Route::get('/order/details', [AnalystController::class, 'detail'])->name('.order.detail');
+    Route::get('/dashboard', [AnalystController::class, 'dashboard'])->name('.dashboard');
+    Route::get('/profile', [AnalystController::class, 'profile'])->name('.profile');
 
-        // Orders
-        Route::prefix('orders')->name('order.')->group(function () {
-            Route::get('/', 'order')->name('index');
-            Route::get('/{order}', 'orderDetail')->name('detail');
-            Route::put('/{order}/accept', 'acceptOrder')->name('accept');
-            Route::post('/{order}/download', 'downloadOrder')->name('download');
-        });
-
-        // Samples
-        Route::prefix('samples')->name('sample.')->group(function () {
-            Route::post('/{sample}/confirm', 'confirmSample')->name('confirm');
-            Route::post('/{sample}/unconfirm', 'unconfirmSample')->name('unconfirm');
-        });
-
-        // Reports
-        Route::prefix('reports')->name('report.')->group(function () {
-            Route::post('/', 'createReport')->name('create');
-            Route::put('/{report}', 'updateReport')->name('update');
-        });
-    });
+});
 
 // Client
-Route::controller(ClientController::class)
-    ->middleware(['auth', 'client'])
-    ->prefix('client')
-    ->name('client.')
-    ->group(function () {
-        Route::get('/', 'index')->name('index');
+Route::prefix('client')->name('client')->group(function () {
+    Route::get('/', [ClientController::class, 'index'])->name('.index');
+    Route::get('/dashboard', [ClientController::class, 'dashboard'])->name('.dashboard');
+    Route::get('/order/details', [ClientController::class, 'show'])->name('.show');
+    Route::get('/order/history', [ClientController::class, 'history'])->name('.history');
+});
 
-        // Dashboard
-        Route::prefix('dashboard')->name('dashboard.')->group(function () {
-            Route::get('/stats', 'dashboardStats')->name('stats');
-            Route::get('/orders', 'dashboardOrders')->name('orders');
-        });
+//Manager
+Route::prefix('manager')->name('manager')->group(function () {
+    Route::get('/', [ManagerController::class, 'index'])->name('.index');
+    Route::prefix('report-validation')->name('.report')->group(function () {
+        Route::get('/', [ManagerController::class, 'reportValidation'])->name('.index');
+        Route::get('/detail', [ManagerController::class, 'detailOrder'])->name('.detail');
+    });
+    Route::get('/orders', [ManagerController::class, 'orders'])->name('.orders');
+    Route::get('/users', [ManagerController::class, 'users'])->name('.users');
+});
+
+// Staff
+Route::prefix('staff')->name('staff')->group(function () {
+    Route::redirect('/', '/staff/manage-clients');
+
+    Route::get('/manage-clients', [StaffController::class, 'managementClient'])->name('.clients');
+    Route::get('/samples', [StaffController::class, 'sample'])->name('.sample');
+    Route::get('/orders', [StaffController::class, 'order'])->name('.order');
+});
+
+// Login
+Route::controller(LoginController::class)->name('login')->group(function () {
+    Route::get('/auth/login', 'index')->name('login');
+});
 
         // Details
         Route::prefix('details')->name('details.')->group(function () {
