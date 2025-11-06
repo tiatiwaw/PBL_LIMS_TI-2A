@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Order;
 use App\Models\Sample;
-use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AnalystController extends Controller
 {
@@ -17,9 +18,9 @@ class AnalystController extends Controller
             ->get();
 
         $stats = [
-            'total' => Order::count(),
-            'accepted' => Order::where('status', 'in_progress')->count(),
-            'finished' => Order::where('status', 'completed')->count(),
+            'totalOrder' => Order::count(),
+            'processedOrder' => Order::where('status', 'in_progress')->count(),
+            'completedOrder' => Order::where('status', 'completed')->count(),
         ];
 
         return Inertia::render('analyst/dashboard', [
@@ -47,29 +48,46 @@ class AnalystController extends Controller
 
     public function detail(Order $orders)
     {
-        $order = $orders->load('samples');
+        $order = $orders->load('samples.sample_categories');
 
         return Inertia::render('analyst/order-detail', [
             'order' => $order,
             'samples' => $order->samples,
         ]);
+
     }
 
     public function uploadReport(Request $request, Order $order)
-{
-    $request->validate([
-        'laporan' => 'required|mimes:pdf|max:5120'
-    ]);
+    {
+        $request->validate([
+            'laporan' => 'required|mimes:pdf|max:5120'
+        ]);
 
-    $path = $request->file('laporan')->store('public/reports');
+        $path = $request->file('laporan')->store('public/reports');
 
-    $order->update([
-        'laporan_path' => $path,
-        'waktu_laporan' => now(),
-    ]);
+        $order->update([
+            'report_file_path' => $path,
+            'waktu_laporan' => now(),
+        ]);
 
-    return back()->with('success', 'Laporan berhasil diupload.');
-}
+        return back()->with('success', 'Laporan berhasil diupload.');
+    }
+
+    public function downloadReport(Order $order)
+    {
+        // Pastikan file report ada
+        if (!$order->report_file_path || !Storage::exists($order->report_file_path)) {
+            return back()->with('error', 'File laporan tidak ditemukan.');
+        }
+
+        // Ambil nama file agar hasil download rapi
+        $filename = 'Laporan_' . ($order->order_number ?? $order->id) . '.pdf';
+
+        // Kembalikan file untuk diunduh
+        return Storage::download($order->report_file_path, $filename, [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
 
     public function confirm(Sample $sample)
     {

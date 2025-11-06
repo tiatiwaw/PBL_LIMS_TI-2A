@@ -30,9 +30,9 @@ class Order extends Model
         return $this->belongsTo(Client::class, 'client_id');
     }
 
-    public function n_order_samples()
+    public function samples()
     {
-        return $this->hasMany(NOrderSample::class, 'order_id');
+        return $this->belongsToMany(Sample::class, 'n_order_samples');
     }
 
     public function n_analyses_methods_orders()

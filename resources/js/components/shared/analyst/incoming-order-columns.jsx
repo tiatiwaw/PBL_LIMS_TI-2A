@@ -23,10 +23,10 @@ export const getOrdersColumns = ({setSelectedTest}) => [
     { accessorKey: "title", header: "Judul Pesanan" },
     { accessorKey: "estimate_date", header: "Estimasi Selesai" },
     {
-        accessorKey: "tipe",
+        accessorKey: "order_type",
         header: "Tipe Pesanan",
         cell: ({ row }) => {
-            const value = row.tipe;
+            const value = row.order_type;
             return (
                 <Badge
                     variant={tipeVariantMap[value] || "outline"}

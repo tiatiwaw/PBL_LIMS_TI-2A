@@ -9,8 +9,9 @@ const statusVariantMap = {
     Received: "received",
 };
 const tipeVariantMap = {
-    Eksternal: "eksternal",
+    Eksternal: "external",
     Internal: "internal",
+    Internal: "regular",
     Urgent: "urgent",
 };
 

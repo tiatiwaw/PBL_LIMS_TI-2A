@@ -13,9 +13,10 @@ const statusVariantMap = {
 };
 
 const tipeVariantMap = {
-    Eksternal: "warning",
+    External: "warning",
     Internal: "info",
     Urgent: "error",
+    Regular: "info",
 };
 
 export const getOrdersColumns = () => [
@@ -26,7 +27,7 @@ export const getOrdersColumns = () => [
         accessorKey: "tipe",
         header: "Tipe Pesanan",
         cell: ({ row }) => {
-            const value = row.tipe;
+            const value = row.order_type;
             return (
                 <Badge
                     variant={tipeVariantMap[value] || "outline"}
@@ -53,12 +54,12 @@ export const getOrdersColumns = () => [
         id: "aksi",
         header: "Aksi",
         cell: ({ row }) => (
-            <Link href="/analyst/order/details">
+            <Link href={`/analyst/order/${row.id}`}>
                 <Button
                 variant="outline"
                 size="sm"
                 >
-                        <AlertCircle/>
+                    <AlertCircle/>
                 </Button>
             </Link>
         ),

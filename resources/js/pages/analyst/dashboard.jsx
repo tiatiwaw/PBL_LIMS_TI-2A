@@ -1,5 +1,5 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, ShoppingCart, Loader, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardFooter, CardContent } from "@/components/ui/card";
@@ -20,23 +20,21 @@ const dashboard = () => {
     avatar: "https://i.pravatar.cc/150?img=3",
   };
 
-const handleConfirm = () => {
-  if (!selectedTest) return;
+  const handleConfirm = () => {
+    if (!selectedTest) return;
 
-  console.log("Kirim ke:", route("analyst.orders.accept", selectedTest.id));
+    console.log("Kirim ke:", route("analyst.orders.accept", selectedTest.id));
 
-  router.put(route("analyst.orders.accept", { order: selectedTest.id }), {}, {
-    onSuccess: () => {
-      console.log("Berhasil diterima!");
-      setSelectedTest(null);
-    },
-    onError: (err) => {
-      console.error("Gagal:", err);
-    },
-  });
-};
-
-
+    router.put(route("analyst.orders.accept", { order: selectedTest.id }), {}, {
+      onSuccess: () => {
+        console.log("Berhasil diterima!");
+        setSelectedTest(null);
+      },
+      onError: (err) => {
+        console.error("Gagal:", err);
+      },
+    });
+  };
 
   const handleCancel = () => {
     setSelectedTest(null);
@@ -44,15 +42,19 @@ const handleConfirm = () => {
 
   const columns = useMemo(() => getOrdersColumns({setSelectedTest: setSelectedTest}), []);
 
-  return (
-    <DashboardLayout title="Dashboard" user={user} header="Selamat Datang, Analis">
-      <div className="flex flex-col gap-10 text-[#02364B]">
+  const cards = [
+        { title: "Total Orders", value: String(stats.totalOrder), subtitle: "Semua pesanan yang tercatat", icon: ShoppingCart },
+        { title: "Total Processed Order", value: String(stats.processedOrder), subtitle: "Pesanan sedang dikerjakan", icon: Loader },
+        { title: "Total Completed Order", value: String(stats.completedOrder), subtitle: "Pesanan selesai", icon: CheckCircle },
+    ];
 
+  return (
+    <DashboardLayout title="Dashboard Manager" user={user} header='Selamat Datang, Manager!'>
+      <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {stats &&
-            Object.entries(stats).map(([key, value]) => (
-              <StatCard key={key} stat={{ title: key, value }} />
-            ))}
+          {cards.map((stat, index) => (
+            <StatCard key={index} stat={stat} />
+          ))}
         </div>
 
         <h2 className="font-bold text-lg mt-3 -mb-3">Tes Mendatang</h2>

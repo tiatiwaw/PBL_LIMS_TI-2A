@@ -10,7 +10,18 @@ const statusVariantMap = {
 
 export const getSampleColumns = ({ onShowDetail, onShowConfirm, onShowUnConfirm }) => [
     { accessorKey: "name", header: "Nama Sampel" },
-    { accessorKey: "cathegory", header: "Kategori Sampel" },
+    {
+        accessorKey: "sample_categories.name",
+        header: "Kategori Sampel",
+        cell: ({ row }) => {
+            const value = row?.sample_categories.name;
+            return (
+                <>
+                    {value}
+                </>
+            );
+        },
+    },
     {
         accessorKey: "status",
         header: "Status",
