@@ -170,19 +170,13 @@ Route::middleware(['auth', 'staff'])
                 Route::delete('/{id}', [StaffController::class, 'destroy'])->name('delete');
             });
 
-        // Sample Routes
-        Route::prefix('samples')
-            ->name('sample.')
-            ->group(function () {
-                Route::post('/', [StaffController::class, 'storeSample'])->name('store');
-            });
-
         // Order Routes
         Route::prefix('orders')
             ->name('order.')
             ->group(function () {
                 Route::get('/', [StaffController::class, 'indexOrder'])->name('index');
-                Route::post('/', [StaffController::class, 'storeOrder'])->name('store');
+                Route::post('/', [StaffController::class, 'storeOrder'])->name('storeOrder');
+                Route::post('/sample', [StaffController::class, 'storeSample'])->name('storeSample');
             });
     });
 
@@ -194,6 +188,7 @@ Route::middleware(['auth', 'supervisor'])
         Route::get('/', [SupervisorController::class, 'index'])->name('index');
 
     });
+    
 // Analyst
 Route::middleware(['auth', 'analyst'])
     ->prefix('analyst')

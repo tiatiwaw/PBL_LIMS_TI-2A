@@ -20,9 +20,7 @@ class StaffMiddleware
             return redirect()->route('auth.login');
         }
 
-        $allowedRoles = ['staff', 'supervisor', 'manager', 'admin'];
-
-        if (!in_array(Auth::user()->role, $allowedRoles)) {
+        if (Auth::user()->role !== 'staff') {
             abort(403, 'Unauthorized access. Staff role required.');
         }
 
