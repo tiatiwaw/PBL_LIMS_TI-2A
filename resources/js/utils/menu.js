@@ -18,7 +18,7 @@ import {
     FileText,
     ClipboardList,
     TestTube2,
-    Pipette,
+    ChartArea,
     ListCheck,
     ChartArea,
     Inbox,
@@ -182,19 +182,14 @@ const MENU_CONFIG = {
 
     staff: [
         {
-            name: "Manajemen Klien",
-            icon: ListCheck,
-            href: "/staff/manage-clients",
-        },
-        {
-            name: "Sample",
-            icon: Pipette,
-            href: "/staff/samples",
-        },
-        {
             name: "Orders",
             icon: ChartArea,
             href: "/staff/orders",
+        },
+        {
+            name: "Manajemen Klien",
+            icon: ListCheck,
+            href: "/staff/manage-clients",
         },
     ],
 

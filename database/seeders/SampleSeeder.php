@@ -15,7 +15,6 @@ class SampleSeeder extends Seeder
                 'name' => 'Air Sungai Ciliwung',
                 'form' => 'liquid',
                 'preservation_method' => 'Pendinginan 4°C',
-                'sample_volume' => 500.0,
                 'condition' => 'good',
                 'storage_condition' => 'Chiller 4°C', // INI PERBAIKANNYA
             ],
@@ -24,7 +23,6 @@ class SampleSeeder extends Seeder
                 'name' => 'Tanah Pertanian A',
                 'form' => 'solid',
                 'preservation_method' => 'Disimpan dalam wadah tertutup',
-                'sample_volume' => 300.5,
                 'condition' => 'good',
                 'storage_condition' => 'Suhu Ruang', // INI PERBAIKANNYA
             ],
@@ -33,7 +31,6 @@ class SampleSeeder extends Seeder
                 'name' => 'Udara Pabrik X',
                 'form' => 'gas',
                 'preservation_method' => 'Sampel dalam tabung khusus',
-                'sample_volume' => 2.5,
                 'condition' => 'good',
                 'storage_condition' => 'Rak Tabung Gas', // INI PERBAIKANNYA
             ],

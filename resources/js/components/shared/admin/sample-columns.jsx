@@ -19,9 +19,9 @@ const temperatureVariantMap = {
 };
 
 export const getSamplesColumns = () => [
-    { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'sample_category', header: 'Kategori Sampel' },
-    { accessorKey: 'name', header: 'Nama Sampel' },
+    { accessorKey: "id", header: "ID" },
+    { accessorKey: "sample_category", header: "Kategori Sampel" },
+    { accessorKey: "name", header: "Nama Sampel" },
     {
         accessorKey: "form",
         header: "Bentuk",
@@ -37,8 +37,8 @@ export const getSamplesColumns = () => [
             );
         },
     },
-    { accessorKey: 'preservation_method', header: 'Metode Pengawetan' },
-    { accessorKey: 'sample_volume', header: 'Volume Sampel' },
+    { accessorKey: "preservation_method", header: "Metode Pengawetan" },
+    { accessorKey: "sample_volume", header: "Volume Sampel" },
     {
         accessorKey: "condition",
         header: "Kondisi",
@@ -79,8 +79,8 @@ export const getSamplesColumns = () => [
 ];
 
 export const getSampleCategoriesColumns = () => [
-    { accessorKey: 'no', header: 'No.' },
-    { accessorKey: 'name', header: 'Nama Kategori' },
+    { accessorKey: "no", header: "No." },
+    { accessorKey: "name", header: "Nama Kategori" },
     {
         id: "aksi",
         header: "Aksi",

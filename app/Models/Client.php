@@ -13,17 +13,18 @@ class Client extends Model
         "user_id",
         "name",
         "address",
+        "email",
         "phone_number",
         "npwp_number"
     ];
 
     public function users()
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function orders()
     {
-        return $this->hasMany(Order::class,'client_id');
+        return $this->hasMany(Order::class, 'client_id');
     }
 }

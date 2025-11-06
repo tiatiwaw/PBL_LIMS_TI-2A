@@ -22,4 +22,18 @@ class ClientController extends Controller
     {
         return Inertia::render('client/history/index');
     }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->input('q');
+
+        $clients = Client::query()
+            ->where('name', 'like', "%{$keyword}%")
+            ->orWhere('email', 'like', "%{$keyword}%")
+            ->orWhere('phone', 'like', "%{$keyword}%")
+            ->limit(10)
+            ->get(['id', 'name', 'email', 'phone']);
+
+        return response()->json($clients);
+    }
 }

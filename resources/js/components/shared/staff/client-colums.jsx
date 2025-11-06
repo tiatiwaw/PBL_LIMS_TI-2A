@@ -1,6 +1,4 @@
-import { Button } from "@/components/ui/button";
 import ActionColumn from "../tabel/action-column";
-import { List } from "lucide-react";
 
 export const getClientColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No." },
