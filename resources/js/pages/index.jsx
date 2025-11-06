@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Head, Link } from "@inertiajs/react";
 import { FlaskConical, Menu } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import {
     Sheet,
     SheetContent,
@@ -19,6 +20,16 @@ export default function HomePage() {
     ];
 
     const sheetContentClassName = "bg-primary-hijauTua text-white border-none";
+
+    // const [users, setUsers] = useState([]);
+
+    // useEffect(() => {
+    //     fetch("http://localhost/PBL_LIMS_TI-2A/public/api/manager/users")
+    //     .then((response) => response.json())
+    //     .then((data) => setUsers(data))
+    //     .catch((error) => console.error("Error:", error));
+    // }, []);
+    // console.log(users);
 
     return (
         <section className="bg-primary-hijauTerang flex items-center justify-center px-4 py-6 min-h-screen relative overflow-hidden">
