@@ -14,6 +14,16 @@ class DatabaseSeeder extends Seeder
                 // Seeder User
                 $this->call(UserRoleSeeder::class);
 
+                //Seeder Client Analyst
+                // $this->call([
+                //     UserRoleSeeder::class,
+                //     ClientSeeder::class,
+                //     OrderSeeder::class,
+                //     SampleCategorySeeder::class,
+                //     SampleSeeder::class,
+                //     NOrderSampleSeeder::class,
+                // ]);
+
                 // Master Data Independen
                 $this->call([
                         // BrandTypeSeeder::class,
