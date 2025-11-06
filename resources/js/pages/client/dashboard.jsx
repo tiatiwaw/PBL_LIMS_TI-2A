@@ -5,6 +5,8 @@ import {
     ChevronLeft,
     ChevronRight,
     ClipboardList,
+    Clock10 as Clock10Icon,
+    Check as CheckIcon,
     History,
     FileText,
     Download
@@ -19,9 +21,9 @@ const dashboard = () => {
     };
 
     const statCardsData = [
-        { title: 'Total Sampel', value: 20, subtitle: 'Berdasarkan Bulan Terakhir' },
-        { title: 'Sedang Diuji', value: 20, subtitle: 'Berdasarkan Bulan Terakhir' },
-        { title: 'Selesai', value: 20, subtitle: 'Berdasarkan Bulan Terakhir' },
+        { title: 'Total Sampel', value: 20, subtitle: 'Berdasarkan Bulan Terakhir', IconComponent: ClipboardList },
+        { title: 'Sedang Diuji', value: 20, subtitle: 'Berdasarkan Bulan Terakhir', IconComponent: Clock10Icon },
+        { title: 'Selesai', value: 20, subtitle: 'Berdasarkan Bulan Terakhir', IconComponent: CheckIcon },
     ];
 
     const tableData = [
@@ -38,18 +40,20 @@ const dashboard = () => {
 
                 {/* --- Bagian 3 Kartu Statistik --- */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                    {statCardsData.map((card) => (
+                    {statCardsData.map((card) => {
+                        const IconComponent = card.IconComponent;
+                        return (
                         <div key={card.title} className="bg-white rounded-xl shadow-lg p-5 flex items-center gap-2 border border-gray-100">
                             <div className="p-3 bg-cyan-100 rounded-lg">
-                                <ClipboardList size={28} className="text-cyan-200" />
+                                <IconComponent size={28} className="text-cyan-500" />
                             </div>
                             <div className="text-primary-hijauTua">
                                 <span className="text-sm font-semibold text-gray-500">{card.title}</span>
                                 <p className="text-3xl font-bold">{card.value}</p>
-                                <span className="text-xs text-gray-200">{card.subtitle}</span>
+                                <span className="text-xs text-gray-800">{card.subtitle}</span>
                             </div>
                         </div>
-                    ))}
+                    )})}
                 </div>
 
                 {/* --- Judul "Sampel" --- */}
