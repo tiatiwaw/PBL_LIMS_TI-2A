@@ -20,7 +20,10 @@ export default function ReportValidationPage({ auth, reportData }) {
         router.visit(route("manager.report.detail"));
     };
 
-    const columns = useMemo(() => getReportsColumns({ onShowDetail: handleShowDetail }), []);
+    const columns = useMemo(
+        () => getReportsColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
     const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
     const parameters = reportData || reports;

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('reagents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
-            $table->foreignId('grade_id')->constrained('grades')->onDelete('cascade');
+            $table->foreignId('supplier_id')->constrained('suppliers')->cascadeOnDelete();
+            $table->foreignId('grade_id')->constrained('grades')->cascadeOnDelete();
             $table->string('name');
             $table->string('formula');
             $table->string('batch_number');

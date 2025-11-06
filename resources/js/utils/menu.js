@@ -10,7 +10,7 @@ import {
     TrendingUp,
     Users,
     ShoppingCart,
-    Inbox,
+    Mail,
     History,
     Factory,
     Building2,
@@ -21,6 +21,8 @@ import {
     Pipette,
     ListCheck,
     ChartArea,
+    Inbox,
+    ScrollText,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -36,6 +38,7 @@ const isActive = (currentUrl, href, subItems = []) => {
         return true;
     if (subItems.length > 0) {
         return subItems.some((sub) => currentUrl.startsWith(sub.href));
+
     }
     return false;
 };
@@ -51,14 +54,14 @@ const getRoleFromUrl = (url) => {
 const MENU_CONFIG = {
     analyst: [
         {
-            name: "Kotak Masuk",
-            icon: Inbox,
-            href: "/analyst/inbox",
+            name: "Beranda",
+            icon: Home,
+            href: "/analyst/dashboard",
         },
         {
-            name: "Riwayat",
-            icon: History,
-            href: "/analyst/history",
+            name: "Daftar Pesanan",
+            icon: ScrollText,
+            href: "/analyst/order",
         },
     ],
 
