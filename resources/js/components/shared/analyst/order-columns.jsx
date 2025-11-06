@@ -3,20 +3,30 @@ import { Button } from "@/components/ui/button";
 import { Link } from '@inertiajs/react';
 import { AlertCircle } from "lucide-react";
 
+const statusLabelMap = {
+  completed: "Completed",
+  in_progress: "In Progress",
+  pending: "Pending",
+  disapproved: "Disapproved",
+  approved: "Approved",
+  received: "Received",
+};
+
+
 const statusVariantMap = {
-    Completed: "success",
-    "In Progress": "warning",
-    Pending: "info",
-    Disapproved: "error",
-    Approved: "approved",
-    Received: "received",
+    completed: "success",
+    in_progress: "warning",
+    pending: "info",
+    disapproved: "error",
+    approved: "approved",
+    received: "received",
 };
 
 const tipeVariantMap = {
-    External: "warning",
-    Internal: "info",
-    Urgent: "error",
-    Regular: "info",
+    external: "warning",
+    internal: "info",
+    urgent: "error",
+    regular: "secondary",
 };
 
 export const getOrdersColumns = () => [
@@ -38,17 +48,22 @@ export const getOrdersColumns = () => [
             );
         },
     },
-    {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => {
-            const value = row.status;
-            return (
-                <Badge variant={statusVariantMap[value] || "outline"}>
-                    {value}
-                </Badge>
-            );
-        },
+        {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+        const value = row.status?.toLowerCase();
+        const displayText = value
+        .split("_")
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(" ");
+
+        return (
+        <Badge variant={statusVariantMap[value] || "outline"}>
+            {displayText}
+        </Badge>
+        );
+    },
     },
     {
         id: "aksi",
