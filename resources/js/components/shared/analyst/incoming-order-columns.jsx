@@ -3,19 +3,30 @@ import { Button } from "@/components/ui/button";
 import { Link } from '@inertiajs/react';
 import { FileText, History } from "lucide-react";
 
+const statusLabelMap = {
+  completed: "Completed",
+  in_progress: "In Progress",
+  pending: "Pending",
+  disapproved: "Disapproved",
+  approved: "Approved",
+  received: "Received",
+};
+
+
 const statusVariantMap = {
-    Completed: "success",
-    "In Progress": "warning",
-    Pending: "info",
-    Disapproved: "error",
-    Approved: "approved",
-    Received: "received",
+    completed: "success",
+    in_progress: "warning",
+    pending: "info",
+    disapproved: "error",
+    approved: "approved",
+    received: "received",
 };
 
 const tipeVariantMap = {
-    Eksternal: "warning",
-    Internal: "info",
-    Urgent: "error",
+    external: "warning",
+    internal: "info",
+    urgent: "error",
+    reguler: "Secondary",
 };
 
 export const getOrdersColumns = ({setSelectedTest}) => [
