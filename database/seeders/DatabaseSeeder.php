@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
                         SampleCategorySeeder::class,
                         // UnitValueSeeder::class,
                         // ReferenceStandardSeeder::class,
-                        // AnalysesMethodSeeder::class,
+                        AnalysesMethodSeeder::class,
                 ]);
 
                 // // Master Data Dependen

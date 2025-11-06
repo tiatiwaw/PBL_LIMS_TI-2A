@@ -63,14 +63,6 @@ export default function OrdersPage({
         setStep((prev) => prev - 1);
     };
 
-    // const handleSave = () => {
-    //     if (step === 3) {
-    //         // Simulasi proses penyimpanan
-    //         console.log("Data berhasil disimpan!");
-    //         setIsSaved(true);
-    //         // contoh: Inertia.post("/orders", formData);
-    //     }
-    // };
     const handleSave = () => {
         if (step === 3) {
             post(route("staff.order.store"), {
@@ -80,9 +72,6 @@ export default function OrdersPage({
                 },
                 onError: (e) => {
                     console.error("Gagal menyimpan data:", e);
-                    // toast.error(
-                    //     "Gagal menyimpan data. Periksa kembali form Anda."
-                    // );
                     if (
                         errors.selectedKlien ||
                         errors.judulOrder ||
@@ -108,7 +97,6 @@ export default function OrdersPage({
             </div>
 
             <div className="px-4 py-2 rounded-md shadow-sm">
-                {/* Jika data sudah disimpan, tampilkan header sukses + detail order */}
                 {isSaved ? (
                     <>
                         {/* ✅ Header sukses seperti di gambar */}
