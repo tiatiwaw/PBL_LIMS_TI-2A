@@ -16,6 +16,10 @@ Route::controller(HomeController::class)->name('index')->group(function () {
 });
 
 // Login
+Route::get('/login', function () {
+    return redirect()->route('auth.login.form');
+})->name('login');
+
 Route::middleware('guest')
     ->prefix('auth')
     ->name('auth.')
