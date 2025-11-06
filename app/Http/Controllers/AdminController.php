@@ -162,14 +162,7 @@ class AdminController extends Controller
 
     public function showOrder($id)
     {
-        $order = Order::with(['client', 'analysts', 'parameter_methods.parameter', 'parameter_methods.method'])
-            ->findOrFail($id);
-
         return inertia('admin/orders/detail', [
-            'auth' => [
-                'user' => auth()->user(),
-            ],
-            'order' => $order,
             'canValidate' => false,
         ]);
     }
