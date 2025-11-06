@@ -21,9 +21,9 @@ export default function MethodsPage({ auth, methodsData }) {
                 data={parameters}
                 columns={columns}
                 editFields={editMethodFields}
+                createUrl="admin.test.method.create"
                 editUrl="admin.test.method.update"
                 deleteUrl="admin.test.method.destroy"
-                searchColumn="name"
                 editTitle="Edit Metode Uji"
                 deleteTitle="Hapus Metode Uji"
             />
