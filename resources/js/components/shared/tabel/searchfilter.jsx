@@ -32,7 +32,7 @@ export default function SearchFilter({
                             value={searchTerm}
                             onChange={(e) => onSearchChange(e.target.value)}
                             className={cn(
-                                "w-full bg-white/10 backdrop-blur-md border border-primary-hijauTua/30 rounded-lg py-2.5 pl-12 pr-4 text-sm text-primary-hijauTua placeholder:text-primary-hijauTua/60",
+                                "w-full bg-white/10 backdrop-blur-md border border-primary-hijauTua/30 rounded-lg py-2.5 pl-12 pr-4 text-sm font-semibold text-primary-hijauTua placeholder:text-primary-hijauTua/60",
                                 "focus:outline-none focus:ring focus:ring-primary-hijauTua/50 focus:border-primary-hijauTua/10",
                                 "hover:border-primary-hijauTua/50 transition-all duration-300",
                                 "shadow-sm hover:shadow-md"

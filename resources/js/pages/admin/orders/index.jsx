@@ -7,12 +7,12 @@ import { orders } from "@/data/manager/detail";
 
 const filterData = [
     { value: "all", label: "All Status" },
-    { value: "Completed", label: "Completed" },
-    { value: "In Progress", label: "In Progress" },
-    { value: "Pending", label: "Pending" },
-    { value: "Disapproved", label: "Disapproved" },
-    { value: "Approved", label: "Approved" },
-    { value: "Received", label: "Received" },
+    { value: "completed", label: "Completed" },
+    { value: "in_progress", label: "In Progress" },
+    { value: "pending", label: "Pending" },
+    { value: "disapproved", label: "Disapproved" },
+    { value: "approved", label: "Approved" },
+    { value: "received", label: "Received" },
 ];
 
 export default function AdminOrdersPage({ auth, ordersData }) {

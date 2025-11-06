@@ -174,7 +174,6 @@ class AdminController extends Controller
         ]);
     }
 
-
     public function logActivity()
     {
         return Inertia::render('admin/log-activity/index');

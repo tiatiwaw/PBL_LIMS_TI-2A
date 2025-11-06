@@ -1,20 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-const statusVariantMap = {
-    completed: "success",
-    in_progress: "warning",
-    pending: "info",
-    disapproved: "error",
-    approved: "approved",
-    received: "received",
-};
-
-const tipeVariantMap = {
-    eksternal: "warning",
-    internal: "info",
-    urgent: "error",
-};
+import { getOrderStatusLabel, getOrderStatusVariant, getOrderTypeLabel, getOrderTypeVariant } from "@/utils/statusHelpers";
 
 export const getOrdersColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No." },
@@ -29,10 +15,9 @@ export const getOrdersColumns = ({ onShowDetail }) => [
             const value = row.order_type;
             return (
                 <Badge
-                    variant={tipeVariantMap[value] || "outline"}
-                    className="capitalize"
+                    variant={getOrderTypeVariant(value)}
                 >
-                    {value}
+                    {getOrderTypeLabel(value)}
                 </Badge>
             );
         },
@@ -43,8 +28,8 @@ export const getOrdersColumns = ({ onShowDetail }) => [
         cell: ({ row }) => {
             const value = row.status;
             return (
-                <Badge variant={statusVariantMap[value] || "outline"}>
-                    {value}
+                <Badge variant={getOrderStatusVariant(value)}>
+                    {getOrderStatusLabel(value)}
                 </Badge>
             );
         },

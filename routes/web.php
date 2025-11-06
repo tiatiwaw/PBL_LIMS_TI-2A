@@ -38,7 +38,7 @@ Route::controller(AdminController::class)
     ->name('admin.')
     ->group(function () {
         Route::get('/', 'index')->name('index');
-        
+
         // Tools
         Route::prefix('tools')->name('tools.')->group(function () {
             Route::get('/equipments', 'equipment')->name('equipments');
@@ -110,7 +110,7 @@ Route::controller(AdminController::class)
             Route::get('/', 'orders')->name('index');
             Route::get('/{id}', 'detailOrder')->name('detail');
         });
-        
+
         // Additional Routes
         Route::get('/activities', 'activities')->name('activities');
         Route::get('/log-activity', 'logActivity')->name('log');
@@ -232,23 +232,14 @@ Route::controller(ClientController::class)
     ->group(function () {
         Route::get('/', 'index')->name('index');
 
-        // Dashboard
-        Route::prefix('dashboard')->name('dashboard.')->group(function () {
-            Route::get('/stats', 'dashboardStats')->name('stats');
-            Route::get('/orders', 'dashboardOrders')->name('orders');
-        });
-
-        // Details
-        Route::prefix('details')->name('details.')->group(function () {
-            Route::get('/order/{order}', 'detailsOrder')->name('order');
-            Route::get('/samples', 'detailsSamples')->name('samples');
-            Route::get('/samples/{sample}/info', 'detailsSampleInfo')->name('samples.info');
+        // Orders
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', 'orders')->name('index');
+            Route::inertia('/detail', 'client/detail/index')->name('client.orders.detail');
         });
 
         // History
-        Route::prefix('history')->name('history.')->group(function () {
-            Route::get('/timeline', 'historyTimeline')->name('timeline');
-        });
+        Route::get('/history', 'history')->name('history');
     });
 
 require __DIR__ . '/auth.php';

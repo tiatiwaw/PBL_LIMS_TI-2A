@@ -16,7 +16,7 @@ export default function DashboardLayout({
     const { url } = usePage();
 
     const handleLogout = useCallback(() => {
-        router.visit('/logout');
+        router.visit('/auth/logout');
         toast.success('Logout Berhasil');
     });
 

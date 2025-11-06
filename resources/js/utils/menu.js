@@ -48,6 +48,7 @@ const getRoleFromUrl = (url) => {
     if (url.startsWith("/admin")) return "admin";
     if (url.startsWith("/manager")) return "manager";
     if (url.startsWith("/staff")) return "staff";
+    if (url.startsWith("/client")) return "client";
     return null;
 };
 
@@ -178,6 +179,7 @@ const MENU_CONFIG = {
             href: "/manager/users",
         },
     ],
+
     staff: [
         {
             name: "Manajemen Klien",
@@ -193,6 +195,19 @@ const MENU_CONFIG = {
             name: "Orders",
             icon: ChartArea,
             href: "/staff/orders",
+        },
+    ],
+
+    client: [
+        {
+            name: "Beranda",
+            icon: Home,
+            href: "/client",
+        },
+        {
+            name: "Riwayat",
+            icon: ChartArea,
+            href: "/client/history",
         },
     ],
 };

@@ -9,7 +9,6 @@ export const HeaderCard = ({ title, user, notificationCount = 3, onLogout }) => 
     const { url } = usePage();
     const segments = url.split('/').filter(Boolean);
 
-    // Buat label agar tampil lebih rapi
     const formatLabel = (segment) => {
         return segment
             .replace(/-/g, ' ')

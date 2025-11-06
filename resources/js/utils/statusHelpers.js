@@ -24,6 +24,27 @@ export const getEquipmentStatusLabel = (status) => {
     return statuses[status] || status;
 };
 
+export const getOrderStatusLabel = (status) => {
+    const statuses = {
+        completed: "Selesai",
+        in_progress: "Sedang Diproses",
+        pending: "Menunggu",
+        disapproved: "Ditolak",
+        approved: "Disetujui",
+        received: "Diterima",
+    };
+    return statuses[status] || status;
+};
+
+export const getOrderTypeLabel = (type) => {
+    const types = {
+        eksternal: "Eksternal",
+        internal: "Internal",
+        urgent: "Urgent",
+    };
+    return types[type] || type;
+};
+
 export const getOrderTypeVariant = (type) => {
     const variants = {
         eksternal: "warning",
