@@ -9,9 +9,31 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Link } from '@inertiajs/react';
 
 export const UserMenu = ({ user, onLogout }) => {
     const userInitial = user?.name?.charAt(0)?.toUpperCase() || 'U';
+
+    // 🔹 Buat URL dinamis berdasarkan role user
+    const getProfileUrl = (role) => {
+        const normalized = role?.toLowerCase();
+        switch (normalized) {
+            case 'manager':
+                return '/manager/profile';
+            case 'staff':
+                return '/staff/profile';
+            case 'supervisor':
+                return '/supervisor/profile';
+            case 'analyst':
+                return '/analyst/profile';
+            case 'client':
+                return '/client/profile';
+            default:
+                return '/profile';
+        }
+    };
+
+    const profileUrl = getProfileUrl(user?.role);
 
     return (
         <DropdownMenu>
@@ -22,7 +44,7 @@ export const UserMenu = ({ user, onLogout }) => {
                         flex items-center gap-3 
                         bg-white/10 hover:bg-white/20 
                         text-white rounded-xl 
-                        px-4 h-14 
+                        px-4 h-14 group
                         transition-all duration-300
                     "
                 >
@@ -33,16 +55,17 @@ export const UserMenu = ({ user, onLogout }) => {
                         </AvatarFallback>
                     </Avatar>
                     <div className="text-left">
-                        <p className="font-semibold text-sm leading-none">
+                        <p className="font-semibold text-sm leading-none text-white group-hover:text-gray-300">
                             {user.name}
                         </p>
                         <p className="text-xs text-white/70 mt-1.5">
                             {user.role}
                         </p>
                     </div>
-                    <ChevronDown size={16} className="opacity-70" />
+                    <ChevronDown size={16} className="opacity-70 group-hover:text-gray-300" />
                 </Button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent
                 className="
                     w-56 mr-4 
@@ -62,19 +85,27 @@ export const UserMenu = ({ user, onLogout }) => {
                         </p>
                     </div>
                 </DropdownMenuLabel>
+
                 <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem className="hover:bg-white/10 cursor-pointer py-2.5">
+
+                {/* 🔹 Link profil dinamis */}
+                <DropdownMenuItem className="hover:!bg-primary-hijauTerang cursor-pointer py-2.5">
                     <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                    <Link href={profileUrl} className="w-full block">
+                        Profile
+                    </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="hover:bg-white/10 cursor-pointer py-2.5">
+
+                <DropdownMenuItem className="hover:!bg-primary-hijauTerang cursor-pointer py-2.5">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                 </DropdownMenuItem>
+
                 <DropdownMenuSeparator className="bg-white/10" />
+
                 <DropdownMenuItem
                     onClick={onLogout}
-                    className="text-red-400 hover:text-red-300 hover:bg-red-500/10 cursor-pointer py-2.5"
+                    className="text-red-400 hover:!text-white hover:!bg-red-400 cursor-pointer py-2.5"
                 >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
