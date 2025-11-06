@@ -8,33 +8,29 @@ import {
     DialogFooter,
     DialogDescription,
 } from "@/components/ui/dialog";
+import ManagedDataTable from "../tabel/managed-data-table";
+import { getSampleColumnsOrder } from "./sample-order-colums";
 import TableSamplesOrd from "@/components/shared/staff/table-samplesord";
 import { Button } from "@/components/ui/button";
 import { samples } from "@/data/staff/sample";
 import { DatePicker } from "@/components/ui/date-picker";
+import { editSampleFields } from "@/utils/fields/staff";
 
-export default function OrdersForm2() {
+export default function OrdersForm2({ samples, categories, data, setData }) {
     const [selectedSamples, setSelectedSamples] = useState([]);
     const [isSampleDialogOpen, setIsSampleDialogOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [formData, setFormData] = useState({
-        tipeOrder: "",
-        samples: [],
-        tanggalOrder: "",
-        estimasiSelesai: "",
-        catatan: "",
-    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
+        setData((prev) => ({
             ...prev,
             [name]: value,
         }));
     };
 
     const handleTipeOrderSelect = (value) => {
-        setFormData((prev) => ({
+        setData((prev) => ({
             ...prev,
             tipeOrder: value,
         }));
@@ -42,6 +38,8 @@ export default function OrdersForm2() {
     };
 
     const handleSampleSelect = (sample) => {
+        if (!sample) return console.log(`sample ${sample} tidak terkirim"`); // 🚧 Tambahkan guard agar tidak undefined
+
         setSelectedSamples((prev) => {
             const exists = prev.find((s) => s.id === sample.id);
             return exists
@@ -55,7 +53,7 @@ export default function OrdersForm2() {
         const normalized = selectedSamples.map((s) =>
             s.hasOwnProperty("value") ? s : { ...s, value: "" }
         );
-        setFormData((prev) => ({
+        setData((prev) => ({
             ...prev,
             samples: normalized,
         }));
@@ -65,38 +63,36 @@ export default function OrdersForm2() {
 
     const handleOpenDialog = () => {
         // clone supaya tidak referensi langsung
-        setSelectedSamples((formData.samples || []).map(s => ({ ...s })));
+        setSelectedSamples((data.samples || []).map((s) => ({ ...s })));
         setIsSampleDialogOpen(true);
     };
 
     const handleDialogChange = (open) => {
         if (!open) {
-            setSelectedSamples((formData.samples || []).map(s => ({ ...s })));
+            setSelectedSamples((data.samples || []).map((s) => ({ ...s })));
         }
         setIsSampleDialogOpen(open);
     };
 
     const handleRemoveSample = (sampleId) => {
-        const updatedSamples = formData.samples.filter(
-            (s) => s.id !== sampleId
-        );
-        setFormData((prev) => ({
+        const updatedSamples = data.samples.filter((s) => s.id !== sampleId);
+        setData((prev) => ({
             ...prev,
             samples: updatedSamples,
         }));
-        setSelectedSamples(updatedSamples.map(s => ({ ...s })));
+        setSelectedSamples(updatedSamples.map((s) => ({ ...s })));
     };
 
     // update value/volume untuk sample yang dipilih
-    const handleSampleValueChange = (sampleId, value) => {
-        setFormData((prev) => {
+    const handleSampleValueChange = (sampleId, sample_volume) => {
+        setData((prev) => {
             const updated = (prev.samples || []).map((s) =>
-                s.id === sampleId ? { ...s, value } : s
+                s.id === sampleId ? { ...s, sample_volume } : s
             );
             return { ...prev, samples: updated };
         });
         setSelectedSamples((prev) =>
-            prev.map((s) => (s.id === sampleId ? { ...s, value } : s))
+            prev.map((s) => (s.id === sampleId ? { ...s, sample_volume } : s))
         );
     };
 
@@ -109,7 +105,7 @@ export default function OrdersForm2() {
 
     const getSelectedLabel = () => {
         const selected = orderTypes.find(
-            (type) => type.value === formData.tipeOrder
+            (type) => type.value === data.tipeOrder
         );
         return selected ? selected.label : "Pilih Tipe Order";
     };
@@ -136,7 +132,7 @@ export default function OrdersForm2() {
                             >
                                 <span
                                     className={
-                                        formData.tipeOrder
+                                        data.tipeOrder
                                             ? "text-gray-700"
                                             : "text-gray-400"
                                     }
@@ -166,7 +162,7 @@ export default function OrdersForm2() {
                                                     border rounded-lg p-3 cursor-pointer transition-all duration-200 text-center
                                                     ${type.bgColor} text-white
                                                     ${
-                                                        formData.tipeOrder ===
+                                                        data.tipeOrder ===
                                                         type.value
                                                             ? "ring-2 ring-offset-2 ring-gray-400"
                                                             : "hover:brightness-110"
@@ -187,9 +183,9 @@ export default function OrdersForm2() {
                     {/* Tanggal Order - Menggunakan DatePicker */}
                     <DatePicker
                         label="Tanggal Order"
-                        value={formData.tanggalOrder}
+                        value={data.tanggalOrder}
                         onChange={(date) =>
-                            setFormData((prev) => ({
+                            setData((prev) => ({
                                 ...prev,
                                 tanggalOrder: date
                                     ? date.toISOString().split("T")[0]
@@ -201,9 +197,9 @@ export default function OrdersForm2() {
                     {/* Estimasi Order Selesai - Menggunakan DatePicker */}
                     <DatePicker
                         label="Estimasi Order Selesai"
-                        value={formData.estimasiSelesai}
+                        value={data.estimasiSelesai}
                         onChange={(date) =>
-                            setFormData((prev) => ({
+                            setData((prev) => ({
                                 ...prev,
                                 estimasiSelesai: date
                                     ? date.toISOString().split("T")[0]
@@ -219,7 +215,7 @@ export default function OrdersForm2() {
                         </label>
                         <textarea
                             name="catatan"
-                            value={formData.catatan}
+                            value={data.catatan}
                             onChange={handleChange}
                             placeholder="Catatan orderan"
                             rows="4"
@@ -248,9 +244,9 @@ export default function OrdersForm2() {
                             Sampel yang dipilih:
                         </h3>
 
-                        {formData.samples.length > 0 ? (
+                        {data.samples.length > 0 ? (
                             <div className="space-y-2">
-                                {formData.samples.map((sample, index) => (
+                                {data.samples.map((sample, index) => (
                                     <div
                                         key={sample.id}
                                         className="flex items-center gap-3 p-3 bg-gray-100 rounded-md border border-gray-200"
@@ -262,7 +258,9 @@ export default function OrdersForm2() {
                                         <div className="flex-1 px-2">
                                             <input
                                                 type="text"
-                                                value={sample.value ?? ""}
+                                                value={
+                                                    sample.sample_volume ?? ""
+                                                }
                                                 onChange={(e) =>
                                                     handleSampleValueChange(
                                                         sample.id,
@@ -278,7 +276,9 @@ export default function OrdersForm2() {
                                             <button
                                                 type="button"
                                                 onClick={() =>
-                                                    handleRemoveSample(sample.id)
+                                                    handleRemoveSample(
+                                                        sample.id
+                                                    )
                                                 }
                                                 className="text-red-500 hover:text-red-700 text-xs font-medium"
                                             >
@@ -309,10 +309,17 @@ export default function OrdersForm2() {
                     </DialogHeader>
 
                     <div className="flex-grow overflow-y-auto">
-                        <TableSamplesOrd
+                        <ManagedDataTable
                             data={samples}
-                            onSelectSample={handleSampleSelect}
-                            selected={selectedSamples}
+                            columns={getSampleColumnsOrder({
+                                selectedSamples,
+                                onSelectSample: handleSampleSelect,
+                            })}
+                            editFields={editSampleFields(categories)}
+                            showFilter={false}
+                            showSearch={true}
+                            createUrl="staff.sample.store"
+                            pageSize={5}
                         />
                     </div>
 
@@ -320,7 +327,6 @@ export default function OrdersForm2() {
                         <Button
                             variant="outline"
                             onClick={() => setIsSampleDialogOpen(false)}
-                            className="bg-gray-200 hover:bg-gray-300"
                         >
                             Tutup
                         </Button>
