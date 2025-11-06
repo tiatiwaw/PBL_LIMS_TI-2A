@@ -27,7 +27,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             if ($user->hasRole('admin')) {
-                return redirect()->intended('/admin'); // Arahkan ke halaman admin
+                return redirect()->intended(route('admin.index')); // Arahkan ke halaman admin
             }
             if ($user->hasRole('analyst')) {
                 return redirect()->intended('/analyst'); // Arahkan ke halaman admin
@@ -39,7 +39,7 @@ class AuthController extends Controller
                 return redirect()->intended('/client'); // Arahkan ke halaman manager
             }
 
-            return redirect()->intended('/profile'); // Arahkan ke halaman profil
+            // return redirect()->intended('/profile'); // Arahkan ke halaman profil
         }
         return back()->with('error', 'Login gagal, pastikan email dan password benar.');
     }

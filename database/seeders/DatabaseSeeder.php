@@ -46,8 +46,8 @@ class DatabaseSeeder extends Seeder
                 // Data Transaksional
                 $this->call([
                         // AnalystSeeder::class,
-                        ClientSeeder::class,
-                        SampleSeeder::class,
+                        // ClientSeeder::class,
+                        // SampleSeeder::class,
                 ]);
         }
 }
