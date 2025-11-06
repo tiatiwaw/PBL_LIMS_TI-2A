@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 
-export default function DetailSheet({
+export default function  DetailSheet({
     open,
     onOpenChange,
     title,

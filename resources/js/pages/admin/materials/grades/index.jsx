@@ -1,15 +1,25 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getGradesColumns } from "@/components/shared/admin/material-columns";
+import GradeDetailSheet from "@/components/shared/sheet/grade-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { grades } from "@/data/admin/materials";
 import { editGradeFields } from "@/utils/fields/admin";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export default function GradesPage({ auth, gradesData }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedGrades, setSelectedGrades] = useState(null);
+    
+    const handleShowDetail = (materials) => {
+            setSelectedGrades(materials);
+            setIsOpen(true);
+    };
+
     const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
     const parameters = gradesData || grades;
 
-    const columns = useMemo(() => getGradesColumns(), []);
+    const columns = useMemo(() => getGradesColumns({ onShowDetail: handleShowDetail }), []);
+    
 
     return (
         <DashboardLayout
@@ -27,6 +37,7 @@ export default function GradesPage({ auth, gradesData }) {
                 editTitle="Edit Tingkatan"
                 deleteTitle="Hapus Tingkatan"
             />
+        <GradeDetailSheet data={selectedGrades} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }
