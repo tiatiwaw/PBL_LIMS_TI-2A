@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react"; // Import Search icon
 import ManagedDataTable from "../tabel/managed-data-table";
 import { getMethodColumns } from "./analyses-method-colums";
-import { getClientOrderColumns } from "./client-order-columns";
+import { getClientOrderColumns } from "./client-colums";
 
 export default function OrdersForm({ clients, methods, data, setData }) {
     const [isMethodDialogOpen, setIsMethodDialogOpen] = useState(false);

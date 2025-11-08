@@ -23,7 +23,7 @@ class StaffController extends Controller
     // ================================
     // KLIEN
     // ================================
-    public function clientIndex()
+    public function index()
     {
         $clients = Client::with('users')->get();
 
@@ -32,7 +32,7 @@ class StaffController extends Controller
         ]);
     }
 
-    public function clientStore(Request $request)
+    public function store(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -47,6 +47,7 @@ class StaffController extends Controller
             ],
             'password' => 'required|string|min:8',
         ]);
+
 
         $user = User::create([
             'name' => $validatedData['name'],
@@ -64,10 +65,10 @@ class StaffController extends Controller
             'email' => $validatedData['email'],
         ]);
 
-        return Redirect::route('staff.client.index')->with('success', 'Klien baru berhasil dibuat.');
+        return Redirect::route('staff.client.index')->with('success', 'Klien baru berhasil dibuat yeahhh.');
     }
 
-    public function clientUpdate(Request $request, Client $client)
+    public function update(Request $request, Client $client)
     {
         // 1. Validasi data
         $validatedData = $request->validate([
@@ -101,7 +102,7 @@ class StaffController extends Controller
         return Redirect::route('staff.client.index')->with('success', 'Data klien berhasil diperbarui.');
     }
 
-    public function clientDestroy(Client $client)
+    public function destroy(Client $client)
     {
         if ($client->users) {
             $client->users->delete();
@@ -115,7 +116,7 @@ class StaffController extends Controller
     // SAMPLE
     // ================================
 
-    public function sampleStore(Request $request)
+    public function storeSample(Request $request)
     {
         $validatedData = $request->validate([
             'sample_category_id' => ['required', 'exists:sample_categories,id'],
@@ -141,7 +142,7 @@ class StaffController extends Controller
     // ================================
     // ORDER
     // ================================
-    public function order()
+    public function indexOrder()
     {
         $samples = Sample::with('sample_categories')->get();
         $methods = AnalysesMethod::all();

@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { menuItems } from '@/utils/menu';
 import { Sidebar } from './sidebar';
 import { HeaderCard } from '../shared/dashboard/header-card';
-import { toast } from 'sonner';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function DashboardLayout({
     children,
@@ -14,11 +14,11 @@ export default function DashboardLayout({
     notificationCount = 3,
 }) {
     const { url } = usePage();
+    const { logout } = useAuth();
 
     const handleLogout = useCallback(() => {
-        router.visit('/auth/logout');
-        toast.success('Logout Berhasil');
-    });
+        logout();
+    }, [logout]);
 
     const getMenuItems = menuItems(url);
 
@@ -26,7 +26,7 @@ export default function DashboardLayout({
         <div className="p-4 flex gap-4 h-screen bg-primary-hijauTerang">
             <Head title={title} />
 
-            <Sidebar menuItems={getMenuItems} />
+            <Sidebar menuItems={getMenuItems} onLogout={handleLogout} />
 
             <div className="flex-1 flex flex-col overflow-hidden">
                 <header className="mb-6">

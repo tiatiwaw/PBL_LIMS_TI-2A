@@ -14,7 +14,6 @@ import { Link } from '@inertiajs/react';
 export const UserMenu = ({ user, onLogout }) => {
     const userInitial = user?.name?.charAt(0)?.toUpperCase() || 'U';
 
-    // 🔹 Buat URL dinamis berdasarkan role user
     const getProfileUrl = (role) => {
         const normalized = role?.toLowerCase();
         switch (normalized) {
@@ -49,7 +48,7 @@ export const UserMenu = ({ user, onLogout }) => {
                     "
                 >
                     <Avatar className="w-9 h-9 ring-2 ring-white/30 ring-offset-2 ring-offset-transparent">
-                        <AvatarImage src="/placeholder-avatar.jpg" alt={user.name} />
+                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.role)}`} alt={user?.name} />
                         <AvatarFallback className="bg-white/20 text-white font-semibold">
                             {userInitial}
                         </AvatarFallback>
@@ -88,7 +87,6 @@ export const UserMenu = ({ user, onLogout }) => {
 
                 <DropdownMenuSeparator className="bg-white/10" />
 
-                {/* 🔹 Link profil dinamis */}
                 <DropdownMenuItem className="hover:!bg-primary-hijauTerang cursor-pointer py-2.5">
                     <User className="mr-2 h-4 w-4" />
                     <Link href={profileUrl} className="w-full block">

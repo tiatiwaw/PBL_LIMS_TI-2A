@@ -1,7 +1,11 @@
 import { useState } from "react";
-import { router } from "@inertiajs/react";
 import { toast } from "sonner";
-import { DataTableCard, DataTableHeader, DataTableContent, DataTablePagination } from "./data-table";
+import {
+    DataTableCard,
+    DataTableHeader,
+    DataTableContent,
+    DataTablePagination,
+} from "./data-table";
 import UpsertDialog from "../dialog/upsert-dialog";
 import DeleteDialog from "../dialog/delete-dialog";
 import { useTable } from "@/hooks/useTables";
@@ -10,11 +14,13 @@ export default function ManagedDataTable({
     data,
     columns,
     editFields,
-    createUrl,
-    editUrl,
-    deleteUrl,
 
-    // Props buat Konfigurasi
+    // callback
+    onCreate,
+    onEdit,
+    onDelete,
+
+    // konfigurasi
     filterOptions = [],
     filterColumn = "status",
     showSearch = true,
@@ -23,15 +29,14 @@ export default function ManagedDataTable({
     pageSize = 10,
     meta = {},
 
-    // Props buat Teks (Opsional)
+    // teks
+    createTitle = "Tambah Data Baru",
+    createDescription = "Isi data baru, lalu simpan.",
     editTitle = "Edit Data",
     editDescription = "Ubah data dan klik simpan untuk menyimpan perubahan.",
     deleteTitle = "Konfirmasi Hapus Data",
-    deleteDescription = "Tindakan ini tidak dapat dibatalkan. Data akan dihapus permanen.",
-    createTitle = "Tambah Data Baru",
-    createDescription = "Tambahkan data baru dan klik simpan untuk menyimpan perubahan.",
+    deleteDescription = "Data akan dihapus permanen.",
 }) {
-
     const table = useTable({
         data,
         defaultPageSize: pageSize,
@@ -43,78 +48,45 @@ export default function ManagedDataTable({
     const [formDialog, setFormDialog] = useState({
         open: false,
         data: null,
-        mode: 'create'
+        mode: "create",
     });
-    const [deleteDialog, setDeleteDialog] = useState({ open: false, data: null });
+    const [deleteDialog, setDeleteDialog] = useState({
+        open: false,
+        data: null,
+    });
 
-    const handleOpenCreate = () => {
-        setFormDialog({ open: true, data: null, mode: 'create' });
-    };
+    const handleOpenCreate = () => setFormDialog({ open: true, data: null, mode: "create" });
+    const handleOpenEdit = (row) => setFormDialog({ open: true, data: row, mode: "edit" });
+    const handleOpenDelete = (row) => setDeleteDialog({ open: true, data: row });
 
-    const handleOpenEdit = (row) => {
-        setFormDialog({ open: true, data: row, mode: 'edit' });
-    };
-
-    const handleOpenDelete = (row) => {
-        setDeleteDialog({ open: true, data: row });
-    };
-
-    const handleSave = (formData) => {
-        const { mode, data: originalData } = formDialog;
-
-        if (mode === 'edit') {
-            if (!editUrl) {
-                console.warn("editUrl diisi kocak!.");
-                setFormDialog({ open: false, data: null, mode: 'idle' });
-                return;
+    const handleSave = async (formData) => {
+        const isEdit = formDialog.mode === "edit";
+        try {
+            if (isEdit) {
+                await onEdit?.(formDialog.data.id, formData);
+                toast.success("Data berhasil diperbarui");
+            } else {
+                await onCreate?.(formData);
+                toast.success("Data berhasil ditambahkan");
             }
-
-            router.put(
-                route(editUrl, originalData.id),
-                formData,
-                {
-                    onSuccess: () => toast.success("Data berhasil disimpan"),
-                    onError: (e) => toast.error("Gagal menyimpan data:", e),
-                    onFinish: () => setFormDialog({ open: false, data: null, mode: 'idle' }),
-                }
-            );
-        } else if (mode === 'create') {
-            if (!createUrl) {
-                console.warn("createUrl diisi kocak!.");
-                setFormDialog({ open: false, data: null, mode: 'idle' });
-                return;
-            }
-
-            router.post(
-                route(createUrl),
-                formData,
-                {
-                    onSuccess: () => toast.success("Data berhasil ditambahkan"),
-                    onError: (e) => toast.error("Gagal menambahkan data:", e),
-                    onFinish: () => setFormDialog({ open: false, data: null, mode: 'idle' }),
-                }
-            );
+            setFormDialog({ open: false, data: null, mode: "create" });
+        } catch (err) {
+            toast.error(err.message || "Gagal menyimpan data");
         }
     };
 
-    const handleConfirmDelete = (deletedData) => {
-        if (!deleteUrl) {
-            console.warn("ManagedDataTable: Prop 'deleteUrl' tidak disediakan.");
+    const handleConfirmDelete = async () => {
+        try {
+            await onDelete?.(deleteDialog.data.id);
+            toast.success("Data berhasil dihapus");
+        } catch (err) {
+            toast.error(err.message || "Gagal menghapus data");
+        } finally {
             setDeleteDialog({ open: false, data: null });
-            return;
         }
-
-        router.delete(
-            route(deleteUrl, deletedData.id),
-            {
-                onSuccess: () => toast.success("Data berhasil dihapus"),
-                onError: (e) => toast.error("Gagal menghapus data:", e),
-                onFinish: () => setDeleteDialog({ open: false, data: null }),
-            }
-        );
     };
 
-    const isCreating = formDialog.mode === 'create';
+    const isCreating = formDialog.mode === "create";
     const dialogTitle = isCreating ? createTitle : editTitle;
     const dialogDescription = isCreating ? createDescription : editDescription;
 
@@ -151,7 +123,9 @@ export default function ManagedDataTable({
 
             <UpsertDialog
                 open={formDialog.open}
-                onOpenChange={(open) => setFormDialog({ open, data: null, mode: 'create' })}
+                onOpenChange={(open) =>
+                    setFormDialog((prev) => ({ ...prev, open }))
+                }
                 data={formDialog.data}
                 onSave={handleSave}
                 fields={editFields}
@@ -161,7 +135,9 @@ export default function ManagedDataTable({
 
             <DeleteDialog
                 open={deleteDialog.open}
-                onOpenChange={(open) => setDeleteDialog({ open, data: null })}
+                onOpenChange={(open) =>
+                    setDeleteDialog((prev) => ({ ...prev, open }))
+                }
                 data={deleteDialog.data}
                 onConfirm={handleConfirmDelete}
                 title={deleteTitle}

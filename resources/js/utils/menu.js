@@ -35,7 +35,6 @@ const isActive = (currentUrl, href, subItems = []) => {
         return true;
     if (subItems.length > 0) {
         return subItems.some((sub) => currentUrl.startsWith(sub.href));
-
     }
     return false;
 };
@@ -46,6 +45,7 @@ const getRoleFromUrl = (url) => {
     if (url.startsWith("/manager")) return "manager";
     if (url.startsWith("/staff")) return "staff";
     if (url.startsWith("/client")) return "client";
+    if (url.startsWith("/supervisor")) return "supervisor";
     return null;
 };
 
@@ -202,6 +202,8 @@ const MENU_CONFIG = {
             href: "/client/history",
         },
     ],
+
+    supervisor: [{ name: "Beranda", icon: Home, href: "/supervisor" }],
 };
 
 export function menuItems(url) {

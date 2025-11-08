@@ -17,7 +17,7 @@ export default function EquipmentDetailSheet({ data, isOpen, onOpenChange }) {
             description={`Detail Alat dari ${data.name}.`}
             fields={[
                 { label: "Nama Alat", value: data.name },
-                { label: "Brand / Tipe", value: data.brand_type },
+                { label: "Brand / Tipe", value: data.brand_types.name },
                 { label: "Nomor Seri", value: data.serial_number },
                 { label: "Tahun Pembelian", value: data.purchase_year },
                 { label: "Jadwal Kalibrasi", value: data.calibration_schedule },

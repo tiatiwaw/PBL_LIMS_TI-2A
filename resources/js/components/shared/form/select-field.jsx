@@ -41,7 +41,7 @@ export default function SelectField({
                     </SelectTrigger>
                     <SelectContent>
                         {options.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
+                            <SelectItem key={opt.value} value={opt.value} className="capitalize">
                                 {opt.label}
                             </SelectItem>
                         ))}
