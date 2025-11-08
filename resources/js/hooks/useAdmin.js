@@ -12,7 +12,7 @@ export const useAdmin = () => {
         queryKey: ["admin"],
         queryFn: async () => {
             try {
-                const response = await adminService.getDashboard();
+                const response = await adminService.dashboard.getAll();
                 return response.data;
             } catch (err) {
                 const message =
