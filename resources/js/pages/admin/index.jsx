@@ -4,8 +4,8 @@ import StatCard from '@/components/shared/card/stat-card';
 import { stats } from '@/data/admin/beranda';
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 import { useAdmin } from "@/hooks/useAdmin";
-import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/hooks/useAuth";
+import Loading from "@/components/ui/loading";
 
 export default function AdminDashboard() {
   const { dashboard, loading: dashboardLoading, error } = useAdmin();
@@ -23,9 +23,7 @@ export default function AdminDashboard() {
   if (dashboardLoading || authLoading) {
     return (
       <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang, Admin!">
-        <div className="flex items-center justify-center h-96">
-          <Spinner className="w-8 h-8" />
-        </div>
+        <Loading />
       </DashboardLayout>
     );
   }

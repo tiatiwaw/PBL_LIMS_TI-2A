@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\V1\Admin\BrandTypeController;
 use App\Http\Controllers\API\V1\Admin\DashboardController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\StaffApiController;
@@ -9,62 +10,37 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     Route::get('/auth/user', [AuthController::class, 'user']);
 
-    Route::prefix('admin')
-        ->middleware('admin')
-        ->controller(DashboardController::class)
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
+    // Admin
+    Route::prefix('admin')->middleware('admin')->name('api.admin.')->group(function () {
 
-            Route::prefix('tools')->group(function () {
-                Route::post('/equipments', 'storeEquipment');
-                Route::put('/equipments/{id}', 'updateEquipment');
-                Route::delete('/equipments/{id}', 'destroyEquipment');
+        Route::get('/', [DashboardController::class, 'index']);
 
-                Route::post('/brands', 'storeBrand');
-                Route::put('/brands/{id}', 'updateBrand');
-                Route::delete('/brands/{id}', 'destroyBrand');
-            });
+        // Route::apiResource('users', AdminApiUser::class);
+        // Route::apiResource('orders', AdminApiOrder::class)->except(['index', 'show']);
+        // Route::apiResource('activities', AdminApiActivity::class);
 
-            Route::prefix('materials')->group(function () {
-                Route::post('/reagents', 'storeReagent');
-                Route::put('/reagents/{id}', 'updateReagent');
-                Route::delete('/reagents/{id}', 'destroyReagent');
-
-                Route::post('/grades', 'storeGrade');
-                Route::put('/grades/{id}', 'updateGrade');
-                Route::delete('/grades/{id}', 'destroyGrade');
-
-                Route::post('/suppliers', 'storeSupplier');
-                Route::put('/suppliers/{id}', 'updateSupplier');
-                Route::delete('/suppliers/{id}', 'destroySupplier');
-            });
-
-            Route::prefix('tests')->group(function () {
-                Route::post('/parameters', 'storeParameter');
-                Route::put('/parameters/{id}', 'updateParameter');
-                Route::delete('/parameters/{id}', 'destroyParameter');
-
-                Route::post('/methods', 'storeMethod');
-                Route::put('/methods/{id}', 'updateMethod');
-                Route::delete('/methods/{id}', 'destroyMethod');
-
-                Route::post('/units', 'storeUnit');
-                Route::put('/units/{id}', 'updateUnit');
-                Route::delete('/units/{id}', 'destroyUnit');
-
-                Route::post('/references', 'storeStandard');
-                Route::put('/references/{id}', 'updateStandard');
-                Route::delete('/references/{id}', 'destroyStandard');
-
-                Route::post('/categories', 'storeCategory');
-                Route::put('/categories/{id}', 'updateCategory');
-                Route::delete('/categories/{id}', 'destroyCategory');
-            });
-
-            Route::post('/users',  'storeUser');
-            Route::put('/users/{id}',  'updateUser');
-            Route::delete('/users/{id}',  'destroyUser');
+        // Tools
+        Route::prefix('tools')->name('tools.')->group(function () {
+            // Route::apiResource('equipments', AdminApiEquipment::class)->except(['index']);
+            Route::apiResource('brands', BrandTypeController::class);
         });
+
+        // Materials
+        // Route::prefix('materials')->name('materials.')->group(function () {
+        //     Route::apiResource('reagents', AdminApiReagent::class)->except(['index']);
+        //     Route::apiResource('grades', AdminApiGrade::class)->except(['index']);
+        //     Route::apiResource('suppliers', AdminApiSupplier::class)->except(['index']);
+        // });
+
+        // Tests
+        // Route::prefix('tests')->name('tests.')->group(function () {
+        //     Route::apiResource('parameters', AdminApiParameter::class)->except(['index']);
+        //     Route::apiResource('methods', AdminApiMethod::class)->except(['index']);
+        //     Route::apiResource('units', AdminApiUnit::class)->except(['index']);
+        //     Route::apiResource('references', AdminApiReference::class)->except(['index']);
+        //     Route::apiResource('categories', AdminApiCategory::class)->except(['index']);
+        // });
+    });
 });
 
 Route::prefix('staff')->group(function () {

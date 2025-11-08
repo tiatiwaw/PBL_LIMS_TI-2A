@@ -1,36 +1,33 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { adminService } from "@/services/adminService";
 import { toast } from "sonner";
 
 export const useAdmin = () => {
-    const [dashboard, setDashboard] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    const fetchDashboard = async () => {
-        setLoading(true);
-        try {
-            const data = await adminService.getDashboard();
-            setDashboard(data.data);
-            setError(null);
-        } catch (err) {
-            setError(
-                err.response?.data?.message || "Failed to fetch dashboard"
-            );
-            toast.error("Failed to load dashboard");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchDashboard();
-    }, []);
+    const {
+        data: dashboard,
+        isLoading: loading,
+        error,
+        refetch,
+    } = useQuery({
+        queryKey: ["admin"],
+        queryFn: async () => {
+            try {
+                const response = await adminService.getDashboard();
+                return response.data;
+            } catch (err) {
+                const message =
+                    err.response?.data?.message || "Failed to fetch dashboard";
+                toast.error(message);
+                throw new Error(message);
+            }
+        },
+        refetchOnWindowFocus: false,
+    });
 
     return {
         dashboard,
         loading,
         error,
-        refetch: fetchDashboard,
+        refetch,
     };
 };

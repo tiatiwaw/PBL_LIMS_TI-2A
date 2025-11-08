@@ -24,7 +24,7 @@ export default function LoginPage() {
         try {
             await login(formData);
         } catch (error) {
-            // Error handling is done in useAuth hook
+            console.error(error);
         }
     };
 

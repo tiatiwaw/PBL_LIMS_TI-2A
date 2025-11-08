@@ -38,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        $middleware->redirectGuestsTo(fn() => route('auth.login.form'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
