@@ -1,43 +1,45 @@
-import React, {useState, useEffect} from 'react';
-import axios from 'axios';
 import { TrendingUp, Activity, AlertCircle } from "lucide-react";
 import { Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import StatCard from '@/components/shared/card/stat-card';
 import { stats } from '@/data/admin/beranda';
 import DashboardLayout from '@/components/layouts/dashboard-layout';
-import { usePage } from '@inertiajs/react';
+import { useAdmin } from "@/hooks/useAdmin";
+import { useAuth } from "@/hooks/useAuth";
+import Loading from "@/components/ui/loading";
 
 export default function AdminDashboard() {
-  const [monthlyTrend, setMonthlyTrend] = useState([]);
-  const user = {
-    name: 'Yapi',
-    role: 'Manager',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-  };
+  const { dashboard, loading: dashboardLoading, error } = useAdmin();
+  const { user, loading: authLoading } = useAuth();
 
+  stats[0].value = dashboard?.totalUser
+  stats[1].value = dashboard?.totalEquipment;
+  stats[2].value = dashboard?.totalReagent;
+  stats[3].value = dashboard?.totalSample;
+  stats[4].value = dashboard?.totalParameter;
+  stats[5].value = dashboard?.totalMethod;
 
-  const {
-    totalUser, 
-    totalEquipment, 
-    totalReagent, 
-    totalSample, 
-    totalParameter, 
-    totalMethod, 
-    monthlyTrendData,
-    resourceDistribution,
-    quickSummary,
-    weeklyActivity
-  } = usePage().props;
+  const currentUser = user || { name: "Admin", role: "Admin" };
 
-  stats[0].value = totalUser
-  stats[1].value = totalEquipment;
-  stats[2].value = totalReagent;
-  stats[3].value = totalSample;
-  stats[4].value = totalParameter;
-  stats[5].value = totalMethod;
-  
+  if (dashboardLoading || authLoading) {
+    return (
+      <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang, Admin!">
+        <Loading />
+      </DashboardLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang, Admin!">
+        <div className="text-center text-red-500 py-8">
+          {error.message}
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
-    <DashboardLayout title="Dashboard Admin" user={user} header="Selamat Datang, Admin!">
+    <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang, Admin!">
       <div className="max-w-7xl mx-auto space-y-8">
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -56,7 +58,7 @@ export default function AdminDashboard() {
               <Activity className="w-6 h-6 text-emerald-600" />
             </div>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={monthlyTrendData}>
+              <AreaChart data={dashboard?.monthlyTrendData}>
                 <defs>
                   <linearGradient id="colorClient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
@@ -96,7 +98,7 @@ export default function AdminDashboard() {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={resourceDistribution}
+                  data={dashboard?.resourceDistribution}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -104,7 +106,7 @@ export default function AdminDashboard() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {resourceDistribution.map((entry, index) => (
+                  {dashboard?.resourceDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -119,7 +121,7 @@ export default function AdminDashboard() {
               </PieChart>
             </ResponsiveContainer>
             <div className="grid grid-cols-2 gap-2 mt-4">
-              {resourceDistribution.map((item, index) => (
+              {dashboard?.resourceDistribution.map((item, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
                   <span className="text-xs text-gray-600">{item.name}</span>
@@ -139,7 +141,7 @@ export default function AdminDashboard() {
               <TrendingUp className="w-6 h-6 text-emerald-600" />
             </div>
             <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={weeklyActivity}>
+              <BarChart data={dashboard?.weeklyActivity}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="day" stroke="#9ca3af" />
                 <YAxis stroke="#9ca3af" />
@@ -168,25 +170,25 @@ export default function AdminDashboard() {
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <div className="flex items-center justify-between">
                   <span className="text-emerald-100">Total Resources</span>
-                  <span className="text-2xl font-bold">{quickSummary.totalResources}</span>
+                  <span className="text-2xl font-bold">{dashboard?.quickSummary.totalResources}</span>
                 </div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <div className="flex items-center justify-between">
                   <span className="text-emerald-100">Pengujian Bulan Ini</span>
-                  <span className="text-2xl font-bold">{quickSummary.pengujianBulanIni}</span>
+                  <span className="text-2xl font-bold">{dashboard?.quickSummary.pengujianBulanIni}</span>
                 </div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <div className="flex items-center justify-between">
                   <span className="text-emerald-100">Rata-rata Harian</span>
-                  <span className="text-2xl font-bold">{quickSummary.rataRataHarian}</span>
+                  <span className="text-2xl font-bold">{dashboard?.quickSummary.rataRataHarian}</span>
                 </div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <div className="flex items-center justify-between">
                   <span className="text-emerald-100">Tingkat Efisiensi</span>
-                  <span className="text-2xl font-bold">{quickSummary.efisiensi}%</span>
+                  <span className="text-2xl font-bold">{dashboard?.quickSummary.efisiensi}%</span>
                 </div>
               </div>
             </div>

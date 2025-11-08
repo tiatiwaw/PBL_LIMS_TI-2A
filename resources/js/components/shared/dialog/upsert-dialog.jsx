@@ -9,10 +9,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import InputField from "../form/input-field";
-import { ChevronRight } from "lucide-react";
 import SelectField from "../form/select-field";
+import { ChevronRight } from "lucide-react";
 
-// Up = Update, Sert = Insert ==> dadine Upsert
 export default function UpsertDialog({
     open,
     onOpenChange,
@@ -23,67 +22,64 @@ export default function UpsertDialog({
     description,
 }) {
     const [formData, setFormData] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (open) {
-            if (data) {
-                setFormData(data);
-            } else {
-                const emptyForm = fields.reduce((acc, field) => {
-                    acc[field.name] = "";
-                    return acc;
-                }, {});
-                setFormData(emptyForm);
-            }
+            const initialData = fields.reduce((acc, field) => {
+                acc[field.name] = data
+                    ? data[field.name] ?? ""
+                    : field.defaultValue ?? "";
+                return acc;
+            }, {});
+            setFormData(initialData);
         }
     }, [data, fields, open]);
 
     const handleChange = (field, value) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
+        setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
-    const handleSubmit = () => {
-        if (onSave) onSave(formData);
-        onOpenChange(false);
+    const handleSubmit = async () => {
+        try {
+            setIsSubmitting(true);
+            await onSave(formData);
+            onOpenChange(false);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const renderField = (field) => {
-        const { name, label, type = 'text', options } = field;
-        const value = formData[name] || "";
+        const value = formData[field.name] ?? "";
 
-        switch (type) {
-            case 'select':
-                return (
-                    <SelectField
-                        key={field.name}
-                        id={field.name}
-                        label={field.label}
-                        icon={ChevronRight}
-                        placeholder={field.placeholder || ""}
-                        value={formData[field.name] || ""}
-                        options={field.options}
-                        onChange={(value) => handleChange(field.name, value)}
-                        error={!formData[name] ? 'Wajib dipilih' : ''}
-                    />
-                );
-
-            case 'number':
-            case 'email':
-            case 'text':
-            default:
-                return (
-                    <InputField
-                        key={field.name}
-                        id={field.name}
-                        label={field.label}
-                        icon={ChevronRight}
-                        type={field.type || "text"}
-                        placeholder={field.placeholder || ""}
-                        value={formData[field.name] || ""}
-                        onChange={(e) => handleChange(field.name, e.target.value)}
-                    />
-                );
+        if (field.type === "select") {
+            return (
+                <SelectField
+                    key={field.name}
+                    id={field.name}
+                    label={field.label}
+                    icon={ChevronRight}
+                    placeholder={field.placeholder || ""}
+                    value={value}
+                    options={field.options}
+                    onChange={(val) => handleChange(field.name, val)}
+                />
+            );
         }
+
+        return (
+            <InputField
+                key={field.name}
+                id={field.name}
+                label={field.label}
+                icon={ChevronRight}
+                type={field.type || "text"}
+                placeholder={field.placeholder || ""}
+                value={value}
+                onChange={(e) => handleChange(field.name, e.target.value)}
+            />
+        );
     };
 
     return (
@@ -94,20 +90,24 @@ export default function UpsertDialog({
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
 
-                <div className="grid gap-4 py-4">
-                    {fields.map(renderField)}
-                </div>
+                <div className="grid gap-4 py-4">{fields.map(renderField)}</div>
 
                 <DialogFooter>
                     <Button
                         type="button"
                         variant="outline"
-                        className="text-primary-hijauTua hover:text-primary-hijauTua"
                         onClick={() => onOpenChange(false)}
+                        disabled={isSubmitting}
                     >
                         Batal
                     </Button>
-                    <Button className="bg-primary-hijauTua hover:bg-primary-hijauTua/85" onClick={handleSubmit}>Simpan</Button>
+                    <Button
+                        className="bg-primary-hijauTua hover:bg-primary-hijauTua/85"
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? "Menyimpan..." : "Simpan"}
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

@@ -38,10 +38,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
+        $middleware->group('api', [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
-        //
+
+        $middleware->redirectGuestsTo(fn() => route('auth.login.form'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

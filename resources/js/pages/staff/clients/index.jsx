@@ -1,5 +1,4 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import ClientDetailsDialog from "@/components/shared/staff/client-dialog";
 import { getClientColumns } from "@/components/shared/staff/client-colums";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { Clients } from "@/data/staff/clients";

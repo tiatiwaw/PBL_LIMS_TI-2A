@@ -6,6 +6,7 @@ import OrdersForm from "@/components/shared/staff/orders-form1";
 import OrdersForm2 from "@/components/shared/staff/orders-form2";
 import OrderForms3 from "@/components/shared/staff/orders-form3";
 import { CheckSquare } from "lucide-react";
+import { toast } from "sonner";
 
 export default function OrdersPage({
     auth,
@@ -65,13 +66,13 @@ export default function OrdersPage({
 
     const handleSave = () => {
         if (step === 3) {
-            post(route("staff.order.store"), {
+            post(route("staff.order.storeOrder"), {
                 onSuccess: () => {
-                    console.log("Data berhasil disimpan!");
+                    toast.success("Order berhasil dibuat");
                     setIsSaved(true);
                 },
                 onError: (e) => {
-                    console.error("Gagal menyimpan data:", e);
+                    toast.error("Gagal menyimpan Order:", e);
                     if (
                         errors.selectedKlien ||
                         errors.judulOrder ||
