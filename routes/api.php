@@ -4,6 +4,8 @@ use App\Http\Controllers\API\V1\Admin\BrandTypeController;
 use App\Http\Controllers\API\V1\Admin\DashboardController;
 use App\Http\Controllers\API\V1\Admin\EquipmentController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\API\V1\Staff\ClientController;
+use App\Http\Controllers\API\V1\Staff\OrderController;
 use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,14 +44,14 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         //     Route::apiResource('categories', AdminApiCategory::class)->except(['index']);
         // });
     });
-});
 
-Route::prefix('staff')->group(function () {
-    Route::get('/clients', [StaffApiController::class, 'apiClientIndex']);
-    Route::post('/clients', [StaffApiController::class, 'apiClientStore']);
-    Route::put('/clients/{client}', [StaffApiController::class, 'apiClientUpdate']);
-    Route::delete('/clients/{client}', [StaffApiController::class, 'apiClientDestroy']);
-    Route::get('/orders', [StaffApiController::class, 'apiOrderIndex']);
-    Route::post('/orders', [StaffApiController::class, 'apiStoreOrder']);
-    Route::post('/orders/samples', [StaffApiController::class, 'apiSampleStore']);
+    // Staff
+    Route::prefix('staff')->middleware('staff')->name('api.staff.')->group(function () {
+        Route::prefix('clients.')->apiResource('clients', ClientController::class);
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', [OrderController::class, 'index'])->name('index');
+            Route::post('/', [OrderController::class, 'store'])->name('store');
+            Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
+        });
+    });
 });
