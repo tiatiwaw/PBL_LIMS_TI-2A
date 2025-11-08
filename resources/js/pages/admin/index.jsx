@@ -32,7 +32,7 @@ export default function AdminDashboard() {
     return (
       <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang, Admin!">
         <div className="text-center text-red-500 py-8">
-          {error}
+          {error.message}
         </div>
       </DashboardLayout>
     );

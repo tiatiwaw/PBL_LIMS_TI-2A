@@ -14,7 +14,6 @@ export default function BrandsPage() {
 
     const { user, loading: authLoading } = useAuth();
     const { brands, isLoading, error, createBrand, updateBrand, deleteBrand } = useBrands();
-    console.log(brands);
 
     const handleShowDetail = (brand) => {
         setSelectedBrand(brand);

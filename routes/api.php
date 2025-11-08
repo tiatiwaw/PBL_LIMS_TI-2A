@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\V1\Admin\BrandTypeController;
 use App\Http\Controllers\API\V1\Admin\DashboardController;
+use App\Http\Controllers\API\V1\Admin\EquipmentController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
@@ -21,7 +22,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
         // Tools
         Route::prefix('tools')->name('tools.')->group(function () {
-            // Route::apiResource('equipments', AdminApiEquipment::class)->except(['index']);
+            Route::apiResource('equipments', EquipmentController::class);
             Route::apiResource('brands', BrandTypeController::class);
         });
 
