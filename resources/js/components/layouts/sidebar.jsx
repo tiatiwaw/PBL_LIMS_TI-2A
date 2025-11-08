@@ -1,8 +1,8 @@
 import { LogOut } from 'lucide-react';
 import { NavItem } from '../shared/dashboard/nav-item';
-import { Link } from '@inertiajs/react';
+import { Button } from '../ui/button';
 
-export const Sidebar = ({ menuItems }) => {
+export const Sidebar = ({ menuItems, onLogout }) => {
     if (!menuItems || menuItems.length === 0) {
         return null;
     }
@@ -25,13 +25,13 @@ export const Sidebar = ({ menuItems }) => {
             </nav>
 
             <div className="p-4 border-t border-white/10">
-                <Link
-                    href={route('auth.logout')}
-                    className="flex justify-center items-center gap-2 px-5 py-3 rounded-lg bg-red-500/80 hover:bg-red-600 hover:text-white transition-all duration-300"
+                <Button
+                onClick={onLogout}
+                    className="w-full flex justify-center items-center gap-2 px-5 py-3 rounded-lg bg-red-500/80 hover:bg-red-600 hover:text-white transition-all duration-300"
                 >
                     <LogOut size={20} />
                     Keluar
-                </Link>
+                </Button>
             </div>
         </aside>
     );

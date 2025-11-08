@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\AnalystController;
+use App\Http\Controllers\API\V1\AuthController as V1AuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\SupervisorController;
@@ -15,45 +16,29 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('index');
 });
 
-// // Auth
-// Route::controller(AuthController::class)
-//     ->prefix('auth')
-//     ->name('auth.')
-//     ->group(function () {
-//         Route::middleware('guest')->group(function () {
-//             Route::get('/login', 'index')->name('index');
-//             Route::post('/login', 'login')->name('login');
-//         });
-
-//         Route::middleware('auth')->group(function () {
-//             Route::get('/logout', 'logout')->name('logout');
-//         });
-//     });
-
-// Auth Routes - PAKAI CONTROLLER
+// Auth
 Route::controller(AuthController::class)
     ->prefix('auth')
     ->name('auth.')
     ->group(function () {
-        // Untuk guest (belum login)
-        Route::middleware('guest')
-            ->group(function () {
-                Route::get('/login', 'index')->name('login.form');
-                Route::post('/login', 'login')->name('login');
+        Route::middleware('guest')->group(function () {
+            Route::get('/login', 'index')->name('login.form');
         });
-
-        // Untuk user yang sudah login
-        Route::middleware('auth')
-            ->group(function () {
-                Route::post('/logout', 'logout')->name('logout');
-                Route::get('/logout', 'logout');
+        Route::middleware('auth')->group(function () {
+            Route::post('/logout', 'logout')->name('logout');
+            Route::get('/logout', 'logout');
         });
     });
 
-// Redirect /login ke form login
-Route::get('/login', function () {
-    return redirect()->route('auth.login.form');
-})->name('login');
+// API
+Route::prefix('api/v1/auth')->name('api.auth.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::post('/login', [V1AuthController::class, 'login'])->name('login');
+    });
+    Route::middleware('auth')->group(function () {
+        Route::post('/logout', [V1AuthController::class, 'logout'])->name('logout');
+    });
+});
 
 // Admin
 Route::controller(AdminController::class)
@@ -63,90 +48,28 @@ Route::controller(AdminController::class)
     ->group(function () {
         Route::get('/', 'index')->name('index');
 
-        // Tools
-        Route::prefix('tools')
-            ->name('tools.')
-            ->group(function () {
-                // equipment routes
-                Route::get('/equipments', 'equipments')->name('equipments');
-                Route::post('/equipments', 'storeEquipment')->name('equipments.store');
-                Route::put('/equipments/{id}', 'updateEquipment')->name('equipments.update');
-                Route::delete('/equipments/{id}', 'destroyEquipment')->name('equipments.destroy');
-
-                // brand routes
-                Route::get('/brands', 'brands')->name('brands');
-                Route::post('/brands', 'storeBrand')->name('brands.store');
-                Route::put('/brands/{id}', 'updateBrand')->name('brands.update');
-                Route::delete('/brands/{id}', 'destroyBrand')->name('brands.destroy');
+        Route::prefix('tools')->name('tools.')->group(function () {
+            Route::get('/equipments', 'equipments')->name('equipments');
+            Route::get('/brands', 'brands')->name('brands');
         });
 
-        // Materials
-        Route::prefix('materials')
-            ->name('materials.')
-            ->group(function () {
-                // reagent routes
-                Route::get('/reagents', 'reagents')->name('reagents');
-                Route::post('/reagents', 'storeReagent')->name('reagents.store');
-                Route::put('/reagents/{id}', 'updateReagent')->name('reagents.update');
-                Route::delete('/reagents/{id}', 'destroyReagent')->name('reagents.destroy');
-
-                // grade routes
-                Route::get('/grades', 'grades')->name('grades');
-                Route::post('/grades', 'storeGrade')->name('grades.store');
-                Route::put('/grades/{id}', 'updateGrade')->name('grades.update');
-                Route::delete('/grades/{id}', 'destroyGrade')->name('grades.destroy');
-
-                // supplier routes
-                Route::get('/suppliers', 'suppliers')->name('suppliers');
-                Route::post('/suppliers', 'storeSupplier')->name('suppliers.store');
-                Route::put('/suppliers/{id}', 'updateSupplier')->name('suppliers.update');
-                Route::delete('/suppliers/{id}', 'destroySupplier')->name('suppliers.destroy');
+        Route::prefix('materials')->name('materials.')->group(function () {
+            Route::get('/reagents', 'reagents')->name('reagents');
+            Route::get('/grades', 'grades')->name('grades');
+            Route::get('/suppliers', 'suppliers')->name('suppliers');
         });
 
-        // Tests
-        Route::prefix('tests')
-            ->name('tests.')
-            ->group(function () {
-                // parameter routes
-                Route::get('/parameters', 'parameters')->name('parameters');
-                Route::post('/parameters', 'storeParameter')->name('parameters.store');
-                Route::put('/parameters/{id}', 'updateParameter')->name('parameters.update');
-                Route::delete('/parameters/{id}', 'destroyParameter')->name('parameters.destroy');
-
-                // method routes
-                Route::get('/methods', 'methods')->name('methods');
-                Route::post('/methods', 'storeMethod')->name('methods.store');
-                Route::put('/methods/{id}', 'updateMethod')->name('methods.update');
-                Route::delete('/methods/{id}', 'destroyMethod')->name('methods.destroy');
-
-                // unit routes
-                Route::get('/units', 'units')->name('units');
-                Route::post('/units', 'storeUnit')->name('units.store');
-                Route::put('/units/{id}', 'updateUnit')->name('units.update');
-                Route::delete('/units/{id}', 'destroyUnit')->name('units.destroy');
-
-                // standard routes
-                Route::get('/references', 'references')->name('references');
-                Route::post('/references', 'storeStandard')->name('references.store');
-                Route::put('/references/{id}', 'updateStandard')->name('references.update');
-                Route::delete('/references/{id}', 'destroyStandard')->name('references.destroy');
-
-                // category routes
-                Route::get('/categories', 'categories')->name('categories');
-                Route::post('/categories', 'storeCategory')->name('categories.store');
-                Route::put('/categories/{id}', 'updateCategory')->name('categories.update');
-                Route::delete('/categories/{id}', 'destroyCategory')->name('categories.destroy');
+        Route::prefix('tests')->name('tests.')->group(function () {
+            Route::get('/parameters', 'parameters')->name('parameters');
+            Route::get('/methods', 'methods')->name('methods');
+            Route::get('/units', 'units')->name('units');
+            Route::get('/references', 'references')->name('references');
+            Route::get('/categories', 'categories')->name('categories');
         });
 
-        // Additional Routes
         Route::get('/orders',  'orders')->name('orders');
         Route::get('/activities',  'activities')->name('activities');
-        
-        // Users Routes
         Route::get('/users',  'users')->name('users');
-        Route::post('/users',  'storeUser')->name('users.store');
-        Route::put('/users/{id}',  'updateUser')->name('users.update');
-        Route::delete('/users/{id}',  'destroyUser')->name('users.destroy');
     });
 
 // Manager

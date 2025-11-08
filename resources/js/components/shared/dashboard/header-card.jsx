@@ -32,7 +32,6 @@ export const HeaderCard = ({ title, user, notificationCount = 3, onLogout }) => 
                         {title}
                     </h2>
 
-                    {/* Breadcrumb dinamis */}
                     <Badge
                         variant="secondary"
                         className="mt-2 text-xs bg-white/15 text-white/90 hover:bg-white/25 border-white/10 px-2 py-1"

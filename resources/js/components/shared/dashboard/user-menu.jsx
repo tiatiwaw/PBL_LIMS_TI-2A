@@ -14,7 +14,6 @@ import { Link } from '@inertiajs/react';
 export const UserMenu = ({ user, onLogout }) => {
     const userInitial = user?.name?.charAt(0)?.toUpperCase() || 'U';
 
-    // 🔹 Buat URL dinamis berdasarkan role user
     const getProfileUrl = (role) => {
         const normalized = role?.toLowerCase();
         switch (normalized) {
