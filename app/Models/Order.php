@@ -25,6 +25,12 @@ class Order extends Model
         'status'
     ];
 
+    protected $casts = [
+        'estimate_date' => 'date',
+        'report_issued_at' => 'datetime',
+        'order_date' => 'date',
+    ];
+
     public function clients()
     {
         return $this->belongsTo(Client::class, 'client_id');
