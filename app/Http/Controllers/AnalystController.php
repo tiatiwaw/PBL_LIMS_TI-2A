@@ -5,44 +5,45 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Order;
 use App\Models\Sample;
+use App\Models\NParameterMethod;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class AnalystController extends Controller
 {
     // -------------------- WEB VERSION --------------------
-
+    // Show
     public function index()
     {
         $order = Order::where('status', 'pending')
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
+        
         $stats = [
             'totalOrder' => Order::count(),
             'processedOrder' => Order::where('status', 'in_progress')->count(),
             'completedOrder' => Order::where('status', 'completed')->count(),
         ];
-
+        
         return Inertia::render('analyst/dashboard', [
             'orders' => $order,
             'stats' => $stats,
         ]);
     }
-
-    public function accept(Order $order)
-    {
-        if ($order->status === 'pending') {
-            $order->update(['status' => 'in_progress']);
-        }
-
-        return redirect()->route('analyst.order.detail', $order->id);
+    
+    public function dashboard() {
+        return Inertia::render('analyst/dashboard');
     }
 
+    public function profile() {
+        return Inertia::render('analyst/profile');
+    }
+    
     public function order() {
         $order = Order::orderBy('created_at', 'desc')->get();
-
+        
         return Inertia::render('analyst/order', [
             'orders' => $order
         ]);
@@ -58,35 +59,16 @@ class AnalystController extends Controller
         ]);
     }
 
-    public function uploadReport(Request $request, Order $order)
+    public function accept(Order $order)
     {
-        $request->validate([
-            'laporan' => 'required|mimes:pdf|max:5120'
-        ]);
-
-        $path = $request->file('laporan')->store('public/reports');
-
-        $order->update([
-            'report_file_path' => $path,
-            'waktu_laporan' => now(),
-        ]);
-
-        return back()->with('success', 'Laporan berhasil diupload.');
-    }
-
-    public function downloadReport(Order $order)
-    {
-        if (!$order->report_file_path || !Storage::exists($order->report_file_path)) {
-            return back()->with('error', 'File laporan tidak ditemukan.');
+        if ($order->status === 'pending') {
+            $order->update(['status' => 'in_progress']);
         }
 
-        $filename = 'Laporan_' . ($order->order_number ?? $order->id) . '.pdf';
-
-        return Storage::download($order->report_file_path, $filename, [
-            'Content-Type' => 'application/pdf',
-        ]);
+        return redirect()->route('analyst.order.detail', $order->id);
     }
-
+    
+    // Status Sample Uji
     public function confirm(Sample $sample)
     {
         $sample->update(['status' => 'Done']);
@@ -98,15 +80,104 @@ class AnalystController extends Controller
         $sample->update(['status' => 'In Progress']);
         return back()->with('success', 'Sampel dibatalkan statusnya.');
     }
+    // Reports
+    public function saveReport(Request $request, $orderId)
+    {
+        $request->validate([
+            'results' => 'required|array',
+        ]);
 
-    public function dashboard() {
-        return Inertia::render('analyst/dashboard');
+        foreach ($request->results as $sampleId => $parameters) {
+            foreach ($parameters as $key => $param) {
+                if (is_numeric($key)) {
+                    $paramId = $key;
+                    $value = $param;
+                }
+                elseif (is_array($param) && isset($param['id']) && isset($param['value'])) {
+                    $paramId = $param['id'];
+                    $value = $param['value'];
+                } else {
+                    continue;
+                }
+
+                NParameterMethod::where('sample_id', $sampleId)
+                    ->where('test_parameter_id', $paramId)
+                    ->update(['result' => $value]);
+
+            }
+        }
+
+        return back()->with('success', 'Hasil uji berhasil disimpan.');
     }
 
-    public function profile() {
-        return Inertia::render('analyst/profile');
+
+    public function submitReport($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        // Ambil semua sample lewat pivot n_order_samples
+        $samples = $order->samples()->get();
+
+        if ($samples->isEmpty()) {
+            return back()->with('error', 'Tidak ada sampel untuk dibuatkan laporan.');
+        }
+
+        // Ambil semua data parameter-method berdasarkan sample
+        $data = [];
+        foreach ($samples as $sample) {
+            $data[$sample->id] = [
+                'sample' => $sample->name,
+                'parameters' => NParameterMethod::with([
+                    // relasi utama
+                    'test_parameters.unit_values',
+                    'test_parameters.reference_standards',
+                    'test_methods.reference_standards'
+                ])
+                ->where('sample_id', $sample->id)
+                ->get()
+                ->map(function ($param) {
+                    return [
+                        'parameter_name' => $param->test_parameters->name ?? '-',
+                        'unit' => $param->test_parameters->unit_values->value ?? '-',
+                        'reference' => $param->test_parameters->reference_standards->name ?? '-',
+                        'method' => $param->test_methods->name ?? '-',
+                        'method_reference' => $param->test_methods->reference_standards->name ?? '-',
+                        'result' => $param->result ?? '-',
+                    ];
+                }),
+            ];
+        }
+
+        // Generate PDF
+        $pdf = Pdf::loadView('pdf.report', [
+            'order' => $order,
+            'data' => $data,
+        ]);
+
+        // Simpan ke storage
+        $fileName = 'report_order_' . $order->id . '.pdf';
+        $filePath = 'reports/' . $fileName;
+        Storage::disk('public')->put($filePath, $pdf->output());
+
+        // Update path ke tabel orders.result_value
+        $order->update(['result_value' => $filePath]);
+
+        return back()->with('success', 'Report berhasil dibuat dan disimpan.');
     }
 
+
+   public function downloadReport(Order $order)
+    {
+        if (!$order->report_file_path || !Storage::exists($order->report_file_path)) {
+            return back()->with('error', 'File laporan tidak ditemukan.');
+        }
+
+        $fileName = 'report_order_' . $order->id . '.pdf';
+
+        return Storage::download($order->report_file_path, $fileName, [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
 
 
     // -------------------- API VERSION --------------------

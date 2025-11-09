@@ -7,7 +7,7 @@ import SampleDetailsDialog from "@/components/shared/dialog/sample-detail-dialog
 import SampleConfirmDialog from "@/components/shared/dialog/sample-confirm-dialog";
 import SampleUnConfirmDialog from "@/components/shared/dialog/sample-unconfirm-dialog";
 import { Button } from "@/components/ui/button";
-import { FileDown, FileUp, CheckCircle } from "lucide-react";
+import { FileDown } from "lucide-react";
 
 export default function OrderDetail({ order, samples }) {
     const user = {
@@ -16,11 +16,14 @@ export default function OrderDetail({ order, samples }) {
         avatar: "https://i.pravatar.cc/150?img=3",
     };
 
-    const [uploadSuccess, setUploadSuccess] = useState(false); // ✅ notifikasi upload sukses
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
     const [isUnConfirmDialogOpen, setIsUnConfirmDialogOpen] = useState(false);
     const [selectedSample, setSelectedSample] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [testResults, setTestResults] = useState(
+        samples.map(() => ({ result: "" }))
+    );
 
     const handleShowDetail = (sample) => {
         setSelectedSample(sample);
@@ -36,15 +39,38 @@ export default function OrderDetail({ order, samples }) {
         router.post(`/analyst/samples/${sample.id}/confirm`);
         setIsConfirmDialogOpen(false);
     };
-    
+
     const handleShowUnConfirm = (sample) => {
         setSelectedSample(sample);
         setIsUnConfirmDialogOpen(true);
     };
-    
+
     const handleUnConfirmAction = (sample) => {
         setIsUnConfirmDialogOpen(false);
         router.post(`/analyst/samples/${sample.id}/unconfirm`);
+    };
+
+    const handleResultChange = (index, value) => {
+        const updated = [...testResults];
+        updated[index].result = value;
+        setTestResults(updated);
+    };
+
+    const handleSaveResults = () => {
+        const payload = testResults.map((r, i) => ({
+            sample_id: samples[i].id,
+            result: r.result,
+        }));
+        router.post(route('analyst.saveReport', order.id), { results: payload });
+        setIsEditing(false);
+    };
+
+    const handleSubmitResults = () => {
+        router.post(route('analyst.submitReport', order.id));
+    };
+
+    const handleDownloadPDF = () => {
+        router.get(route('analyst.downloadReport', order.id));
     };
 
     const columns = useMemo(
@@ -57,7 +83,6 @@ export default function OrderDetail({ order, samples }) {
         []
     );
 
-    // ✅ Data dari database
     const orderDetails = [
         { label: "ID Pemesanan", value: order.order_number ?? "-" },
         { label: "ID Klien", value: order.client_id ?? "-" },
@@ -77,33 +102,11 @@ export default function OrderDetail({ order, samples }) {
         { value: "In Progress", label: "In Progress" },
     ];
 
-    const handleUpload = (e) => {
-        if (!e.target.files.length) return;
-        const file = e.target.files[0];
-        const formData = new FormData();
-        formData.append("laporan", file);
-
-        router.post(`/analyst/order/${order.id}/upload`, formData, {
-            onSuccess: () => {
-                setUploadSuccess(true); // ✅ tampilkan popup sukses
-                setTimeout(() => setUploadSuccess(false), 3000); // hilang otomatis
-            },
-        });
-    };
-
     return (
         <DashboardLayout title="Analyst" user={user} header="Selamat Datang Analyst!">
             <div className="relative w-full max-w-4xl mx-auto flex flex-col gap-8 text-primary-hijauTua p-4">
 
-                {/* ✅ Popup sukses upload */}
-                {uploadSuccess && (
-                    <div className="absolute top-4 right-4 bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg shadow-md flex items-center gap-2 animate-fade-in-down">
-                        <CheckCircle className="text-green-600" size={18} />
-                        <span>File berhasil diupload!</span>
-                    </div>
-                )}
-
-                {/* --- Bagian 1: Detail Pemesanan --- */}
+                {/* --- Detail Pemesanan --- */}
                 <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
                     <h2 className="text-xl font-bold mb-5 text-gray-800">Detail Pemesanan</h2>
                     <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-y-2 text-sm font-medium">
@@ -116,63 +119,7 @@ export default function OrderDetail({ order, samples }) {
                     </div>
                 </div>
 
-                {/* Unduh Laporan */}
-                <div className="bg-white rounded-xl shadow-md p-5 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-primary-hijauMuda/30">
-                            <FileDown className="text-primary-hijauTua" size={20} />
-                        </div>
-                        <div>
-                            <p className="text-sm font-semibold text-gray-800">Laporan Pengujian</p>
-                            <p className="text-xs text-gray-500">
-                                {order.report_file_path ? (
-                                    <span>File tersedia: <b>{order.report_file_path.split('/').pop()}</b></span>
-                                ) : (
-                                    "Belum ada file"
-                                )}
-                            </p>
-                        </div>
-                    </div>
-
-                    {order.report_file_path ? (
-                        <a
-                            href={route('analyst.order.downloadReport', order.id)}
-                            download
-                            className="px-3 py-1.5 rounded-lg bg-primary-hijauTua text-white text-sm hover:bg-primary-hijauTua/90"
-                        >
-                            Download
-                        </a>
-                    ) : (
-                        <span className="text-gray-500 text-sm">Tidak ada file</span>
-                    )}
-                </div>
-
-                {/* Upload / Ganti Laporan */}
-                <div className="bg-white rounded-xl shadow-md p-5 flex items-center justify-between mt-4">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-primary-hijauMuda/30">
-                            <FileUp className="text-primary-hijauTua" size={20} />
-                        </div>
-                        <div>
-                            <label className="text-sm font-semibold text-gray-800">
-                                Upload / Ganti Laporan
-                            </label>
-                            <p className="text-xs text-gray-500">Format PDF</p>
-                        </div>
-                    </div>
-
-                    <label className="px-3 py-1.5 rounded-lg bg-gray-200 text-sm text-gray-700 cursor-pointer hover:bg-gray-300">
-                        Pilih File
-                        <input
-                            type="file"
-                            accept="application/pdf"
-                            className="hidden"
-                            onChange={handleUpload}
-                        />
-                    </label>
-                </div>
-
-                {/* Tabel Sampel */}
+                {/* --- Tabel Sampel --- */}
                 <ManagedDataTable
                     data={samples}
                     columns={columns}
@@ -182,7 +129,73 @@ export default function OrderDetail({ order, samples }) {
                     filterOptions={filterData}
                 />
 
-                {/* Dialogs */}
+                {/* --- Input Hasil Uji --- */}
+                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                    <h2 className="text-lg font-semibold mb-4 text-gray-800">
+                        Input Hasil Uji Sampel
+                    </h2>
+
+                    <div className="flex flex-col gap-4">
+                        {samples.map((sample, index) => (
+                            <div key={sample.id} className="flex flex-col">
+                                <label className="text-sm font-medium text-gray-700 mb-1">
+                                    Hasil Sample {index + 1} ({sample.name ?? "Tanpa Nama"})
+                                </label>
+                                <input
+                                    type="text"
+                                    className={`border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-hijauMuda ${
+                                        !isEditing && "bg-gray-100 cursor-not-allowed"
+                                    }`}
+                                    disabled={!isEditing}
+                                    value={testResults[index].result}
+                                    onChange={(e) =>
+                                        handleResultChange(index, e.target.value)
+                                    }
+                                    placeholder="Masukkan hasil uji..."
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Tombol Edit, Save, Submit */}
+                    <div className="flex flex-wrap justify-end gap-3 mt-6">
+                        {!isEditing ? (
+                            <Button
+                                className="bg-primary-hijauTua text-white"
+                                onClick={() => setIsEditing(true)}
+                            >
+                                Edit
+                            </Button>
+                        ) : (
+                            <Button
+                                className="bg-green-600 text-white"
+                                onClick={handleSaveResults}
+                            >
+                                Save
+                            </Button>
+                        )}
+
+                        <Button
+                            onClick={handleSubmitResults}
+                            className="bg-primary-hijauTua"
+                        >
+                            Submit
+                        </Button>
+                    </div>
+
+                    {/* Tombol Download PDF di bawah semua */}
+                    <div className="flex justify-end mt-6">
+                        <Button
+                            onClick={handleDownloadPDF}
+                            className="flex items-center gap-2 bg-blue-600 text-white"
+                        >
+                            <FileDown size={18} />
+                            Download PDF
+                        </Button>
+                    </div>
+                </div>
+
+                {/* --- Dialogs --- */}
                 <SampleDetailsDialog
                     sample={selectedSample}
                     isOpen={isDialogOpen}
@@ -201,6 +214,7 @@ export default function OrderDetail({ order, samples }) {
                     onUnconfirm={handleUnConfirmAction}
                 />
 
+                {/* Tombol kembali */}
                 <div className="w-full flex justify-end mt-4">
                     <Button className="bg-primary-hijauTua">
                         <Link href="/analyst/order">Kembali</Link>

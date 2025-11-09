@@ -2,7 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\NParameterMethod;
+use App\Models\TestParameter;
+use App\Models\UnitValue;
 use Illuminate\Database\Seeder;
+use League\CommonMark\Reference\Reference;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,6 +23,11 @@ class DatabaseSeeder extends Seeder
             SampleCategorySeeder::class,
             SampleSeeder::class,
             NOrderSampleSeeder::class,
+            TestParameterSeeder::class,
+            TestMethodSeeder::class,
+            UnitValueSeeder::class,
+            ReferenceStandardSeeder::class,
+            NParameterMethodSeeder::class,
         ]);
 
         // // Master Data Independen
