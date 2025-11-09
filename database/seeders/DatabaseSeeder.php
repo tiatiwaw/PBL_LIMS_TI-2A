@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
                 $this->call([
                         UserRoleSeeder::class,
                         ClientSeeder::class,
-                        OrderSeeder::class,
+                        // OrderSeeder::class,
                 ]);
 
                 // // Master Data Independen

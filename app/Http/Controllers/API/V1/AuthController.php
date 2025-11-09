@@ -18,7 +18,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (!Auth::attempt($credentials, true)) {
+        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -30,6 +30,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Login successful',
             'data' => [
                 'user' => [
                     'id' => $user->id,

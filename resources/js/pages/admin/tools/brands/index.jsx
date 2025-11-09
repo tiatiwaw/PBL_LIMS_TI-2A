@@ -28,9 +28,11 @@ export default function BrandsPage() {
     const currentUser = user || { name: "Admin", role: "Admin" };
 
     const handleCreate = async (formData) => createBrand.mutateAsync(formData);
+
     const handleEdit = async (id, formData) => {
         await updateBrand.mutateAsync({ id, data: formData });
     };
+    
     const handleDelete = async (id) => deleteBrand.mutateAsync(id);
 
     if (isLoading || authLoading) {

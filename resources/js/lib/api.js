@@ -9,12 +9,30 @@ const api = axios.create({
     withCredentials: true,
 });
 
+api.interceptors.request.use(
+    (config) => {
+        const token = document.head.querySelector('meta[name="csrf-token"]');
+        if (token) {
+            config.headers["X-CSRF-TOKEN"] = token.content;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        return response;
+    },
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.removeItem("token");
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new Event('auth:unauthorized'));
+            }
         }
+        
         return Promise.reject(error);
     }
 );
