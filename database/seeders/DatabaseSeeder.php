@@ -36,12 +36,5 @@ class DatabaseSeeder extends Seeder
                 //     TestMethodSeeder::class,
                 //     TestParameterSeeder::class,
                 // ]);
-
-                // Data Transaksional
-                $this->call([
-                        // AnalystSeeder::class,
-                        ClientSeeder::class,
-                        SampleSeeder::class,
-                ]);
         }
 }

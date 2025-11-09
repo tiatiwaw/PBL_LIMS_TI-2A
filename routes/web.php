@@ -211,7 +211,7 @@ Route::controller(ClientController::class)
             ->name('orders.')
             ->group(function () {
                 Route::get('/', 'orders')->name('index');
-                Route::inertia('/detail', 'client/detail/index')->name('client.orders.detail');
+                Route::inertia('/detail', 'client/detail/index')->name('detail');
         });
 
         // History
