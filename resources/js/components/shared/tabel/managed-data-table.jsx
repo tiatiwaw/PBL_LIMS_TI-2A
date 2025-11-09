@@ -64,10 +64,8 @@ export default function ManagedDataTable({
         try {
             if (isEdit) {
                 await onEdit?.(formDialog.data.id, formData);
-                toast.success("Data berhasil diperbarui");
             } else {
                 await onCreate?.(formData);
-                toast.success("Data berhasil ditambahkan");
             }
             setFormDialog({ open: false, data: null, mode: "create" });
         } catch (err) {
@@ -78,7 +76,6 @@ export default function ManagedDataTable({
     const handleConfirmDelete = async () => {
         try {
             await onDelete?.(deleteDialog.data.id);
-            toast.success("Data berhasil dihapus");
         } catch (err) {
             toast.error(err.message || "Gagal menghapus data");
         } finally {

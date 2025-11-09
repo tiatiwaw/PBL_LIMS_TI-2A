@@ -1,91 +1,118 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { router } from "@inertiajs/react";
 import { authService } from "@/services/authService";
 
+const ROLE_REDIRECT_MAP = {
+    admin: "/admin",
+    analyst: "/analyst",
+    manager: "/manager",
+    staff: "/staff/manage-clients",
+    supervisor: "/supervisor",
+    client: "/client",
+};
+
+const DEFAULT_REDIRECT_PATH = "/";
+
+const ERROR_MESSAGES = {
+    SESSION_EXPIRED: "Session telah berakhir. Silahkan login kembali.",
+    LOGIN_FAILED: "Login gagal",
+    LOGOUT_FAILED: "Logout gagal",
+    SUCCESSFUL_LOGIN: "Berhasil login!",
+    SUCCESSFUL_LOGOUT: "Berhasil logout!",
+};
+
 export const useAuth = () => {
     const [user, setUser] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(
-        authService.isAuthenticated()
-    );
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-            setLoading(false);
-        } else if (isAuthenticated) {
+        const initializeAuth = async () => {
             setLoading(true);
-            authService
-                .getUser()
-                .then((data) => {
-                    const fetchedUser = data.data.user;
-                    localStorage.setItem("user", JSON.stringify(fetchedUser));
+
+            try {
+                const authenticated = await authService.isAuthenticated();
+
+                if (authenticated) {
+                    const userDataResponse = await authService.getUser();
+                    const fetchedUser = userDataResponse.data.user;
                     setUser(fetchedUser);
-                })
-                .catch(() => {
-                    toast.error("Session expired. Please login again.");
+                    setIsAuthenticated(true);
+                } else {
+                    setUser(null);
                     setIsAuthenticated(false);
-                    router.visit("/auth/login");
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
-        } else {
-            setLoading(false);
-        }
-    }, [isAuthenticated]);
+                }
+            } catch (error) {
+                console.error("Auth initialization error:", error);
+                setUser(null);
+                setIsAuthenticated(false);
+                toast.error(ERROR_MESSAGES.SESSION_EXPIRED);
 
-    const login = async (credentials) => {
+                router.visit("/auth/login");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        initializeAuth();
+    }, []);
+
+    const login = useCallback(async (credentials) => {
         setLoading(true);
+
         try {
-            const data = await authService.login(credentials);
-            setUser(data.data.user);
+            const response = await authService.login(credentials);
+            const userData = response.data.user;
+
+            setUser(userData);
             setIsAuthenticated(true);
-            toast.success("Login successful!");
 
-            const role = data.data.user.role;
-            const redirectMap = {
-                admin: "/admin",
-                analyst: "/analyst",
-                manager: "/manager",
-                staff: "/staff/manage-clients",
-                supervisor: "/supervisor",
-                client: "/client",
-            };
+            toast.success(ERROR_MESSAGES.SUCCESSFUL_LOGIN);
 
-            router.visit(redirectMap[role] || "/");
-            return data;
+            const userRole = userData.role;
+            const redirectPath = ROLE_REDIRECT_MAP[userRole] || DEFAULT_REDIRECT_PATH;
+
+            router.visit(redirectPath);
+
+            return response;
         } catch (error) {
-            toast.error(error.response?.data?.message || "Login failed");
+            const errorMessage = error.message || ERROR_MESSAGES.LOGIN_FAILED;
+            toast.error(errorMessage);
             throw error;
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const logout = async () => {
+    const logout = useCallback(async () => {
         setLoading(true);
+
         try {
             await authService.logout();
+
             setUser(null);
             setIsAuthenticated(false);
-            toast.success("Logged out successfully");
+
+            toast.success(ERROR_MESSAGES.SUCCESSFUL_LOGOUT);
 
             router.visit(route("auth.login.form"));
         } catch (error) {
-            toast.error(error.response?.data?.message || "Logout failed");
+            const errorMessage = error.message || ERROR_MESSAGES.LOGOUT_FAILED;
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    return {
+    const authStatus = {
         user,
         loading,
         isAuthenticated,
+    };
+
+    return {
+        ...authStatus,
         login,
         logout,
     };
