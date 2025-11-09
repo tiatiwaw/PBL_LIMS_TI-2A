@@ -87,28 +87,18 @@ class AnalystController extends Controller
             'results' => 'required|array',
         ]);
 
-        foreach ($request->results as $sampleId => $parameters) {
-            foreach ($parameters as $key => $param) {
-                if (is_numeric($key)) {
-                    $paramId = $key;
-                    $value = $param;
-                }
-                elseif (is_array($param) && isset($param['id']) && isset($param['value'])) {
-                    $paramId = $param['id'];
-                    $value = $param['value'];
-                } else {
-                    continue;
-                }
-
-                NParameterMethod::where('sample_id', $sampleId)
-                    ->where('test_parameter_id', $paramId)
-                    ->update(['result' => $value]);
-
+        foreach ($request->results as $result) {
+            if (!isset($result['sample_id']) || !isset($result['result'])) {
+                continue;
             }
+
+            NParameterMethod::where('sample_id', $result['sample_id'])
+                ->update(['result' => $result['result']]);
         }
 
         return back()->with('success', 'Hasil uji berhasil disimpan.');
     }
+
 
 
     public function submitReport($orderId)
@@ -166,18 +156,25 @@ class AnalystController extends Controller
     }
 
 
-   public function downloadReport(Order $order)
+   public function downloadReport($orderId)
     {
-        if (!$order->report_file_path || !Storage::exists($order->report_file_path)) {
-            return back()->with('error', 'File laporan tidak ditemukan.');
+        $order = \App\Models\Order::findOrFail($orderId);
+
+        if (!$order->result_value) {
+            return back()->with('error', 'File report belum tersedia.');
+        }
+        $relativePath = $order->result_value; 
+        $storagePath = Storage::disk('public')->path($relativePath);
+
+        if (!file_exists($storagePath)) {
+            return back()->with('error', 'File report tidak ditemukan di server.');
         }
 
-        $fileName = 'report_order_' . $order->id . '.pdf';
-
-        return Storage::download($order->report_file_path, $fileName, [
+        return response()->download($storagePath, basename($storagePath), [
             'Content-Type' => 'application/pdf',
         ]);
     }
+
 
 
     // -------------------- API VERSION --------------------
