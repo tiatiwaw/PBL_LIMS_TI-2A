@@ -30,7 +30,8 @@ const isActive = (currentUrl, href, subItems = []) => {
         href !== "/manager" &&
         href !== "/analyst" &&
         href !== "/staff" &&
-        href !== "/supervisor"
+        href !== "/supervisor" &&
+        href !== "/client"
     )
         return true;
     if (subItems.length > 0) {

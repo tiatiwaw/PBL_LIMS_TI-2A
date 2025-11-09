@@ -41,9 +41,9 @@ export default function ClientPage({ auth, clientData }) {
                 data={processedParameters}
                 columns={columns}
                 editFields={editClientFields}
-                createUrl="staff.client.store"
-                editUrl="staff.client.update"
-                deleteUrl="staff.client.destroy"
+                createUrl="staff.clients.store"
+                editUrl="staff.clients.update"
+                deleteUrl="staff.clients.destroy"
                 editTitle="Edit Client"
                 deleteTitle="Hapus Client"
             />

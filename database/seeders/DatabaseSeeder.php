@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
                 $this->call([
                         UserRoleSeeder::class,
                         ClientSeeder::class,
-                        OrderSeeder::class,
+                        // OrderSeeder::class,
                 ]);
 
                 // // Master Data Independen
@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
                 // Data Transaksional
                 $this->call([
                         // AnalystSeeder::class,
-                        ClientSeeder::class,
+                        // ClientSeeder::class,
                         SampleSeeder::class,
                 ]);
         }
