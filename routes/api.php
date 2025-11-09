@@ -46,12 +46,28 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     });
 
     // Staff
-    Route::prefix('staff')->middleware('staff')->name('api.staff.')->group(function () {
-        Route::prefix('clients.')->apiResource('clients', ClientController::class);
-        Route::prefix('orders')->name('orders.')->group(function () {
-            Route::get('/', [OrderController::class, 'index'])->name('index');
-            Route::post('/', [OrderController::class, 'store'])->name('store');
-            Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
+    Route::prefix('staff')
+        ->middleware('staff')
+        ->name('api.staff.')
+        ->group(function () {
+
+            // Resource untuk manage-clients
+            Route::apiResource('manage-clients', ClientController::class)
+                ->names([
+                    'index'   => 'clients.index',
+                    'store'   => 'clients.store',
+                    'update'  => 'clients.update',
+                    'destroy' => 'clients.destroy',
+                ])
+                ->parameters([
+                    'manage-clients' => 'client', // supaya param jadi {client}, bukan {manage_client}
+                ]);
+
+            // Orders
+            Route::prefix('orders')->name('orders.')->group(function () {
+                Route::get('/', [OrderController::class, 'index'])->name('index');
+                Route::post('/', [OrderController::class, 'store'])->name('store');
+                Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
+            });
         });
-    });
 });
