@@ -21,6 +21,7 @@ export const useOrders = () => {
         mutationFn: staffService.orders.create,
         onSuccess: () => {
             queryClient.invalidateQueries(["orders"]);
+            toast.success("Order berhasil dibuat");
         },
         onError: (err) => toast.error(err?.message || "Gagal menambah Order"),
     });
@@ -29,8 +30,9 @@ export const useOrders = () => {
         mutationFn: staffService.samples.create,
         onSuccess: () => {
             queryClient.invalidateQueries(["orders"]);
+            toast.success("Sampel berhasil dibuat");
         },
-        onError: (err) => toast.error(err?.message || "Gagal menambah Order"),
+        onError: (err) => toast.error(err?.message || "Gagal menambah Sampel"),
     });
 
     return {
