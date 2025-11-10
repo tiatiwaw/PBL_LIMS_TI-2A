@@ -10,11 +10,13 @@ use App\Http\Controllers\API\V1\AuthController as V1AuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\SupervisorController;
+use Inertia\Inertia;
 
 // Home
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('index');
 });
+
 
 // Auth
 Route::controller(AuthController::class)
@@ -87,7 +89,7 @@ Route::controller(ManagerController::class)
                 Route::get('/', 'reportValidation')->name('index');
                 Route::get('/{id}', 'showReportValidation')->name('show');
                 Route::put('/{id}', 'updateReportValidation')->name('update');
-        });
+            });
 
         // Orders
         Route::prefix('orders')
@@ -95,7 +97,7 @@ Route::controller(ManagerController::class)
             ->group(function () {
                 Route::get('/', 'orders')->name('index');
                 Route::get('/{id}', 'showOrder')->name('show');
-        });
+            });
 
         // Users
         Route::prefix('users')
@@ -104,7 +106,7 @@ Route::controller(ManagerController::class)
                 Route::get('/', 'users')->name('index');
                 Route::put('/{id}', 'updateUser')->name('update');
                 Route::delete('/{id}', 'destroyUser')->name('destroy');
-        });
+            });
     });
 
 // Staff
@@ -123,14 +125,14 @@ Route::controller(StaffController::class)
                 Route::post('/', 'store')->name('store');
                 Route::put('/{id}', 'update')->name('update');
                 Route::delete('/{id}', 'destroy')->name('delete');
-        });
+            });
 
         // Samples
         Route::prefix('samples')
             ->name('sample.')
             ->group(function () {
                 Route::post('/', 'storeSample')->name('store');
-        });
+            });
 
         // Orders
         Route::prefix('orders')
@@ -138,7 +140,7 @@ Route::controller(StaffController::class)
             ->group(function () {
                 Route::get('/', 'indexOrder')->name('index');
                 Route::post('/', 'storeOrder')->name('store');
-        });
+            });
 
         // Order Routes
         Route::prefix('orders')
@@ -156,7 +158,27 @@ Route::controller(SupervisorController::class)
     ->prefix('supervisor')
     ->name('supervisor.')
     ->group(function () {
-        Route::get('/', 'index')->name('index');
+        Route::get('/analysts', function () {
+            return Inertia::render('supervisor/analysts/index');
+        });
+        Route::get('/orders', function () {
+            return Inertia::render('supervisor/orders/index');
+        });
+        Route::get('/orders/parameters/analysts', function () {
+            return Inertia::render('supervisor/orders/parameters/analysts/index');
+        });
+        Route::get('/orders/parameters/detail', function () {
+            return Inertia::render('supervisor/orders/parameters/detail/index');
+        });
+        Route::get('/orders/parameters/first', function () {
+            return Inertia::render('supervisor/orders/parameters/first/index');
+        });
+        Route::get('/orders/parameters/review', function () {
+            return Inertia::render('supervisor/orders/parameters/review/index');
+        });
+        Route::get('/orders/parameters/second', function () {
+            return Inertia::render('supervisor/orders/parameters/second/index');
+        });
     });
 
 
@@ -179,7 +201,7 @@ Route::controller(AnalystController::class)
                 Route::get('/{id}', 'orderDetail')->name('detail');
                 Route::put('/{id}/accept', 'acceptOrder')->name('accept');
                 Route::post('/{id}/download', 'downloadOrder')->name('download');
-        });
+            });
 
         // Samples
         Route::prefix('samples')
@@ -187,7 +209,7 @@ Route::controller(AnalystController::class)
             ->group(function () {
                 Route::post('/{id}/confirm', 'confirmSample')->name('confirm');
                 Route::post('/{id}/unconfirm', 'unconfirmSample')->name('unconfirm');
-        });
+            });
 
         // Reports
         Route::prefix('reports')
@@ -195,7 +217,7 @@ Route::controller(AnalystController::class)
             ->group(function () {
                 Route::post('/', 'createReport')->name('create');
                 Route::put('/{id}', 'updateReport')->name('update');
-        });
+            });
     });
 
 // Client
@@ -212,7 +234,7 @@ Route::controller(ClientController::class)
             ->group(function () {
                 Route::get('/', 'orders')->name('index');
                 Route::inertia('/detail', 'client/detail/index')->name('detail');
-        });
+            });
 
         // History
         Route::get('/history', 'history')->name('history');

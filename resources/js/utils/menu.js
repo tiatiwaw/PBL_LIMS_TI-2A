@@ -20,6 +20,7 @@ import {
     ListCheck,
     Inbox,
     ScrollText,
+    User,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -204,7 +205,10 @@ const MENU_CONFIG = {
         },
     ],
 
-    supervisor: [{ name: "Beranda", icon: Home, href: "/supervisor" }],
+    supervisor: [
+        { name: "Orders", icon: Home, href: "/supervisor/orders" },
+        { name: "Analysts", icon: User, href: "/supervisor/analysts" },
+    ],
 };
 
 export function menuItems(url) {
