@@ -29,11 +29,7 @@ class OrderSeeder extends Seeder
                     'client_id' => $client->id,
                     'order_number' => strtoupper(Str::random(8)),
                     'title' => "Order ke-$i untuk {$client->name}",
-<<<<<<< HEAD
-                    'result_value' => null,
-=======
                     'result_value' => fake()->randomFloat(2, 10, 99) . ' mg/L',
->>>>>>> 959efcc43a424c061d04ca2cd39c7066a8c2fe07
                     'order_date' => now()->subDays(rand(1, 30)),
                     'estimate_date' => now()->addDays(rand(3, 10)),
                     'report_issued_at' => rand(0, 1) ? now()->subDays(rand(1, 5)) : null,
