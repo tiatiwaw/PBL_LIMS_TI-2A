@@ -2,7 +2,7 @@ import { Beaker, Gauge, Microscope, TestTube, Users, Wrench } from "lucide-react
 
 export const stats = [
   {
-    title: "Total Users",
+    title: "Total Client",
     value: "40",
     subtitle: "Increased from last month",
     icon: Users,
@@ -40,12 +40,12 @@ export const stats = [
 ];
 
 export const monthlyTrend = [
-  { month: 'Jan', users: 25, sampel: 28, pengujian: 30 },
-  { month: 'Feb', users: 28, sampel: 32, pengujian: 35 },
-  { month: 'Mar', users: 32, sampel: 35, pengujian: 38 },
-  { month: 'Apr', users: 35, sampel: 38, pengujian: 40 },
-  { month: 'May', users: 38, sampel: 39, pengujian: 42 },
-  { month: 'Jun', users: 40, sampel: 40, pengujian: 45 },
+  { month: 'Jan', client: 25, sampel: 28, pengujian: 30 },
+  { month: 'Feb', client: 28, sampel: 32, pengujian: 35 },
+  { month: 'Mar', client: 32, sampel: 35, pengujian: 38 },
+  { month: 'Apr', client: 35, sampel: 38, pengujian: 40 },
+  { month: 'May', client: 38, sampel: 39, pengujian: 42 },
+  { month: 'Jun', client: 40, sampel: 40, pengujian: 45 },
 ];
 
 export const equipmentUsage = [

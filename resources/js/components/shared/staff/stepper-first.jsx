@@ -1,75 +1,81 @@
-import React from 'react';
+import React from "react";
+import { Check, Edit, FileCheck } from "lucide-react";
 
-// Terima prop 'currentStep' untuk mengetahui tahap yang sedang aktif/selesai
-export default function Stepper({ currentStep = 1 }) { 
-    
-    // Fungsi pembantu untuk menentukan kelas warna lingkaran
-    const getCircleClasses = (stepNumber) => {
-        // Jika nomor langkah saat ini lebih besar atau sama dengan langkah ini (sudah selesai/aktif)
-        if (currentStep >= stepNumber) {
-            // Warna Aktif/Selesai (Hijau/Teal)
-            return "bg-teal-600 text-white text-3xl font-semibold"; // Tambahkan kelas ukuran/font di sini
-        } else {
-            // Warna Tidak Aktif/Belum Selesai (Abu-abu)
-            return "border-2 border-gray-400 text-gray-600";
-        }
-    };
-    
-    // Fungsi getTextClasses tidak lagi diperlukan karena logika teks/angka kini ada di JSX
+const steps = [
+    { number: 1, name: "Klien & Order", icon: Edit },
+    { number: 2, name: "Uji & Metode", icon: FileCheck },
+    { number: 3, name: "Konfirmasi", icon: Check },
+];
 
+export default function Stepper({ currentStep = 1 }) {
     return (
-        <div className="py-4">
-            <h2 className="text-primary-hijauTua text-lg font-bold">
-                Langkah {currentStep} : {currentStep === 1 ? 'Klien dan Order' : currentStep === 2 ? 'Uji dan Metode' : 'Konfirmasi dan Submit'}
+        <div className="px-4 py-8 md:px-8 rounded-2xl shadow-sm">
+            <h2 className="text-2xl font-semibold text-teal-700 mb-2">
+                Registrasi Order Baru
             </h2>
-            
-            <div className="flex items-center gap-4 mt-4">
-                
-                {/* Step 1: Klien dan Order */}
-                {/* Step 1 sudah hanya angka, jadi tidak ada perubahan di sini */}
-                <div className="flex flex-col items-center">
-                    {/* Kelas font/ukuran 3xl sudah ditambahkan ke getCircleClasses untuk konsistensi */}
-                    <div className={`w-20 h-20 rounded-full flex items-center justify-center ${getCircleClasses(1)}`}>
-                        1
-                    </div>
-                </div>
-                
-                {/* Garis penghubung (Opsional) */}
-                
-                {/* Step 2: Uji dan Metode */}
-                <div className="flex flex-col items-center">
-                    <div className={`w-20 h-20 rounded-full flex items-center justify-center ${getCircleClasses(2)}`}>
-                        {/* 🌟 LOGIKA BARU: Jika currentStep >= 2, tampilkan angka. Jika tidak, tampilkan teks. */}
-                        {currentStep >= 2 ? (
-                            2 // Tampilkan angka 2 jika sudah aktif/selesai
-                        ) : (
-                            // Tampilkan teks jika belum aktif
-                            <div className="text-center flex flex-col justify-center items-center h-full py-1">
-                                <div className={`text-[10px] font-medium leading-none text-gray-600`}>UJI</div>
-                                <div className={`text-[8px] font-medium leading-none text-gray-600`}>&</div>
-                                <div className={`text-[10px] font-medium leading-none text-gray-600`}>METODE</div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-                
-                {/* Step 3: Konfirmasi dan Submit */}
-                <div className="flex flex-col items-center">
-                    <div className={`w-20 h-20 rounded-full flex items-center justify-center ${getCircleClasses(3)}`}>
-                        {/* 🌟 LOGIKA BARU: Jika currentStep >= 3, tampilkan angka. Jika tidak, tampilkan teks. */}
-                        {currentStep >= 3 ? (
-                            3 // Tampilkan angka 3 jika sudah aktif/selesai
-                        ) : (
-                            // Tampilkan teks jika belum aktif
-                            <div className="text-center flex flex-col justify-center items-center h-full py-1">
-                                <div className={`text-[10px] font-medium leading-none text-gray-600`}>KONFIRMASI</div>
-                                <div className={`text-[8px] font-medium leading-none text-gray-600`}>&</div>
-                                <div className={`text-[10px] font-medium leading-none text-gray-600`}>SUBMIT</div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
+            <p className="text-sm text-gray-600 mb-10">
+                Langkah {currentStep} dari {steps.length}:{" "}
+                <span className="font-semibold text-teal-700">
+                    {steps.find((s) => s.number === currentStep)?.name || ""}
+                </span>
+            </p>
+
+            <nav aria-label="Progress">
+                <ol className="flex justify-between items-center relative">
+                    {steps.map((step, index) => {
+                        const isCompleted = currentStep > step.number;
+                        const isActive = currentStep === step.number;
+                        const Icon = step.icon;
+
+                        return (
+                            <li key={step.name} className="flex-1 relative">
+                                <div className="flex flex-col items-center">
+                                    {/* Garis penghubung */}
+                                    {index < steps.length - 1 && (
+                                        <div
+                                            className={`absolute top-6 left-1/2 w-full h-[2px] z-0
+                      ${isCompleted ? "bg-teal-500" : "bg-gray-300"}`}
+                                        ></div>
+                                    )}
+
+                                    {/* Lingkaran Icon */}
+                                    <div
+                                        className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full
+                    transition-all duration-300 shadow-md border
+                    ${
+                        isCompleted
+                            ? "bg-teal-500 border-teal-500 text-white"
+                            : isActive
+                            ? "bg-teal-600 border-teal-600 text-white scale-110 shadow-lg"
+                            : "bg-gray-100 border-gray-300 text-gray-400"
+                    }`}
+                                    >
+                                        {isCompleted ? (
+                                            <Check className="w-6 h-6" />
+                                        ) : (
+                                            <Icon className="w-6 h-6" />
+                                        )}
+                                    </div>
+
+                                    {/* Label */}
+                                    <span
+                                        className={`mt-3 text-center text-sm font-medium
+                    ${
+                        isActive
+                            ? "text-teal-700 font-semibold"
+                            : isCompleted
+                            ? "text-gray-600"
+                            : "text-gray-500"
+                    }`}
+                                    >
+                                        {step.name}
+                                    </span>
+                                </div>
+                            </li>
+                        );
+                    })}
+                </ol>
+            </nav>
         </div>
     );
 }

@@ -1,38 +1,23 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-const statusVariantMap = {
-    Completed: "success",
-    "In Progress": "warning",
-    Pending: "info",
-    Disapproved: "error",
-    Approved: "approved",
-    Received: "received",
-};
-
-const tipeVariantMap = {
-    Eksternal: "warning",
-    Internal: "info",
-    Urgent: "error",
-};
+import { getOrderStatusLabel, getOrderStatusVariant, getOrderTypeLabel, getOrderTypeVariant } from "@/utils/statusHelpers";
 
 export const getOrdersColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No." },
-    { accessorKey: "user", header: "User" },
+    { accessorKey: "order_number", header: "No. Order" },
     { accessorKey: "title", header: "Judul Analisis" },
-    { accessorKey: "estimasi", header: "Estimasi Selesai" },
+    { accessorKey: "estimated_date", header: "Estimasi Selesai" },
     { accessorKey: "report_issued_at", header: "Tanggal Laporan" },
     {
-        accessorKey: "tipe",
+        accessorKey: "order_type",
         header: "Tipe Order",
         cell: ({ row }) => {
-            const value = row.tipe;
+            const value = row.order_type;
             return (
                 <Badge
-                    variant={tipeVariantMap[value] || "outline"}
-                    className="capitalize"
+                    variant={getOrderTypeVariant(value)}
                 >
-                    {value}
+                    {getOrderTypeLabel(value)}
                 </Badge>
             );
         },
@@ -43,8 +28,8 @@ export const getOrdersColumns = ({ onShowDetail }) => [
         cell: ({ row }) => {
             const value = row.status;
             return (
-                <Badge variant={statusVariantMap[value] || "outline"}>
-                    {value}
+                <Badge variant={getOrderStatusVariant(value)}>
+                    {getOrderStatusLabel(value)}
                 </Badge>
             );
         },

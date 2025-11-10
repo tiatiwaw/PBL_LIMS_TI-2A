@@ -3,7 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
+use App\Models\User;
+use App\Models\Equipment;
+use App\Models\Reagent;
+use App\Models\Sample;
+use App\Models\TestParameter;
+use App\Models\TestMethod;
+use App\Models\Order;
 
 class AdminController extends Controller
 {
@@ -12,7 +21,7 @@ class AdminController extends Controller
         return Inertia::render('admin/index');
     }
 
-    public function equipment()
+    public function equipments()
     {
         return Inertia::render('admin/tools/equipments/index');
     }
@@ -37,37 +46,44 @@ class AdminController extends Controller
         return Inertia::render('admin/materials/suppliers/index');
     }
 
-    public function sample()
-    {
-        return Inertia::render('admin/sampling/sample/index');
-    }
-
-    public function category()
-    {
-        return Inertia::render('admin/sampling/category/index');
-    }
-
-    public function parameter()
+    public function parameters()
     {
         return Inertia::render('admin/test/parameter/index');
     }
 
-    public function method()
+    public function methods()
     {
         return Inertia::render('admin/test/method/index');
     }
 
-    public function unitValue()
+    public function units()
     {
         return Inertia::render('admin/test/unit-value/index');
     }
 
-    public function standardReference()
+    public function references()
     {
         return Inertia::render('admin/test/standard-reference/index');
     }
 
-    public function logActivity()
+    public function categories()
+    {
+        return Inertia::render('admin/test/category/index');
+    }
+
+    public function orders()
+    {
+        return Inertia::render('admin/orders/index');
+    }
+
+    public function showOrder($id)
+    {
+        return inertia('admin/orders/detail', [
+            'canValidate' => false,
+        ]);
+    }
+
+    public function activities()
     {
         return Inertia::render('admin/log-activity/index');
     }

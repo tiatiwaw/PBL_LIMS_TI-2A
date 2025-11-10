@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\NParameterMethod;
-use App\Models\TestParameter;
 use App\Models\UnitValue;
+use App\Models\TestParameter;
 use Illuminate\Database\Seeder;
+use App\Models\NParameterMethod;
+use Database\Seeders\UserRoleSeeder;
 use League\CommonMark\Reference\Reference;
 
 class DatabaseSeeder extends Seeder

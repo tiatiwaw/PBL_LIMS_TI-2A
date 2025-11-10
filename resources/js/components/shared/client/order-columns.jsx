@@ -19,6 +19,7 @@ const tipeVariantMap = {
 };
 
 export const getOrdersColumns = () => [
+    { accessorKey: "no", header: "No." },
     { accessorKey: "order_number", header: "Kode Pesanan" },
     { accessorKey: "title", header: "Judul Pesanan" },
     { accessorKey: "estimate_date", header: "Estimasi Selesai" },
@@ -40,20 +41,11 @@ export const getOrdersColumns = () => [
         cell: ({ row }) => (
             <div className="flex gap-2">
                 <Button
-                variant="outline"
-                size="sm"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onShowDetail(row)}
                 >
-                    <Link href="/client/order/details">
-                        <FileText/>
-                    </Link>
-                </Button>
-                <Button
-                variant="outline"
-                size="sm"
-                >
-                    <Link href="/client/order/history">
-                        <History/>
-                    </Link>
+                    Detail
                 </Button>
             </div>
         ),

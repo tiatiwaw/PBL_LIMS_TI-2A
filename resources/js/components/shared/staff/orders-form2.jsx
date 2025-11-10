@@ -8,33 +8,43 @@ import {
     DialogFooter,
     DialogDescription,
 } from "@/components/ui/dialog";
-import TableSamplesOrd from "@/components/shared/staff/table-samplesord";
+import ManagedDataTable from "../tabel/managed-data-table";
+import { getSampleColumnsOrder } from "./sample-order-colums";
 import { Button } from "@/components/ui/button";
-import { samples } from "@/data/staff/sample";
 import { DatePicker } from "@/components/ui/date-picker";
+import { editSampleFields } from "@/utils/fields/staff";
+import { toast } from "sonner";
 
-export default function OrdersForm2() {
+export default function OrdersForm2({
+    samples,
+    categories,
+    createSample,
+    data,
+    setData,
+}) {
     const [selectedSamples, setSelectedSamples] = useState([]);
     const [isSampleDialogOpen, setIsSampleDialogOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [formData, setFormData] = useState({
-        tipeOrder: "",
-        samples: [],
-        tanggalOrder: "",
-        estimasiSelesai: "",
-        catatan: "",
-    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
+        setData((prev) => ({
             ...prev,
             [name]: value,
         }));
     };
+    const handleCreate = async (formData) =>
+        createSample.mutateAsync(formData, {
+            onSuccess: () => {
+                toast.success("Sampel berhasil dibuat");
+            },
+            onError: (e) => {
+                toast.error("Gagal menyimpan Sampel:", e);
+            },
+        });
 
     const handleTipeOrderSelect = (value) => {
-        setFormData((prev) => ({
+        setData((prev) => ({
             ...prev,
             tipeOrder: value,
         }));
@@ -42,43 +52,62 @@ export default function OrdersForm2() {
     };
 
     const handleSampleSelect = (sample) => {
+        if (!sample) return console.log(`sample ${sample} tidak terkirim"`); // 🚧 Tambahkan guard agar tidak undefined
+
         setSelectedSamples((prev) => {
             const exists = prev.find((s) => s.id === sample.id);
             return exists
                 ? prev.filter((s) => s.id !== sample.id)
-                : [...prev, sample];
+                : [...prev, { ...sample, value: sample.value ?? "" }];
         });
     };
 
+    // saat menambahkan dari dialog, pastikan setiap sample punya field value
     const handleTambahSamples = () => {
-        setFormData((prev) => ({
+        const normalized = selectedSamples.map((s) =>
+            s.hasOwnProperty("value") ? s : { ...s, value: "" }
+        );
+        setData((prev) => ({
             ...prev,
-            samples: selectedSamples,
+            samples: normalized,
         }));
+        setSelectedSamples(normalized);
         setIsSampleDialogOpen(false);
     };
 
     const handleOpenDialog = () => {
-        setSelectedSamples([...formData.samples]);
+        // clone supaya tidak referensi langsung
+        setSelectedSamples((data.samples || []).map((s) => ({ ...s })));
         setIsSampleDialogOpen(true);
     };
 
     const handleDialogChange = (open) => {
         if (!open) {
-            setSelectedSamples([...formData.samples]);
+            setSelectedSamples((data.samples || []).map((s) => ({ ...s })));
         }
         setIsSampleDialogOpen(open);
     };
 
     const handleRemoveSample = (sampleId) => {
-        const updatedSamples = formData.samples.filter(
-            (s) => s.id !== sampleId
-        );
-        setFormData((prev) => ({
+        const updatedSamples = data.samples.filter((s) => s.id !== sampleId);
+        setData((prev) => ({
             ...prev,
             samples: updatedSamples,
         }));
-        setSelectedSamples(updatedSamples);
+        setSelectedSamples(updatedSamples.map((s) => ({ ...s })));
+    };
+
+    // update value/volume untuk sample yang dipilih
+    const handleSampleValueChange = (sampleId, sample_volume) => {
+        setData((prev) => {
+            const updated = (prev.samples || []).map((s) =>
+                s.id === sampleId ? { ...s, sample_volume } : s
+            );
+            return { ...prev, samples: updated };
+        });
+        setSelectedSamples((prev) =>
+            prev.map((s) => (s.id === sampleId ? { ...s, sample_volume } : s))
+        );
     };
 
     const orderTypes = [
@@ -90,7 +119,7 @@ export default function OrdersForm2() {
 
     const getSelectedLabel = () => {
         const selected = orderTypes.find(
-            (type) => type.value === formData.tipeOrder
+            (type) => type.value === data.tipeOrder
         );
         return selected ? selected.label : "Pilih Tipe Order";
     };
@@ -117,7 +146,7 @@ export default function OrdersForm2() {
                             >
                                 <span
                                     className={
-                                        formData.tipeOrder
+                                        data.tipeOrder
                                             ? "text-gray-700"
                                             : "text-gray-400"
                                     }
@@ -147,7 +176,7 @@ export default function OrdersForm2() {
                                                     border rounded-lg p-3 cursor-pointer transition-all duration-200 text-center
                                                     ${type.bgColor} text-white
                                                     ${
-                                                        formData.tipeOrder ===
+                                                        data.tipeOrder ===
                                                         type.value
                                                             ? "ring-2 ring-offset-2 ring-gray-400"
                                                             : "hover:brightness-110"
@@ -168,9 +197,9 @@ export default function OrdersForm2() {
                     {/* Tanggal Order - Menggunakan DatePicker */}
                     <DatePicker
                         label="Tanggal Order"
-                        value={formData.tanggalOrder}
+                        value={data.tanggalOrder}
                         onChange={(date) =>
-                            setFormData((prev) => ({
+                            setData((prev) => ({
                                 ...prev,
                                 tanggalOrder: date
                                     ? date.toISOString().split("T")[0]
@@ -182,9 +211,9 @@ export default function OrdersForm2() {
                     {/* Estimasi Order Selesai - Menggunakan DatePicker */}
                     <DatePicker
                         label="Estimasi Order Selesai"
-                        value={formData.estimasiSelesai}
+                        value={data.estimasiSelesai}
                         onChange={(date) =>
-                            setFormData((prev) => ({
+                            setData((prev) => ({
                                 ...prev,
                                 estimasiSelesai: date
                                     ? date.toISOString().split("T")[0]
@@ -200,7 +229,7 @@ export default function OrdersForm2() {
                         </label>
                         <textarea
                             name="catatan"
-                            value={formData.catatan}
+                            value={data.catatan}
                             onChange={handleChange}
                             placeholder="Catatan orderan"
                             rows="4"
@@ -226,28 +255,50 @@ export default function OrdersForm2() {
                     {/* Box: Sample yang dipilih */}
                     <div className="border border-gray-300 rounded-lg p-4 bg-white min-h-[400px]">
                         <h3 className="text-sm font-semibold mb-3 text-gray-700">
-                            Sampel yg dipilih:
+                            Sampel yang dipilih:
                         </h3>
 
-                        {formData.samples.length > 0 ? (
+                        {data.samples.length > 0 ? (
                             <div className="space-y-2">
-                                {formData.samples.map((sample, index) => (
+                                {data.samples.map((sample, index) => (
                                     <div
                                         key={sample.id}
-                                        className="flex items-center justify-between p-3 bg-gray-100 rounded-md border border-gray-200"
+                                        className="flex items-center gap-3 p-3 bg-gray-100 rounded-md border border-gray-200"
                                     >
-                                        <span className="text-sm text-gray-700">
+                                        <div className="flex-none w-2/5 text-sm text-gray-700">
                                             {index + 1}. {sample.name}
-                                        </span>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                handleRemoveSample(sample.id)
-                                            }
-                                            className="text-red-500 hover:text-red-700 text-xs font-medium"
-                                        >
-                                            Hapus
-                                        </button>
+                                        </div>
+
+                                        <div className="flex-1 px-2">
+                                            <input
+                                                type="text"
+                                                value={
+                                                    sample.sample_volume ?? ""
+                                                }
+                                                onChange={(e) =>
+                                                    handleSampleValueChange(
+                                                        sample.id,
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder="Masukkan volume / nilai"
+                                                className="w-full text-center px-3 py-2 border border-gray-300 rounded-md bg-white"
+                                            />
+                                        </div>
+
+                                        <div className="flex-none">
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleRemoveSample(
+                                                        sample.id
+                                                    )
+                                                }
+                                                className="text-red-500 hover:text-red-700 text-xs font-medium"
+                                            >
+                                                Hapus
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -272,10 +323,16 @@ export default function OrdersForm2() {
                     </DialogHeader>
 
                     <div className="flex-grow overflow-y-auto">
-                        <TableSamplesOrd
+                        <ManagedDataTable
                             data={samples}
-                            onSelectSample={handleSampleSelect}
-                            selected={selectedSamples}
+                            columns={getSampleColumnsOrder({
+                                selectedSamples,
+                                onSelectSample: handleSampleSelect,
+                            })}
+                            editFields={editSampleFields(categories)}
+                            showFilter={false}
+                            showSearch={true}
+                            onCreate={handleCreate}
                         />
                     </div>
 
@@ -283,7 +340,6 @@ export default function OrdersForm2() {
                         <Button
                             variant="outline"
                             onClick={() => setIsSampleDialogOpen(false)}
-                            className="bg-gray-200 hover:bg-gray-300"
                         >
                             Tutup
                         </Button>

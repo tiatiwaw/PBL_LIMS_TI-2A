@@ -1,46 +1,50 @@
-export const editEquipmentFields = [
-    {
-        name: "name",
-        label: "Nama Alat",
-        placeholder: "Masukkan nama alat",
-    },
-    {
-        name: "brand_type",
-        label: "Brand / Tipe",
-        placeholder: "Masukkan brand / tipe alat",
-    },
-    {
-        name: "serial_number",
-        label: "Nomor Seri",
-        placeholder: "Masukkan nomor seri alat",
-    },
-    {
-        name: "purchase_year",
-        label: "Tahun Pembelian",
-        placeholder: "Masukkan tahun pembelian alat",
-    },
-    {
-        name: "calibration_schedule",
-        label: "Jadwal Kalibrasi",
-        placeholder: "Masukkan jadwal kalibrasi alat",
-    },
-    {
-        name: "status",
-        label: "Status",
-        type: "select",
-        placeholder: "Pilih status alat",
-        options: [
-            { value: "active", label: "Aktif" },
-            { value: "maintenance", label: "Perbaikan" },
-            { value: "broken", label: "Rusak" },
-        ],
-    },
-    {
-        name: "location",
-        label: "Lokasi",
-        placeholder: "Masukkan lokasi alat",
-    },
-];
+export const editEquipmentFields = (data) =>{
+    return [
+        {
+            name: "name",
+            label: "Nama Alat",
+            placeholder: "Masukkan nama alat",
+        },
+        {
+            name: "brand_type",
+            label: "Brand / Tipe",
+            type: "select",
+            placeholder: "Masukkan brand / tipe alat",
+            options: data.map((item) => ({ value: item.id, label: item.name })),
+        },
+        {
+            name: "serial_number",
+            label: "Nomor Seri",
+            placeholder: "Masukkan nomor seri alat",
+        },
+        {
+            name: "purchase_year",
+            label: "Tahun Pembelian",
+            placeholder: "Masukkan tahun pembelian alat",
+        },
+        {
+            name: "calibration_schedule",
+            label: "Jadwal Kalibrasi",
+            placeholder: "Masukkan jadwal kalibrasi alat",
+        },
+        {
+            name: "status",
+            label: "Status",
+            type: "select",
+            placeholder: "Pilih status alat",
+            options: [
+                { value: "active", label: "Aktif" },
+                { value: "maintenance", label: "Perbaikan" },
+                { value: "broken", label: "Rusak" },
+            ],
+        },
+        {
+            name: "location",
+            label: "Lokasi",
+            placeholder: "Masukkan lokasi alat",
+        },
+    ];
+}
 
 export const editBrandFields = [
     {

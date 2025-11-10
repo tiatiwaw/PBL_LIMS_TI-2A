@@ -10,7 +10,7 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import SearchFilter from "../dashboard/searchfilter";
+import SearchFilter from "./searchfilter";
 
 export function DataTableCard({ className, ...props }) {
     return (
@@ -29,6 +29,8 @@ export function DataTableHeader({
     onSearchChange,
     filterValue,
     onFilterChange,
+    showCreate,
+    onCreate
 }) {
     return (
         <CardHeader className="pb-0">
@@ -40,6 +42,8 @@ export function DataTableHeader({
                 onSearchChange={onSearchChange}
                 filterValue={filterValue}
                 onFilterChange={onFilterChange}
+                onCreate={onCreate}
+                showCreate={showCreate}
             />
         </CardHeader>
     );

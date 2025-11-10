@@ -4,7 +4,6 @@ export function useTable({
     data,
     defaultPageSize = 10,
     filterColumn = "status",
-    searchColumn = "user",
     showFilter = false,
     showSearch = false,
 }) {
@@ -20,11 +19,12 @@ export function useTable({
             );
         }
         if (showSearch && searchTerm) {
-            result = result.filter((item) =>
-                item[searchColumn]
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase())
-            );
+            result = result.filter((item) => {
+                const lowerSearch = searchTerm.toLowerCase();
+                return Object.values(item).some((val) =>
+                    String(val).toLowerCase().includes(lowerSearch)
+                );
+            });
         }
         return result;
     }, [
@@ -34,7 +34,6 @@ export function useTable({
         showFilter,
         showSearch,
         filterColumn,
-        searchColumn,
     ]);
 
     const totalPages = Math.ceil(filteredData.length / defaultPageSize) || 1;

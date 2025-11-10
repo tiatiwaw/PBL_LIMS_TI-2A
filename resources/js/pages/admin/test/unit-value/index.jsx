@@ -1,15 +1,25 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getUnitsColumns } from "@/components/shared/admin/test-columns";
+import UnitDetailSheet from "@/components/shared/sheet/unit-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { units } from "@/data/admin/tests";
 import { editUnitFields } from "@/utils/fields/admin";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export default function UnitsPage({ auth, unitsData }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedUnit, setSelectedUnit] = useState(null);
+        
+    const handleShowDetail = (tests) => {
+            setSelectedUnit(tests);
+            setIsOpen(true);
+    };
+    
+
     const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
     const parameters = unitsData || units;
 
-    const columns = useMemo(() => getUnitsColumns(), []);
+    const columns = useMemo(() => getUnitsColumns({ onShowDetail: handleShowDetail }), []);
 
     return (
         <DashboardLayout
@@ -21,12 +31,13 @@ export default function UnitsPage({ auth, unitsData }) {
                 data={parameters}
                 columns={columns}
                 editFields={editUnitFields}
+                createUrl="admin.test.unit.create"
                 editUrl="admin.test.unit.update"
                 deleteUrl="admin.test.unit.destroy"
-                searchColumn="value"
                 editTitle="Edit Nilai Satuan"
                 deleteTitle="Hapus Nilai Satuan"
             />
+        <UnitDetailSheet data={selectedUnit} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }

@@ -25,6 +25,12 @@ class Order extends Model
         'status'
     ];
 
+    protected $casts = [
+        'estimate_date' => 'date',
+        'report_issued_at' => 'datetime',
+        'order_date' => 'date',
+    ];
+
     public function clients()
     {
         return $this->belongsTo(Client::class, 'client_id');
@@ -33,6 +39,11 @@ class Order extends Model
     public function samples()
     {
         return $this->belongsToMany(Sample::class, 'n_order_samples');
+    }
+
+    public function n_order_samples()
+    {
+        return $this->hasMany(NOrderSample::class, 'order_id');
     }
 
     public function n_analyses_methods_orders()

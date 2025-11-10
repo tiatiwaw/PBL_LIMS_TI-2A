@@ -9,21 +9,15 @@ import {
     FileCheck2,
     TrendingUp,
     Users,
-    Database,
     ShoppingCart,
-    Mail,
-    History,
     Factory,
     Building2,
     Ruler,
     FileText,
     ClipboardList,
-    TestTubes,
-    TestTube,
     TestTube2,
-    Pipette,
-    ListCheck,
     ChartArea,
+    ListCheck,
     Inbox,
     ScrollText,
 } from "lucide-react";
@@ -36,12 +30,12 @@ const isActive = (currentUrl, href, subItems = []) => {
         href !== "/manager" &&
         href !== "/analyst" &&
         href !== "/staff" &&
-        href !== "/supervisor"
+        href !== "/supervisor" &&
+        href !== "/client"
     )
         return true;
     if (subItems.length > 0) {
         return subItems.some((sub) => currentUrl.startsWith(sub.href));
-
     }
     return false;
 };
@@ -51,6 +45,8 @@ const getRoleFromUrl = (url) => {
     if (url.startsWith("/admin")) return "admin";
     if (url.startsWith("/manager")) return "manager";
     if (url.startsWith("/staff")) return "staff";
+    if (url.startsWith("/client")) return "client";
+    if (url.startsWith("/supervisor")) return "supervisor";
     return null;
 };
 
@@ -112,51 +108,45 @@ const MENU_CONFIG = {
             ],
         },
         {
-            name: "Sampling",
-            icon: TestTubes,
-            subItems: [
-                {
-                    name: "Sampel",
-                    icon: TestTube,
-                    href: "/admin/sampling/sample",
-                },
-                {
-                    name: "Kategori Sampel",
-                    icon: TestTube2,
-                    href: "/admin/sampling/category",
-                },
-            ],
-        },
-        {
             name: "Pengujian",
             icon: ClipboardList,
             subItems: [
                 {
                     name: "Parameter",
                     icon: Gauge,
-                    href: "/admin/test/parameter",
+                    href: "/admin/tests/parameters",
                 },
                 {
                     name: "Metode Uji",
                     icon: Microscope,
-                    href: "/admin/test/test-method",
+                    href: "/admin/tests/methods",
                 },
                 {
                     name: "Nilai Satuan",
                     icon: Ruler,
-                    href: "/admin/test/unit-value",
+                    href: "/admin/tests/units",
                 },
                 {
                     name: "Standard Referensi",
                     icon: FileText,
-                    href: "/admin/test/standard-reference",
+                    href: "/admin/tests/references",
+                },
+                {
+                    name: "Kategori Sampel",
+                    icon: TestTube2,
+                    href: "/admin/tests/categories",
                 },
             ],
         },
         {
+            name: "Order",
+            icon: ShoppingCart,
+            href: "/admin/orders",
+        },
+        {
             name: "Aktivitas Log",
             icon: TrendingUp,
-            href: "/admin/log-activity",
+            href: "/admin/activities",
         },
         {
             name: "Pengguna",
@@ -177,33 +167,44 @@ const MENU_CONFIG = {
             href: "/manager/report-validation",
         },
         {
-            name: "Orders",
+            name: "Order",
             icon: ShoppingCart,
             href: "/manager/orders",
         },
         {
-            name: "Users",
+            name: "Karyawan",
             icon: Users,
             href: "/manager/users",
         },
     ],
+
     staff: [
-        {
-            name: "Manajemen Klien",
-            icon: ListCheck,
-            href: "/staff/manage-clients",
-        },
-        {
-            name: "Sample",
-            icon: Pipette,
-            href: "/staff/samples",
-        },
         {
             name: "Orders",
             icon: ChartArea,
             href: "/staff/orders",
         },
+        {
+            name: "Manajemen Klien",
+            icon: ListCheck,
+            href: "/staff/manage-clients",
+        },
     ],
+
+    client: [
+        {
+            name: "Beranda",
+            icon: Home,
+            href: "/client",
+        },
+        {
+            name: "Riwayat",
+            icon: ChartArea,
+            href: "/client/history",
+        },
+    ],
+
+    supervisor: [{ name: "Beranda", icon: Home, href: "/supervisor" }],
 };
 
 export function menuItems(url) {

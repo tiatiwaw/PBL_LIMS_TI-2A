@@ -7,11 +7,9 @@ const statusVariantMap = {
     broken: "error",
 };
 
-export const getEquipmentsColumns = () => [
+export const getEquipmentsColumns = ({ onShowDetail }) => [
     { accessorKey: 'no', header: 'No.' },
-    { accessorKey: 'brand_type', header: 'Brand / Tipe' },
     { accessorKey: 'name', header: 'Nama Alat' },
-    { accessorKey: 'serial_number', header: 'Nomor Seri' },
     { accessorKey: 'purchase_year', header: 'Tahun Pembelian' },
     { accessorKey: 'calibration_schedule', header: 'Jadwal Kalibrasi' },
     {
@@ -34,19 +32,21 @@ export const getEquipmentsColumns = () => [
         id: "aksi",
         header: "Aksi",
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
         ),
     },
 ];
 
-export const getBrandsColumns = () => [
+export const getBrandsColumns = ({ onShowDetail }) => [
     { accessorKey: 'no', header: 'No.' },
-    { accessorKey: 'name', header: 'Nama' },
+    { accessorKey: 'name', header: 'Nama Alat' },
     {
         id: "aksi",
         header: "Aksi",
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
         ),
     },
 ];
+
+

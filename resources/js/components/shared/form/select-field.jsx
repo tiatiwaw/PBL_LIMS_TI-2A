@@ -41,14 +41,14 @@ export default function SelectField({
                     </SelectTrigger>
                     <SelectContent>
                         {options.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
+                            <SelectItem key={opt.value} value={opt.value} className="capitalize">
                                 {opt.label}
                             </SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
             </div>
-            {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+            {error && <p className="text-sm font-semibold text-red-500 mt-1">{error}</p>}
         </div>
     );
 }

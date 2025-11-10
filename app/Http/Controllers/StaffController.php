@@ -2,26 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Client;
+use App\Models\User;
+use App\Models\Sample;
+use App\Models\SampleCategory;
+use App\Models\NOrderSample;
+use App\Models\Order;
+use App\Models\AnalysesMethod;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class StaffController extends Controller
 {
+    // ================================
+    // KLIEN
+    // ================================
+    public function index()
+    {
+        $clients = Client::with('users')->get();
 
-    // public function index()
-    // {
-    //     return Inertia::render('staff/index');
-    // }
-    public function sample()
-    {
-        return Inertia::render('staff/samples/index');
+        return Inertia::render('staff/clients/index', [
+            'clientData' => $clients,
+        ]);
     }
-    public function managementClient()
+
+    // ================================
+    // ORDER
+    // ================================
+    public function indexOrder()
     {
-        return Inertia::render('staff/clients/index');
-    }
-    public function order()
-    {
-        return Inertia::render('staff/orders/index');
+        $samples = Sample::with('sample_categories')->get();
+        $methods = AnalysesMethod::all();
+        $clients = Client::all();
+        $categories = SampleCategory::all();
+        // 🔹 Buat nomor order otomatis
+        $lastOrder = Order::latest('id')->first();
+        $nextNumber = str_pad(($lastOrder ? $lastOrder->id + 1 : 1), 4, '0', STR_PAD_LEFT);
+        $orderNumber = 'ORD-' . now('Asia/Jakarta')->format('Ymd') . '-' . $nextNumber;
+
+        return Inertia::render('staff/orders/index', [
+            'samples' => $samples,
+            'methods' => $methods,
+            'clients' => $clients,
+            'categories' => $categories,
+            'orderNumber' => $orderNumber,
+        ]);
     }
 }

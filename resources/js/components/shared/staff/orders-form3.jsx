@@ -1,11 +1,10 @@
 import React from "react";
-import { Clients } from "@/data/staff/clients";
-import { samples } from "@/data/staff/sample";
-import { dataOrder } from "@/data/staff/orders";
+import ManagedDataTable from "../tabel/managed-data-table";
+import { getSampleSelectedColumnsOrder } from "./sample-order-colums";
+import { getMethodSelectedColumns } from "./analyses-method-colums";
 
-// Komponen pembantu
 const HeaderBar = ({ title }) => (
-    <div className="bg-teal-500 rounded-lg p-3 shadow-md mb-4">
+    <div className="bg-primary-hijauTua hover:bg-primary-hijauTuas rounded-lg p-3 shadow-md mb-4">
         <h2 className="text-xl font-bold text-white">{title}</h2>
     </div>
 );
@@ -14,17 +13,31 @@ const DetailRow = ({ label, value }) => (
     <div className="flex justify-start items-start py-1">
         <p className="text-gray-700 w-32 font-semibold">{label}</p>
         <span className="mr-4">:</span>
-        <p className="text-gray-800 flex-1">{value}</p>
+        <p className="text-gray-800 flex-1">{value || "-"}</p>
     </div>
 );
 
-export default function OrderForms3() {
-    //Ambil dummy pertama untuk contoh tampilan
-    const klien = Clients[0];
+const formatRupiah = (number) => {
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+    }).format(number);
+};
 
+export default function OrderForms3({ data }) {
+    const klien = data.selectedKlien || {};
+    const sampletext =
+        data.samples.length > 0
+            ? data.samples.map((m) => m.name).join(", ")
+            : "-";
+    const metodeAnalisisText =
+        data.metodeAnalisis.length > 0
+            ? data.metodeAnalisis.map((m) => m.analyses_method).join(", ")
+            : "-";
     return (
-        <div className="p-6 md:p-10 min-h-screen font-sans">
-            <div className="max-w-7xl mx-auto p-6 rounded-xl">
+        <div className="p-6 min-h-screen font-sans">
+            <div className="rounded-xl">
                 {/* --- Bagian Klien --- */}
                 <div className="mb-8">
                     <HeaderBar title="Client" />
@@ -42,78 +55,60 @@ export default function OrderForms3() {
                 {/* --- Bagian Order --- */}
                 <div>
                     <HeaderBar title="Order" />
-                    <div className="px-4 py-2 space-y-2 mb-6">
+                    <div className="px-4 py-2 space-y-2">
                         <DetailRow
                             label="Nomor Order"
-                            value={dataOrder.nomorOrder}
+                            value={data.nomorOrder}
                         />
                         <DetailRow
                             label="Judul Order"
-                            value={dataOrder.judulOrder}
+                            value={data.judulOrder}
                         />
+                        <DetailRow label="Tipe Order" value={data.tipeOrder} />
+                        <DetailRow label="Catatan" value={data.catatan} />
                         <DetailRow
                             label="Metode Analisis"
-                            value={dataOrder.metodeAnalisis}
-                        />
-                        <DetailRow
-                            label="Tipe Order"
-                            value={dataOrder.tipeOrder}
+                            value={metodeAnalisisText}
                         />
                     </div>
 
+                    {/* --- Tabel Analyses Method --- */}
+                    <div className="mb-6">
+                        <ManagedDataTable
+                            data={data.metodeAnalisis}
+                            columns={getMethodSelectedColumns}
+                            showFilter={false}
+                            showSearch={false}
+                            showCreate={false}
+                        />
+                    </div>
+                    <div className="px-4 py-2 space-y-2">
+                        <DetailRow label="Samples" value={sampletext} />
+                    </div>
                     {/* --- Tabel Sample --- */}
                     <div className="mb-6">
-                        <div className="bg-teal-500 text-white grid grid-cols-5 p-3 rounded-t-lg font-semibold text-sm shadow-inner">
-                            <div className="col-span-1">ID</div>
-                            <div className="col-span-1">Nama</div>
-                            <div className="col-span-1">Bentuk</div>
-                            <div className="col-span-1">Kategori</div>
-                            <div className="col-span-1">Kondisi</div>
-                        </div>
-
-                        {samples.map((sample, index) => (
-                            <div
-                                key={sample.id}
-                                className={`grid grid-cols-5 p-3 text-sm border-b ${
-                                    index % 2 === 0
-                                        ? "bg-[#024D601A]"
-                                        : "bg-white"
-                                }`}
-                            >
-                                <div className="col-span-1 text-gray-600">
-                                    {sample.id}
-                                </div>
-                                <div className="col-span-1 font-medium text-gray-800">
-                                    {sample.name}
-                                </div>
-                                <div className="col-span-1">{sample.form}</div>
-                                <div className="col-span-1">
-                                    {sample.sample_category}
-                                </div>
-                                <div
-                                    className={`col-span-1 font-bold ${
-                                        sample.condition === "damaged"
-                                            ? "text-red-600"
-                                            : sample.condition === "expired"
-                                            ? "text-yellow-600"
-                                            : "text-green-600"
-                                    }`}
-                                >
-                                    {sample.condition}
-                                </div>
-                            </div>
-                        ))}
+                        <ManagedDataTable
+                            data={data.samples}
+                            columns={getSampleSelectedColumnsOrder}
+                            showFilter={false}
+                            showSearch={false}
+                            showCreate={false}
+                        />
                     </div>
 
                     {/* --- Tanggal dan Estimasi --- */}
                     <div className="px-4 py-2 space-y-2">
                         <DetailRow
                             label="Tanggal Masuk"
-                            value={dataOrder.tanggalOrder}
+                            value={data.tanggalOrder}
+                        />
+                        <DetailRow
+                            label="Total Harga"
+                            value={formatRupiah(data.totalHarga)}
                         />
                         <DetailRow
                             label="Estimasi Selesai"
-                            value={dataOrder.estimasiSelesai}
+                            value={data.estimasiSelesai}
                         />
                     </div>
                 </div>
