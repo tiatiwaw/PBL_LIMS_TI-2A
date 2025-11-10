@@ -12,7 +12,7 @@ import {
 import {
     getSampleStatusVariant,
     getStatusParameterLabel,
-} from "@/utils/statusHelpers";
+} from "@/utils/statusUtils";
 
 export default function SampleInfoCard({ sample }) {
     return (

@@ -1,17 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import ActionColumn from "../tabel/action-column";
-
-const categoryVariantMap = {
-    kimia: "success",
-    mikrobiologi: "info",
-    fisika: "warning",
-    klinik: "error",
-};
-
-const detectionVariantMap = {
-    LOD: "info",
-    LOQ: "success",
-};
+import { getCategoryTypeVariant, getDetectionTypeVariant } from "@/utils/statusUtils";
 
 export const getParametersColumns = ({ onShowDetail }) => [
     { accessorKey: 'no', header: 'No.' },
@@ -25,7 +14,7 @@ export const getParametersColumns = ({ onShowDetail }) => [
             const value = row.category;
             return (
                 <Badge
-                    variant={categoryVariantMap[value] || "outline"}
+                    variant={getCategoryTypeVariant(value) || "outline"}
                     className="capitalize"
                 >
                     {value}
@@ -40,7 +29,7 @@ export const getParametersColumns = ({ onShowDetail }) => [
             const value = row.detection_limit;
             return (
                 <Badge
-                    variant={detectionVariantMap[value] || "outline"}
+                    variant={getDetectionTypeVariant(value) || "outline"}
                     className="capitalize"
                 >
                     {value}

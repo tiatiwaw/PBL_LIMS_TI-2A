@@ -4,7 +4,7 @@ import { Settings } from "lucide-react";
 import {
     getEquipmentStatusVariant,
     getEquipmentStatusLabel,
-} from "@/utils/statusHelpers";
+} from "@/utils/statusUtils";
 import { formatDate } from "@/utils/formatters";
 
 export default function EquipmentCard({ equipments }) {
