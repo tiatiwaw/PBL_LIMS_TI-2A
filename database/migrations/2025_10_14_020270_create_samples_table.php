@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->enum('form', ['solid', 'liquid', 'gas'])->default('solid');
             $table->string('preservation_method');
-            $table->enum('condition', ['good', 'damages', 'expired'])->default('good');
+            $table->enum('condition', ['good', 'damaged', 'expired'])->default('good');
             $table->enum('status', ['in_progress', 'done'])->default('in_progress');
             $table->string('storage_condition');
             $table->timestamps();

@@ -1,35 +1,69 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getClientColumns } from "@/components/shared/staff/client-colums";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { Clients } from "@/data/staff/clients";
 import { editClientFields } from "@/utils/fields/staff";
 import { useMemo, useState } from "react";
 import ClientDetailSheet from "@/components/shared/sheet/client-detail-sheet";
+import { useAuth } from "@/hooks/useAuth";
+import { useClients } from "@/hooks/useClient";
+import Loading from "@/components/ui/loading";
 
-export default function ClientPage({ auth, clientData }) {
+export default function ClientPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
+
+    const { user, loading: authLoading } = useAuth();
+    const {
+        clients,
+        isLoading,
+        error,
+        createClient,
+        updateClient,
+        deleteClient,
+    } = useClients();
 
     const handleShowDetail = (client) => {
         setSelectedClient(client);
         setIsOpen(true);
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Staff" };
-    const parameters = clientData || Clients;
-
-    const processedParameters = useMemo(
-        () =>
-            parameters.map((client) => ({
-                ...client,
-            })),
-        [parameters]
-    );
+    const currentUser = user || { name: "Staff", role: "Staff" };
+    const handleCreate = async (formData) => createClient.mutateAsync(formData);
+    const handleEdit = async (id, formData) => {
+        await updateClient.mutateAsync({ id, data: formData });
+    };
+    const handleDelete = async (id) => deleteClient.mutateAsync(id);
 
     const columns = useMemo(
         () => getClientColumns({ onShowDetail: handleShowDetail }),
         []
     );
+
+    if (isLoading || authLoading) {
+        return (
+            <DashboardLayout
+                title="Manajemen Client"
+                header="Client"
+                user={currentUser}
+            >
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout
+                title="Manajemen Client"
+                header="Client"
+                user={currentUser}
+            >
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
         <DashboardLayout
@@ -38,12 +72,12 @@ export default function ClientPage({ auth, clientData }) {
             header="Client"
         >
             <ManagedDataTable
-                data={processedParameters}
+                data={clients}
                 columns={columns}
                 editFields={editClientFields}
-                createUrl="staff.clients.store"
-                editUrl="staff.clients.update"
-                deleteUrl="staff.clients.destroy"
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
                 editTitle="Edit Client"
                 deleteTitle="Hapus Client"
             />

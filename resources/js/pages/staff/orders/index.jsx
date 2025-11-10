@@ -1,31 +1,37 @@
 import React, { useState, useEffect, useRef } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { useForm, router } from "@inertiajs/react";
 import StepperFirst from "@/components/shared/staff/stepper-first";
 import OrdersForm from "@/components/shared/staff/orders-form1";
 import OrdersForm2 from "@/components/shared/staff/orders-form2";
 import OrderForms3 from "@/components/shared/staff/orders-form3";
 import { CheckSquare } from "lucide-react";
-import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { useOrders } from "@/hooks/useOrders";
+import Loading from "@/components/ui/loading";
 
-export default function OrdersPage({
-    auth,
-    clients,
-    methods,
-    samples,
-    categories,
-    orderNumber,
-}) {
+export default function OrdersPage() {
     const [step, setStep] = useState(1);
-    const [isSaved, setIsSaved] = useState(false); // Menandakan form sudah disimpan
-    const currentUser = auth?.user || { name: "King Akbar", role: "Staff" };
+    const [isSaved, setIsSaved] = useState(false);
+    const { user, loading: authLoading } = useAuth();
+    const currentUser = user || { name: "Staff", role: "Staff" };
+    const {
+        clients,
+        methods,
+        samples,
+        categories,
+        orderNumber,
+        isLoading,
+        error,
+        createOrder,
+        createSample,
+    } = useOrders();
 
-    const { data, setData, post, processing, errors } = useForm({
+    const [data, setData] = useState({
         // Step 1 data
         selectedKlien: null,
         judulOrder: "",
         metodeAnalisis: [],
-        nomorOrder: orderNumber,
+        nomorOrder: "",
 
         // Step 2 data
         tipeOrder: "",
@@ -66,13 +72,11 @@ export default function OrdersPage({
 
     const handleSave = () => {
         if (step === 3) {
-            post(route("staff.order.storeOrder"), {
+            createOrder.mutate(data, {
                 onSuccess: () => {
-                    toast.success("Order berhasil dibuat");
                     setIsSaved(true);
                 },
-                onError: (e) => {
-                    toast.error("Gagal menyimpan Order:", e);
+                onError: () => {
                     if (
                         errors.selectedKlien ||
                         errors.judulOrder ||
@@ -86,6 +90,32 @@ export default function OrdersPage({
             });
         }
     };
+
+    if (isLoading || authLoading) {
+        return (
+            <DashboardLayout
+                title="Orders"
+                header="Registrasi Order Baru"
+                user={currentUser}
+            >
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout
+                title="Orders"
+                header="Registrasi Order Baru"
+                user={currentUser}
+            >
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
         <DashboardLayout
@@ -121,7 +151,7 @@ export default function OrdersPage({
                             <button
                                 onClick={() => {
                                     setIsSaved(false);
-                                    router.visit(route("staff.order.index"));
+                                    window.location.href = "/staff/orders";
                                 }}
                                 className="px-8 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors duration-200"
                             >
@@ -136,6 +166,7 @@ export default function OrdersPage({
                             <OrdersForm
                                 clients={clients}
                                 methods={methods}
+                                orderNumber={orderNumber}
                                 data={data}
                                 setData={setData}
                             />
@@ -144,6 +175,7 @@ export default function OrdersPage({
                             <OrdersForm2
                                 samples={samples}
                                 categories={categories}
+                                createSample={createSample}
                                 data={data}
                                 setData={setData}
                             />
@@ -171,7 +203,7 @@ export default function OrdersPage({
                                 <button
                                     onClick={handleSave}
                                     disabled={
-                                        processing ||
+                                        createOrder.isPending ||
                                         !data.selectedKlien ||
                                         !data.judulOrder.trim() ||
                                         data.metodeAnalisis.length === 0 ||
@@ -186,7 +218,9 @@ export default function OrdersPage({
                                     }
                                     className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50"
                                 >
-                                    {processing ? "Menyimpan..." : "Simpan"}
+                                    {createOrder.isPending
+                                        ? "Menyimpan..."
+                                        : "Simpan"}
                                 </button>
                             )}
                         </div>

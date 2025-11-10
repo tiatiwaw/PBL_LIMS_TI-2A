@@ -34,7 +34,7 @@ class ClientController extends Controller
             ];
         });
 
-        // dd($tableData);
+        dd($tableData);
         // Stats
         $totalOrders = Order::where('client_id', $user->id)->count();
         $processingOrders = Order::where('client_id', $user->id)
