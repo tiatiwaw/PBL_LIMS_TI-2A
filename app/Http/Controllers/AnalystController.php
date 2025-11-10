@@ -16,6 +16,10 @@ class AnalystController extends Controller
     // Show
     public function index()
     {
+        return redirect()->route('analyst.dashboard');
+    }
+    
+    public function dashboard() {
         $order = Order::where('status', 'pending')
         ->orderBy('created_at', 'desc')
         ->take(5)
@@ -32,10 +36,6 @@ class AnalystController extends Controller
             'stats' => $stats,
         ]);
     }
-    
-    public function dashboard() {
-        return Inertia::render('analyst/dashboard');
-    }
 
     public function profile() {
         return Inertia::render('analyst/profile');
@@ -49,10 +49,12 @@ class AnalystController extends Controller
         ]);
     }
 
-    public function detail(Order $orders)
+    public function detail(Order $order)
     {
-        $order = $orders->load('samples.sample_categories');
-
+        $order = $order->load([
+            'samples.sample_categories',
+            'samples.parameter.unit_values',
+        ]);
         return Inertia::render('analyst/order-detail', [
             'order' => $order,
             'samples' => $order->samples,
@@ -87,12 +89,15 @@ class AnalystController extends Controller
             'results' => 'required|array',
         ]);
 
+        // dd($request->results);
+
         foreach ($request->results as $result) {
             if (!isset($result['sample_id']) || !isset($result['result'])) {
                 continue;
             }
-
+            // dd($request);
             NParameterMethod::where('sample_id', $result['sample_id'])
+                ->where('test_parameter_id', $result['parameter']['id'])
                 ->update(['result' => $result['result']]);
         }
 
@@ -100,44 +105,34 @@ class AnalystController extends Controller
     }
 
 
-
     public function submitReport($orderId)
     {
         $order = Order::findOrFail($orderId);
 
-        // Ambil semua sample lewat pivot n_order_samples
-        $samples = $order->samples()->get();
+        $samples = $order->samples()->with([
+            'parameter.unit_values',
+            'parameter.reference_standards',
+        ])->get();
 
         if ($samples->isEmpty()) {
             return back()->with('error', 'Tidak ada sampel untuk dibuatkan laporan.');
         }
 
-        // Ambil semua data parameter-method berdasarkan sample
-        $data = [];
-        foreach ($samples as $sample) {
-            $data[$sample->id] = [
+        $data = $samples->map(function ($sample) {
+            return [
                 'sample' => $sample->name,
-                'parameters' => NParameterMethod::with([
-                    // relasi utama
-                    'test_parameters.unit_values',
-                    'test_parameters.reference_standards',
-                    'test_methods.reference_standards'
-                ])
-                ->where('sample_id', $sample->id)
-                ->get()
-                ->map(function ($param) {
+                'parameters' => $sample->parameter->map(function ($param) {
                     return [
-                        'parameter_name' => $param->test_parameters->name ?? '-',
-                        'unit' => $param->test_parameters->unit_values->value ?? '-',
-                        'reference' => $param->test_parameters->reference_standards->name ?? '-',
-                        'method' => $param->test_methods->name ?? '-',
-                        'method_reference' => $param->test_methods->reference_standards->name ?? '-',
-                        'result' => $param->result ?? '-',
+                        'parameter_name' => $param->name ?? '-',
+                        'unit' => $param->unit_values->value ?? '-',
+                        'reference' => $param->reference_standards->name ?? '-',
+                        'result' => $param->pivot->result ?? '-',
                     ];
-                }),
+                })->toArray(),
             ];
-        }
+        })->toArray();
 
+    
         // Generate PDF
         $pdf = Pdf::loadView('pdf.report', [
             'order' => $order,

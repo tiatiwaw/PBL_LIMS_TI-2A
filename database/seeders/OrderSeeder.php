@@ -32,7 +32,7 @@ class OrderSeeder extends Seeder
                     'result_value' => fake()->randomFloat(2, 10, 99) . ' mg/L',
                     'order_date' => now()->subDays(rand(1, 30)),
                     'estimate_date' => now()->addDays(rand(3, 10)),
-                    'report_issued_at' => rand(0, 1) ? now()->subDays(rand(1, 5)) : null,
+                    'report_issued_at' => null,
                     'report_file_path' => null,
                     'notes' => fake()->sentence(),
                     'order_type' => fake()->randomElement(['internal', 'regular', 'external', 'urgent']),

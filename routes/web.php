@@ -167,21 +167,6 @@ Route::controller(SupervisorController::class)
         Route::get('/', 'index')->name('index');
     });
 
-
-// Analyst
-Route::prefix('analyst')->name('analyst')->group(function () {
-    Route::get('/order', [AnalystController::class, 'order'])->name('.order');
-    Route::get('/profile', [AnalystController::class, 'profile'])->name('.profile');
-    Route::get('/dashboard', [AnalystController::class, 'index'])->name('.dashboard');
-    Route::put('/orders/{order}/accept', [AnalystController::class, 'accept'])->name('.orders.accept');
-    Route::get('/order/{orders}', [AnalystController::class, 'detail'])->name('.order.detail');
-    Route::get('{order}/download', [AnalystController::class, 'downloadReport'])->name('.downloadReport');
-    Route::post('/samples/{sample}/confirm', [AnalystController::class, 'confirm'])->name('.sample.confirm');
-    Route::post('/samples/{sample}/unconfirm', [AnalystController::class, 'unconfirm'])->name('.sample.unconfirm');
-    Route::post('{order}/save', [AnalystController::class, 'saveReport'])->name('.saveReport');
-    Route::post('{order}/submit', [AnalystController::class, 'submitReport'])->name('.submitReport');
-});
-
 // Analyst
 Route::controller(AnalystController::class)
     ->middleware(['auth', 'analyst'])
@@ -202,7 +187,7 @@ Route::controller(AnalystController::class)
                 Route::get('/', 'order')->name('index');
                 Route::get('/{order}', 'detail')->name('detail');
                 Route::put('/{order}/accept', 'accept')->name('accept');
-                Route::get('/{order}/download', 'download')->name('download');
+                Route::get('/{order}/download', 'downloadReport')->name('downloadReport');
         });
 
         // Samples

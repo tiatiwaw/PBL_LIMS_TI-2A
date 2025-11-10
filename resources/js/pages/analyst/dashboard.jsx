@@ -13,12 +13,9 @@ import { usePage, router } from '@inertiajs/react';
 const dashboard = () => {
   const { orders, stats } = usePage().props;
   const [selectedTest, setSelectedTest] = useState(null);
-
-  const user = {
-    name: "Puff",
-    role: "analyst",
-    avatar: "https://i.pravatar.cc/150?img=3",
-  };
+  
+  const { auth } = usePage().props;
+  const user = auth.user;
 
   const handleConfirm = () => {
     if (!selectedTest) return;
@@ -43,13 +40,13 @@ const dashboard = () => {
   const columns = useMemo(() => getOrdersColumns({setSelectedTest: setSelectedTest}), []);
 
   const cards = [
-        { title: "Total Orders", value: String(stats.totalOrder), subtitle: "Semua pesanan yang tercatat", icon: ShoppingCart },
-        { title: "Total Processed Order", value: String(stats.processedOrder), subtitle: "Pesanan sedang dikerjakan", icon: Loader },
-        { title: "Total Completed Order", value: String(stats.completedOrder), subtitle: "Pesanan selesai", icon: CheckCircle },
-    ];
+    { title: "Total Orders", value: String(stats.totalOrder), subtitle: "Semua pesanan yang tercatat", icon: ShoppingCart },
+    { title: "Total Processed Order", value: String(stats.processedOrder), subtitle: "Pesanan sedang dikerjakan", icon: Loader },
+    { title: "Total Completed Order", value: String(stats.completedOrder), subtitle: "Pesanan selesai", icon: CheckCircle },
+  ];
 
   return (
-    <DashboardLayout title="Dashboard Manager" user={user} header='Selamat Datang, Manager!'>
+    <DashboardLayout title="Dashboard Analis" user={user} header='Selamat Datang, Analis!'>
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cards.map((stat, index) => (
@@ -65,6 +62,7 @@ const dashboard = () => {
           showSearch={false}
           showFilter={false}
           searchColumn="id"
+          showCreate={false}
           filterColumn="tipe"
         />
 

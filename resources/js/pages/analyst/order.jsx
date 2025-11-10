@@ -6,11 +6,9 @@ import { getOrdersColumns } from "@/components/shared/analyst/order-columns";
 
 const OrderPage = () => {
   const { orders } = usePage().props; // Ambil dari backend
-  const user = {
-    name: "Nardo",
-    role: "Analyst",
-    avatar: "https://i.pravatar.cc/150?img=3",
-  };
+  
+  const { auth } = usePage().props;
+  const user = auth.user;
 
   const filterData = [
     { value: "all", label: "All Status" },
@@ -32,6 +30,7 @@ const OrderPage = () => {
         filterOptions={filterData}
         searchColumn="title"
         showFilter={true}
+        showCreate={false}
         filterColumn="status"
       />
     </DashboardLayout>

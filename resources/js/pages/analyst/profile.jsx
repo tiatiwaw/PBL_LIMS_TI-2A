@@ -1,13 +1,9 @@
 import ProfileLayout from "@/components/layouts/profile-layout";
+import { usePage } from "@inertiajs/react";
 
 export default function ProfilePage() {
-  const user = {
-    name: "Nardo",
-    email: "nardo@example.com",
-    role: "Analyst",
-    certifications: ["Data Analysis Level 1", "Python for Data Science"],
-    trainingHistory: ["Advanced Excel", "SQL Fundamentals"],
-  };
+  const { auth } = usePage().props;
+  const user = auth.user;
 
   return <ProfileLayout user={user} />;
 }

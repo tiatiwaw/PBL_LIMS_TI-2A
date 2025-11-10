@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { usePage } from '@inertiajs/react';
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { Link, router } from "@inertiajs/react";
@@ -10,20 +11,33 @@ import { Button } from "@/components/ui/button";
 import { FileDown } from "lucide-react";
 
 export default function OrderDetail({ order, samples }) {
-    const user = {
-        name: "Nardo",
-        role: "Analyst",
-        avatar: "https://i.pravatar.cc/150?img=3",
-    };
-
+    const [viewMode, setViewMode] = useState("table"); // "table" | "input"
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
     const [isUnConfirmDialogOpen, setIsUnConfirmDialogOpen] = useState(false);
     const [selectedSample, setSelectedSample] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [testResults, setTestResults] = useState(
-        samples.map(() => ({ result: "" }))
+        samples.map((sample) => ({
+            id: sample.id,
+            parameter: sample.parameter.map((param) => ({
+                id: param.id,
+                result: param.pivot?.result ?? "",
+            })),
+        }))
     );
+
+    const handleResultChange = (sampleIndex, paramIndex, value) => {
+        setTestResults((prev) => {
+            const updated = [...prev];
+            const sample = { ...updated[sampleIndex] };
+            const parameters = [...sample.parameter];
+            parameters[paramIndex] = { ...parameters[paramIndex], result: value };
+            sample.parameter = parameters;
+            updated[sampleIndex] = sample;
+            return updated;
+        });
+    };
 
     const handleShowDetail = (sample) => {
         setSelectedSample(sample);
@@ -50,17 +64,15 @@ export default function OrderDetail({ order, samples }) {
         router.post(`/analyst/samples/${sample.id}/unconfirm`);
     };
 
-    const handleResultChange = (index, value) => {
-        const updated = [...testResults];
-        updated[index].result = value;
-        setTestResults(updated);
-    };
-
-    const handleSaveResults = () => {
-        const payload = testResults.map((r, i) => ({
-            sample_id: samples[i].id,
-            result: r.result,
-        }));
+    const handleSaveResults = () => {      
+        const payload = testResults.flatMap((sample) =>
+            sample.parameter.map((param) => ({
+                sample_id: sample.id,
+                parameter: { id: param.id },
+                result: param.result,
+            }))
+        );
+        console.log(payload);
         router.post(route('analyst.saveReport', order.id), { results: payload });
         setIsEditing(false);
     };
@@ -71,7 +83,7 @@ export default function OrderDetail({ order, samples }) {
 
     const handleDownloadPDF = () => {
         router.get(route('analyst.downloadReport', order.id));
-    };
+    }
 
     const columns = useMemo(
         () =>
@@ -102,10 +114,12 @@ export default function OrderDetail({ order, samples }) {
         { value: "In Progress", label: "In Progress" },
     ];
 
+    const { auth } = usePage().props;
+    const user = auth.user;
+
     return (
         <DashboardLayout title="Analyst" user={user} header="Selamat Datang Analyst!">
             <div className="relative w-full max-w-4xl mx-auto flex flex-col gap-8 text-primary-hijauTua p-4">
-
                 {/* --- Detail Pemesanan --- */}
                 <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
                     <h2 className="text-xl font-bold mb-5 text-gray-800">Detail Pemesanan</h2>
@@ -119,81 +133,112 @@ export default function OrderDetail({ order, samples }) {
                     </div>
                 </div>
 
+                {/* --- Toggle Table / Input --- */}
+                <div className="flex gap-3 mb-4">
+                    <Button
+                        className={`${viewMode === "table" ? "bg-primary-hijauTua text-white" : "bg-gray-200 text-gray-700"}`}
+                        onClick={() => setViewMode("table")}
+                    >
+                        Tabel Sampel
+                    </Button>
+                    <Button
+                        className={`${viewMode === "input" ? "bg-primary-hijauTua text-white" : "bg-gray-200 text-gray-700"}`}
+                        onClick={() => setViewMode("input")}
+                    >
+                        Input Hasil Uji
+                    </Button>
+                </div>
+
                 {/* --- Tabel Sampel --- */}
-                <ManagedDataTable
-                    data={samples}
-                    columns={columns}
-                    searchColumn="name"
-                    showFilter={true}
-                    filterColumn="status"
-                    filterOptions={filterData}
-                />
+                {viewMode === "table" && (
+                    <ManagedDataTable
+                        data={samples}
+                        columns={columns}
+                        searchColumn="name"
+                        showFilter={true}
+                        showCreate={false}
+                        filterColumn="status"
+                        filterOptions={filterData}
+                    />
+                )}
 
                 {/* --- Input Hasil Uji --- */}
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                    <h2 className="text-lg font-semibold mb-4 text-gray-800">
-                        Input Hasil Uji Sampel
-                    </h2>
+                {viewMode === "input" && (
+                    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                        <h2 className="text-lg font-semibold mb-4 text-gray-800">
+                            Input Hasil Uji Sampel
+                        </h2>
 
-                    <div className="flex flex-col gap-4">
-                        {samples.map((sample, index) => (
-                            <div key={sample.id} className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">
-                                    Hasil Sample {index + 1} ({sample.name ?? "Tanpa Nama"})
-                                </label>
-                                <input
-                                    type="text"
-                                    className={`border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-hijauMuda ${
-                                        !isEditing && "bg-gray-100 cursor-not-allowed"
-                                    }`}
-                                    disabled={!isEditing}
-                                    value={testResults[index].result}
-                                    onChange={(e) =>
-                                        handleResultChange(index, e.target.value)
-                                    }
-                                    placeholder="Masukkan hasil uji..."
-                                />
-                            </div>
-                        ))}
-                    </div>
+                        <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-sm">
+                            {samples.map((sample, sampleIndex) => (
+                                <div key={sample.id} className="bg-primary-hijauPudar gap-3 flex flex-col border shadow-md rounded-lg overflow-hidden">
+                                    <h1 className="text-sm p-3 font-medium text-white bg-primary-hijauTua">
+                                        Hasil Sample ({sample.name ?? "Tanpa Nama"})
+                                    </h1>
 
-                    {/* Tombol Edit, Save, Submit */}
-                    <div className="flex flex-wrap justify-end gap-3 mt-6">
-                        {!isEditing ? (
+                                    <div className="flex flex-col gap-2 p-3">
+                                        {sample.parameter.map((param, paramIndex) => (
+                                            <div key={paramIndex} className="flex items-center justify-between w-full">
+                                                <label className="text-sm text-gray-600">
+                                                    {param.name} ({param.unit_values.value}) :
+                                                </label>
+
+                                                <input
+                                                    type="text"
+                                                    className={`w-1/2 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-hijauMuda ${
+                                                        !isEditing ? "bg-gray-100 cursor-not-allowed" : ""
+                                                    }`}
+                                                    disabled={!isEditing}
+                                                    defaultValue={param.pivot.result ?? ""}
+                                                    onChange={(e) =>
+                                                        handleResultChange(sampleIndex, paramIndex, e.target.value)
+                                                    }
+                                                    placeholder="Masukkan hasil uji..."
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Tombol Edit, Save, Submit */}
+                        <div className="flex flex-wrap justify-end gap-3 mt-6">
+                            {!isEditing ? (
+                                <Button
+                                    className="bg-primary-hijauTua text-white"
+                                    onClick={() => setIsEditing(true)}
+                                >
+                                    Edit
+                                </Button>
+                            ) : (
+                                <Button
+                                    className="bg-green-600 text-white"
+                                    onClick={handleSaveResults}
+                                >
+                                    Save
+                                </Button>
+                            )}
+
                             <Button
-                                className="bg-primary-hijauTua text-white"
-                                onClick={() => setIsEditing(true)}
+                                onClick={handleSubmitResults}
+                                className="bg-primary-hijauTua"
                             >
-                                Edit
+                                Submit
                             </Button>
-                        ) : (
+                        </div>
+
+                        {/* Tombol Download PDF */}
+                        <form action={route('analyst.order.downloadReport', order.id)} className="flex justify-end mt-6">
                             <Button
-                                className="bg-green-600 text-white"
-                                onClick={handleSaveResults}
+                                className="flex items-center gap-2 bg-blue-600 text-white"
                             >
-                                Save
+                                <FileDown size={18} />
+                                Download PDF
                             </Button>
-                        )}
-
-                        <Button
-                            onClick={handleSubmitResults}
-                            className="bg-primary-hijauTua"
-                        >
-                            Submit
-                        </Button>
+                        </form>
                     </div>
-
-                    {/* Tombol Download PDF di bawah semua */}
-                    <div className="flex justify-end mt-6">
-                        <Button
-                            onClick={handleDownloadPDF}
-                            className="flex items-center gap-2 bg-blue-600 text-white"
-                        >
-                            <FileDown size={18} />
-                            Download PDF
-                        </Button>
-                    </div>
-                </div>
+                )}
 
                 {/* --- Dialogs --- */}
                 <SampleDetailsDialog
