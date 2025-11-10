@@ -51,10 +51,12 @@ class AnalystController extends Controller
 
     public function detail(Order $order)
     {
-        $order = $order->load([
+        $order = Order::with([
+            'samples',
             'samples.sample_categories',
             'samples.parameter.unit_values',
-        ]);
+        ])->find($order->id);
+
         return Inertia::render('analyst/order-detail', [
             'order' => $order,
             'samples' => $order->samples,
@@ -84,21 +86,33 @@ class AnalystController extends Controller
     }
     // Reports
     public function saveReport(Request $request, $orderId)
-    {
+    {   
         $request->validate([
             'results' => 'required|array',
         ]);
-
-        // dd($request->results);
-
+        
         foreach ($request->results as $result) {
-            if (!isset($result['sample_id']) || !isset($result['result'])) {
-                continue;
-            }
-            // dd($request);
             NParameterMethod::where('sample_id', $result['sample_id'])
                 ->where('test_parameter_id', $result['parameter']['id'])
                 ->update(['result' => $result['result']]);
+
+                
+            $allDone = NParameterMethod::where('sample_id', $result['sample_id'])
+                ->whereNotNull('result')
+                ->count();
+                
+            $totalParams = NParameterMethod::where('sample_id', $result['sample_id'])->count();
+
+            $sample = Sample::findOrFail($result['sample_id']);
+
+            if ($allDone == $totalParams) {
+                $sample->status = 'done';
+                $sample->save();
+            } else {
+                $sample->status = 'in_progress';
+                $sample->save();
+            }
+            
         }
 
         return back()->with('success', 'Hasil uji berhasil disimpan.');

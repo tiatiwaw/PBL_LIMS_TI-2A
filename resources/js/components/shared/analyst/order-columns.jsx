@@ -4,14 +4,13 @@ import { Link } from '@inertiajs/react';
 import { AlertCircle } from "lucide-react";
 
 const statusLabelMap = {
-  completed: "Completed",
-  in_progress: "In Progress",
-  pending: "Pending",
-  disapproved: "Disapproved",
-  approved: "Approved",
-  received: "Received",
+    completed: "Completed",
+    in_progress: "In Progress",
+    pending: "Pending",
+    disapproved: "Disapproved",
+    approved: "Approved",
+    received: "Received",
 };
-
 
 const statusVariantMap = {
     completed: "success",
@@ -29,6 +28,13 @@ const tipeVariantMap = {
     regular: "secondary",
 };
 
+const tipeLabelMap = {
+    external: "External",
+    internal: "Internal",
+    urgent: "Urgent",
+    regular: "Regular",
+};
+
 export const getOrdersColumns = () => [
     { accessorKey: "order_number", header: "Kode Pesanan" },
     { accessorKey: "title", header: "Judul Pesanan" },
@@ -41,9 +47,8 @@ export const getOrdersColumns = () => [
             return (
                 <Badge
                     variant={tipeVariantMap[value] || "outline"}
-                    className="capitalize"
                 >
-                    {value}
+                    {tipeLabelMap[value]}
                 </Badge>
             );
         },
@@ -52,18 +57,15 @@ export const getOrdersColumns = () => [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-        const value = row.status?.toLowerCase();
-        const displayText = value
-        .split("_")
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" ");
-
-        return (
-        <Badge variant={statusVariantMap[value] || "outline"}>
-            {displayText}
-        </Badge>
-        );
-    },
+            const value = row.status;
+            return (
+                <Badge
+                    variant={statusVariantMap[value] || "outline"}
+                >
+                    {statusLabelMap[value]}
+                </Badge>
+            );
+        },
     },
     {
         id: "aksi",

@@ -23,7 +23,7 @@ const OrderPage = () => {
   const columns = useMemo(() => getOrdersColumns(), []);
 
   return (
-    <DashboardLayout title="Analyst" user={user} header="Selamat Datang, Analyst!">
+    <DashboardLayout title="Daftar Pesanan" user={user} header="Lihat Daftar Pesanan">
       <ManagedDataTable
         data={orders ?? []}
         columns={columns}

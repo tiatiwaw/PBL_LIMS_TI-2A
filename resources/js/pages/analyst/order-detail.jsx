@@ -11,12 +11,13 @@ import { Button } from "@/components/ui/button";
 import { FileDown } from "lucide-react";
 
 export default function OrderDetail({ order, samples }) {
-    const [viewMode, setViewMode] = useState("table"); // "table" | "input"
+    const [viewMode, setViewMode] = useState("input"); // "table" | "input"
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
     const [isUnConfirmDialogOpen, setIsUnConfirmDialogOpen] = useState(false);
     const [selectedSample, setSelectedSample] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    
     const [testResults, setTestResults] = useState(
         samples.map((sample) => ({
             id: sample.id,
@@ -26,6 +27,22 @@ export default function OrderDetail({ order, samples }) {
             })),
         }))
     );
+
+    const statusLabelMap = {
+        completed: "Completed",
+        in_progress: "In Progress",
+        pending: "Pending",
+        disapproved: "Disapproved",
+        approved: "Approved",
+        received: "Received",
+    };
+
+    const tipeLabelMap = {
+        external: "External",
+        internal: "Internal",
+        urgent: "Urgent",
+        regular: "Regular",
+    };
 
     const handleResultChange = (sampleIndex, paramIndex, value) => {
         setTestResults((prev) => {
@@ -99,26 +116,25 @@ export default function OrderDetail({ order, samples }) {
         { label: "ID Pemesanan", value: order.order_number ?? "-" },
         { label: "ID Klien", value: order.client_id ?? "-" },
         { label: "Judul", value: order.title ?? "-" },
-        { label: "Tipe Pemesanan", value: order.order_type ?? "-" },
-        { label: "Tanggal Order", value: order.order_date ?? "-" },
-        { label: "Estimasi Selesai", value: order.estimate_date ?? "-" },
-        { label: "Nilai Hasil", value: order.result_value ?? "-" },
-        { label: "Waktu Laporan", value: order.report_issued_at ?? "-" },
+        { label: "Tipe Pemesanan", value: tipeLabelMap[order.order_type] ?? "-" },
+        { label: "Tanggal Order", value: new Date(order.order_date).toLocaleDateString("id-ID") ?? "-" },
+        { label: "Estimasi Selesai", value: new Date(order.estimate_date).toLocaleDateString("id-ID") ?? "-" },
+        { label: "Waktu Laporan", value: new Date(order.report_issued_at).toLocaleDateString("id-ID") ?? "-" },
         { label: "Catatan", value: order.notes ?? "-" },
-        { label: "Status", value: order.status ?? "-" },
+        { label: "Status", value: statusLabelMap[order.status] ?? "-" },
     ];
 
     const filterData = [
         { value: "all", label: "All Status" },
-        { value: "Done", label: "Done" },
-        { value: "In Progress", label: "In Progress" },
+        { value: "done", label: "Done" },
+        { value: "in_progress", label: "In Progress" },
     ];
 
     const { auth } = usePage().props;
     const user = auth.user;
 
     return (
-        <DashboardLayout title="Analyst" user={user} header="Selamat Datang Analyst!">
+        <DashboardLayout title="Detail Pesanan" user={user} header="Kelola Data Pesanan">
             <div className="relative w-full max-w-4xl mx-auto flex flex-col gap-8 text-primary-hijauTua p-4">
                 {/* --- Detail Pemesanan --- */}
                 <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
@@ -136,16 +152,16 @@ export default function OrderDetail({ order, samples }) {
                 {/* --- Toggle Table / Input --- */}
                 <div className="flex gap-3 mb-4">
                     <Button
-                        className={`${viewMode === "table" ? "bg-primary-hijauTua text-white" : "bg-gray-200 text-gray-700"}`}
-                        onClick={() => setViewMode("table")}
-                    >
-                        Tabel Sampel
-                    </Button>
-                    <Button
                         className={`${viewMode === "input" ? "bg-primary-hijauTua text-white" : "bg-gray-200 text-gray-700"}`}
                         onClick={() => setViewMode("input")}
                     >
                         Input Hasil Uji
+                    </Button>
+                    <Button
+                        className={`${viewMode === "table" ? "bg-primary-hijauTua text-white" : "bg-gray-200 text-gray-700"}`}
+                        onClick={() => setViewMode("table")}
+                    >
+                        Tabel Sampel
                     </Button>
                 </div>
 
@@ -169,14 +185,14 @@ export default function OrderDetail({ order, samples }) {
                             Input Hasil Uji Sampel
                         </h2>
 
-                        <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-sm">
+                        <div className="flex flex-col gap-4 p-4 bg-white rounded-lg">
                             {samples.map((sample, sampleIndex) => (
-                                <div key={sample.id} className="bg-primary-hijauPudar gap-3 flex flex-col border shadow-md rounded-lg overflow-hidden">
+                                <div key={sample.id} className="bg-white flex flex-col shadow-md rounded-lg overflow-hidden">
                                     <h1 className="text-sm p-3 font-medium text-white bg-primary-hijauTua">
                                         Hasil Sample ({sample.name ?? "Tanpa Nama"})
                                     </h1>
 
-                                    <div className="flex flex-col gap-2 p-3">
+                                    <div className="flex flex-col gap-2 p-3 py-6">
                                         {sample.parameter.map((param, paramIndex) => (
                                             <div key={paramIndex} className="flex items-center justify-between w-full">
                                                 <label className="text-sm text-gray-600">

@@ -20,9 +20,7 @@ const dashboard = () => {
   const handleConfirm = () => {
     if (!selectedTest) return;
 
-    console.log("Kirim ke:", route("analyst.orders.accept", selectedTest.id));
-
-    router.put(route("analyst.orders.accept", { order: selectedTest.id }), {}, {
+    router.put(route("analyst.order.accept", { order: selectedTest.id }), {}, {
       onSuccess: () => {
         console.log("Berhasil diterima!");
         setSelectedTest(null);
