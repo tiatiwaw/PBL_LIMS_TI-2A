@@ -19,11 +19,7 @@ class StaffController extends Controller
     // ================================
     public function index()
     {
-        $clients = Client::with('users')->get();
-
-        return Inertia::render('staff/clients/index', [
-            'clientData' => $clients,
-        ]);
+        return Inertia::render('staff/clients/index');
     }
 
     // ================================
@@ -31,21 +27,6 @@ class StaffController extends Controller
     // ================================
     public function indexOrder()
     {
-        $samples = Sample::with('sample_categories')->get();
-        $methods = AnalysesMethod::all();
-        $clients = Client::all();
-        $categories = SampleCategory::all();
-        // 🔹 Buat nomor order otomatis
-        $lastOrder = Order::latest('id')->first();
-        $nextNumber = str_pad(($lastOrder ? $lastOrder->id + 1 : 1), 4, '0', STR_PAD_LEFT);
-        $orderNumber = 'ORD-' . now('Asia/Jakarta')->format('Ymd') . '-' . $nextNumber;
-
-        return Inertia::render('staff/orders/index', [
-            'samples' => $samples,
-            'methods' => $methods,
-            'clients' => $clients,
-            'categories' => $categories,
-            'orderNumber' => $orderNumber,
-        ]);
+        return Inertia::render('staff/orders/index');
     }
 }
