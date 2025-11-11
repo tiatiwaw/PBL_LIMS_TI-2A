@@ -3,23 +3,25 @@
 use App\Http\Controllers\API\V1\Admin\BrandTypeController;
 use App\Http\Controllers\API\V1\Admin\DashboardController;
 use App\Http\Controllers\API\V1\Admin\EquipmentController;
+use App\Http\Controllers\API\V1\Admin\SupplierController;
+use App\Http\Controllers\API\V1\Admin\OrdersController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\API\V1\Staff\ClientController;
 use App\Http\Controllers\API\V1\Staff\OrderController;
 use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v1')->group(function () {
 
     Route::get('/auth/user', [AuthController::class, 'user']);
 
     // Admin
-    Route::prefix('admin')->middleware('admin')->name('api.admin.')->group(function () {
+    Route::prefix('admin')->name('api.admin.')->group(function () {
 
         Route::get('/', [DashboardController::class, 'index']);
 
         // Route::apiResource('users', AdminApiUser::class);
-        // Route::apiResource('orders', AdminApiOrder::class)->except(['index', 'show']);
+         Route::apiResource('orders', OrdersController::class)->only(['index']);
         // Route::apiResource('activities', AdminApiActivity::class);
 
         // Tools
@@ -29,11 +31,11 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         });
 
         // Materials
-        // Route::prefix('materials')->name('materials.')->group(function () {
-        //     Route::apiResource('reagents', AdminApiReagent::class)->except(['index']);
-        //     Route::apiResource('grades', AdminApiGrade::class)->except(['index']);
-        //     Route::apiResource('suppliers', AdminApiSupplier::class)->except(['index']);
-        // });
+        Route::prefix('materials')->name('materials.')->group(function () {
+        //    Route::apiResource('reagents', ReagentController::class);
+        //    Route::apiResource('grades', GradeController::class);
+            Route::apiResource('suppliers', SupplierController::class);
+        });
 
         // Tests
         // Route::prefix('tests')->name('tests.')->group(function () {
