@@ -205,20 +205,16 @@ Route::controller(ClientController::class)
     ->name('client.')
     ->group(function () {
         Route::get('/', 'index')->name('index');
-
-        // Orders
+        Route::get('/profile', 'profile')->name('profile');
+        Route::get('/history', 'history')->name('history');
+        
+        // Orders - sesuaikan dengan API structure
         Route::prefix('orders')
             ->name('orders.')
             ->group(function () {
-                Route::get('/', 'orders')->name('index');
-                // Route::inertia('/detail/{id}', 'client/detail/index')->name('detail');
-        });
-
-        // History
-        Route::get('/history', 'history')->name('history');
-
-        // Profile
-        Route::get('/profile', 'profile')->name('profile');
+                Route::get('/{order}', 'orderDetail')->name('show');
+                Route::get('/{order}/status', 'orderStatus')->name('status');
+            });
     });
 
 require __DIR__ . '/auth.php';
