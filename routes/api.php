@@ -89,16 +89,13 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             
             // Dashboard & Profile
             Route::get('/', [ClientClientController::class, 'index'])->name('index');
-            Route::get('/history/{order}', [ClientHistoryController::class, 'history'])->name('history');
-
-            // Route::get('/profile', [ClientProfileController::class, 'profile'])->name('profile');
 
             // Orders - menggunakan apiResource untuk efisiensi
             Route::prefix('orders')
                 ->name('orders.')
                 ->group(function () {
-                    Route::get('/detail/{order}', [ClientOrderController::class, 'index'])->name('indexDetail');
-                    // Route::get('/', [ClientOrderController::class, 'show'])->name('show');
+                    Route::get('/{order}', [ClientOrderController::class, 'show']);
+                    Route::get('/{order}/status', [ClientHistoryController::class, 'show'])->name('status');
                 });
         });
 });

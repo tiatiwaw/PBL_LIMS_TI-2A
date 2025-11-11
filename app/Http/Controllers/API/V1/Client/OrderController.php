@@ -14,7 +14,7 @@ class OrderController extends Controller
     /**
      * Get client orders
      */
-    public function index($id): JsonResponse
+    public function show($id): JsonResponse
     {
         $user = Auth::user();
         
