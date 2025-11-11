@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getOrderStatusLabel, getOrderStatusVariant, getOrderTypeLabel, getOrderTypeVariant } from "@/utils/statusHelpers";
+import { getOrderStatusLabel, getOrderStatusVariant, getOrderTypeLabel, getOrderTypeVariant } from "@/utils/statusUtils";
 
 export const getOrdersColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No." },

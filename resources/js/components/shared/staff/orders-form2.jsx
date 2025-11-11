@@ -14,7 +14,13 @@ import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { editSampleFields } from "@/utils/fields/staff";
 
-export default function OrdersForm2({ samples, categories, data, setData }) {
+export default function OrdersForm2({
+    samples,
+    categories,
+    createSample,
+    data,
+    setData,
+}) {
     const [selectedSamples, setSelectedSamples] = useState([]);
     const [isSampleDialogOpen, setIsSampleDialogOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -26,6 +32,7 @@ export default function OrdersForm2({ samples, categories, data, setData }) {
             [name]: value,
         }));
     };
+    const handleCreate = async (formData) => createSample.mutateAsync(formData);
 
     const handleTipeOrderSelect = (value) => {
         setData((prev) => ({
@@ -316,8 +323,7 @@ export default function OrdersForm2({ samples, categories, data, setData }) {
                             editFields={editSampleFields(categories)}
                             showFilter={false}
                             showSearch={true}
-                            createUrl="staff.sample.store"
-                            pageSize={5}
+                            onCreate={handleCreate}
                         />
                     </div>
 

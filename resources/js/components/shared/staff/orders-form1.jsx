@@ -13,7 +13,13 @@ import ManagedDataTable from "../tabel/managed-data-table";
 import { getMethodColumns } from "./analyses-method-colums";
 import { getClientOrderColumns } from "./client-colums";
 
-export default function OrdersForm({ clients, methods, data, setData }) {
+export default function OrdersForm({
+    clients,
+    methods,
+    orderNumber,
+    data,
+    setData,
+}) {
     const [isMethodDialogOpen, setIsMethodDialogOpen] = useState(false);
     const [dialogClientOpen, setDialogClientOpen] = useState(false);
     const [dialogSelectedMethods, setDialogSelectedMethods] = useState([]);
@@ -41,6 +47,7 @@ export default function OrdersForm({ clients, methods, data, setData }) {
         setData((prev) => ({
             ...prev,
             selectedKlien: client,
+            nomorOrder: orderNumber,
         }));
         setDialogClientOpen(false); // Tutup dialog
     };
@@ -117,7 +124,10 @@ export default function OrdersForm({ clients, methods, data, setData }) {
     }, [data.metodeAnalisis]);
 
     useEffect(() => {
-        setData("totalHarga", totalHarga);
+        setData((prev) => ({
+            ...prev,
+            totalHarga: totalHarga,
+        }));
     }, [totalHarga, setData]);
 
     return (
@@ -143,7 +153,7 @@ export default function OrdersForm({ clients, methods, data, setData }) {
                             className="w-full px-4 py-3 bg-gray-100 border border-gray-300
                             rounded-lg text-gray-700 font-medium"
                         >
-                            {data.nomorOrder}
+                            {orderNumber}
                         </div>
                     </div>
 

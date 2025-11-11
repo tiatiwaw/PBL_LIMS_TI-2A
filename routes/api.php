@@ -8,7 +8,7 @@ use App\Http\Controllers\API\V1\Staff\ClientController;
 use App\Http\Controllers\API\V1\Staff\OrderController;
 use App\Http\Controllers\API\V1\Client\ClientController as ClientClientController;
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
-use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
+// use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
 use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
@@ -59,18 +59,29 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         ->middleware('staff')
         ->name('api.staff.')
         ->group(function () {
-            Route::prefix('clients')
-                ->apiResource('clients', ClientController::class);
-            Route::prefix('orders')
-                ->name('orders.')
-                ->group(function () {
-                    Route::get('/', [OrderController::class, 'index'])->name('index');
-                    Route::post('/', [OrderController::class, 'store'])->name('store');
-                    Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
-                });
+
+            // Resource untuk manage-clients
+            Route::apiResource('manage-clients', ClientController::class)
+                ->names([
+                    'index'   => 'clients.index',
+                    'store'   => 'clients.store',
+                    'update'  => 'clients.update',
+                    'destroy' => 'clients.destroy',
+                ])
+                ->parameters([
+                    'manage-clients' => 'client', // supaya param jadi {client}, bukan {manage_client}
+                ]);
+
+            // Orders
+
+            Route::prefix('orders')->name('orders.')->group(function () {
+                Route::get('/', [OrderController::class, 'index'])->name('index');
+                Route::post('/', [OrderController::class, 'store'])->name('store');
+                Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
+            });
         });
 
-    // Client
+        // Client
     Route::prefix('client')
         ->middleware(['auth:sanctum', 'client'])
         ->name('api.client.')
@@ -79,7 +90,8 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             // Dashboard & Profile
             Route::get('/', [ClientClientController::class, 'index'])->name('index');
             Route::get('/history/{order}', [ClientHistoryController::class, 'history'])->name('history');
-            Route::get('/profile', [ClientProfileController::class, 'profile'])->name('profile');
+
+            // Route::get('/profile', [ClientProfileController::class, 'profile'])->name('profile');
 
             // Orders - menggunakan apiResource untuk efisiensi
             Route::prefix('orders')

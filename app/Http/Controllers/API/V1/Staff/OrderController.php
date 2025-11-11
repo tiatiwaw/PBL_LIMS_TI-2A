@@ -16,7 +16,7 @@ use App\Models\SampleCategory;
 class OrderController extends Controller
 {
 
-    public function indexOrder()
+    public function index()
     {
         $samples = Sample::with('sample_categories')->get();
         $methods = AnalysesMethod::all();
@@ -120,6 +120,6 @@ class OrderController extends Controller
             'storage_condition' =>  $validatedData['storage_condition'],
         ]);
 
-        return back();
+        return response()->json(['message' => 'Sample berhasil dibuat.', 'data' => $newSample], 201);
     }
 }

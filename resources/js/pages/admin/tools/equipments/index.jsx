@@ -23,7 +23,6 @@ export default function EquipmentsPage({ auth, toolsData }) {
     const { brands, isLoading: brandLoading, error: brandError } = useBrands();
     const { equipments, isLoading: equipmentLoading, error: equipmentError } = useEquipments();
     const { user, loading: authLoading } = useAuth();
-    console.log(equipments);
 
     const handleShowDetail = (equipment) => {
         setSelectedEquipment(equipment);
