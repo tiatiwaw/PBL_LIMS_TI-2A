@@ -22,21 +22,21 @@ class AnalystController extends Controller
     {
         $analyst = $this->analyst();
 
-        $orders = Order::where('status', 'pending')
-            ->whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id))
+        $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id));
+        $pendingOrders = $orders->where('status', 'pending')
             ->latest()
             ->take(5)
             ->get();
 
         $stats = [
-            'totalOrder' => Order::count(),
-            'processedOrder' => Order::where('status', 'in_progress')->count(),
-            'completedOrder' => Order::where('status', 'completed')->count(),
+            'totalOrder' => $orders->count(),
+            'processedOrder' => $orders->where('status', 'in_progress')->count(),
+            'completedOrder' => $orders->where('status', 'completed')->count(),
         ];
 
         return response()->json([
             'analyst' => $analyst,
-            'orders' => $orders,
+            'orders' => $pendingOrders,
             'stats' => $stats,
         ]);
     }
@@ -46,6 +46,7 @@ class AnalystController extends Controller
         $analyst = $this->analyst();
 
         $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id))
+            ->whereNot('status', 'pending')
             ->latest()
             ->get();
 
@@ -96,7 +97,7 @@ class AnalystController extends Controller
         ]);
     }
 
-    public function saveReport(Request $request, $orderId)
+    public function saveReport(Request $request)
     {
         $validated = $request->validate([
             'results' => 'required|array',
@@ -170,17 +171,20 @@ class AnalystController extends Controller
         $order = Order::findOrFail($orderId);
 
         if (!$order->result_value) {
-            return response()->json(['error' => 'File report belum tersedia.'], 404);
+            abort(404, 'Laporan belum digenerate.');
         }
 
-        $storagePath = Storage::disk('public')->path($order->result_value);
+        $filePath = storage_path('app/public/' . $order->result_value);
 
-        if (!file_exists($storagePath)) {
-            return response()->json(['error' => 'File tidak ditemukan di server.'], 404);
+        if (!file_exists($filePath)) {
+            abort(404, 'File laporan tidak ditemukan.');
         }
 
-        return response()->download($storagePath, basename($storagePath), [
-            'Content-Type' => 'application/pdf',
-        ]);
+        // Kirim file langsung → browser otomatis download
+        return response()->download(
+            $filePath,
+            'Laporan_Order_' . $order->id . '.pdf',
+            ['Content-Type' => 'application/pdf']
+        );
     }
 }

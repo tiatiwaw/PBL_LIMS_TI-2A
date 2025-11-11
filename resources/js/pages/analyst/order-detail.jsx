@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { usePage } from '@inertiajs/react';
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
@@ -9,8 +9,21 @@ import SampleConfirmDialog from "@/components/shared/dialog/sample-confirm-dialo
 import SampleUnConfirmDialog from "@/components/shared/dialog/sample-unconfirm-dialog";
 import { Button } from "@/components/ui/button";
 import { FileDown } from "lucide-react";
+import { useOrderDetail } from "@/hooks/analyst/useOrderDetail"; // Asumsi path hook Anda
+import { useResult } from "@/hooks/analyst/useResult"; // Asumsi path hook Anda
 
-export default function OrderDetail({ order, samples }) {
+export default function OrderDetail({ orderId }) {
+    // Menggunakan hook useOrderDetail untuk mengambil data
+    const {
+        order,
+        samples,
+        isLoading,
+        confirmSample,
+        unconfirmSample,
+    } = useOrderDetail(orderId);
+
+	const { saveResult, isSaving, submitResult, isSubmitting, downloadResult, isDownloading } = useResult();
+
     const [viewMode, setViewMode] = useState("input"); // "table" | "input"
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
@@ -18,15 +31,22 @@ export default function OrderDetail({ order, samples }) {
     const [selectedSample, setSelectedSample] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     
-    const [testResults, setTestResults] = useState(
-        samples.map((sample) => ({
-            id: sample.id,
-            parameter: sample.parameter.map((param) => ({
-                id: param.id,
-                result: param.pivot?.result ?? "",
-            })),
-        }))
-    );
+    // State untuk hasil uji, diinisialisasi ulang saat 'samples' berubah (setelah fetch)
+    const [testResults, setTestResults] = useState([]);
+
+    useEffect(() => {
+        if (samples) {
+            setTestResults(
+                samples.map((sample) => ({
+                    id: sample.id,
+                    parameter: sample.parameter.map((param) => ({
+                        id: param.id,
+                        result: param.pivot?.result ?? "",
+                    })),
+                }))
+            );
+        }
+    }, [samples]); // Re-initialize when samples data changes
 
     const statusLabelMap = {
         completed: "Completed",
@@ -44,17 +64,26 @@ export default function OrderDetail({ order, samples }) {
         regular: "Regular",
     };
 
-    const handleResultChange = (sampleIndex, paramIndex, value) => {
+    const handleResultChange = (sampleId, paramId, value) => {
         setTestResults((prev) => {
-            const updated = [...prev];
-            const sample = { ...updated[sampleIndex] };
-            const parameters = [...sample.parameter];
-            parameters[paramIndex] = { ...parameters[paramIndex], result: value };
-            sample.parameter = parameters;
-            updated[sampleIndex] = sample;
-            return updated;
+            return prev.map((sample) => {
+                if (sample.id === sampleId) {
+                    const updatedParameters = sample.parameter.map((param) => {
+                        if (param.id === paramId) {
+                            return { ...param, result: value };
+                        }
+                        return param;
+                    });
+                    return { ...sample, parameter: updatedParameters };
+                }
+                return sample;
+            });
         });
     };
+    
+    // Fungsi untuk mendapatkan sampleIndex dan paramIndex yang benar dari ID
+    // Diganti dengan cara yang lebih aman, yaitu dengan langsung memanipulasi state berdasarkan ID,
+    // namun untuk menjaga kesamaan dengan struktur awal, kita buat penyesuaian di `handleResultChange` di atas.
 
     const handleShowDetail = (sample) => {
         setSelectedSample(sample);
@@ -67,7 +96,8 @@ export default function OrderDetail({ order, samples }) {
     };
 
     const handleConfirmAction = (sample) => {
-        router.post(`/analyst/samples/${sample.id}/confirm`);
+        // Menggunakan mutate dari React Query hook
+        confirmSample.mutate(sample.id);
         setIsConfirmDialogOpen(false);
     };
 
@@ -77,30 +107,45 @@ export default function OrderDetail({ order, samples }) {
     };
 
     const handleUnConfirmAction = (sample) => {
+        // Menggunakan mutate dari React Query hook
+        unconfirmSample.mutate(sample.id);
         setIsUnConfirmDialogOpen(false);
-        router.post(`/analyst/samples/${sample.id}/unconfirm`);
     };
 
     const handleSaveResults = () => {      
         const payload = testResults.flatMap((sample) =>
             sample.parameter.map((param) => ({
                 sample_id: sample.id,
-                parameter: { id: param.id },
+                parameter: { id: param.id }, // Pastikan kunci di sini sesuai dengan backend
                 result: param.result,
             }))
         );
-        console.log(payload);
-        router.post(route('analyst.saveReport', order.id), { results: payload });
-        setIsEditing(false);
+
+		console.log(payload)
+        
+        saveResult({ 
+            orderId: order.id, 
+            payload: payload 
+        }, {
+            onSuccess: () => {
+                // Atur isEditing menjadi false hanya jika mutasi sukses
+                setIsEditing(false);
+            }
+        });
     };
 
     const handleSubmitResults = () => {
-        router.post(route('analyst.submitReport', order.id));
+        // router.post(route('analyst.submitReport', order.id));
+		submitResult(order.id);
     };
 
-    const handleDownloadPDF = () => {
-        router.get(route('analyst.downloadReport', order.id));
-    }
+	const handleDownloadPDF = () => {
+		if (!order.result_value) {
+			toast.error("Laporan belum digenerate.");
+			return;
+		}
+		downloadResult(order.id);
+	};
 
     const columns = useMemo(
         () =>
@@ -109,17 +154,42 @@ export default function OrderDetail({ order, samples }) {
                 onShowConfirm: handleShowConfirm,
                 onShowUnConfirm: handleShowUnConfirm,
             }),
-        []
+        [confirmSample.isLoading, unconfirmSample.isLoading] // Tambahkan dependensi loading state
     );
+
+    // Tampilkan loading saat data sedang diambil
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Detail Pesanan" user={usePage().props.auth.user} header="Kelola Data Pesanan">
+                <div className="flex justify-center items-center h-64">
+                    <p className="text-xl text-gray-500">Memuat detail pesanan...</p>
+                </div>
+            </DashboardLayout>
+        );
+    }
+
+    // Tampilkan jika order atau samples tidak ada
+    if (!order || !samples) {
+        return (
+            <DashboardLayout title="Detail Pesanan" user={usePage().props.auth.user} header="Kelola Data Pesanan">
+                <div className="flex flex-col justify-center items-center h-64">
+                    <p className="text-xl text-red-500">Detail Pesanan tidak ditemukan.</p>
+                    <Button className="bg-primary-hijauTua mt-4">
+                        <Link href="/analyst/order">Kembali</Link>
+                    </Button>
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     const orderDetails = [
         { label: "ID Pemesanan", value: order.order_number ?? "-" },
         { label: "ID Klien", value: order.client_id ?? "-" },
         { label: "Judul", value: order.title ?? "-" },
         { label: "Tipe Pemesanan", value: tipeLabelMap[order.order_type] ?? "-" },
-        { label: "Tanggal Order", value: new Date(order.order_date).toLocaleDateString("id-ID") ?? "-" },
-        { label: "Estimasi Selesai", value: new Date(order.estimate_date).toLocaleDateString("id-ID") ?? "-" },
-        { label: "Waktu Laporan", value: new Date(order.report_issued_at).toLocaleDateString("id-ID") ?? "-" },
+        { label: "Tanggal Order", value: order.order_date ? new Date(order.order_date).toLocaleDateString("id-ID") : "-" },
+        { label: "Estimasi Selesai", value: order.estimate_date ? new Date(order.estimate_date).toLocaleDateString("id-ID") : "-" },
+        { label: "Waktu Laporan", value: order.report_issued_at ? new Date(order.report_issued_at).toLocaleDateString("id-ID") : "-" },
         { label: "Catatan", value: order.notes ?? "-" },
         { label: "Status", value: statusLabelMap[order.status] ?? "-" },
     ];
@@ -186,36 +256,44 @@ export default function OrderDetail({ order, samples }) {
                         </h2>
 
                         <div className="flex flex-col gap-4 p-4 bg-white rounded-lg">
-                            {samples.map((sample, sampleIndex) => (
+                            {samples.map((sample, sampleIndex) => {
+                                // Temukan hasil uji yang sesuai dari testResults state
+                                const currentTestResults = testResults.find(tr => tr.id === sample.id);
+                                
+                                return (
                                 <div key={sample.id} className="bg-white flex flex-col shadow-md rounded-lg overflow-hidden">
                                     <h1 className="text-sm p-3 font-medium text-white bg-primary-hijauTua">
                                         Hasil Sample ({sample.name ?? "Tanpa Nama"})
                                     </h1>
 
                                     <div className="flex flex-col gap-2 p-3 py-6">
-                                        {sample.parameter.map((param, paramIndex) => (
-                                            <div key={paramIndex} className="flex items-center justify-between w-full">
-                                                <label className="text-sm text-gray-600">
-                                                    {param.name} ({param.unit_values.value}) :
-                                                </label>
+                                        {sample.parameter.map((param) => {
+                                            const currentParamResult = currentTestResults?.parameter.find(p => p.id === param.id);
+                                            
+                                            return (
+                                                <div key={param.id} className="flex items-center justify-between w-full">
+                                                    <label className="text-sm text-gray-600">
+                                                        {param.name} ({param.unit_values.value}) :
+                                                    </label>
 
-                                                <input
-                                                    type="text"
-                                                    className={`w-1/2 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-hijauMuda ${
-                                                        !isEditing ? "bg-gray-100 cursor-not-allowed" : ""
-                                                    }`}
-                                                    disabled={!isEditing}
-                                                    defaultValue={param.pivot.result ?? ""}
-                                                    onChange={(e) =>
-                                                        handleResultChange(sampleIndex, paramIndex, e.target.value)
-                                                    }
-                                                    placeholder="Masukkan hasil uji..."
-                                                />
-                                            </div>
-                                        ))}
+                                                    <input
+                                                        type="text"
+                                                        className={`w-1/2 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-hijauMuda ${
+                                                            !isEditing ? "bg-gray-100 cursor-not-allowed" : ""
+                                                        }`}
+                                                        disabled={!isEditing}
+                                                        value={currentParamResult?.result ?? ""} // Gunakan value dari state
+                                                        onChange={(e) =>
+                                                            handleResultChange(sample.id, param.id, e.target.value)
+                                                        }
+                                                        placeholder="Masukkan hasil uji..."
+                                                    />
+                                                </div>
+                                            )
+                                        })}
                                     </div>
                                 </div>
-                            ))}
+                            )})}
                         </div>
 
                         {/* Tombol Edit, Save, Submit */}
@@ -236,23 +314,35 @@ export default function OrderDetail({ order, samples }) {
                                 </Button>
                             )}
 
-                            <Button
-                                onClick={handleSubmitResults}
-                                className="bg-primary-hijauTua"
-                            >
-                                Submit & Generate Laporan (PDF)
-                            </Button>
+							{isSubmitting ? 
+								(<Button
+									disabled
+									className="bg-primary-hijauTua"
+								>
+									Generating...
+								</Button>)
+								:
+								(<Button
+									onClick={handleSubmitResults}
+									className="bg-primary-hijauTua"
+									disabled={confirmSample.isLoading || unconfirmSample.isLoading} // Tambahkan disable saat proses berjalan
+								>
+									Submit & Generate Laporan (PDF)
+								</Button>)
+							}
                         </div>
 
                         {/* Tombol Download PDF */}
-                        <form action={route('analyst.order.downloadReport', order.id)} className="flex justify-end mt-6">
+                        <div className="flex justify-end mt-6">
+                            {/* Ganti form dengan Button dan panggil handleDownloadPDF, atau gunakan Link Inertia jika route sudah terdefinisi untuk GET */}
                             <Button
+                                onClick={handleDownloadPDF}
                                 className="flex items-center gap-2 bg-blue-600 text-white"
                             >
                                 <FileDown size={18} />
                                 Download PDF
                             </Button>
-                        </form>
+                        </div>
                     </div>
                 )}
 
@@ -267,12 +357,14 @@ export default function OrderDetail({ order, samples }) {
                     isOpen={isConfirmDialogOpen}
                     onOpenChange={setIsConfirmDialogOpen}
                     onConfirm={handleConfirmAction}
+                    isPending={confirmSample.isLoading} // Tambahkan isPending
                 />
                 <SampleUnConfirmDialog
                     sample={selectedSample}
                     isOpen={isUnConfirmDialogOpen}
                     onOpenChange={setIsUnConfirmDialogOpen}
                     onUnconfirm={handleUnConfirmAction}
+                    isPending={unconfirmSample.isLoading} // Tambahkan isPending
                 />
 
                 {/* Tombol kembali */}

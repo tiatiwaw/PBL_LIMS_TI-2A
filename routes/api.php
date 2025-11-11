@@ -82,20 +82,20 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         });
         
     Route::prefix('analyst')
-        ->middleware(['analyst'])
+        ->middleware(['auth:sanctum', 'analyst'])
         ->name('api.analyst.')
-        ->controller(AnalystController::class)
         ->group(function () {
-            Route::get('/dashboard', 'dashboard')->name('dashboard');
-            Route::get('/orders', 'orders')->name('orders');
-            Route::get('/orders/{order}', 'detail')->name('orders.detail');
-            Route::put('/orders/{order}/accept', 'accept')->name('orders.accept');
-            Route::post('/samples/{sample}/confirm', 'confirm')->name('samples.confirm');
-            Route::post('/samples/{sample}/unconfirm', 'unconfirm')->name('samples.unconfirm');
-            Route::post('/orders/{order}/save', 'saveReport')->name('orders.save');
-            Route::post('/orders/{order}/submit', 'submitReport')->name('orders.submit');
-            Route::get('/orders/{order}/download', 'downloadReport')->name('orders.download');
+            Route::get('/dashboard', [AnalystController::class, 'dashboard'])->name('dashboard');
+            Route::get('/orders', [AnalystController::class, 'orders'])->name('orders');
+            Route::get('/orders/{order}', [AnalystController::class, 'detail'])->name('orders.detail');
+            Route::put('/orders/accept/{order}', [AnalystController::class, 'accept'])->name('orders.accept');
+            Route::post('/samples/{sample}/confirm', [AnalystController::class, 'confirm'])->name('samples.confirm');
+            Route::post('/samples/{sample}/unconfirm', [AnalystController::class, 'unconfirm'])->name('samples.unconfirm');
+            Route::put('/orders/save/{order}', [AnalystController::class, 'saveReport'])->name('orders.save');
+            Route::put('/orders/submit/{order}', [AnalystController::class, 'submitReport'])->name('orders.submit');
+            Route::get('/orders/download/{order}', [AnalystController::class, 'downloadReport'])->name('orders.download');
         });
+
         // Client
     Route::prefix('client')
         ->middleware(['auth:sanctum', 'client'])
@@ -113,4 +113,4 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
                     Route::get('/{order}/status', [ClientHistoryController::class, 'show'])->name('status');
                 });
         });
-    });
+});

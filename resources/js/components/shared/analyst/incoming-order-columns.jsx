@@ -34,7 +34,7 @@ export const getOrdersColumns = ({setSelectedTest}) => [
     { accessorKey: "title", header: "Judul Pesanan" },
     { accessorKey: "estimate_date", header: "Estimasi Selesai" },
     {
-        accessorKey: "order_type",
+        accessorKey: "tipe",
         header: "Tipe Pesanan",
         cell: ({ row }) => {
             const value = row.order_type;

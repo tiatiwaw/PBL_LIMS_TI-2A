@@ -10,11 +10,16 @@ use App\Http\Controllers\API\V1\AuthController as V1AuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\SupervisorController;
+use Inertia\Inertia;
 
 // Home
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('index');
 });
+
+Route::get('/profile', function () {
+    return Inertia::render('profile');
+})->name('profile');
 
 // Auth
 Route::controller(AuthController::class)
@@ -187,7 +192,7 @@ Route::controller(AnalystController::class)
                 Route::get('/', 'order')->name('index');
                 Route::get('/{order}', 'detail')->name('detail');
                 Route::put('/{order}/accept', 'accept')->name('accept');
-                Route::get('/{order}/download', 'downloadReport')->name('downloadReport');
+                Route::get('/download/{order}', 'downloadReport')->name('downloadReport');
         });
 
         // Samples

@@ -1,50 +1,44 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { AlertTriangle, ShoppingCart, Loader, CheckCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardFooter, CardContent } from "@/components/ui/card";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { getOrdersColumns } from "@/components/shared/analyst/incoming-order-columns";
-import { useMemo } from "react";
 import StatCard from "@/components/shared/card/stat-card";
-import { usePage, router } from '@inertiajs/react';
+import { useDashboard } from "@/hooks/analyst/useDashboard";
+import { useAuth } from "@/hooks/useAuth";
+import Loading from "@/components/ui/loading";
+import { useAcceptOrder } from "@/hooks/analyst/useAcceptOrder";
 
- 
-const dashboard = () => {
-  const { orders, stats } = usePage().props;
+const Dashboard = () => {
+  const { acceptOrder, loading: acceptLoading } = useAcceptOrder();
+  const { data: dashboardData, refetch: refetchDashboard, isLoading: isDashboardLoading } = useDashboard();
+  const orders = dashboardData?.orders
   const [selectedTest, setSelectedTest] = useState(null);
-  
-  const { auth } = usePage().props;
-  const user = auth.user;
 
-  const handleConfirm = () => {
-    if (!selectedTest) return;
-
-    router.put(route("analyst.order.accept", { order: selectedTest.id }), {}, {
-      onSuccess: () => {
-        console.log("Berhasil diterima!");
-        setSelectedTest(null);
-      },
-      onError: (err) => {
-        console.error("Gagal:", err);
-      },
-    });
-  };
-
-  const handleCancel = () => {
-    setSelectedTest(null);
-  };
-
-  const columns = useMemo(() => getOrdersColumns({setSelectedTest: setSelectedTest}), []);
+  const columns = useMemo(() => getOrdersColumns({ setSelectedTest }), []);
 
   const cards = [
-    { title: "Total Orders", value: String(stats.totalOrder), subtitle: "Semua pesanan yang tercatat", icon: ShoppingCart },
-    { title: "Total Processed Order", value: String(stats.processedOrder), subtitle: "Pesanan sedang dikerjakan", icon: Loader },
-    { title: "Total Completed Order", value: String(stats.completedOrder), subtitle: "Pesanan selesai", icon: CheckCircle },
+    { title: "Total Orders", value: String(dashboardData?.stats?.totalOrder ?? 0), subtitle: "Semua pesanan yang tercatat", icon: ShoppingCart },
+    { title: "Total Processed Order", value: String(dashboardData?.stats?.processedOrder ?? 0), subtitle: "Pesanan sedang dikerjakan", icon: Loader },
+    { title: "Total Completed Order", value: String(dashboardData?.stats?.completedOrder ?? 0), subtitle: "Pesanan selesai", icon: CheckCircle },
   ];
 
+  const filterData = [
+    { value: "all", label: "Semua Tipe" },
+    { value: "internal", label: "Internal" },
+    { value: "external", label: "External" },
+    { value: "regular", label: "Regular" },
+    { value: "urgent", label: "Urgent" },
+  ];
+
+  const { user, loading: authLoading } = useAuth();
+  const currentUser = user 
+  
+  if (authLoading || isDashboardLoading) return <Loading/>;
   return (
-    <DashboardLayout title="Dashboard Analis" user={user} header='Selamat Datang, Analis!'>
+    <DashboardLayout title="Dashboard Analis" header="Dashboard Analis" user={currentUser}>
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cards.map((stat, index) => (
@@ -58,42 +52,40 @@ const dashboard = () => {
           columns={columns}
           pageSize={5}
           showSearch={false}
-          showFilter={false}
+          showFilter={true}
           searchColumn="id"
           showCreate={false}
-          filterColumn="tipe"
+          filterOptions={filterData}
+          filterColumn="order_type"
         />
 
-
+        {/* Modal konfirmasi */}
         {selectedTest && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <Card className="border-0 w-[450px] bg-primary-hijauMuda relative rounded-2xl shadow-xl text-[#02364B]">
-              <button
-                onClick={handleCancel}
-                className="absolute top-4 right-4 text-primary-hijauTua hover:opacity-80"
-              >
-                ✕
-              </button>
-
+              <button onClick={() => setSelectedTest(null)} className="absolute top-4 right-4 text-primary-hijauTua hover:opacity-80">✕</button>
               <CardHeader className="flex items-center justify-center pt-10">
                 <AlertTriangle className="w-20 h-20 text-primary-hijauTua" />
               </CardHeader>
-
               <CardContent className="text-center px-8 pb-8">
                 <p className="font-bold text-lg leading-relaxed">
                   Apakah Anda yakin akan menerima pesanan?
                 </p>
               </CardContent>
-
               <CardFooter className="flex justify-center gap-4 pb-8">
                 <Button
-                  onClick={handleConfirm}
+                  onClick={() => {
+                    acceptOrder(selectedTest.id, () => {
+                    setSelectedTest(null);
+                    refetchDashboard();
+                  });
+                  }}
                   className="rounded-lg px-6 bg-primary-hijauTua text-white hover:bg-primary-hijauTua/90"
                 >
                   Terima
                 </Button>
                 <Button
-                  onClick={handleCancel}
+                  onClick={() => setSelectedTest(null)}
                   variant="outline"
                   className="rounded-lg px-6 border-primary-hijauTua text-primary-hijauTua hover:bg-primary-hijauTua hover:text-white"
                 >
@@ -108,4 +100,4 @@ const dashboard = () => {
   );
 };
 
-export default dashboard;
+export default Dashboard;
