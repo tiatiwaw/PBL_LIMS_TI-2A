@@ -136,6 +136,16 @@ const MENU_CONFIG = {
                     icon: TestTube2,
                     href: "/admin/tests/categories",
                 },
+                {
+                    name: "Sertifikasi",
+                    icon: Inbox,
+                    href: "/admin/tests/sertif",
+                },
+                {
+                    name: "Pelatihan",
+                    icon: ListCheck,
+                    href: "/admin/tests/training",
+                }
             ],
         },
         {

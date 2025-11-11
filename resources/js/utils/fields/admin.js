@@ -279,6 +279,56 @@ export const editStandardFields = [
     },
 ];
 
+export const editSertificateFields = [
+    {
+        name: "name",
+        label: "Nama Sertifikat",
+        placeholder: "Masukkan nama sertifikat",
+    },
+    {
+        name: "analyst_id",
+        label: "ID Analis",
+        placeholder: "Masukkan ID analis",
+    },
+    {
+        name: "certificate_id",
+        label: "ID Sertifikat",
+        placeholder: "Masukkan ID sertifikat",
+    },
+    {
+        name: "tanggal_terbit",
+        label: "Tanggal Terbit",
+        placeholder: "Masukkan tanggal terbit sertifikat",
+    },
+    {
+        name: "tanggal_kadaluarsa",
+        label: "Tanggal Kadaluarsa",
+        placeholder: "Masukkan tanggal kadaluarsa sertifikat",
+    }
+];
+export const editTrainingFields = [
+    {
+        name: "name",
+        label: "Nama Sertifikat",
+        placeholder: "Masukkan nama sertifikat",
+    },
+    {
+        name: "provider",
+        label: "Provider",
+        placeholder: "Masukkan provider",
+    },
+    {
+        name: "date",
+        label: "Tanggal",
+        placeholder: "Masukkan tanggal",
+    },
+    {
+        name: "result",
+        label: "Hasil",
+        placeholder: "Masukkan hasil",
+    }
+];
+
 export const editUsersFields = [
     {
         name: "name",

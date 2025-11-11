@@ -70,6 +70,14 @@ class AdminController extends Controller
     {
         return Inertia::render('admin/test/category/index');
     }
+    public function sertif()
+    {
+        return Inertia::render('admin/test/sertif/index');
+    }
+    public function training()
+    {
+        return Inertia::render('admin/test/training/index');
+    }
 
     public function orders()
     {
