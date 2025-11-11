@@ -36,7 +36,7 @@ class OrderSeeder extends Seeder
                     'report_file_path' => null,
                     'notes' => fake()->sentence(),
                     'order_type' => fake()->randomElement(['internal', 'regular', 'external', 'urgent']),
-                    'status' => fake()->randomElement(['received', 'in_progress', 'pending', 'disapproved', 'approved', 'completed']),
+                    'status' => 'pending',
                 ]);
             }
         }

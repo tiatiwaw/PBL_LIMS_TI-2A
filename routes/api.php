@@ -1,16 +1,18 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StaffApiController;
+use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\API\V1\Staff\OrderController;
+use App\Http\Controllers\API\V1\Staff\ClientController;
 use App\Http\Controllers\API\V1\Admin\BrandTypeController;
 use App\Http\Controllers\API\V1\Admin\DashboardController;
 use App\Http\Controllers\API\V1\Admin\EquipmentController;
-use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\AnalystController;
-use App\Http\Controllers\API\V1\Staff\ClientController;
-use App\Http\Controllers\API\V1\Staff\OrderController;
-use App\Http\Controllers\StaffApiController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\V1\Analyst\AnalystController;
 
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v1')
+->middleware('auth:sanctum')
+->group(function () {
 
     Route::get('/auth/user', [AuthController::class, 'user']);
 
@@ -71,21 +73,20 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
                 Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
             });
         });
-});
-
-Route::prefix('analyst')->group(function () {
-    Route::get('/dashboard', [AnalystController::class, 'apiDashboard']);
-    Route::post('/orders/{order}/accept', [AnalystController::class, 'apiAccept']);
-
-    Route::get('/orders', [AnalystController::class, 'apiOrders']);
-    Route::get('/orders/{id}', [AnalystController::class, 'apiOrderDetail']);
-
-    Route::post('/orders/{order}/upload-report', [AnalystController::class, 'apiUploadReport']);
-    Route::get('/orders/{order}/download-report', [AnalystController::class, 'apiDownloadReport']);
-
-    Route::post('/samples/{sample}/confirm', [AnalystController::class, 'apiConfirm']);
-    Route::post('/samples/{sample}/unconfirm', [AnalystController::class, 'apiUnconfirm']);
-
-    Route::get('/dashboard-page', [AnalystController::class, 'apiDashboardPage']);
-    Route::get('/profile', [AnalystController::class, 'apiProfile']);
+        
+    Route::prefix('analyst')
+        ->middleware(['analyst'])
+        ->name('api.analyst.')
+        ->controller(AnalystController::class)
+        ->group(function () {
+            Route::get('/dashboard', 'dashboard')->name('dashboard');
+            Route::get('/orders', 'orders')->name('orders');
+            Route::get('/orders/{order}', 'detail')->name('orders.detail');
+            Route::put('/orders/{order}/accept', 'accept')->name('orders.accept');
+            Route::post('/samples/{sample}/confirm', 'confirm')->name('samples.confirm');
+            Route::post('/samples/{sample}/unconfirm', 'unconfirm')->name('samples.unconfirm');
+            Route::post('/orders/{order}/save', 'saveReport')->name('orders.save');
+            Route::post('/orders/{order}/submit', 'submitReport')->name('orders.submit');
+            Route::get('/orders/{order}/download', 'downloadReport')->name('orders.download');
+        });
 });

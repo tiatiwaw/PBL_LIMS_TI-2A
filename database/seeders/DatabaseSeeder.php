@@ -29,6 +29,11 @@ class DatabaseSeeder extends Seeder
             UnitValueSeeder::class,
             ReferenceStandardSeeder::class,
             NParameterMethodSeeder::class,
+            AnalystSeeder::class,
+            CertificateSeeder::class,
+            TrainingSeeder::class,
+            NTrainingAnalystSeeder::class,
+            NAnalystSeeder::class,
         ]);
 
         // // Master Data Independen

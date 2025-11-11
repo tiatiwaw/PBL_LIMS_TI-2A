@@ -240,7 +240,7 @@ export default function OrderDetail({ order, samples }) {
                                 onClick={handleSubmitResults}
                                 className="bg-primary-hijauTua"
                             >
-                                Submit
+                                Submit & Generate Laporan (PDF)
                             </Button>
                         </div>
 
