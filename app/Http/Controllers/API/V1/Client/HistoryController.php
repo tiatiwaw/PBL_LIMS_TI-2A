@@ -12,7 +12,7 @@ class HistoryController extends Controller
     /**
      * Tampilkan order detail dengan status aktif
      */
-    public function history($id): JsonResponse
+    public function show($id): JsonResponse
     {
         try {
             $user = Auth::user();
