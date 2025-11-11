@@ -3,6 +3,14 @@
 use App\Http\Controllers\API\V1\Admin\BrandTypeController;
 use App\Http\Controllers\API\V1\Admin\DashboardController;
 use App\Http\Controllers\API\V1\Admin\EquipmentController;
+use App\Http\Controllers\API\V1\Admin\GradeController;
+use App\Http\Controllers\API\V1\Admin\ParameterController;
+use App\Http\Controllers\API\V1\Admin\ReagentController;
+use App\Http\Controllers\API\V1\Admin\ReferenceController;
+use App\Http\Controllers\API\V1\Admin\SampleCategoryController;
+use App\Http\Controllers\API\V1\Admin\TestMethodsController;
+use App\Http\Controllers\API\V1\Admin\UnitValueController;
+use App\Http\Controllers\API\V1\Admin\UserController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\API\V1\Staff\ClientController;
 use App\Http\Controllers\API\V1\Staff\OrderController;
@@ -12,6 +20,7 @@ use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
 use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
+use League\CommonMark\Reference\Reference;
 
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
@@ -25,9 +34,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
             Route::get('/', [DashboardController::class, 'index']);
 
-            // Route::apiResource('users', AdminApiUser::class);
-            // Route::apiResource('orders', AdminApiOrder::class)->except(['index', 'show']);
-            // Route::apiResource('activities', AdminApiActivity::class);
+        Route::apiResource('users', UserController::class);
+        // Route::apiResource('orders', AdminApiOrder::class)->except(['index', 'show']);
+        // Route::apiResource('activities', AdminApiActivity::class);
 
             // Tools
             Route::prefix('tools')
@@ -37,22 +46,22 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
                     Route::apiResource('brands', BrandTypeController::class);
                 });
 
-            // Materials
-            // Route::prefix('materials')->name('materials.')->group(function () {
-            //     Route::apiResource('reagents', AdminApiReagent::class)->except(['index']);
-            //     Route::apiResource('grades', AdminApiGrade::class)->except(['index']);
-            //     Route::apiResource('suppliers', AdminApiSupplier::class)->except(['index']);
-            // });
-
-            // Tests
-            // Route::prefix('tests')->name('tests.')->group(function () {
-            //     Route::apiResource('parameters', AdminApiParameter::class)->except(['index']);
-            //     Route::apiResource('methods', AdminApiMethod::class)->except(['index']);
-            //     Route::apiResource('units', AdminApiUnit::class)->except(['index']);
-            //     Route::apiResource('references', AdminApiReference::class)->except(['index']);
-            //     Route::apiResource('categories', AdminApiCategory::class)->except(['index']);
-            // });
+        // Materials
+        Route::prefix('materials')->name('materials.')->group(function () {
+            Route::apiResource('reagents', ReagentController::class);
+            Route::apiResource('grades', GradeController::class);
+        //     Route::apiResource('suppliers', AdminApiSupplier::class)->except(['index']);
         });
+
+        // Tests
+        Route::prefix('tests')->name('tests.')->group(function () {
+            Route::apiResource('parameters', ParameterController::class);
+            Route::apiResource('methods', TestMethodsController::class);
+            Route::apiResource('units', UnitValueController::class);
+            Route::apiResource('references', ReferenceController::class);
+            Route::apiResource('categories', SampleCategoryController::class);
+        });
+    });
 
     // Staff
     Route::prefix('staff')
