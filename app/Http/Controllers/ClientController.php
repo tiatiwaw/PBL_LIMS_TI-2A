@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
 use App\Models\Order;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -24,5 +21,38 @@ class ClientController extends Controller
     public function history()
     {
         return Inertia::render('client/history/index');
+    }
+
+    /**
+     * Show order detail page
+     */
+    public function orderDetail($id)
+    {
+        $user = Auth::user();
+        
+        // Validasi order milik user
+        $order = Order::where('id', $id)
+                    ->where('client_id', $user->id)
+                    ->firstOrFail();
+
+        return Inertia::render('client/detail/index', [
+            'order' => $order
+        ]);
+    }
+
+    /**
+     * Show order status page
+     */
+    public function orderStatus($id)
+    {
+        $user = Auth::user();
+        
+        $order = Order::where('id', $id)
+                    ->where('client_id', $user->id)
+                    ->firstOrFail();
+
+        return Inertia::render('client/history/index', [
+            'order' => $order->id
+        ]);
     }
 }

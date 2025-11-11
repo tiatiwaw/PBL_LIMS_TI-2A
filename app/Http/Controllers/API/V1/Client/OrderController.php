@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Sample;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -40,8 +41,10 @@ class OrderController extends Controller
             : 'Tidak ada metode';
 
         $orderData = [
+            'id' => $order->id, 
             'id_pemesanan' => $order->order_number ?? 'M-' . $order->id,
             'id_client' => $order->client_id,
+            'judul' => $order->title ?? '-',
             'metode_analisis' => $metodeAnalisis, 
             'nilai_hasil' => $order->result_value ?? '98',
             'tanggal_order' => $order->order_date ? Carbon::parse($order->order_date)->format('d/m/Y') : null,
@@ -54,6 +57,7 @@ class OrderController extends Controller
 
         $tableDataSamples = $order->samples->map(function ($sample) {
             return [
+                'id' => $sample->id,
                 'nama_sampel' => $sample->name,
                 'status' => $sample->status,
                 'tanggal_masuk' => $sample->created_at ? Carbon::parse($sample->created_at)->format('d/m/Y') : null,

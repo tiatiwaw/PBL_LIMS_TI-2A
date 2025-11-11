@@ -12,6 +12,7 @@ use League\CommonMark\Reference\Reference;
 
 class DatabaseSeeder extends Seeder
 {
+<<<<<<< HEAD
     /**
      * Seed the application's database.
      */
@@ -36,15 +37,28 @@ class DatabaseSeeder extends Seeder
             NTrainingAnalystSeeder::class,
             NAnalystSeeder::class,
         ]);
+=======
+        /**
+         * Seed the application's database.
+         */
+        public function run(): void
+        {
+                // Seeder User
+                $this->call([
+                        UserRoleSeeder::class,
+                        ClientSeeder::class,
+                        OrderSeeder::class,
+                ]);
+>>>>>>> a15a978d4845461964e5e26b4c0f5d32ce26f2b2
 
                 // // Master Data Independen
                 $this->call([
-                        //     BrandTypeSeeder::class,
-                        //     GradeSeeder::class,
-                        //     SupplierSeeder::class,
+                            BrandTypeSeeder::class,
+                            GradeSeeder::class,
+                            SupplierSeeder::class,
                         SampleCategorySeeder::class,
-                        //     UnitValueSeeder::class,
-                        //     ReferenceStandardSeeder::class,
+                            UnitValueSeeder::class,
+                            ReferenceStandardSeeder::class,
                         AnalysesMethodSeeder::class,
                         SampleSeeder::class,
                         NOrderSampleSeeder::class,
