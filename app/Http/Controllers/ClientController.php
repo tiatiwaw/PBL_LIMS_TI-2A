@@ -52,7 +52,7 @@ class ClientController extends Controller
                     ->firstOrFail();
 
         return Inertia::render('client/history/index', [
-            'order' => $order
+            'order' => $order->id
         ]);
     }
 }

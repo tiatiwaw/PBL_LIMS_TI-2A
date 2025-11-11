@@ -103,8 +103,8 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('orders')
                     ->name('orders.')
                     ->group(function () {
-                        Route::get('/{order}', [ClientOrderController::class, 'show']);
-                        Route::get('/{order}/status', [ClientHistoryController::class, 'show'])->name('status');
+                        Route::get('/{id}', [ClientOrderController::class, 'show']);
+                        Route::get('/{id}/status', [ClientHistoryController::class, 'show'])->name('status');
                     });
             });
     });

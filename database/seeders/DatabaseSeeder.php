@@ -16,17 +16,17 @@ class DatabaseSeeder extends Seeder
                 $this->call([
                         UserRoleSeeder::class,
                         ClientSeeder::class,
-                        // OrderSeeder::class,
+                        OrderSeeder::class,
                 ]);
 
                 // // Master Data Independen
                 $this->call([
-                        //     BrandTypeSeeder::class,
-                        //     GradeSeeder::class,
-                        //     SupplierSeeder::class,
+                            BrandTypeSeeder::class,
+                            GradeSeeder::class,
+                            SupplierSeeder::class,
                         SampleCategorySeeder::class,
-                        //     UnitValueSeeder::class,
-                        //     ReferenceStandardSeeder::class,
+                            UnitValueSeeder::class,
+                            ReferenceStandardSeeder::class,
                         AnalysesMethodSeeder::class,
                         SampleSeeder::class,
                         NOrderSampleSeeder::class,

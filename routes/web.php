@@ -193,8 +193,8 @@ Route::controller(ClientController::class)
         Route::prefix('orders')
             ->name('orders.')
             ->group(function () {
-                Route::get('/{order}', 'orderDetail')->name('show');
-                Route::get('/{order}/status', 'orderStatus')->name('status');
+                Route::get('/{id}', 'orderDetail')->name('show');
+                Route::get('/{id}/status', 'orderStatus')->name('status');
             });
     });
 
