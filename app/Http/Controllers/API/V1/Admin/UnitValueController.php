@@ -3,54 +3,62 @@
 namespace App\Http\Controllers\API\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BrandType;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use App\Models\UnitValue;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
-class BrandTypeController extends Controller
+class UnitValueController extends Controller
 {
     /**
-     * Tampilkan semua tipe merek.
+     * Tampilkan semua unit value.
      */
     public function index()
     {
         try {
-            $brands = BrandType::all();
+            $units = UnitValue::all();
 
-            return response()->json($brands);
+            return response()->json([
+                'success' => true,
+                'message' => 'Data unit value berhasil diambil.',
+                'data'    => $units,
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Terjadi kesalahan saat mengambil data.',
+                'success' => false,
+                'message' => 'Gagal mengambil data unit value.',
                 'error'   => $e->getMessage(),
             ], 500);
         }
     }
 
     /**
-     * Simpan tipe merek baru.
+     * Simpan unit value baru.
      */
     public function store(Request $request)
     {
         try {
             $validated = $request->validate([
-                'name' => 'required|string|max:255|unique:brand_types,name',
+                'value' => 'required|string|max:255|unique:unit_values,value',
             ]);
 
-            $brandType = BrandType::create($validated);
+            $unitValue = UnitValue::create($validated);
 
             return response()->json([
-                'message' => 'Tipe Merek berhasil dibuat.',
-                'data'    => $brandType,
+                'success' => true,
+                'message' => 'Unit value berhasil ditambahkan.',
+                'data'    => $unitValue,
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
+                'success' => false,
                 'message' => 'Validasi gagal.',
                 'errors'  => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
+                'success' => false,
                 'message' => 'Terjadi kesalahan pada server.',
                 'error'   => $e->getMessage(),
             ], 500);
@@ -58,39 +66,43 @@ class BrandTypeController extends Controller
     }
 
     /**
-     * Perbarui tipe merek berdasarkan ID.
+     * Perbarui unit value.
      */
     public function update(Request $request, $id)
     {
         try {
-            $brandType = BrandType::findOrFail($id);
+            $unitValue = UnitValue::findOrFail($id);
 
             $validated = $request->validate([
-                'name' => [
+                'value' => [
                     'required',
                     'string',
                     'max:255',
-                    Rule::unique('brand_types')->ignore($brandType->id),
+                    Rule::unique('unit_values', 'value')->ignore($unitValue->id),
                 ],
             ]);
 
-            $brandType->update($validated);
+            $unitValue->update($validated);
 
             return response()->json([
-                'message' => 'Tipe Merek berhasil diperbarui.',
-                'data'    => $brandType,
+                'success' => true,
+                'message' => 'Unit value berhasil diperbarui.',
+                'data'    => $unitValue,
             ], 200);
         } catch (ValidationException $e) {
             return response()->json([
+                'success' => false,
                 'message' => 'Validasi gagal.',
                 'errors'  => $e->errors(),
             ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'Tipe Merek tidak ditemukan.',
+                'success' => false,
+                'message' => 'Unit value tidak ditemukan.',
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
+                'success' => false,
                 'message' => 'Terjadi kesalahan pada server.',
                 'error'   => $e->getMessage(),
             ], 500);
@@ -98,23 +110,26 @@ class BrandTypeController extends Controller
     }
 
     /**
-     * Hapus tipe merek berdasarkan ID.
+     * Hapus unit value.
      */
     public function destroy($id)
     {
         try {
-            $brandType = BrandType::findOrFail($id);
-            $brandType->delete();
+            $unitValue = UnitValue::findOrFail($id);
+            $unitValue->delete();
 
             return response()->json([
-                'message' => 'Tipe Merek berhasil dihapus.',
+                'success' => true,
+                'message' => 'Unit value berhasil dihapus.',
             ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'Tipe Merek tidak ditemukan.',
+                'success' => false,
+                'message' => 'Unit value tidak ditemukan.',
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
+                'success' => false,
                 'message' => 'Terjadi kesalahan pada server.',
                 'error'   => $e->getMessage(),
             ], 500);

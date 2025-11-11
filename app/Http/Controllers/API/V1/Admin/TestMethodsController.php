@@ -3,46 +3,49 @@
 namespace App\Http\Controllers\API\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BrandType;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use App\Models\TestMethod;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-class BrandTypeController extends Controller
+class TestMethodsController extends Controller
 {
     /**
-     * Tampilkan semua tipe merek.
+     * Tampilkan semua data test method.
      */
     public function index()
     {
         try {
-            $brands = BrandType::all();
+            $methods = TestMethod::with('reference_standards')->get();
 
-            return response()->json($brands);
+            return response()->json($methods);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Terjadi kesalahan saat mengambil data.',
+                'message' => 'Gagal mengambil data metode pengujian.',
                 'error'   => $e->getMessage(),
             ], 500);
         }
     }
 
     /**
-     * Simpan tipe merek baru.
+     * Simpan data test method baru.
      */
     public function store(Request $request)
     {
         try {
             $validated = $request->validate([
-                'name' => 'required|string|max:255|unique:brand_types,name',
+                'reference_id'        => 'required|exists:reference_standards,id',
+                'name'                => 'required|string|max:255|unique:test_methods,name',
+                'applicable_parameter'=> 'required|string|max:255',
+                'duration'            => 'required|integer|min:1',
+                'validity_period'     => 'required|date',
             ]);
 
-            $brandType = BrandType::create($validated);
+            $method = TestMethod::create($validated);
 
             return response()->json([
-                'message' => 'Tipe Merek berhasil dibuat.',
-                'data'    => $brandType,
+                'message' => 'Metode pengujian berhasil ditambahkan.',
+                'data'    => $method,
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
@@ -58,27 +61,26 @@ class BrandTypeController extends Controller
     }
 
     /**
-     * Perbarui tipe merek berdasarkan ID.
+     * Perbarui data test method.
      */
     public function update(Request $request, $id)
     {
         try {
-            $brandType = BrandType::findOrFail($id);
+            $method = TestMethod::findOrFail($id);
 
             $validated = $request->validate([
-                'name' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    Rule::unique('brand_types')->ignore($brandType->id),
-                ],
+                'reference_id'        => 'sometimes|exists:reference_standards,id',
+                'name'                => 'sometimes|string|max:255|unique:test_methods,name,' . $method->id,
+                'applicable_parameter'=> 'sometimes|string|max:255',
+                'duration'            => 'sometimes|integer|min:1',
+                'validity_period'     => 'sometimes|date',
             ]);
 
-            $brandType->update($validated);
+            $method->update($validated);
 
             return response()->json([
-                'message' => 'Tipe Merek berhasil diperbarui.',
-                'data'    => $brandType,
+                'message' => 'Metode pengujian berhasil diperbarui.',
+                'data'    => $method,
             ], 200);
         } catch (ValidationException $e) {
             return response()->json([
@@ -87,7 +89,7 @@ class BrandTypeController extends Controller
             ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'Tipe Merek tidak ditemukan.',
+                'message' => 'Metode pengujian tidak ditemukan.',
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
@@ -98,20 +100,20 @@ class BrandTypeController extends Controller
     }
 
     /**
-     * Hapus tipe merek berdasarkan ID.
+     * Hapus data test method.
      */
     public function destroy($id)
     {
         try {
-            $brandType = BrandType::findOrFail($id);
-            $brandType->delete();
+            $method = TestMethod::findOrFail($id);
+            $method->delete();
 
             return response()->json([
-                'message' => 'Tipe Merek berhasil dihapus.',
+                'message' => 'Metode pengujian berhasil dihapus.',
             ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'Tipe Merek tidak ditemukan.',
+                'message' => 'Metode pengujian tidak ditemukan.',
             ], 404);
         } catch (\Exception $e) {
             return response()->json([

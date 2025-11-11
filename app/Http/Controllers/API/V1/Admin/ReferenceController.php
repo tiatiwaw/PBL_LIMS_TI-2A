@@ -3,46 +3,46 @@
 namespace App\Http\Controllers\API\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BrandType;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use App\Models\ReferenceStandard;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
-class BrandTypeController extends Controller
+class ReferenceController extends Controller
 {
     /**
-     * Tampilkan semua tipe merek.
+     * Tampilkan semua data reference standard.
      */
     public function index()
     {
         try {
-            $brands = BrandType::all();
+            $references = ReferenceStandard::all();
 
-            return response()->json($brands);
+            return response()->json($references);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Terjadi kesalahan saat mengambil data.',
+                'message' => 'Gagal mengambil data reference standard.',
                 'error'   => $e->getMessage(),
             ], 500);
         }
     }
 
     /**
-     * Simpan tipe merek baru.
+     * Simpan reference standard baru.
      */
     public function store(Request $request)
     {
         try {
             $validated = $request->validate([
-                'name' => 'required|string|max:255|unique:brand_types,name',
+                'name' => 'required|string|max:255|unique:reference_standards,name',
             ]);
 
-            $brandType = BrandType::create($validated);
+            $reference = ReferenceStandard::create($validated);
 
             return response()->json([
-                'message' => 'Tipe Merek berhasil dibuat.',
-                'data'    => $brandType,
+                'message' => 'Reference standard berhasil ditambahkan.',
+                'data'    => $reference,
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
@@ -58,27 +58,27 @@ class BrandTypeController extends Controller
     }
 
     /**
-     * Perbarui tipe merek berdasarkan ID.
+     * Perbarui reference standard.
      */
     public function update(Request $request, $id)
     {
         try {
-            $brandType = BrandType::findOrFail($id);
+            $reference = ReferenceStandard::findOrFail($id);
 
             $validated = $request->validate([
                 'name' => [
                     'required',
                     'string',
                     'max:255',
-                    Rule::unique('brand_types')->ignore($brandType->id),
+                    Rule::unique('reference_standards', 'name')->ignore($reference->id),
                 ],
             ]);
 
-            $brandType->update($validated);
+            $reference->update($validated);
 
             return response()->json([
-                'message' => 'Tipe Merek berhasil diperbarui.',
-                'data'    => $brandType,
+                'message' => 'Reference standard berhasil diperbarui.',
+                'data'    => $reference,
             ], 200);
         } catch (ValidationException $e) {
             return response()->json([
@@ -87,7 +87,7 @@ class BrandTypeController extends Controller
             ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'Tipe Merek tidak ditemukan.',
+                'message' => 'Reference standard tidak ditemukan.',
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
@@ -98,20 +98,20 @@ class BrandTypeController extends Controller
     }
 
     /**
-     * Hapus tipe merek berdasarkan ID.
+     * Hapus reference standard.
      */
     public function destroy($id)
     {
         try {
-            $brandType = BrandType::findOrFail($id);
-            $brandType->delete();
+            $reference = ReferenceStandard::findOrFail($id);
+            $reference->delete();
 
             return response()->json([
-                'message' => 'Tipe Merek berhasil dihapus.',
+                'message' => 'Reference standard berhasil dihapus.',
             ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'Tipe Merek tidak ditemukan.',
+                'message' => 'Reference standard tidak ditemukan.',
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
