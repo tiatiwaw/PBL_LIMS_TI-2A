@@ -25,7 +25,12 @@ export const editEquipmentFields = (data) =>{
         {
             name: "calibration_schedule",
             label: "Jadwal Kalibrasi",
+            type: "select",
             placeholder: "Masukkan jadwal kalibrasi alat",
+            options: [
+                {value: "internal", label: "Internal"},
+                {value: "eksternal",label: "Eksternal"}
+            ]
         },
         {
             name: "status",
@@ -54,8 +59,9 @@ export const editBrandFields = [
     },
 ];
 
-export const editReagentFields = [
-    {
+export const editReagentFields = (dataSupplier, dataGrade) =>{
+    return [
+        {
         name: "name",
         label: "Nama Reagen",
         placeholder: "Masukkan nama reagen",
@@ -64,11 +70,17 @@ export const editReagentFields = [
         name: "supplier",
         label: "Pemasok",
         placeholder: "Masukkan pemasok reagen",
+        type: "select",
+        options: dataSupplier?dataSupplier.map((item) => ({ value: item.id, label: item.name })):[],
+
     },
     {
         name: "grade",
         label: "Tingkatan",
         placeholder: "Masukkan tingkatan reagen",
+        type: "select",
+        options: dataGrade?dataGrade.map((item) => ({ value: item.id, label: item.name })):[],
+
     },
     {
         name: "formula",
@@ -85,7 +97,9 @@ export const editReagentFields = [
         label: "Lokasi Penyimpanan",
         placeholder: "Masukkan lokasi penyimpanan reagen",
     },
-];
+    ]
+    
+};
 
 export const editGradeFields = [
     {
