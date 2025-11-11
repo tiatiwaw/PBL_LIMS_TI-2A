@@ -1,3 +1,6 @@
+import { useParameters } from "@/hooks/useAdminParameter";
+import Loading from "@/components/ui/loading"; 
+import { useAuth } from "@/hooks/useAuth"; 
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getParametersColumns } from "@/components/shared/admin/test-columns";
 import ParameterDetailSheet from "@/components/shared/sheet/parameter-detail-sheet";

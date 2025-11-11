@@ -35,7 +35,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         //     Route::apiResource('suppliers', AdminApiSupplier::class)->except(['index']);
         // });
 
-        // Tests
         // Route::prefix('tests')->name('tests.')->group(function () {
         //     Route::apiResource('parameters', AdminApiParameter::class)->except(['index']);
         //     Route::apiResource('methods', AdminApiMethod::class)->except(['index']);

@@ -1,3 +1,6 @@
+import { useMethods } from "@/hooks/useAdminMethod";
+import Loading from "@/components/ui/loading"; 
+import { useAuth } from "@/hooks/useAuth"; 
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getMethodsColumns } from "@/components/shared/admin/test-columns";
 import MethodDetailSheet from "@/components/shared/sheet/method-detail-sheet";

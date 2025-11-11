@@ -65,6 +65,8 @@ Route::controller(AdminController::class)
             Route::get('/units', 'units')->name('units');
             Route::get('/references', 'references')->name('references');
             Route::get('/categories', 'categories')->name('categories');
+            Route::get('/sertif', 'sertif')->name('sertif');
+            Route::get('/training', 'training')->name('training');
         });
 
         Route::get('/orders',  'orders')->name('orders');
@@ -74,7 +76,7 @@ Route::controller(AdminController::class)
 
 // Manager
 Route::controller(ManagerController::class)
-    ->middleware(['auth', 'manager'])
+    // ->middleware(['auth', 'manager'])
     ->prefix('manager')
     ->name('manager.')
     ->group(function () {

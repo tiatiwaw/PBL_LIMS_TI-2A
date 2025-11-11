@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import ActionColumn from "../tabel/action-column";
+import { Copy } from "lucide-react"; 
 
 const categoryVariantMap = {
     kimia: "success",
@@ -101,6 +102,45 @@ export const getStandardsColumns = ({onShowDetail}) => [
 export const getSampleCategoriesColumns = ({onShowDetail}) => [
     { accessorKey: 'no', header: 'No.' },
     { accessorKey: 'name', header: 'Nama Kategori' },
+    {
+        id: "aksi",
+        header: "Aksi",
+        cell: ({ row, onEdit, onDelete }) => (
+            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
+        ),
+    },
+];
+
+export const getSertifColumns = ({ onShowDetail }) => [
+    { accessorKey: 'no', header: 'No.' },
+    { accessorKey: 'name', header: 'Nama Sertifikat' },
+    { accessorKey: 'analyst_id', header: 'Nama Analis' },
+    { accessorKey: 'certificate_id', header: 'No Sertifikat' },
+    {accessorKey: "tanggal_terbit", header: "Tanggal Terbit", },
+    {accessorKey: "tanggal_kadaluarsa", header: "Tanggal Kadaluarsa",},
+    {
+        accessorKey: 'file_path',
+        header: 'File',
+        cell: ({ row }) => (
+            <button className="flex items-center gap-1.5 text-xs bg-primary-hijauMuda hover:bg-primary-hijauTua text-white px-3 py-1.5 rounded-md font-semibold">
+                File <Copy size={12} />
+            </button>
+        )
+    },
+    {
+        id: "aksi",
+        header: "Aksi",
+        cell: ({ row, onEdit, onDelete }) => (
+            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
+        ),
+    },
+];
+export const getTrainingColumns = ({ onShowDetail }) => [
+    { accessorKey: 'no', header: 'No.' },
+    { accessorKey: 'name', header: 'Nama Sertifikat' },
+    { accessorKey: 'provider', header: 'Nama Penyedia' },
+    { accessorKey: 'date', header: 'Tanggal Pelatihan' },
+    {accessorKey: 'result', header: "Hasil", },
     {
         id: "aksi",
         header: "Aksi",
