@@ -6,6 +6,10 @@ use App\Http\Controllers\API\V1\Admin\EquipmentController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\API\V1\Staff\ClientController;
 use App\Http\Controllers\API\V1\Staff\OrderController;
+use App\Http\Controllers\API\V1\Client\ClientController as ClientClientController;
+use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
+use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
+use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
 use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,44 +18,75 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/auth/user', [AuthController::class, 'user']);
 
     // Admin
-    Route::prefix('admin')->middleware('admin')->name('api.admin.')->group(function () {
+    Route::prefix('admin')
+        ->middleware('admin')
+        ->name('api.admin.')
+        ->group(function () {
 
-        Route::get('/', [DashboardController::class, 'index']);
+            Route::get('/', [DashboardController::class, 'index']);
 
-        // Route::apiResource('users', AdminApiUser::class);
-        // Route::apiResource('orders', AdminApiOrder::class)->except(['index', 'show']);
-        // Route::apiResource('activities', AdminApiActivity::class);
+            // Route::apiResource('users', AdminApiUser::class);
+            // Route::apiResource('orders', AdminApiOrder::class)->except(['index', 'show']);
+            // Route::apiResource('activities', AdminApiActivity::class);
 
-        // Tools
-        Route::prefix('tools')->name('tools.')->group(function () {
-            Route::apiResource('equipments', EquipmentController::class);
-            Route::apiResource('brands', BrandTypeController::class);
+            // Tools
+            Route::prefix('tools')
+                ->name('tools.')
+                ->group(function () {
+                    Route::apiResource('equipments', EquipmentController::class);
+                    Route::apiResource('brands', BrandTypeController::class);
+                });
+
+            // Materials
+            // Route::prefix('materials')->name('materials.')->group(function () {
+            //     Route::apiResource('reagents', AdminApiReagent::class)->except(['index']);
+            //     Route::apiResource('grades', AdminApiGrade::class)->except(['index']);
+            //     Route::apiResource('suppliers', AdminApiSupplier::class)->except(['index']);
+            // });
+
+            // Tests
+            // Route::prefix('tests')->name('tests.')->group(function () {
+            //     Route::apiResource('parameters', AdminApiParameter::class)->except(['index']);
+            //     Route::apiResource('methods', AdminApiMethod::class)->except(['index']);
+            //     Route::apiResource('units', AdminApiUnit::class)->except(['index']);
+            //     Route::apiResource('references', AdminApiReference::class)->except(['index']);
+            //     Route::apiResource('categories', AdminApiCategory::class)->except(['index']);
+            // });
         });
-
-        // Materials
-        // Route::prefix('materials')->name('materials.')->group(function () {
-        //     Route::apiResource('reagents', AdminApiReagent::class)->except(['index']);
-        //     Route::apiResource('grades', AdminApiGrade::class)->except(['index']);
-        //     Route::apiResource('suppliers', AdminApiSupplier::class)->except(['index']);
-        // });
-
-        // Tests
-        // Route::prefix('tests')->name('tests.')->group(function () {
-        //     Route::apiResource('parameters', AdminApiParameter::class)->except(['index']);
-        //     Route::apiResource('methods', AdminApiMethod::class)->except(['index']);
-        //     Route::apiResource('units', AdminApiUnit::class)->except(['index']);
-        //     Route::apiResource('references', AdminApiReference::class)->except(['index']);
-        //     Route::apiResource('categories', AdminApiCategory::class)->except(['index']);
-        // });
-    });
 
     // Staff
-    Route::prefix('staff')->middleware('staff')->name('api.staff.')->group(function () {
-        Route::prefix('clients.')->apiResource('clients', ClientController::class);
-        Route::prefix('orders')->name('orders.')->group(function () {
-            Route::get('/', [OrderController::class, 'index'])->name('index');
-            Route::post('/', [OrderController::class, 'store'])->name('store');
-            Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
+    Route::prefix('staff')
+        ->middleware('staff')
+        ->name('api.staff.')
+        ->group(function () {
+            Route::prefix('clients')
+                ->apiResource('clients', ClientController::class);
+            Route::prefix('orders')
+                ->name('orders.')
+                ->group(function () {
+                    Route::get('/', [OrderController::class, 'index'])->name('index');
+                    Route::post('/', [OrderController::class, 'store'])->name('store');
+                    Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
+                });
         });
-    });
+
+    // Client
+    Route::prefix('client')
+        ->middleware(['auth:sanctum', 'client'])
+        ->name('api.client.')
+        ->group(function () {
+            
+            // Dashboard & Profile
+            Route::get('/', [ClientClientController::class, 'index'])->name('index');
+            Route::get('/history/{order}', [ClientHistoryController::class, 'history'])->name('history');
+            Route::get('/profile', [ClientProfileController::class, 'profile'])->name('profile');
+
+            // Orders - menggunakan apiResource untuk efisiensi
+            Route::prefix('orders')
+                ->name('orders.')
+                ->group(function () {
+                    Route::get('/detail/{order}', [ClientOrderController::class, 'index'])->name('indexDetail');
+                    // Route::get('/', [ClientOrderController::class, 'show'])->name('show');
+                });
+        });
 });

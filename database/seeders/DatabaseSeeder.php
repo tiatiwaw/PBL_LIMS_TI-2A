@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\NOrderSample;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -27,6 +28,9 @@ class DatabaseSeeder extends Seeder
                         //     UnitValueSeeder::class,
                         //     ReferenceStandardSeeder::class,
                         AnalysesMethodSeeder::class,
+                        SampleSeeder::class,
+                        NOrderSampleSeeder::class,
+                        NAnalysesMethodsOrdersSeeder::class,
                 ]);
 
                 // // Master Data Dependen
