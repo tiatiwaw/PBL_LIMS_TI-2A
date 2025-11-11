@@ -221,6 +221,9 @@ Route::controller(ClientController::class)
         });
 
         // History
+        Route::get('/detail', 'detail')->name('detail');
+
+        // detail
         Route::get('/history', 'history')->name('history');
 
         // Profile

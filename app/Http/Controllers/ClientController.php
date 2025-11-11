@@ -25,4 +25,9 @@ class ClientController extends Controller
     {
         return Inertia::render('client/history/index');
     }
+
+    public function detail()
+    {
+        return Inertia::render('client/detail/index');
+    }
 }

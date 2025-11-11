@@ -4,12 +4,12 @@ import { Link } from '@inertiajs/react';
 import { FileText, History } from "lucide-react";
 
 const statusVariantMap = {
-    Completed: "success",
-    "In Progress": "warning",
-    Pending: "info",
-    Disapproved: "error",
-    Approved: "approved",
-    Received: "received",
+    completed: "success",
+    in_progress: "warning",
+    pending: "info",
+    disapproved: "error",
+    approved: "approved",
+    received: "received",
 };
 
 const tipeVariantMap = {
