@@ -212,11 +212,14 @@ Route::controller(ClientController::class)
             ->name('orders.')
             ->group(function () {
                 Route::get('/', 'orders')->name('index');
-                Route::inertia('/detail', 'client/detail/index')->name('detail');
+                // Route::inertia('/detail/{id}', 'client/detail/index')->name('detail');
         });
 
         // History
         Route::get('/history', 'history')->name('history');
+
+        // Profile
+        Route::get('/profile', 'profile')->name('profile');
     });
 
 require __DIR__ . '/auth.php';

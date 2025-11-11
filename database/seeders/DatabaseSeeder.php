@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\UnitValue;
 use App\Models\TestParameter;
+use App\Models\NOrderSample;
 use Illuminate\Database\Seeder;
 use App\Models\NParameterMethod;
 use Database\Seeders\UserRoleSeeder;
@@ -36,16 +37,19 @@ class DatabaseSeeder extends Seeder
             NAnalystSeeder::class,
         ]);
 
-        // // Master Data Independen
-        // $this->call([
-        //     BrandTypeSeeder::class,
-        //     GradeSeeder::class,
-        //     SupplierSeeder::class,
-        //     SampleCategorySeeder::class,
-        //     UnitValueSeeder::class,
-        //     ReferenceStandardSeeder::class,
-        //     AnalysesMethodSeeder::class,
-        // ]);
+                // // Master Data Independen
+                $this->call([
+                        //     BrandTypeSeeder::class,
+                        //     GradeSeeder::class,
+                        //     SupplierSeeder::class,
+                        SampleCategorySeeder::class,
+                        //     UnitValueSeeder::class,
+                        //     ReferenceStandardSeeder::class,
+                        AnalysesMethodSeeder::class,
+                        SampleSeeder::class,
+                        NOrderSampleSeeder::class,
+                        NAnalysesMethodsOrdersSeeder::class,
+                ]);
 
         // // Master Data Dependen
         // $this->call([

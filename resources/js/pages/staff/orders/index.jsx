@@ -5,7 +5,6 @@ import OrdersForm from "@/components/shared/staff/orders-form1";
 import OrdersForm2 from "@/components/shared/staff/orders-form2";
 import OrderForms3 from "@/components/shared/staff/orders-form3";
 import { CheckSquare } from "lucide-react";
-import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useOrders } from "@/hooks/useOrders";
 import Loading from "@/components/ui/loading";
@@ -75,11 +74,9 @@ export default function OrdersPage() {
         if (step === 3) {
             createOrder.mutate(data, {
                 onSuccess: () => {
-                    toast.success("Order berhasil dibuat");
                     setIsSaved(true);
                 },
-                onError: (e) => {
-                    toast.error("Gagal menyimpan Order:", e);
+                onError: () => {
                     if (
                         errors.selectedKlien ||
                         errors.judulOrder ||
@@ -96,7 +93,11 @@ export default function OrdersPage() {
 
     if (isLoading || authLoading) {
         return (
-            <DashboardLayout title="Orders" user={currentUser}>
+            <DashboardLayout
+                title="Orders"
+                header="Registrasi Order Baru"
+                user={currentUser}
+            >
                 <Loading />
             </DashboardLayout>
         );
@@ -104,7 +105,11 @@ export default function OrdersPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Orders" user={currentUser}>
+            <DashboardLayout
+                title="Orders"
+                header="Registrasi Order Baru"
+                user={currentUser}
+            >
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>

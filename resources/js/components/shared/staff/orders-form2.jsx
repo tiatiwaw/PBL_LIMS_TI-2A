@@ -13,7 +13,6 @@ import { getSampleColumnsOrder } from "./sample-order-colums";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { editSampleFields } from "@/utils/fields/staff";
-import { toast } from "sonner";
 
 export default function OrdersForm2({
     samples,
@@ -33,15 +32,7 @@ export default function OrdersForm2({
             [name]: value,
         }));
     };
-    const handleCreate = async (formData) =>
-        createSample.mutateAsync(formData, {
-            onSuccess: () => {
-                toast.success("Sampel berhasil dibuat");
-            },
-            onError: (e) => {
-                toast.error("Gagal menyimpan Sampel:", e);
-            },
-        });
+    const handleCreate = async (formData) => createSample.mutateAsync(formData);
 
     const handleTipeOrderSelect = (value) => {
         setData((prev) => ({

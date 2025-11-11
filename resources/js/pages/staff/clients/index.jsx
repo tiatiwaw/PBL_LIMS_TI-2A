@@ -41,7 +41,11 @@ export default function ClientPage() {
 
     if (isLoading || authLoading) {
         return (
-            <DashboardLayout title="Manajemen Client" user={currentUser}>
+            <DashboardLayout
+                title="Manajemen Client"
+                header="Client"
+                user={currentUser}
+            >
                 <Loading />
             </DashboardLayout>
         );
@@ -49,7 +53,11 @@ export default function ClientPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Manajemen Client" user={currentUser}>
+            <DashboardLayout
+                title="Manajemen Client"
+                header="Client"
+                user={currentUser}
+            >
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>

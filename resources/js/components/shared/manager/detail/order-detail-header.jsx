@@ -13,7 +13,7 @@ import {
     getStatusLabel,
     getOrderTypeVariant,
     getOrderStatusVariant,
-} from "@/utils/statusHelpers";
+} from "@/utils/statusUtils";
 import { formatDate } from "@/utils/formatters";
 
 export default function OrderDetailHeader({ order, canValidate, onValidate, onInvalidate }) {
