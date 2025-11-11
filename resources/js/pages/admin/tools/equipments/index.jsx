@@ -32,6 +32,22 @@ export default function EquipmentsPage({ auth, toolsData }) {
 
     const columns = useMemo(() => getEquipmentsColumns({ onShowDetail: handleShowDetail }), []);
 
+    const handleCreate = async (formData) => {
+    console.log("Create data:", formData);
+    };
+
+    const handleEdit = async (id, formData) => {
+        console.log("Edit ID:", id);
+        console.log("Data:", formData);
+    };
+
+    const handleDelete = async (id) => {
+        console.log("Delete ID:", id);
+        console.log("Data:", formData);
+    };
+
+
+
     if (brandLoading || equipmentLoading || authLoading) {
         return (
             <DashboardLayout title="Dashboard Admin" user={currentUser}>
@@ -60,14 +76,11 @@ export default function EquipmentsPage({ auth, toolsData }) {
                 data={equipments}
                 columns={columns}
                 editFields={editEquipmentFields(brands)}
-                createUrl="admin.tools.equipment.create"
-                editUrl="admin.tools.equipment.update"
-                deleteUrl="admin.tools.equipment.destroy"
-                showFilter={true}
-                filterColumn="status"
-                filterOptions={filterData}
-                editTitle="Edit Peralatan"
-                deleteTitle="Hapus Peralatan"
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                editTitle="Edit Brand"
+                deleteTitle="Hapus Brand"
             />
             <EquipmentDetailSheet data={selectedEquipment} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>

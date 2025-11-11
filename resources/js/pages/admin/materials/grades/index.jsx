@@ -20,6 +20,20 @@ export default function GradesPage({ auth, gradesData }) {
 
     const columns = useMemo(() => getGradesColumns({ onShowDetail: handleShowDetail }), []);
     
+    const handleCreate = async (formData) => {
+    console.log("Create data:", formData);
+    };
+
+    const handleEdit = async (id, formData) => {
+        console.log("Edit ID:", id);
+        console.log("Data:", formData);
+    };
+
+    const handleDelete = async (id) => {
+        console.log("Delete ID:", id);
+        console.log("Data:", formData);
+    };
+
 
     return (
         <DashboardLayout
@@ -31,6 +45,9 @@ export default function GradesPage({ auth, gradesData }) {
                 data={parameters}
                 columns={columns}
                 editFields={editGradeFields}
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
                 createUrl="admin.materials.grade.create"
                 editUrl="admin.materials.grade.update"
                 deleteUrl="admin.materials.grade.destroy"

@@ -20,6 +20,21 @@ export default function SuppliersPage({ auth, suppliersData }) {
 
     const columns = useMemo(() => getSuppliersColumns({ onShowDetail: handleShowDetail }), []);
     
+    const handleCreate = async (formData) => {
+    console.log("Create data:", formData);
+    };
+
+    const handleEdit = async (id, formData) => {
+        console.log("Edit ID:", id);
+        console.log("Data:", formData);
+    };
+
+    const handleDelete = async (id) => {
+        console.log("Delete ID:", id);
+        console.log("Data:", formData);
+    };
+
+
 
     return (
         <DashboardLayout
@@ -31,6 +46,9 @@ export default function SuppliersPage({ auth, suppliersData }) {
                 data={parameters}
                 columns={columns}
                 editFields={editSupplierFields}
+                onCreate={handleCreate}
+                onDelete={handleDelete}
+                onEdit={handleEdit}
                 createUrl="admin.materials.supplier.create"
                 editUrl="admin.materials.supplier.update"
                 deleteUrl="admin.materials.supplier.destroy"
