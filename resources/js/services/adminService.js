@@ -22,30 +22,36 @@ export const adminService = {
     methods: serviceMethods("/admin/tests/methods", {
         useFormData: true,
     }),
-    
+
     units: serviceMethods("/admin/tests/units", {
         useFormData: true,
     }),
+
     references: serviceMethods("/admin/tests/references", {
         useFormData: true,
     }),
+
     categories: serviceMethods("/admin/tests/categories", {
         useFormData: true,
     }),
-    sertif: serviceMethods("/admin/tests/sertif", {
-        useFormData: true,
-    }),
-    training: serviceMethods("/admin/tests/training", {
-        useFormData: true,
-    }),
-    grades: serviceMethods("/admin/materials/grades", {
-        useFormData: true,
-    }),
-    suppliers: serviceMethods("/admin/materials/suppliers", {
-        useFormData: true,
-    }),
-    reagents: serviceMethods("/admin/materials/suppliers", {
+
+    sertif: serviceMethods("/admin/analyst/certificates", {
         useFormData: true,
     }),
 
+    training: serviceMethods("/admin/analyst/trainings", {
+        useFormData: true,
+    }),
+
+    grades: serviceMethods("/admin/materials/grades", {
+        useFormData: true,
+    }),
+
+    suppliers: serviceMethods("/admin/materials/suppliers", {
+        useFormData: true,
+    }),
+
+    reagents: serviceMethods("/admin/materials/reagents", {
+        useFormData: true,
+    }),
 };

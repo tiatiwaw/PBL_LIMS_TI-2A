@@ -8,9 +8,10 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import InputField from "../form/input-field";
-import SelectField from "../form/select-field";
 import { ChevronRight } from "lucide-react";
+import SelectField from "../form/select-field";
+import DatePicker from "../form/date-picker";
+import InputField from "../form/input-field";
 
 export default function UpsertDialog({
     open,
@@ -24,12 +25,32 @@ export default function UpsertDialog({
     const [formData, setFormData] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const getNestedValue = (obj, path) => {
+        if (!obj || !path) return undefined;
+        const pathArray = path.split('.');
+        return pathArray.reduce((current, key) => (current && current[key] !== undefined ? current[key] : undefined), obj);
+    };
+
     useEffect(() => {
         if (open) {
             const initialData = fields.reduce((acc, field) => {
-                acc[field.name] = data
-                    ? data[field.name] ?? ""
-                    : field.defaultValue ?? "";
+                let initialValue = field.defaultValue ?? "";
+
+                if (data) {
+                    if (field.initialValuePath) {
+                        initialValue = getNestedValue(data, field.initialValuePath) ?? initialValue;
+                    }
+
+                    if (initialValue === (field.defaultValue ?? "") || initialValue === "") {
+                        initialValue = data[field.name] ?? initialValue;
+                    }
+                }
+
+                if (field.type === "date" && initialValue && typeof initialValue === 'string') {
+                    initialValue = new Date(initialValue);
+                }
+
+                acc[field.name] = initialValue ?? "";
                 return acc;
             }, {});
             setFormData(initialData);
@@ -43,7 +64,15 @@ export default function UpsertDialog({
     const handleSubmit = async () => {
         try {
             setIsSubmitting(true);
-            await onSave(formData);
+
+            const dataToSave = { ...formData };
+            fields.forEach(field => {
+                if (field.type === "date" && dataToSave[field.name] instanceof Date) {
+                    dataToSave[field.name] = dataToSave[field.name].toISOString().split('T')[0];
+                }
+            });
+
+            await onSave(dataToSave);
             onOpenChange(false);
         } finally {
             setIsSubmitting(false);
@@ -64,6 +93,19 @@ export default function UpsertDialog({
                     value={value}
                     options={field.options}
                     onChange={(val) => handleChange(field.name, val)}
+                />
+            );
+        }
+
+        if (field.type === "date") {
+            return (
+                <DatePicker
+                    key={field.name}
+                    id={field.name}
+                    label={field.label}
+                    placeholder={field.placeholder || "Pilih tanggal"}
+                    selected={value}
+                    onSelect={(date) => handleChange(field.name, date)}
                 />
             );
         }

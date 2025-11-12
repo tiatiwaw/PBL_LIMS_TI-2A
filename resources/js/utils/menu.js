@@ -20,6 +20,9 @@ import {
     ListCheck,
     Inbox,
     ScrollText,
+    GraduationCap,
+    Award,
+    BarChart3,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -136,16 +139,22 @@ const MENU_CONFIG = {
                     icon: TestTube2,
                     href: "/admin/tests/categories",
                 },
-                {
-                    name: "Sertifikasi",
-                    icon: Inbox,
-                    href: "/admin/tests/sertif",
-                },
+            ],
+        },
+        {
+            name: "Analis",
+            icon: BarChart3,
+            subItems: [
                 {
                     name: "Pelatihan",
-                    icon: ListCheck,
-                    href: "/admin/tests/training",
-                }
+                    icon: GraduationCap,
+                    href: "/admin/analyst/trainings",
+                },
+                {
+                    name: "Sertifikat",
+                    icon: Award,
+                    href: "/admin/analyst/sertificates",
+                },
             ],
         },
         {

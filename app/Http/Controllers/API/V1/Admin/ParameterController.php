@@ -19,16 +19,10 @@ class ParameterController extends Controller
             $parameters = TestParameter::with(['unit_values', 'reference_standards'])->get();
 
             if ($parameters->isEmpty()) {
-                return response()->json([
-                    'message' => 'Data parameter uji belum tersedia.',
-                    'data' => [],
-                ], 200);
+                return response()->json([]);
             }
 
-            return response()->json([
-                'message' => 'Data parameter uji berhasil diambil.',
-                'data' => $parameters,
-            ], 200);
+            return response()->json($parameters);
 
         } catch (ModelNotFoundException $e) {
             return response()->json([

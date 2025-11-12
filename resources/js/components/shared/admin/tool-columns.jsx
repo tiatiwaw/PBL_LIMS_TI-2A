@@ -1,12 +1,26 @@
 import { Badge } from "@/components/ui/badge";
 import ActionColumn from "../tabel/action-column";
-import { getEquipmentStatusVariant } from "@/utils/statusUtils";
+import { getEquipmentStatusVariant, getOrderTypeVariant } from "@/utils/statusUtils";
 
 export const getEquipmentsColumns = ({ onShowDetail }) => [
     { accessorKey: 'no', header: 'No.' },
     { accessorKey: 'name', header: 'Nama Alat' },
     { accessorKey: 'purchase_year', header: 'Tahun Pembelian' },
-    { accessorKey: 'calibration_schedule', header: 'Jadwal Kalibrasi' },
+    {
+        accessorKey: "calibration_schedule",
+        header: "Jadwal Kalibrasi",
+        cell: ({ row }) => {
+            const value = row.calibration_schedule;
+            return (
+                <Badge
+                    variant={getOrderTypeVariant(value) || "outline"}
+                    className="capitalize"
+                >
+                    {value}
+                </Badge>
+            );
+        },
+    },
     {
         accessorKey: "status",
         header: "Status",

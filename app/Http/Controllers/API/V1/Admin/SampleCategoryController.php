@@ -15,11 +15,7 @@ class SampleCategoryController extends Controller
         try {
             $categories = SampleCategory::all();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Daftar kategori sampel berhasil diambil.',
-                'data' => $categories
-            ], 200);
+            return response()->json($categories);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,

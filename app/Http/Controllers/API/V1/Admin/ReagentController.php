@@ -17,11 +17,7 @@ class ReagentController extends Controller
         try {
             $reagents = Reagent::with(['suppliers', 'grades', 'n_parameter_methods'])->get();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Daftar reagent berhasil diambil.',
-                'data' => $reagents,
-            ]);
+            return response()->json($reagents);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,

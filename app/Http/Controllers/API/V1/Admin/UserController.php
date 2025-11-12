@@ -21,11 +21,7 @@ class UserController extends Controller
             // Relasi jamak -> analysts
             $users = User::with(['analysts.certificates', 'analysts.trainings'])->get();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Daftar pengguna berhasil diambil.',
-                'data' => $users,
-            ], 200);
+            return response()->json($users);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,

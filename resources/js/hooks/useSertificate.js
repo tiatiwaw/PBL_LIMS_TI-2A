@@ -53,8 +53,8 @@ export const useSertif = () => {
         isLoading,
         error,
         refetch,
-        createUnit,
-        updateUnit,
-        deleteUnit,
+        createSertif,
+        updateSertif,
+        deleteSertif
     };
 };

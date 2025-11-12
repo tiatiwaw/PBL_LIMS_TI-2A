@@ -19,11 +19,7 @@ class UnitValueController extends Controller
         try {
             $units = UnitValue::all();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Data unit value berhasil diambil.',
-                'data'    => $units,
-            ], 200);
+            return response()->json($units);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

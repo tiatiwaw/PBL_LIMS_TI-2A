@@ -1,6 +1,6 @@
-import { useUnits } from "@/hooks/useAdminUnits";
-import Loading from "@/components/ui/loading"; 
-import { useAuth } from "@/hooks/useAuth"; 
+import { useUnits } from "@/hooks/useUnits";
+import Loading from "@/components/ui/loading";
+import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getUnitsColumns } from "@/components/shared/admin/test-columns";
 import UnitDetailSheet from "@/components/shared/sheet/unit-detail-sheet";
@@ -9,20 +9,47 @@ import { units } from "@/data/admin/tests";
 import { editUnitFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
-export default function UnitsPage({ auth, unitsData }) {
+export default function UnitsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
-        
-    const handleShowDetail = (tests) => {
-            setSelectedUnit(tests);
-            setIsOpen(true);
-    };
-    
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = unitsData || units;
+    const { user, loading: authLoading } = useAuth();
+    const { units, isLoading, error, createUnit, updateUnit, deleteUnit } = useUnits();
+
+    const handleShowDetail = (tests) => {
+        setSelectedUnit(tests);
+        setIsOpen(true);
+    };
 
     const columns = useMemo(() => getUnitsColumns({ onShowDetail: handleShowDetail }), []);
+
+    const currentUser = user || { name: "Admin", role: "Admin" };
+
+    const handleCreate = async (formData) => createUnit.mutateAsync(formData);
+
+    const handleEdit = async (id, formData) => {
+        await updateUnit.mutateAsync({ id, data: formData });
+    };
+
+    const handleDelete = async (id) => deleteUnit.mutateAsync(id);
+
+    if (isLoading || authLoading) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
         <DashboardLayout
@@ -31,16 +58,16 @@ export default function UnitsPage({ auth, unitsData }) {
             header="Manajemen Nilai Unit"
         >
             <ManagedDataTable
-                data={parameters}
+                data={units}
                 columns={columns}
                 editFields={editUnitFields}
-                createUrl="admin.test.unit.create"
-                editUrl="admin.test.unit.update"
-                deleteUrl="admin.test.unit.destroy"
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
                 editTitle="Edit Nilai Satuan"
                 deleteTitle="Hapus Nilai Satuan"
             />
-        <UnitDetailSheet data={selectedUnit} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <UnitDetailSheet data={selectedUnit} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }

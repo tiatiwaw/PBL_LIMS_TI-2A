@@ -6,8 +6,6 @@ import { getCategoryTypeVariant, getDetectionTypeVariant } from "@/utils/statusU
 export const getParametersColumns = ({ onShowDetail }) => [
     { accessorKey: 'no', header: 'No.' },
     { accessorKey: 'name', header: 'Nama Parameter' },
-    { accessorKey: 'unit_value', header: 'Satuan' },
-    { accessorKey: 'reference', header: 'Referensi' },
     {
         accessorKey: "category",
         header: "Kategori",
@@ -50,7 +48,6 @@ export const getParametersColumns = ({ onShowDetail }) => [
 
 export const getMethodsColumns = ({onShowDetail}) => [
     { accessorKey: 'no', header: 'No.' },
-    { accessorKey: 'reference', header: 'Referensi' },
     { accessorKey: 'name', header: 'Nama Metode' },
     { accessorKey: 'applicable_parameter', header: 'Parameter Berlaku' },
     { accessorKey: 'duration', header: 'Durasi' },

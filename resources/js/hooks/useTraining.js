@@ -53,8 +53,8 @@ export const useTraining = () => {
         isLoading,
         error,
         refetch,
-        createUnit,
-        updateUnit,
-        deleteUnit,
+        createTraining,
+        updateTraining,
+        deleteTraining
     };
 };

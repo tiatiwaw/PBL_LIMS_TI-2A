@@ -17,11 +17,7 @@ class GradeController extends Controller
         try {
             $grades = Grade::with('reagents')->get();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Daftar grade berhasil diambil.',
-                'data' => $grades,
-            ]);
+            return response()->json($grades);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,

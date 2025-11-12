@@ -1,27 +1,54 @@
-import { useTraining } from "@/hooks/useAdminTraining";
+import { useTraining } from "@/hooks/useTraining";
 import Loading from "@/components/ui/loading"; 
 import { useAuth } from "@/hooks/useAuth"; 
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getTrainingColumns } from "@/components/shared/admin/test-columns";//
 import TrainingDetailSheet from "@/components/shared/sheet/training-detail-sheets";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { SampleTraining } from "@/data/admin/tests";//
 import { editTrainingFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
-export default function SampleCategoriesPage({ auth, trainingData }) {
+export default function SampleCategoriesPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
+
+    const { user, loading: authLoading } = useAuth();
+    const { training, isLoading, error, createTraining, updateTraining, deleteTraining } = useTraining();
             
     const handleShowDetail = (tests) => {
             setSelectedCategory(tests);
             setIsOpen(true);
     };
 
-    const currentUser = auth?.user || { name: "Akbar", role: "Manager" };
-    const parameters = trainingData || SampleTraining;
-
     const columns = useMemo(() => getTrainingColumns({ onShowDetail: handleShowDetail }), []);
+
+    const currentUser = user || { name: "Admin", role: "Admin" };
+
+    const handleCreate = async (formData) => createTraining.mutateAsync(formData);
+
+    const handleEdit = async (id, formData) => {
+        await updateTraining.mutateAsync({ id, data: formData });
+    };
+
+    const handleDelete = async (id) => deleteTraining.mutateAsync(id);
+
+    if (isLoading || authLoading) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
         <DashboardLayout
@@ -30,12 +57,12 @@ export default function SampleCategoriesPage({ auth, trainingData }) {
             header="Manajemen Pelatihan Sampel"
         >
             <ManagedDataTable
-                data={parameters}
+                data={training}
                 columns={columns}
                 editFields={editTrainingFields}
-                createUrl="admin.test.categorySample.create"
-                editUrl="admin.test.categorySample.update"
-                deleteUrl="admin.test.categorySample.destroy"
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
                 editTitle="Edit Pelatihan Sampel"
                 deleteTitle="Hapus Pelatihan Sampel"
             />

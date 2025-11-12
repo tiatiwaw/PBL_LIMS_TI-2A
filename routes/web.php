@@ -69,6 +69,11 @@ Route::controller(AdminController::class)
             Route::get('/training', 'training')->name('training');
         });
 
+    Route::prefix('analyst')->name('analyst.')->group(function () {
+        Route::get('/trainings', 'trainings')->name('trainings');
+        Route::get('/sertificates', 'sertificates')->name('sertificates');
+    });
+
         Route::get('/orders',  'orders')->name('orders');
         Route::get('/activities',  'activities')->name('activities');
         Route::get('/users',  'users')->name('users');

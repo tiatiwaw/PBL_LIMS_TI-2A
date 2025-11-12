@@ -16,8 +16,8 @@ export default function MethodDetailSheet({ data, isOpen, onOpenChange }) {
             title={`Detail Method #${data.id}`}
             description={`Detail Method ${data.name}.`}
             fields={[
-                { label: "Referensi", value: data.reference },
                 { label: "Nama Methode", value: data.name },
+                { label: "Referensi", value: data.reference_standards.name },
                 { label: "Parameter Berlaku", value: data.applicable_parameter },
                 { label: "Durasi", value: data.duration },
                 { label: "Masa Berlaku", value: data.validity_period },

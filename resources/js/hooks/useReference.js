@@ -53,8 +53,8 @@ export const useReferences = () => {
         isLoading,
         error,
         refetch,
-        createUnit,
-        updateUnit,
-        deleteUnit,
+        createReference,
+        updateReference,
+        deleteReference
     };
 };

@@ -1,28 +1,54 @@
-import { useMethods } from "@/hooks/useAdminMethod";
-import Loading from "@/components/ui/loading"; 
-import { useAuth } from "@/hooks/useAuth"; 
+import { useMethods } from "@/hooks/useMethod";
+import Loading from "@/components/ui/loading";
+import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getMethodsColumns } from "@/components/shared/admin/test-columns";
 import MethodDetailSheet from "@/components/shared/sheet/method-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { methods } from "@/data/admin/tests";
 import { editMethodFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
-export default function MethodsPage({ auth, methodsData }) {
+export default function MethodsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedMethod, setSelectedMethod] = useState(null);
-        
+
+    const { user, loading: authLoading } = useAuth();
+    const { methods, isLoading, error, createMethod, updateMethod, deleteMethod } = useMethods();
+
     const handleShowDetail = (tests) => {
-            setSelectedMethod(tests);
-            setIsOpen(true);
+        setSelectedMethod(tests);
+        setIsOpen(true);
     };
-    
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = methodsData || methods;
+
+    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const columns = useMemo(() => getMethodsColumns({ onShowDetail: handleShowDetail }), []);
-    
+
+    const handleCreate = async (formData) => createMethod.mutateAsync(formData);
+
+    const handleEdit = async (id, formData) => {
+        await updateMethod.mutateAsync({ id, data: formData });
+    };
+
+    const handleDelete = async (id) => deleteMethod.mutateAsync(id);
+
+    if (isLoading || authLoading) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
         <DashboardLayout
@@ -31,16 +57,16 @@ export default function MethodsPage({ auth, methodsData }) {
             header="Manajemen Metode Uji"
         >
             <ManagedDataTable
-                data={parameters}
+                data={methods}
                 columns={columns}
                 editFields={editMethodFields}
-                createUrl="admin.test.method.create"
-                editUrl="admin.test.method.update"
-                deleteUrl="admin.test.method.destroy"
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
                 editTitle="Edit Metode Uji"
                 deleteTitle="Hapus Metode Uji"
             />
-        <MethodDetailSheet data={selectedMethod} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <MethodDetailSheet data={selectedMethod} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }
