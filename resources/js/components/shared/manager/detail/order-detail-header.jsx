@@ -17,6 +17,7 @@ import {
 import { formatDate } from "@/utils/formatters";
 
 export default function OrderDetailHeader({ order, canValidate, onValidate, onInvalidate }) {
+    console.log(order);
     return (
         <div className="flex items-start">
             <div className="space-y-4 flex-1">

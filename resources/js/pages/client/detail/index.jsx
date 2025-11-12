@@ -1,12 +1,12 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { ClientInfoCard, OrderDetailHeader, SampleSelector, AnalysisMethodCard, AnalystTeamCard, EquipmentCard, MethodInfoCard, NotesCard, ParameterInfoCard, ReagentCard, SampleInfoCard } from "@/components/shared/manager/detail";
-import { orders } from "@/data/manager/detail";
+import { orders } from "@/data/client/order";
 
 export default function DetailOrder({ auth, canValidate, id }) {
     const [loading, setLoading] = useState(false);
     const [selectedSampleId, setSelectedSampleId] = useState(
-        orders.parameter_methods[0].id.toString()
+        // orders.parameter_methods[0].id.toString()
     );
 
     const selectedSample = orders.parameter_methods.find(
@@ -17,20 +17,20 @@ export default function DetailOrder({ auth, canValidate, id }) {
 
     const handleValidate = () => {
         alert("Order berhasil divalidasi!");
-        // setLoading(true);
-        // router.post(`/manager/report-validation/${orders.id}/validate`, {}, {
-        //     onFinish: () => setLoading(false),
-        //     onSuccess: () => alert("Order berhasil divalidasi!"),
-        // });
+        setLoading(true);
+        router.post(`/manager/report-validation/${orders.id}/validate`, {}, {
+            onFinish: () => setLoading(false),
+            onSuccess: () => alert("Order berhasil divalidasi!"),
+        });
     };
 
     const handleInvalidate = () => {
         alert("Order berhasil diinvalidasi!");
-        // setLoading(true);
-        // router.post(`/manager/report-validation/${orders.id}/invalidate`, {}, {
-        //     onFinish: () => setLoading(false),
-        //     onSuccess: () => alert("Order berhasil diinvalidasi!"),
-        // });
+        setLoading(true);
+        router.post(`/manager/report-validation/${orders.id}/invalidate`, {}, {
+            onFinish: () => setLoading(false),
+            onSuccess: () => alert("Order berhasil diinvalidasi!"),
+        });
     };
 
     return (
@@ -46,7 +46,7 @@ export default function DetailOrder({ auth, canValidate, id }) {
                 <ClientInfoCard client={orders.client} />
 
                 <SampleSelector
-                    samples={orders.parameter_methods}
+                    samples={orders.parameter_methods || {}}
                     selectedSampleId={selectedSampleId}
                     onSampleChange={setSelectedSampleId}
                 />
@@ -71,7 +71,7 @@ export default function DetailOrder({ auth, canValidate, id }) {
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                     <AnalystTeamCard analysts={orders.analysts} />
                     <AnalysisMethodCard
-                        methods={orders.analysis_methods}
+                        methods={orders.analysis_methods || {}}
                         reportIssuedAt={orders.report_issued_at}
                         reportFilePath={orders.report_file_path}
                         resultValue={orders.result_value}
