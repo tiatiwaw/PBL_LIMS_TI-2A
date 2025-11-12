@@ -11,7 +11,7 @@ use App\Http\Controllers\API\V1\Manager\OrdersController as ManagerOrderControll
 use App\Models\Sample;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v1')->group(function () {
 
     Route::get('/auth/user', [AuthController::class, 'user']);
 
@@ -73,17 +73,25 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
                 Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
             });
         });
-    Route::prefix('manager')
-        ->middleware(middleware: 'manager')
-        ->name('api.manager.')
-        ->group(function () {
-
-            // 👤 USERS (Manager - Manage Staff, Analyst, Supervisor)
-            Route::get('/users', [ManagerUserController::class, 'index'])->name('users.index');
-            Route::put('/users/{id}', [ManagerUserController::class, 'update'])->name('users.update');
-
-            // 📦 ORDERS
-            Route::get('/orders', [ManagerOrderController::class, 'index'])->name('orders.index');
-            Route::put('/orders/{id}', [ManagerOrderController::class, 'update'])->name('orders.update');
-        });
+    
 });
+
+Route::prefix('manager')
+    ->name('api.manager.')
+    ->group(function () {
+        // 👤 USERS
+        Route::apiResource('users', ManagerUserController::class)
+            ->only(['index', 'update'])
+            ->names([
+                'index'  => 'users.index',
+                'update' => 'users.update',
+            ]);
+
+        // 📦 ORDERS
+        Route::apiResource('orders', ManagerOrderController::class)
+            ->only(['index', 'update'])
+            ->names([
+                'index'  => 'orders.index',
+                'update' => 'orders.update',
+            ]);
+    });
