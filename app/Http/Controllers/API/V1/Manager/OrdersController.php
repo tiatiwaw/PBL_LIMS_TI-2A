@@ -16,7 +16,7 @@ class OrdersController extends Controller
             return response()->json($orders, 200);
         } catch (\Throwable $e) {
             return response()->json([
-                'error' => 'Failed to fetch orders',
+                'error' => 'Gagal mengambil  order',
                 'message' => $e->getMessage(),
             ], 500);
         }
@@ -28,12 +28,12 @@ class OrdersController extends Controller
         $order = Order::find($id);
 
         if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
+            return response()->json(['message' => 'Order tidak ditemukan'], 404);
         }
 
         //
         $validated = $request->validate([
-            'status' => 'required|string|max:255',
+            'status' => 'required|string|in: selesai,dalam progress,ditunda,disetujui,diterima',
         ]);
 
         try {
@@ -41,7 +41,7 @@ class OrdersController extends Controller
             return response()->json($order, 200);
         } catch (\Throwable $e) {
             return response()->json([
-                'error' => 'Failed to update order',
+                'error' => 'Gagal mengupdate order',
                 'message' => $e->getMessage(),
             ], 500);
         }
