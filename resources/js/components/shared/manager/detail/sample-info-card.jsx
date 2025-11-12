@@ -10,9 +10,9 @@ import {
     Thermometer,
 } from "lucide-react";
 import {
-    getSampleStatusVariant,
-    getStatusParameterLabel,
-} from "@/utils/statusHelpers";
+    getOrderStatusLabel,
+    getOrderStatusVariant,
+} from "@/utils/statusUtils";
 
 export default function SampleInfoCard({ sample }) {
     return (
@@ -44,7 +44,7 @@ export default function SampleInfoCard({ sample }) {
                                 <span>Kategori</span>
                             </div>
                             <Badge variant="success">
-                                {sample.sample_category.name}
+                                {sample.sample_categories.name}
                             </Badge>
                         </div>
 
@@ -53,7 +53,7 @@ export default function SampleInfoCard({ sample }) {
                                 <Beaker className="w-4 h-4" />
                                 <span>Bentuk</span>
                             </div>
-                            <p className="font-bold text-primary-hijauTua">
+                            <p className="font-bold text-primary-hijauTua capitalize">
                                 {sample.form}
                             </p>
                         </div>
@@ -65,7 +65,7 @@ export default function SampleInfoCard({ sample }) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                                <span className="font-bold text-primary-hijauTua">
+                                <span className="font-bold text-primary-hijauTua capitalize">
                                     {sample.condition}
                                 </span>
                             </div>
@@ -76,8 +76,8 @@ export default function SampleInfoCard({ sample }) {
                                 <TestTube className="w-4 h-4" />
                                 <span>Status</span>
                             </div>
-                            <Badge variant={getSampleStatusVariant(sample.status)}>
-                                {getStatusParameterLabel(sample.status)}
+                            <Badge variant={getOrderStatusVariant(sample.status)}>
+                                {getOrderStatusLabel(sample.status)}
                             </Badge>
                         </div>
                     </div>

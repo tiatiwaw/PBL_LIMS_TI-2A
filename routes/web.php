@@ -6,7 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\AnalystController;
-use App\Http\Controllers\API\V1\AuthController as V1AuthController;
+// use App\Http\Controllers\API\V1\AuthController as V1AuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\SupervisorController;
@@ -32,15 +32,15 @@ Route::controller(AuthController::class)
         });
     });
 
-// API
-Route::prefix('api/v1/auth')->name('api.auth.')->group(function () {
-    Route::middleware('guest')->group(function () {
-        Route::post('/login', [V1AuthController::class, 'login'])->name('login');
-    });
-    Route::middleware('auth')->group(function () {
-        Route::post('/logout', [V1AuthController::class, 'logout'])->name('logout');
-    });
-});
+// // API
+// Route::prefix('api/v1/auth')->name('api.auth.')->group(function () {
+//     Route::middleware('guest')->group(function () {
+//         Route::post('/login', [V1AuthController::class, 'login'])->name('login');
+//     });
+//     Route::middleware('auth')->group(function () {
+//         Route::post('/logout', [V1AuthController::class, 'logout'])->name('logout');
+//     });
+// });
 
 // Admin
 Route::controller(AdminController::class)
@@ -67,16 +67,24 @@ Route::controller(AdminController::class)
             Route::get('/units', 'units')->name('units');
             Route::get('/references', 'references')->name('references');
             Route::get('/categories', 'categories')->name('categories');
+            Route::get('/sertif', 'sertif')->name('sertif');
+            Route::get('/training', 'training')->name('training');
+        });
+
+        Route::prefix('analyst')->name('analyst.')->group(function () {
+            Route::get('/trainings', 'trainings')->name('trainings');
+            Route::get('/sertificates', 'sertificates')->name('sertificates');
         });
 
         Route::get('/orders',  'orders')->name('orders');
+        Route::get('/orders/{id}',  'showOrder')->name('order.show');
         Route::get('/activities',  'activities')->name('activities');
         Route::get('/users',  'users')->name('users');
     });
 
 // Manager
 Route::controller(ManagerController::class)
-    ->middleware(['auth', 'manager'])
+    // ->middleware(['auth', 'manager'])
     ->prefix('manager')
     ->name('manager.')
     ->group(function () {
@@ -227,8 +235,10 @@ Route::controller(ClientController::class)
     ->name('client.')
     ->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::get('/profile', 'profile')->name('profile');
+        Route::get('/history', 'history')->name('history');
 
-        // Orders
+        // Orders - sesuaikan dengan API structure
         Route::prefix('orders')
             ->name('orders.')
             ->group(function () {

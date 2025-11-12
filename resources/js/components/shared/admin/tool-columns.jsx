@@ -1,17 +1,26 @@
 import { Badge } from "@/components/ui/badge";
 import ActionColumn from "../tabel/action-column";
-
-const statusVariantMap = {
-    active: "success",
-    maintenance: "warning",
-    broken: "error",
-};
+import { getEquipmentStatusVariant, getOrderTypeVariant } from "@/utils/statusUtils";
 
 export const getEquipmentsColumns = ({ onShowDetail }) => [
     { accessorKey: 'no', header: 'No.' },
     { accessorKey: 'name', header: 'Nama Alat' },
     { accessorKey: 'purchase_year', header: 'Tahun Pembelian' },
-    { accessorKey: 'calibration_schedule', header: 'Jadwal Kalibrasi' },
+    {
+        accessorKey: "calibration_schedule",
+        header: "Jadwal Kalibrasi",
+        cell: ({ row }) => {
+            const value = row.calibration_schedule;
+            return (
+                <Badge
+                    variant={getOrderTypeVariant(value) || "outline"}
+                    className="capitalize"
+                >
+                    {value}
+                </Badge>
+            );
+        },
+    },
     {
         accessorKey: "status",
         header: "Status",
@@ -19,7 +28,7 @@ export const getEquipmentsColumns = ({ onShowDetail }) => [
             const value = row.status;
             return (
                 <Badge
-                    variant={statusVariantMap[value] || "outline"}
+                    variant={getEquipmentStatusVariant(value) || "outline"}
                     className="capitalize"
                 >
                     {value}

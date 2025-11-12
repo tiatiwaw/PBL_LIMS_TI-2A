@@ -20,6 +20,9 @@ import {
     ListCheck,
     Inbox,
     ScrollText,
+    GraduationCap,
+    Award,
+    BarChart3,
     User,
 } from "lucide-react";
 
@@ -136,6 +139,22 @@ const MENU_CONFIG = {
                     name: "Kategori Sampel",
                     icon: TestTube2,
                     href: "/admin/tests/categories",
+                },
+            ],
+        },
+        {
+            name: "Analis",
+            icon: BarChart3,
+            subItems: [
+                {
+                    name: "Pelatihan",
+                    icon: GraduationCap,
+                    href: "/admin/analyst/trainings",
+                },
+                {
+                    name: "Sertifikat",
+                    icon: Award,
+                    href: "/admin/analyst/sertificates",
                 },
             ],
         },

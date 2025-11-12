@@ -1,13 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getOrderStatusLabel, getOrderStatusVariant, getOrderTypeLabel, getOrderTypeVariant } from "@/utils/statusHelpers";
+import { getOrderStatusLabel, getOrderStatusVariant, getOrderTypeLabel, getOrderTypeVariant } from "@/utils/statusUtils";
 
 export const getOrdersColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "order_number", header: "No. Order" },
     { accessorKey: "title", header: "Judul Analisis" },
-    { accessorKey: "estimated_date", header: "Estimasi Selesai" },
-    { accessorKey: "report_issued_at", header: "Tanggal Laporan" },
     {
         accessorKey: "order_type",
         header: "Tipe Order",
@@ -16,6 +14,7 @@ export const getOrdersColumns = ({ onShowDetail }) => [
             return (
                 <Badge
                     variant={getOrderTypeVariant(value)}
+                    className="capitalize"
                 >
                     {getOrderTypeLabel(value)}
                 </Badge>

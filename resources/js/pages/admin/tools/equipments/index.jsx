@@ -6,6 +6,7 @@ import Loading from "@/components/ui/loading";
 import { useAuth } from "@/hooks/useAuth";
 import { useBrands } from "@/hooks/useBrands";
 import { useEquipments } from "@/hooks/useEquipments";
+import { useEquipments } from "@/hooks/useEquipments";
 import { editEquipmentFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
@@ -16,14 +17,13 @@ const filterData = [
     { value: "Broken", label: "Broken" },
 ];
 
-export default function EquipmentsPage({ auth, toolsData }) {
+export default function EquipmentsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEquipment, setSelectedEquipment] = useState(null);
 
     const { brands, isLoading: brandLoading, error: brandError } = useBrands();
-    const { equipments, isLoading: equipmentLoading, error: equipmentError } = useEquipments();
+    const { equipments, isLoading: equipmentLoading, error: equipmentError, createBrand, updateBrand, deleteBrand } = useEquipments();
     const { user, loading: authLoading } = useAuth();
-    console.log(equipments);
 
     const handleShowDetail = (equipment) => {
         setSelectedEquipment(equipment);
@@ -32,6 +32,14 @@ export default function EquipmentsPage({ auth, toolsData }) {
     const currentUser = user || { name: "King Akbar", role: "Manager" };
 
     const columns = useMemo(() => getEquipmentsColumns({ onShowDetail: handleShowDetail }), []);
+
+    const handleCreate = async (formData) => createEquipment.mutateAsync(formData);
+
+    const handleEdit = async (id, formData) => {
+        await updateEquipment.mutateAsync({ id, data: formData });
+    };
+
+    const handleDelete = async (id) => deleteEquipment.mutateAsync(id);
 
     if (brandLoading || equipmentLoading || authLoading) {
         return (
@@ -61,14 +69,11 @@ export default function EquipmentsPage({ auth, toolsData }) {
                 data={equipments}
                 columns={columns}
                 editFields={editEquipmentFields(brands)}
-                createUrl="admin.tools.equipment.create"
-                editUrl="admin.tools.equipment.update"
-                deleteUrl="admin.tools.equipment.destroy"
-                showFilter={true}
-                filterColumn="status"
-                filterOptions={filterData}
-                editTitle="Edit Peralatan"
-                deleteTitle="Hapus Peralatan"
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                editTitle="Edit Equipment"
+                deleteTitle="Hapus Equipment"
             />
             <EquipmentDetailSheet data={selectedEquipment} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>

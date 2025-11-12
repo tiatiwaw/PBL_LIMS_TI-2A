@@ -4,7 +4,7 @@ import { Settings } from "lucide-react";
 import {
     getEquipmentStatusVariant,
     getEquipmentStatusLabel,
-} from "@/utils/statusHelpers";
+} from "@/utils/statusUtils";
 import { formatDate } from "@/utils/formatters";
 
 export default function EquipmentCard({ equipments }) {
@@ -36,7 +36,7 @@ export default function EquipmentCard({ equipments }) {
                             <div>
                                 <p className="text-xs text-slate-500 mb-1">Tipe</p>
                                 <Badge variant="received">
-                                    {equipment.brand_type.name}
+                                    {equipment.brand_types.name}
                                 </Badge>
                             </div>
                             <div>

@@ -259,3 +259,99 @@ export const sampleCategories = [
     { id: 10, name: "Metal Sample" },
 ];
 
+export const sampleSertificates = [
+    {
+        id: 1, // Untuk key React
+        name: "Sertifikat Kalibrasi Timbangan",
+        analyst_id: "Sari Wulandari",
+        certificate_id: "KAL-001/X/2025",
+        tanggal_terbit: "10 Jan 2025",
+        tanggal_kadaluarsa: "10 Jan 2026",
+    },
+    {
+        id: 2,
+        name: "Pelatihan Kromatografi Gas",
+        analyst_id: "Andi Pratam",
+        certificate_id: "GAS-002/XI/2024",
+        tanggal_terbit: "15 Nov 2024",
+        tanggal_kadaluarsa: "15 Nov 2027",
+    },
+    {
+        id: 3,
+        name: "Sertifikat Uji Mikrobiologi",
+        analyst_id: "Rina Kusuma",
+        certificate_id: "MIK-003/V/2025",
+        tanggal_terbit: "20 Mei 2025",
+        tanggal_kadaluarsa: "20 Mei 2026",
+    },
+    {
+        id: 4,
+        name: "Sertifikat Keamanan Pangan (ISO 22000)",
+        analyst_id: "Dedi Santoso",
+        certificate_id: "ISO-22000/II/2025",
+        tanggal_terbit: "05 Feb 2025",
+        tanggal_kadaluarsa: "05 Feb 2028",
+    },
+    {
+        id: 5,
+        name: "Kalibrasi pH Meter",
+        analyst_id: "Sari Wulandari",
+        certificate_id: "KAL-004/VI/2025",
+        tanggal_terbit: "01 Jun 2025",
+        tanggal_kadaluarsa: "01 Jun 2026",
+    },
+    {
+        id: 6,
+        name: "Pelatihan Pengujian Organoleptik",
+        analyst_id: "Andi Pratam",
+        certificate_id: "ORG-005/III/2025",
+        tanggal_terbit: "10 Mar 2025",
+        tanggal_kadaluarsa: "10 Mar 2028",
+    },
+];
+
+export const SampleTraining = [
+    {
+      id: 1,
+      name: "Pelatihan Kalibrasi Alat Ukur",
+      provider: "Lembaga Sertifikasi Profesi (LSP) Y",
+      date: "2025-10-15",
+      result: "Lulus",
+    },
+    {
+      id: 2,
+      name: "Audit Internal ISO 17025",
+      provider: "Kuncoro Training Center",
+      date: "2025-09-22",
+      result: "Sertifikasi",
+    },
+    {
+      id: 3,
+      name: "Pelatihan K3 Laboratorium",
+      provider: "Universitas Gadjah Mada",
+      date: "2025-07-01",
+      result: "Lulus",
+    },
+    {
+      id: 4,
+      name: "Metode Uji Mikrobiologi Pangan",
+      provider: "Balai Besar POM",
+      date: "2025-05-18",
+      result: "Sertifikasi",
+    },
+    {
+      id: 5,
+      name: "Validasi Metode Uji",
+      provider: "Kuncoro Training Center",
+      date: "2025-03-30",
+      result: "Lulus",
+    },
+    {
+      id: 6,
+      name: "Dasar-Dasar Kromatografi Gas",
+      provider: "Lembaga Ilmu Pengetahuan A",
+      date: "2025-02-11",
+      result: "Partisipasi",
+    },
+  ];
+

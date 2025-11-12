@@ -32,13 +32,13 @@ export default function AnalystTeamCard({ analysts }) {
                                     </div>
                                     <div className="flex-1">
                                         <h4 className="font-bold text-primary-hijauTua mb-1">
-                                            {analyst.user.name}
+                                            {analyst.users.name}
                                         </h4>
                                         <p className="text-sm text-slate-600 font-medium">
                                             {analyst.name}
                                         </p>
                                         <p className="text-xs text-slate-500 mt-1">
-                                            {analyst.user.email}
+                                            {analyst.users.email}
                                         </p>
                                     </div>
                                 </div>

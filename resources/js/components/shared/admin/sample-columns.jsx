@@ -1,22 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import ActionColumn from "../tabel/action-column";
-
-const formVariantMap = {
-    solid: "warning",
-    liquid: "info",
-    gas: "success",
-};
-
-const conditionVariantMap = {
-    good: "success",
-    damaged: "warning",
-    expired: "error",
-};
-
-const temperatureVariantMap = {
-    temperature: "warning",
-    time: "info",
-};
+import { getConditionTypeVariant, getFormTypeVariant, getTemperatureTypeVariant } from "@/utils/statusUtils";
 
 export const getSamplesColumns = () => [
     { accessorKey: "id", header: "ID" },
@@ -29,7 +13,7 @@ export const getSamplesColumns = () => [
             const value = row.form;
             return (
                 <Badge
-                    variant={formVariantMap[value] || "outline"}
+                    variant={getFormTypeVariant(value) || "outline"}
                     className="capitalize"
                 >
                     {value}
@@ -46,7 +30,7 @@ export const getSamplesColumns = () => [
             const value = row.condition;
             return (
                 <Badge
-                    variant={conditionVariantMap[value] || "outline"}
+                    variant={getConditionTypeVariant(value) || "outline"}
                     className="capitalize"
                 >
                     {value}
@@ -61,7 +45,7 @@ export const getSamplesColumns = () => [
             const value = row.temperature;
             return (
                 <Badge
-                    variant={temperatureVariantMap[value] || "outline"}
+                    variant={getTemperatureTypeVariant(value) || "outline"}
                     className="capitalize"
                 >
                     {value}

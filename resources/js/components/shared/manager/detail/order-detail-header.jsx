@@ -13,7 +13,7 @@ import {
     getStatusLabel,
     getOrderTypeVariant,
     getOrderStatusVariant,
-} from "@/utils/statusHelpers";
+} from "@/utils/statusUtils";
 import { formatDate } from "@/utils/formatters";
 
 export default function OrderDetailHeader({ order, canValidate, onValidate, onInvalidate }) {
@@ -58,7 +58,7 @@ export default function OrderDetailHeader({ order, canValidate, onValidate, onIn
                         <span>
                             Estimasi Selesai:{" "}
                             <span className="font-semibold text-primary-hijauTua">
-                                {formatDate(order.estimated_date)}
+                                {formatDate(order.estimate_date)}
                             </span>
                         </span>
                     </div>

@@ -3,7 +3,10 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
 import { router } from "@inertiajs/react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { orders } from "@/data/manager/detail";
+import { useAuth } from "@/hooks/useAuth";
+import Loading from "@/components/ui/loading";
+import { useOrders } from "@/hooks/useOrders";
+import { adminService } from "@/services/adminService";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -15,20 +18,48 @@ const filterData = [
     { value: "received", label: "Received" },
 ];
 
-export default function AdminOrdersPage({ auth, ordersData }) {
+export default function AdminOrdersPage() {
+    const { user, loading: authLoading } = useAuth();
+    const { orders, isLoading, error } = useOrders(adminService, "admin");
+    console.log("order", orders);
+
     const handleShowDetail = (data) => {
-        router.visit(route("admin.orders.detail", data.id));
+        router.visit(route("admin.order.show", data.id));
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = ordersData || orders;
+    const currentUser = user || { name: "Admin", role: "Admin" };
 
-    const columns = useMemo(() => getOrdersColumns({ onShowDetail: handleShowDetail }), []);
+    const columns = useMemo(
+        () => getOrdersColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
+
+    if (isLoading || authLoading) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
-        <DashboardLayout title="Manajemen Orderan" user={currentUser} header="Manajemen Orderan">
+        <DashboardLayout
+            title="Manajemen Orderan"
+            user={currentUser}
+            header="Manajemen Orderan"
+        >
             <ManagedDataTable
-                data={parameters}
+                data={orders}
                 columns={columns}
                 showFilter={true}
                 showCreate={false}
