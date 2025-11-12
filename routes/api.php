@@ -13,6 +13,8 @@ use App\Http\Controllers\API\V1\Admin\TestMethodsController;
 use App\Http\Controllers\API\V1\Admin\TrainingController;
 use App\Http\Controllers\API\V1\Admin\UnitValueController;
 use App\Http\Controllers\API\V1\Admin\UserController;
+use App\Http\Controllers\API\V1\Admin\SupplierController;
+use App\Http\Controllers\API\V1\Admin\OrdersController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\API\V1\Staff\ClientController;
 use App\Http\Controllers\API\V1\Staff\OrderController;
@@ -24,7 +26,7 @@ use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
 use League\CommonMark\Reference\Reference;
 
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v1')->group(function () {
 
     Route::get('/auth/user', [AuthController::class, 'user']);
 
@@ -37,7 +39,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::get('/', [DashboardController::class, 'index']);
 
             Route::apiResource('users', UserController::class);
-            // Route::apiResource('orders', AdminApiOrder::class)->except(['index', 'show']);
+             Route::apiResource('orders', OrdersController::class)->only(['index']);
             // Route::apiResource('activities', AdminApiActivity::class);
 
             // Tools
