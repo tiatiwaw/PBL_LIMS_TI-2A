@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { adminService } from "@/services/adminService";
 
-export const useOrder = (id) => {
+export const useOrder = (id, service) => {
     const {
         data: order,
         isLoading: isLoadingOrder,
@@ -10,7 +9,7 @@ export const useOrder = (id) => {
     } = useQuery({
         queryKey: ["order", id],
         enabled: !!id,
-        queryFn: () => adminService.orders.getById(id),
+        queryFn: () => service.orders.getById(id),
     });
 
     return {

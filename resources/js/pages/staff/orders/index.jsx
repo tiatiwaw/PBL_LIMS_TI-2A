@@ -8,6 +8,7 @@ import { CheckSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useOrders } from "@/hooks/useOrders";
 import Loading from "@/components/ui/loading";
+import { staffService } from "@/services/staffService";
 
 export default function OrdersPage() {
     const [step, setStep] = useState(1);
@@ -24,7 +25,7 @@ export default function OrdersPage() {
         error,
         createOrder,
         createSample,
-    } = useOrders();
+    } = useOrders(staffService, "staff");
 
     const [data, setData] = useState({
         // Step 1 data

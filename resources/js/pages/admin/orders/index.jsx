@@ -6,6 +6,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { useAuth } from "@/hooks/useAuth";
 import Loading from "@/components/ui/loading";
 import { useOrders } from "@/hooks/useOrders";
+import { adminService } from "@/services/adminService";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -19,8 +20,8 @@ const filterData = [
 
 export default function AdminOrdersPage() {
     const { user, loading: authLoading } = useAuth();
-    const { orders, isLoadingOrders, errorOrders } = useOrders();
-    console.log(orders);
+    const { orders, isLoading, error } = useOrders(adminService, "admin");
+    console.log("order", orders);
 
     const handleShowDetail = (data) => {
         router.visit(route("admin.order.show", data.id));
@@ -28,9 +29,12 @@ export default function AdminOrdersPage() {
 
     const currentUser = user || { name: "Admin", role: "Admin" };
 
-    const columns = useMemo(() => getOrdersColumns({ onShowDetail: handleShowDetail }), []);
+    const columns = useMemo(
+        () => getOrdersColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
-    if (isLoadingOrders || authLoading) {
+    if (isLoading || authLoading) {
         return (
             <DashboardLayout title="Dashboard Admin" user={currentUser}>
                 <Loading />
@@ -38,18 +42,22 @@ export default function AdminOrdersPage() {
         );
     }
 
-    if (errorOrders) {
+    if (error) {
         return (
             <DashboardLayout title="Dashboard Admin" user={currentUser}>
                 <div className="text-center text-red-500 py-8">
-                    {errorOrders.message || "Terjadi kesalahan saat memuat data"}
+                    {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
             </DashboardLayout>
         );
     }
 
     return (
-        <DashboardLayout title="Manajemen Orderan" user={currentUser} header="Manajemen Orderan">
+        <DashboardLayout
+            title="Manajemen Orderan"
+            user={currentUser}
+            header="Manajemen Orderan"
+        >
             <ManagedDataTable
                 data={orders}
                 columns={columns}

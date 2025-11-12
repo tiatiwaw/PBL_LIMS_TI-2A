@@ -38,7 +38,7 @@ class UserRoleSeeder extends Seeder
         $otherRoles = ['client', 'staff', 'analyst', 'supervisor', 'manager'];
 
         foreach ($otherRoles as $role) {
-            $users = User::factory(10)->create(['role' => $role]);
+            $users = User::factory(5)->create(['role' => $role]);
 
             foreach ($users as $user) {
                 $user->assignRole($role);

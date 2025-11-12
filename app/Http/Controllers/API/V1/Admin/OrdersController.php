@@ -29,7 +29,7 @@ class OrdersController extends Controller
             }
         ])->get();
 
-        return response()->json($orders);
+        return response()->json(['orders' => $orders]);
     }
 
     public function show(string $id)

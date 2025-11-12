@@ -5,13 +5,14 @@ import Loading from "@/components/ui/loading";
 import { useAuth } from "@/hooks/useAuth";
 import { useOrder } from "@/hooks/useOrder";
 import { usePage } from "@inertiajs/react";
+import { adminService } from "@/services/adminService";
 
 export default function DetailOrder() {
     const { props } = usePage()
     const { id } = props
 
     const { user, loading: authLoading } = useAuth();
-    const { order, isLoadingOrder, errorOrder } = useOrder(id);
+    const { order, isLoadingOrder, errorOrder } = useOrder(id, adminService);
 
     const [selectedSampleId, setSelectedSampleId] = useState(null);
 

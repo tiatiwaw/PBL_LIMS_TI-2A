@@ -1,32 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { staffService } from "@/services/staffService";
-import { adminService } from "@/services/adminService";
 
-export const useOrders = () => {
+export const useOrders = (service, role) => {
+    const isEnabled = !!service && !!role;
     const queryClient = useQueryClient();
 
-    const {
-        data: data,
-        isLoading,
-        error,
-        refetch,
-    } = useQuery({
-        queryKey: ["orders"],
-        queryFn: staffService.orders.getAll,
+    const { data, isLoading, error, refetch } = useQuery({
+        queryKey: ["orders", role],
+        queryFn: service.orders.getAll,
+        enabled: isEnabled,
     });
 
-    const {
-        data: orders,
-        isLoading: isLoadingOrders,
-        error: errorOrders,
-        refetch: refetchOrders,
-    } = useQuery({
-        queryKey: ["orders"],
-        queryFn: adminService.orders.getAll,
-    });
-
-    const { clients, methods, samples, categories, orderNumber } = data || {};
+    const { orders, clients, methods, samples, categories, orderNumber } =
+        data || {};
 
     const createOrder = useMutation({
         mutationFn: staffService.orders.create,
@@ -48,9 +35,6 @@ export const useOrders = () => {
 
     return {
         orders,
-        isLoadingOrders,
-        errorOrders,
-        refetchOrders,
         clients,
         methods,
         samples,
