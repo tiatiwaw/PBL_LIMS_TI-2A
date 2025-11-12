@@ -186,20 +186,16 @@ Route::controller(ClientController::class)
     ->name('client.')
     ->group(function () {
         Route::get('/', 'index')->name('index');
-
-        // Orders
+        Route::get('/profile', 'profile')->name('profile');
+        Route::get('/history', 'history')->name('history');
+        
+        // Orders - sesuaikan dengan API structure
         Route::prefix('orders')
             ->name('orders.')
             ->group(function () {
-                Route::get('/', 'orders')->name('index');
-                // Route::inertia('/detail/{id}', 'client/detail/index')->name('detail');
+                Route::get('/{id}', 'orderDetail')->name('show');
+                Route::get('/{id}/status', 'orderStatus')->name('status');
             });
-
-        // History
-        Route::get('/history', 'history')->name('history');
-
-        // Profile
-        Route::get('/profile', 'profile')->name('profile');
     });
 
 require __DIR__ . '/auth.php';

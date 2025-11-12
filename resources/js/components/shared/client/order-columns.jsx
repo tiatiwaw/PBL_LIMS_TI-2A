@@ -4,19 +4,14 @@ import { Link } from '@inertiajs/react';
 import { FileText, History } from "lucide-react";
 
 const statusVariantMap = {
-    Completed: "success",
-    "In Progress": "warning",
-    Pending: "info",
-    Disapproved: "error",
-    Approved: "approved",
-    Received: "received",
+    completed: "success",
+    in_progress: "warning",
+    pending: "info",
+    disapproved: "error",
+    approved: "approved",
+    received: "received",
 };
 
-const tipeVariantMap = {
-    Eksternal: "warning",
-    Internal: "info",
-    Urgent: "error",
-};
 
 export const getOrdersColumns = () => [
     { accessorKey: "no", header: "No." },
@@ -40,6 +35,13 @@ export const getOrdersColumns = () => [
         header: "Aksi",
         cell: ({ row }) => (
             <div className="flex gap-2">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onShowHistory(row)}
+                >
+                    History
+                </Button>
                 <Button
                     variant="outline"
                     size="sm"
