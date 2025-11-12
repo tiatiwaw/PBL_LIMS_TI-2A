@@ -16,30 +16,17 @@ class DatabaseSeeder extends Seeder
                 $this->call([
                         UserRoleSeeder::class,
                         ClientSeeder::class,
-<<<<<<< HEAD
                         // AnalystSeeder::class,
-=======
-                        OrderSeeder::class,
->>>>>>> a15a978d4845461964e5e26b4c0f5d32ce26f2b2
                 ]);
 
                 // // Master Data Independen
                 $this->call([
-<<<<<<< HEAD
                         // BrandTypeSeeder::class,
                         // GradeSeeder::class,
                         // SupplierSeeder::class,
                         SampleCategorySeeder::class,
                         // UnitValueSeeder::class,
                         // ReferenceStandardSeeder::class,
-=======
-                            BrandTypeSeeder::class,
-                            GradeSeeder::class,
-                            SupplierSeeder::class,
-                        SampleCategorySeeder::class,
-                            UnitValueSeeder::class,
-                            ReferenceStandardSeeder::class,
->>>>>>> a15a978d4845461964e5e26b4c0f5d32ce26f2b2
                         AnalysesMethodSeeder::class,
                         SampleSeeder::class,
                 ]);
