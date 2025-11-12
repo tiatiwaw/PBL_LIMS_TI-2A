@@ -39,7 +39,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/', [DashboardController::class, 'index']);
 
             Route::apiResource('users', UserController::class);
-             Route::apiResource('orders', OrdersController::class)->only(['index']);
+            Route::apiResource('orders', OrdersController::class)->only(['index']);
             // Route::apiResource('activities', AdminApiActivity::class);
 
             // Tools
@@ -56,7 +56,7 @@ Route::prefix('v1')->group(function () {
                 ->group(function () {
                     Route::apiResource('reagents', ReagentController::class);
                     Route::apiResource('grades', GradeController::class);
-                    //     Route::apiResource('suppliers', AdminApiSupplier::class)->except(['index']);
+                    Route::apiResource('suppliers', SupplierController::class);
                 });
 
             // Tests

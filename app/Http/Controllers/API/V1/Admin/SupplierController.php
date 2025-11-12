@@ -21,7 +21,7 @@ class SupplierController extends Controller
             return response()->json($suppliers);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Gagal mengambil data supplier.',
+                'message' => 'Terjadi kesalahan saat mengambil data.',
                 'error'   => $e->getMessage(),
             ], 500);
         }

@@ -2,39 +2,53 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getSuppliersColumns } from "@/components/shared/admin/material-columns";
 import SupplierDetailSheet from "@/components/shared/sheet/supplier-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { suppliers } from "@/data/admin/materials";
+import Loading from "@/components/ui/loading";
+import { useAuth } from "@/hooks/useAuth";
+import { useSuppliers } from "@/hooks/useSupplier";
 import { editSupplierFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
-export default function SuppliersPage({ auth, suppliersData }) {
+export default function SuppliersPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
+
+    const { user, loading: authLoading } = useAuth();
+    const { suppliers, isLoading: suppliersLoading, error: suppliersError, createSupplier, updateSupplier, deleteSupplier } = useSuppliers();
     
     const handleShowDetail = (materials) => {
             setSelectedSupplier(materials);
             setIsOpen(true);
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = suppliersData || suppliers;
+    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const columns = useMemo(() => getSuppliersColumns({ onShowDetail: handleShowDetail }), []);
     
-    const handleCreate = async (formData) => {
-    console.log("Create data:", formData);
-    };
+    const handleCreate = async (formData) => createSupplier.mutateAsync(formData);
 
     const handleEdit = async (id, formData) => {
-        console.log("Edit ID:", id);
-        console.log("Data:", formData);
+        await updateSupplier.mutateAsync({ id, data: formData });
     };
 
-    const handleDelete = async (id) => {
-        console.log("Delete ID:", id);
-        console.log("Data:", formData);
-    };
+    const handleDelete = async (id) => deleteSupplier.mutateAsync(id);
 
+    if (suppliersLoading || authLoading) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <Loading />
+            </DashboardLayout>
+        );
+    }
 
+    if (suppliersError) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <div className="text-center text-red-500 py-8">
+                    {suppliersError.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
         <DashboardLayout
@@ -43,15 +57,12 @@ export default function SuppliersPage({ auth, suppliersData }) {
             header="Manajemen Pemasok Reagent"
         >
             <ManagedDataTable
-                data={parameters}
+                data={suppliers}
                 columns={columns}
                 editFields={editSupplierFields}
                 onCreate={handleCreate}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
-                createUrl="admin.materials.supplier.create"
-                editUrl="admin.materials.supplier.update"
-                deleteUrl="admin.materials.supplier.destroy"
                 editTitle="Edit Pemasok"
                 deleteTitle="Hapus Pemasok"
             />

@@ -2,7 +2,9 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getUsersColumns } from "@/components/shared/admin/user-columns";
 import UserDetailSheet from "@/components/shared/sheet/user-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { users } from "@/data/admin/users";
+import Loading from "@/components/ui/loading";
+import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/hooks/useUser";
 import { editUsersFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
@@ -15,29 +17,57 @@ const filterData = [
     { value: "Manager", label: "Manager" },
 ];
 
-export default function AdminUsersPage({ auth, usersData }) {
+export default function AdminUsersPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+
+    const { user, loading: authLoading } = useAuth();
+    const { users, isLoading, error, createUser, updateUser, deleteUser } = useUser();
 
     const handleShowDetail = (user) => {
         setSelectedUser(user);
         setIsOpen(true);
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = usersData || users;
+    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const columns = useMemo(() => getUsersColumns({ onShowDetail: handleShowDetail }), []);
+
+    const handleCreate = async (formData) => createUser.mutateAsync(formData);
+
+    const handleEdit = async (id, formData) => {
+        await updateUser.mutateAsync({ id, data: formData });
+    };
+
+    const handleDelete = async (id) => deleteUser.mutateAsync(id);
+
+    if (isLoading || authLoading) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
         <DashboardLayout title="Manajemen Pengguna" user={currentUser} header="Manajemen Pengguna">
             <ManagedDataTable
-                data={parameters}
+                data={users}
                 columns={columns}
                 editFields={editUsersFields}
-                createUrl="admin.user.create"
-                editUrl="admin.user.update"
-                deleteUrl="admin.user.destroy"
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
                 showFilter={true}
                 filterColumn="role"
                 filterOptions={filterData}

@@ -7,6 +7,7 @@ import MethodDetailSheet from "@/components/shared/sheet/method-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editMethodFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
+import { useReferences } from "@/hooks/useReference";
 
 export default function MethodsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -14,6 +15,7 @@ export default function MethodsPage() {
 
     const { user, loading: authLoading } = useAuth();
     const { methods, isLoading, error, createMethod, updateMethod, deleteMethod } = useMethods();
+    const { references, isLoading: referenceLoading, error: referenceError } = useReferences();
 
     const handleShowDetail = (tests) => {
         setSelectedMethod(tests);
@@ -59,7 +61,7 @@ export default function MethodsPage() {
             <ManagedDataTable
                 data={methods}
                 columns={columns}
-                editFields={editMethodFields}
+                editFields={editMethodFields(references)}
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}

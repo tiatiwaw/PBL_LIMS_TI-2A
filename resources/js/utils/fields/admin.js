@@ -73,7 +73,7 @@ export const editReagentFields = (dataSupplier, dataGrade) => {
             label: "Pemasok",
             placeholder: "Masukkan pemasok reagen",
             type: "select",
-            initialValuePath: "supplier.id",
+            initialValuePath: "suppliers.id",
             options: dataSupplier
                 ? dataSupplier.map((item) => ({
                       value: item.id,
@@ -86,7 +86,7 @@ export const editReagentFields = (dataSupplier, dataGrade) => {
             label: "Tingkatan",
             placeholder: "Masukkan tingkatan reagen",
             type: "select",
-            initialValuePath: "grade.id",
+            initialValuePath: "grades.id",
             options: dataGrade
                 ? dataGrade.map((item) => ({
                       value: item.id,
@@ -217,7 +217,7 @@ export const editParameterFields = (unitData, referenceData) => {
             options: unitData
                 ? unitData.map((item) => ({
                       value: item.id,
-                      label: item.name,
+                      label: item.value,
                   }))
                 : [],
         },
@@ -225,7 +225,7 @@ export const editParameterFields = (unitData, referenceData) => {
             name: "reference",
             label: "Standar Referensi",
             type: "select",
-            initialValuePath: "references.id",
+            initialValuePath: "reference_standards.id",
             placeholder: "Masukkan standar parameter",
             options: referenceData
                 ? referenceData.map((item) => ({
@@ -275,7 +275,7 @@ export const editMethodFields = (referenceData) => {
             name: "reference",
             label: "Standar Referensi",
             type: "select",
-            initialValuePath: "references.id",
+            initialValuePath: "reference_standards.id",
             placeholder: "Masukkan standar parameter",
             options: referenceData
                 ? referenceData.map((item) => ({

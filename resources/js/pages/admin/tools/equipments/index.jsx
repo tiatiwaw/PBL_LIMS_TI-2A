@@ -16,7 +16,7 @@ const filterData = [
     { value: "Broken", label: "Broken" },
 ];
 
-export default function EquipmentsPage({ auth, toolsData }) {
+export default function EquipmentsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEquipment, setSelectedEquipment] = useState(null);
 

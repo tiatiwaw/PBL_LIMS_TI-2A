@@ -3,7 +3,6 @@ import ActionColumn from "../tabel/action-column";
 export const getReagentsColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "name", header: "Nama" },
-    { accessorKey: "grade", header: "Tingkatan" },
     { accessorKey: "formula", header: "Formula" },
     { accessorKey: "storage_location", header: "Lokasi" },
     {

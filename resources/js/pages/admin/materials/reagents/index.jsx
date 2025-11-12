@@ -54,7 +54,7 @@ export default function ReagentsPage() {
         return (
             <DashboardLayout title="Dashboard Admin" user={currentUser}>
                 <div className="text-center text-red-500 py-8">
-                    {error.message || "Terjadi kesalahan saat memuat data"}
+                    {"Terjadi kesalahan saat memuat data"}
                 </div>
             </DashboardLayout>
         );

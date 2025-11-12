@@ -54,4 +54,12 @@ export const adminService = {
     reagents: serviceMethods("/admin/materials/reagents", {
         useFormData: true,
     }),
+
+    users: serviceMethods("/admin/users", {
+        useFormData: true,
+    }),
+
+    orders: serviceMethods("/admin/orders", {
+        useFormData: false,
+    }),
 };

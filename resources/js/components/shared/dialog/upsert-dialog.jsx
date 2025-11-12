@@ -42,7 +42,7 @@ export default function UpsertDialog({
                     }
 
                     if (initialValue === (field.defaultValue ?? "") || initialValue === "") {
-                        initialValue = data[field.name] ?? initialValue;
+                        initialValue = data[field.name] ?? data[field.value] ?? initialValue;
                     }
                 }
 
