@@ -17,7 +17,7 @@ class UsersController extends Controller
             return response()->json($users, 200);
         } catch (\Throwable $e) {
             return response()->json([
-                'error' => 'Failed to fetch users',
+                'error' => 'Gagal menemukan user',
                 'message' => $e->getMessage(),
             ], 500);
         }
@@ -29,7 +29,7 @@ class UsersController extends Controller
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(['message' => 'User tidak ditemukan'], 404);
         }
 
         // validasi data user
@@ -44,7 +44,7 @@ class UsersController extends Controller
             return response()->json($user, 200);
         } catch (\Throwable $e) {
             return response()->json([
-                'error' => 'Failed to update user',
+                'error' => 'Gagal mengupdate user',
                 'message' => $e->getMessage(),
             ], 500);
         }
