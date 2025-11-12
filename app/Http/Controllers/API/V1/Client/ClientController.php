@@ -27,9 +27,9 @@ class ClientController extends Controller
         // Process table data
         $tableData = $orders->map(function ($order, $index) use ($orders) {
             return [
-                'no_order' => $order->order_number,
-                'judul_analisis' => $order->title,
-                'tanggal_order' => $order->order_date ? Carbon::parse($order->order_date)->format('d/m/Y') : null,
+                'order_number' => $order->order_number,
+                'title' => $order->title,
+                'estimate_date' => $order->estimate_date ? Carbon::parse($order->estimate_date)->format('d/m/Y') : null,
                 'status' => $order->status,
             ];
         });
