@@ -36,7 +36,7 @@ export default function EquipmentCard({ equipments }) {
                             <div>
                                 <p className="text-xs text-slate-500 mb-1">Tipe</p>
                                 <Badge variant="received">
-                                    {equipment.brand_type.name}
+                                    {equipment.brand_types.name}
                                 </Badge>
                             </div>
                             <div>

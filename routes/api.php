@@ -52,8 +52,8 @@ Route::prefix('v1')->group(function () {
                 Route::get('/', [DashboardController::class, 'index']);
 
             Route::apiResource('users', UserController::class);
-            Route::apiResource('orders', OrdersController::class)->only(['index']);
-            // Route::apiResource('activities', AdminApiActivity::class);
+            Route::get('orders', [OrdersController::class, 'index']);
+            Route::get('orders/{id}', [OrdersController::class, 'show']);
 
                 // Tools
                 Route::prefix('tools')

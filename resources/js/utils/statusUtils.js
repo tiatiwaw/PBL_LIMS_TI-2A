@@ -24,14 +24,16 @@ const LABELS = {
     orderType: {
         eksternal: "Eksternal",
         internal: "Internal",
+        regular: "Reguler",
         urgent: "Urgent",
     },
 };
 
 const VARIANTS = {
     orderType: {
-        eksternal: "warning",
-        internal: "info",
+        external: "warning",
+        internal: "success",
+        regular: "info",
         urgent: "error",
     },
     orderStatus: {

@@ -42,7 +42,7 @@ export default function SampleSelector({ samples, selectedSampleId, onSampleChan
                                         {sample.name}
                                     </span>
                                     <Badge variant="success">
-                                        {sample.sample_category.name}
+                                        {sample.sample_categories.name}
                                     </Badge>
                                 </div>
                             </SelectItem>

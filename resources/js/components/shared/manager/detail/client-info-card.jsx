@@ -37,7 +37,7 @@ export default function ClientInfoCard({ client }) {
                             <span>Kontak Person</span>
                         </div>
                         <p className="font-semibold text-primary-hijauTua">
-                            {client.user.name}
+                            {client.users.name}
                         </p>
                     </div>
 
@@ -47,7 +47,7 @@ export default function ClientInfoCard({ client }) {
                             <span>Email</span>
                         </div>
                         <p className="font-semibold text-primary-hijauTua break-all">
-                            {client.user.email}
+                            {client.users.email}
                         </p>
                     </div>
 

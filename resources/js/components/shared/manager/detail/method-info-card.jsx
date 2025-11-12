@@ -37,7 +37,7 @@ export default function MethodInfoCard({ method }) {
                         <span>Referensi</span>
                     </div>
                     <p className="font-bold text-primary-hijauTua">
-                        {method.reference.name}
+                        {method.reference_standards.name}
                     </p>
                 </div>
 

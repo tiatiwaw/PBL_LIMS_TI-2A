@@ -9,6 +9,7 @@ import { useGrades } from "@/hooks/useGrade";
 import { useSuppliers } from "@/hooks/useSupplier";
 import { useReagents } from "@/hooks/useReageants";
 import Loading from "@/components/ui/loading";
+import { create } from "node_modules/axios/index.cjs";
 
 export default function ReagentsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -22,25 +23,19 @@ export default function ReagentsPage() {
     const { user, loading: authLoading } = useAuth();
     const { grades, isLoading: gradesLoading, error: gradesError } = useGrades();
     const { suppliers, isLoading: suppliersLoading, error: suppliersError } = useSuppliers();
-    const { reagents, isLoading: regeantsLoading, error: regeantsError } = useReagents();
+    const { reagents, isLoading: regeantsLoading, error: regeantsError, createReagent, updateReagent, deleteReagent } = useReagents();
 
     const currentUser = user || { name: "Admin", role: "Admin" };
 
     const columns = useMemo(() => getReagentsColumns({ onShowDetail: handleShowDetail }), []);
 
-    const handleCreate = async (formData) => {
-        console.log("Create data:", formData);
-    };
+    const handleCreate = async (formData) => createReagent.mutateAsync(formData);
 
     const handleEdit = async (id, formData) => {
-        console.log("Edit ID:", id);
-        console.log("Data:", formData);
+        await updateReagent.mutateAsync({ id, data: formData });
     };
 
-    const handleDelete = async (id) => {
-        console.log("Delete ID:", id);
-        console.log("Data:", formData);
-    };
+    const handleDelete = async (id) => deleteReagent.mutateAsync(id);
 
     if (gradesLoading || suppliersLoading || regeantsLoading || authLoading) {
         return (

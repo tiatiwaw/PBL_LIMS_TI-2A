@@ -32,7 +32,7 @@ export default function ReagentCard({ reagents }) {
                                 <div>
                                     <p className="text-xs text-slate-500 mb-1">Grade</p>
                                     <Badge className="bg-amber-100/70 border border-amber-500 text-amber-800 hover:bg-amber-100">
-                                        Grade {reagent.grade.name}
+                                        Grade {reagent.grades.name}
                                     </Badge>
                                 </div>
                                 <div>
@@ -47,25 +47,25 @@ export default function ReagentCard({ reagents }) {
                             <div className="pt-2 border-t border-slate-200">
                                 <p className="text-xs text-slate-500 mb-2">Supplier</p>
                                 <div className="bg-white rounded-lg p-3 space-y-2">
-                                    <p className="font-bold text-primary-hijauTua">{reagent.supplier.name}</p>
+                                    <p className="font-bold text-primary-hijauTua">{reagent.suppliers.name}</p>
                                     <div className="grid grid-cols-2 gap-2 text-sm">
                                         <div>
                                             <p className="text-xs text-slate-500">Kontak</p>
                                             <p className="font-semibold text-primary-hijauTua">
-                                                {reagent.supplier.contact_person}
+                                                {reagent.suppliers.contact_person}
                                             </p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-slate-500">Telepon</p>
                                             <p className="font-semibold text-primary-hijauTua">
-                                                {reagent.supplier.phone_number}
+                                                {reagent.suppliers.phone_number}
                                             </p>
                                         </div>
                                     </div>
                                     <div>
                                         <p className="text-xs text-slate-500">Alamat</p>
                                         <p className="text-sm text-slate-600">
-                                            {reagent.supplier.address}
+                                            {reagent.suppliers.address}
                                         </p>
                                     </div>
                                 </div>

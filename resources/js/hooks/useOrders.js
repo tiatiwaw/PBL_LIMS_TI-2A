@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { staffService } from "@/services/staffService";
+import { adminService } from "@/services/adminService";
 
 export const useOrders = () => {
     const queryClient = useQueryClient();
@@ -13,6 +14,16 @@ export const useOrders = () => {
     } = useQuery({
         queryKey: ["orders"],
         queryFn: staffService.orders.getAll,
+    });
+
+    const {
+        data: orders,
+        isLoading: isLoadingOrders,
+        error: errorOrders,
+        refetch: refetchOrders,
+    } = useQuery({
+        queryKey: ["orders"],
+        queryFn: adminService.orders.getAll,
     });
 
     const { clients, methods, samples, categories, orderNumber } = data || {};
@@ -36,6 +47,10 @@ export const useOrders = () => {
     });
 
     return {
+        orders,
+        isLoadingOrders,
+        errorOrders,
+        refetchOrders,
         clients,
         methods,
         samples,

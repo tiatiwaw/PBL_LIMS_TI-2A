@@ -88,8 +88,9 @@ class AdminController extends Controller
 
     public function showOrder($id)
     {
-        return inertia('admin/orders/detail', [
+        return inertia('admin/detail/index', [
             'canValidate' => false,
+            'id' => $id
         ]);
     }
 

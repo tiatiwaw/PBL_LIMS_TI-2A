@@ -37,7 +37,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <FileText className="w-4 h-4" />
                             <span>Kategori</span>
                         </div>
-                        <Badge variant="success">
+                        <Badge variant="success" className="capitalize">
                             {parameter.category}
                         </Badge>
                     </div>
@@ -48,7 +48,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <span>Detection Limit</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua">
-                            {parameter.detectionLimit}
+                            {parameter.detection_limit}
                         </p>
                     </div>
 
@@ -68,7 +68,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <span>Referensi</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua">
-                            {parameter.reference.name}
+                            {parameter.reference_standards.name}
                         </p>
                     </div>
 
@@ -78,7 +78,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <span>Satuan</span>
                         </div>
                         <Badge variant="info">
-                            {parameter.unit.value}
+                            {parameter.unit_values.value}
                         </Badge>
                     </div>
                 </div>

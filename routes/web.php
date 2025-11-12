@@ -69,12 +69,13 @@ Route::controller(AdminController::class)
             Route::get('/training', 'training')->name('training');
         });
 
-    Route::prefix('analyst')->name('analyst.')->group(function () {
-        Route::get('/trainings', 'trainings')->name('trainings');
-        Route::get('/sertificates', 'sertificates')->name('sertificates');
-    });
+        Route::prefix('analyst')->name('analyst.')->group(function () {
+            Route::get('/trainings', 'trainings')->name('trainings');
+            Route::get('/sertificates', 'sertificates')->name('sertificates');
+        });
 
         Route::get('/orders',  'orders')->name('orders');
+        Route::get('/orders/{id}',  'showOrder')->name('order.show');
         Route::get('/activities',  'activities')->name('activities');
         Route::get('/users',  'users')->name('users');
     });
@@ -195,7 +196,7 @@ Route::controller(ClientController::class)
         Route::get('/', 'index')->name('index');
         Route::get('/profile', 'profile')->name('profile');
         Route::get('/history', 'history')->name('history');
-        
+
         // Orders - sesuaikan dengan API structure
         Route::prefix('orders')
             ->name('orders.')
