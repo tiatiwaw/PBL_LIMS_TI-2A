@@ -10,6 +10,7 @@ use App\Http\Controllers\API\V1\Client\ClientController as ClientClientControlle
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 // use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
+use App\Http\Controllers\API\V1\OrderController as V1OrderController;
 use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,9 @@ Route::prefix('v1')->group(function () {
 
     Route::prefix('auth')->name('api.auth.')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->name('login');
+    });
+    Route::prefix('umum')->name('api.umum.')->group(function () {
+        Route::get('/orders', [V1OrderController::class, 'index'])->name('index');
     });
 
     Route::middleware('auth:sanctum')->group(function () {
