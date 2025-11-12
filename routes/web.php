@@ -76,7 +76,6 @@ Route::controller(AdminController::class)
 
         Route::get('/orders',  'orders')->name('orders');
         Route::get('/orders/{id}',  'showOrder')->name('order.show');
-        Route::get('/activities',  'activities')->name('activities');
         Route::get('/users',  'users')->name('users');
     });
 

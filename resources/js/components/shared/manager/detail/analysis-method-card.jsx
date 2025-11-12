@@ -23,7 +23,7 @@ export default function AnalysisMethodCard({ methods, reportIssuedAt, reportFile
                             <div className="flex-1">
                                 <p className="text-xs text-slate-500 mb-2">Nama Metode</p>
                                 <p className="font-bold text-primary-hijauTua text-lg">
-                                    {method.name}
+                                    {method.analyses_method}
                                 </p>
                             </div>
                         </div>

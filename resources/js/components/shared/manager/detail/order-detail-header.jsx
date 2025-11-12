@@ -71,7 +71,7 @@ export default function OrderDetailHeader({ order, canValidate, onValidate, onIn
                         <span>Download</span>
                         <ArrowDown className="w-5 h-5" />
                     </Button>
-                    <Button className="flex items-center gap-2.5 py-2.5 bg-white text-primary-hijauTua font-semibold border border-primtext-primary-hijauTua rounded-lg shadow-sm hover:bg-primary-hijauTua hover:text-white transition-all">
+                    <Button onClick={() => window.history.back()} className="flex items-center gap-2.5 py-2.5 bg-white text-primary-hijauTua font-semibold border border-primtext-primary-hijauTua rounded-lg shadow-sm hover:bg-primary-hijauTua hover:text-white transition-all">
                         <ArrowLeft className="w-5 h-5" />
                         <span>Kembali</span>
                     </Button>

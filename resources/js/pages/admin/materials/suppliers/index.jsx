@@ -34,7 +34,7 @@ export default function SuppliersPage() {
 
     if (suppliersLoading || authLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -42,7 +42,7 @@ export default function SuppliersPage() {
 
     if (suppliersError) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {suppliersError.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -63,6 +63,7 @@ export default function SuppliersPage() {
                 onCreate={handleCreate}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
+                createTitle="Tambah Pemasok"
                 editTitle="Edit Pemasok"
                 deleteTitle="Hapus Pemasok"
             />

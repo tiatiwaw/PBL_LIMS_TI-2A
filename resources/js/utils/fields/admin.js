@@ -11,7 +11,8 @@ export const editEquipmentFields = (data) => {
             type: "select",
             placeholder: "Masukkan brand / tipe alat",
             initialValuePath: "brand_types.id",
-            options: data.map((item) => ({ value: item.id, label: item.name })),
+            options: data ? data.map((item) => ({ value: item.id, label: item.name })) : [],
+            savePath: "brand_type_id",
         },
         {
             name: "serial_number",
@@ -80,6 +81,7 @@ export const editReagentFields = (dataSupplier, dataGrade) => {
                       label: item.name,
                   }))
                 : [],
+            savePath: "supplier_id",
         },
         {
             name: "grade",
@@ -93,6 +95,7 @@ export const editReagentFields = (dataSupplier, dataGrade) => {
                       label: item.name,
                   }))
                 : [],
+            savePath: "grade_id",
         },
         {
             name: "formula",
@@ -220,6 +223,7 @@ export const editParameterFields = (unitData, referenceData) => {
                       label: item.value,
                   }))
                 : [],
+            savePath: "unit_value_id",
         },
         {
             name: "reference",
@@ -233,6 +237,7 @@ export const editParameterFields = (unitData, referenceData) => {
                       label: item.name,
                   }))
                 : [],
+            savePath: "reference_standard_id",
         },
         {
             name: "category",
@@ -283,6 +288,7 @@ export const editMethodFields = (referenceData) => {
                       label: item.name,
                   }))
                 : [],
+            savePath: "reference_standard_id",
         },
         {
             name: "applicable_parameter",

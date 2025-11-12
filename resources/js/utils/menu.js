@@ -18,7 +18,6 @@ import {
     TestTube2,
     ChartArea,
     ListCheck,
-    Inbox,
     ScrollText,
     GraduationCap,
     Award,
@@ -99,7 +98,7 @@ const MENU_CONFIG = {
                     href: "/admin/materials/reagents",
                 },
                 {
-                    name: "Grade",
+                    name: "Tingkat Reagen",
                     icon: Scale,
                     href: "/admin/materials/grades",
                 },
@@ -161,11 +160,6 @@ const MENU_CONFIG = {
             name: "Order",
             icon: ShoppingCart,
             href: "/admin/orders",
-        },
-        {
-            name: "Aktivitas Log",
-            icon: TrendingUp,
-            href: "/admin/activities",
         },
         {
             name: "Pengguna",

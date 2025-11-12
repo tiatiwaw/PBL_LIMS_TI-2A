@@ -39,7 +39,7 @@ export default function ReagentsPage() {
 
     if (gradesLoading || suppliersLoading || regeantsLoading || authLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -47,7 +47,7 @@ export default function ReagentsPage() {
 
     if (regeantsError || suppliersError || gradesError) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {"Terjadi kesalahan saat memuat data"}
                 </div>
@@ -67,10 +67,8 @@ export default function ReagentsPage() {
                 editFields={editReagentFields(suppliers, grades)}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                createUrl="admin.materials.reagent.create"
-                editUrl="admin.materials.reagent.update"
                 onCreate={handleCreate}
-                deleteUrl="admin.materials.reagent.destroy"
+                createTitle="Tambah Reagent"
                 editTitle="Edit Reagent"
                 deleteTitle="Hapus Reagent"
             />

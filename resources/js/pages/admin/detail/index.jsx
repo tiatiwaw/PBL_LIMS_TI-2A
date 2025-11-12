@@ -25,7 +25,7 @@ export default function DetailOrder() {
 
     if (isLoadingOrder || authLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -37,7 +37,7 @@ export default function DetailOrder() {
 
     if (errorOrder) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {errorOrder.message || "Terjadi kesalahan saat memuat data"}
                 </div>

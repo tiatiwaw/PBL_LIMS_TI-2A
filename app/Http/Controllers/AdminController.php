@@ -94,11 +94,6 @@ class AdminController extends Controller
         ]);
     }
 
-    public function activities()
-    {
-        return Inertia::render('admin/log-activity/index');
-    }
-
     public function users()
     {
         return Inertia::render('admin/users/index');

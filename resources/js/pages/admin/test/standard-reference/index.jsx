@@ -35,7 +35,7 @@ export default function StandardsPage() {
 
     if (isLoading || authLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -43,7 +43,7 @@ export default function StandardsPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -64,8 +64,9 @@ export default function StandardsPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                editTitle="Edit Pengguna"
-                deleteTitle="Hapus Pengguna"
+                createTitle="Tambah Standar Referensi"
+                editTitle="Edit Standar Referensi"
+                deleteTitle="Hapus Standar Referensi"
             />
             <ReferenceDetailSheet data={selectedReference} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>

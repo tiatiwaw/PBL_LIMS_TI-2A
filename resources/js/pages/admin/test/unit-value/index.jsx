@@ -35,7 +35,7 @@ export default function UnitsPage() {
 
     if (isLoading || authLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -43,7 +43,7 @@ export default function UnitsPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -64,6 +64,7 @@ export default function UnitsPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                createTitle="Tambah Nilai Satuan"
                 editTitle="Edit Nilai Satuan"
                 deleteTitle="Hapus Nilai Satuan"
             />

@@ -29,14 +29,14 @@ export default function SampleSelector({ samples, selectedSampleId, onSampleChan
                         <SelectValue placeholder="Pilih sample..." />
                     </SelectTrigger>
                     <SelectContent>
-                        {samples.map((sample) => (
+                        {samples.map((sample, index) => (
                             <SelectItem
                                 key={sample.id}
                                 value={sample.id.toString()}
                             >
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-full bg-primary-hijauTua flex items-center justify-center text-white font-semibold text-sm">
-                                        {sample.id}
+                                        {index + 1}
                                     </div>
                                     <span className="font-medium">
                                         {sample.name}

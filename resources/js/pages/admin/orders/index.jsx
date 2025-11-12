@@ -20,7 +20,6 @@ const filterData = [
 export default function AdminOrdersPage() {
     const { user, loading: authLoading } = useAuth();
     const { orders, isLoadingOrders, errorOrders } = useOrders();
-    console.log(orders);
 
     const handleShowDetail = (data) => {
         router.visit(route("admin.order.show", data.id));
@@ -32,7 +31,7 @@ export default function AdminOrdersPage() {
 
     if (isLoadingOrders || authLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -40,7 +39,7 @@ export default function AdminOrdersPage() {
 
     if (errorOrders) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {errorOrders.message || "Terjadi kesalahan saat memuat data"}
                 </div>

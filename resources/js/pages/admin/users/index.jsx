@@ -43,7 +43,7 @@ export default function AdminUsersPage() {
 
     if (isLoading || authLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -51,7 +51,7 @@ export default function AdminUsersPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -71,6 +71,7 @@ export default function AdminUsersPage() {
                 showFilter={true}
                 filterColumn="role"
                 filterOptions={filterData}
+                createTitle="Tambah Pengguna"
                 editTitle="Edit Pengguna"
                 deleteTitle="Hapus Pengguna"
             />

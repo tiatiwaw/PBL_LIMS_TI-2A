@@ -6,15 +6,14 @@ import Loading from "@/components/ui/loading";
 import { useAuth } from "@/hooks/useAuth";
 import { useBrands } from "@/hooks/useBrands";
 import { useEquipments } from "@/hooks/useEquipments";
-import { useEquipments } from "@/hooks/useEquipments";
 import { editEquipmentFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
 const filterData = [
     { value: "all", label: "All Status" },
-    { value: "Active", label: "Active" },
-    { value: "Maintenance", label: "Maintenance" },
-    { value: "Broken", label: "Broken" },
+    { value: "active", label: "Active" },
+    { value: "maintenance", label: "Maintenance" },
+    { value: "broken", label: "Broken" },
 ];
 
 export default function EquipmentsPage() {
@@ -22,7 +21,7 @@ export default function EquipmentsPage() {
     const [selectedEquipment, setSelectedEquipment] = useState(null);
 
     const { brands, isLoading: brandLoading, error: brandError } = useBrands();
-    const { equipments, isLoading: equipmentLoading, error: equipmentError, createBrand, updateBrand, deleteBrand } = useEquipments();
+    const { equipments, isLoading: equipmentLoading, error: equipmentError, createEquipment, updateEquipment, deleteEquipment } = useEquipments();
     const { user, loading: authLoading } = useAuth();
 
     const handleShowDetail = (equipment) => {
@@ -43,7 +42,7 @@ export default function EquipmentsPage() {
 
     if (brandLoading || equipmentLoading || authLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -51,7 +50,7 @@ export default function EquipmentsPage() {
 
     if (brandError || equipmentError) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {equipmentError.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -72,8 +71,12 @@ export default function EquipmentsPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                editTitle="Edit Equipment"
-                deleteTitle="Hapus Equipment"
+                createTitle="Tambah Data Peralatan"
+                editTitle="Edit Data Peralatan"
+                deleteTitle="Hapus Data Peralatan"
+                showFilter={true}
+                filterColumn="status"
+                filterOptions={filterData}
             />
             <EquipmentDetailSheet data={selectedEquipment} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>

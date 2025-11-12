@@ -15,27 +15,30 @@ export const useEquipments = () => {
         queryFn: adminService.equipments.getAll,
     });
 
-    const createBrand = useMutation({
+    const createEquipment = useMutation({
         mutationFn: adminService.equipments.create,
         onSuccess: () => {
             queryClient.invalidateQueries(["equipments"]);
+            toast.success("Alat berhasil ditambahkan");
         },
         onError: (err) => toast.error(err?.message || "Gagal menambah brand"),
     });
 
-    const updateBrand = useMutation({
+    const updateEquipment = useMutation({
         mutationFn: ({ id, data }) => adminService.equipments.update(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries(["equipments"]);
+            toast.success("Alat berhasil diperbarui");
         },
         onError: (err) =>
             toast.error(err?.message || "Gagal memperbarui brand"),
     });
 
-    const deleteBrand = useMutation({
+    const deleteEquipment = useMutation({
         mutationFn: adminService.equipments.delete,
         onSuccess: () => {
             queryClient.invalidateQueries(["equipments"]);
+            toast.success("Alat berhasil dihapus");
         },
         onError: (err) => toast.error(err?.message || "Gagal menghapus brand"),
     });
@@ -45,8 +48,8 @@ export const useEquipments = () => {
         isLoading,
         error,
         refetch,
-        createBrand,
-        updateBrand,
-        deleteBrand,
+        createEquipment,
+        updateEquipment,
+        deleteEquipment,
     };
 };

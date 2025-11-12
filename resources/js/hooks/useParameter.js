@@ -5,12 +5,12 @@ import { toast } from "sonner";
 export const useParameters = () => {
     const queryClient = useQueryClient();
     const {
-        data: parameters, // Nama datanya
+        data: parameters,
         isLoading,
         error,
         refetch,
     } = useQuery({
-        queryKey: ["parameters"], // Label unik untuk data ini
+        queryKey: ["parameters"],
         queryFn: adminService.parameters.getAll,
         staleTime: 5 * 60 * 1000,
         retry: 1,
@@ -18,9 +18,8 @@ export const useParameters = () => {
 
     const createParameter = useMutation({
         mutationKey: ["createParameter"],
-        mutationFn: adminService.parameters.create, // Memanggil "Pelayan"
+        mutationFn: adminService.parameters.create,
         onSuccess: () => {
-            // Otomatis refresh tabel setelah sukses
             queryClient.invalidateQueries({ queryKey: ["parameters"] });
             toast.success("Parameter berhasil ditambahkan");
         },

@@ -66,9 +66,18 @@ export default function UpsertDialog({
             setIsSubmitting(true);
 
             const dataToSave = { ...formData };
+
             fields.forEach(field => {
-                if (field.type === "date" && dataToSave[field.name] instanceof Date) {
-                    dataToSave[field.name] = dataToSave[field.name].toISOString().split('T')[0];
+                const formFieldName = field.name;
+                const saveKey = field.savePath || formFieldName;
+
+                if (field.type === "date" && dataToSave[formFieldName] instanceof Date) {
+                    dataToSave[formFieldName] = dataToSave[formFieldName].toISOString().split('T')[0];
+                }
+
+                if (saveKey !== formFieldName) {
+                    dataToSave[saveKey] = dataToSave[formFieldName];
+                    delete dataToSave[formFieldName];
                 }
             });
 

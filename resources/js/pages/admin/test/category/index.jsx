@@ -34,7 +34,7 @@ export default function SampleCategoriesPage() {
 
     if (isLoading || authLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -42,7 +42,7 @@ export default function SampleCategoriesPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -63,6 +63,7 @@ export default function SampleCategoriesPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                createTitle="Tambah Kategori Sampel"
                 editTitle="Edit Kategori Sampel"
                 deleteTitle="Hapus Kategori Sampel"
             />
