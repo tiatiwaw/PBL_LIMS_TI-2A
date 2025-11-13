@@ -10,6 +10,7 @@ use App\Http\Controllers\AnalystController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\SupervisorController;
+use Inertia\Inertia;
 
 // Home
 Route::controller(HomeController::class)->group(function () {
@@ -41,42 +42,46 @@ Route::controller(AuthController::class)
 // });
 
 // Admin
-Route::controller(AdminController::class)
-    ->middleware(['auth', 'admin'])
+Route::middleware(['auth', 'admin'])
     ->prefix('admin')
-    ->name('admin.')
+    ->as('admin.')
     ->group(function () {
-        Route::get('/', 'index')->name('index');
+        Route::get('/', fn() => Inertia::render('admin/index'))
+            ->name('index');
 
-        Route::prefix('tools')->name('tools.')->group(function () {
-            Route::get('/equipments', 'equipments')->name('equipments');
-            Route::get('/brands', 'brands')->name('brands');
+        Route::prefix('resources')->as('resources.')->group(function () {
+            Route::inertia('/equipments', 'admin/tools/equipments/index')->name('equipments');
+            Route::inertia('/brands', 'admin/tools/brands/index')->name('brands');
+            Route::inertia('/reagents', 'admin/materials/reagents/index')->name('reagents');
+            Route::inertia('/grades', 'admin/materials/grades/index')->name('grades');
+            Route::inertia('/suppliers', 'admin/materials/suppliers/index')->name('suppliers');
         });
 
-        Route::prefix('materials')->name('materials.')->group(function () {
-            Route::get('/reagents', 'reagents')->name('reagents');
-            Route::get('/grades', 'grades')->name('grades');
-            Route::get('/suppliers', 'suppliers')->name('suppliers');
+        Route::prefix('tests')->as('tests.')->group(function () {
+            Route::inertia('/parameters', 'admin/test/parameter/index')->name('parameters');
+            Route::inertia('/methods', 'admin/test/method/index')->name('methods');
+            Route::inertia('/units', 'admin/test/unit-value/index')->name('units');
+            Route::inertia('/references', 'admin/test/standard-reference/index')->name('references');
+            Route::inertia('/categories', 'admin/test/category/index')->name('categories');
+            Route::inertia('/sertif', 'admin/test/sertif/index')->name('sertif');
+            Route::inertia('/training', 'admin/test/training/index')->name('training');
         });
 
-        Route::prefix('tests')->name('tests.')->group(function () {
-            Route::get('/parameters', 'parameters')->name('parameters');
-            Route::get('/methods', 'methods')->name('methods');
-            Route::get('/units', 'units')->name('units');
-            Route::get('/references', 'references')->name('references');
-            Route::get('/categories', 'categories')->name('categories');
-            Route::get('/sertif', 'sertif')->name('sertif');
-            Route::get('/training', 'training')->name('training');
+        Route::prefix('analyst')->as('analyst.')->group(function () {
+            Route::inertia('/trainings', 'admin/analyst/training/index')->name('trainings');
+            Route::inertia('/sertificates', 'admin/analyst/sertificate/index')->name('sertificates');
         });
 
-        Route::prefix('analyst')->name('analyst.')->group(function () {
-            Route::get('/trainings', 'trainings')->name('trainings');
-            Route::get('/sertificates', 'sertificates')->name('sertificates');
-        });
+        Route::inertia('/orders', 'admin/orders/index')->name('orders');
 
-        Route::get('/orders',  'orders')->name('orders');
-        Route::get('/orders/{id}',  'showOrder')->name('order.show');
-        Route::get('/users',  'users')->name('users');
+        Route::get('/orders/{id}', function ($id) {
+            return Inertia::render('admin/detail/index', [
+                'id' => $id,
+                'canValidate' => false,
+            ]);
+        })->name('order.show');
+
+        Route::inertia('/users', 'admin/users/index')->name('users');
     });
 
 // Manager

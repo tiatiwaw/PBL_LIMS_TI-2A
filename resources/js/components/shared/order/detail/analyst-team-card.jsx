@@ -18,7 +18,7 @@ export default function AnalystTeamCard({ analysts }) {
                     {analysts.map((analyst, index) => (
                         <div
                             key={index}
-                            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-50 to-cyan-50 p-5 border border-slate-200 hover:shadow-xl hover:scale-105 transition-all duration-300"
+                            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-50 to-cyan-50 p-5 border border-slate-200 hover:shadow-xl hover:scale-105 transition-all duration-500"
                         >
                             <div className="space-y-4">
                                 <div className="flex items-center gap-4">

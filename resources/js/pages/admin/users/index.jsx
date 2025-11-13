@@ -10,11 +10,11 @@ import { useMemo, useState } from "react";
 
 const filterData = [
     { value: "all", label: "All Role" },
-    { value: "Client", label: "Client" },
-    { value: "Staff", label: "Staff" },
-    { value: "Analis", label: "Analis" },
-    { value: "Supervisor", label: "Supervisor" },
-    { value: "Manager", label: "Manager" },
+    { value: "client", label: "Client" },
+    { value: "staff", label: "Staff" },
+    { value: "analis", label: "Analis" },
+    { value: "supervisor", label: "Supervisor" },
+    { value: "manager", label: "Manager" },
 ];
 
 export default function AdminUsersPage() {
@@ -33,7 +33,8 @@ export default function AdminUsersPage() {
 
     const columns = useMemo(() => getUsersColumns({ onShowDetail: handleShowDetail }), []);
 
-    const handleCreate = async (formData) => createUser.mutateAsync(formData);
+    // const handleCreate = async (formData) => createUser.mutateAsync(formData);
+    const handleCreate = async (formData) => console.log(formData);
 
     const handleEdit = async (id, formData) => {
         await updateUser.mutateAsync({ id, data: formData });

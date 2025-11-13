@@ -5,11 +5,10 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getUnitsColumns } from "@/components/shared/admin/test-columns";
 import UnitDetailSheet from "@/components/shared/sheet/unit-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { units } from "@/data/admin/tests";
 import { editUnitFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
-export default function UnitsPage() {
+export default function AdminUnitsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
 

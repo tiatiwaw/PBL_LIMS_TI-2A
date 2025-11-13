@@ -3,13 +3,12 @@ import { getGradesColumns } from "@/components/shared/admin/material-columns";
 import GradeDetailSheet from "@/components/shared/sheet/grade-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
-import { grades } from "@/data/admin/materials";
 import { useAuth } from "@/hooks/useAuth";
 import { useGrades } from "@/hooks/useGrade";
 import { editGradeFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
-export default function GradesPage() {
+export default function AdminGradesPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedGrades, setSelectedGrades] = useState(null);
 

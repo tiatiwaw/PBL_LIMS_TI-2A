@@ -12,7 +12,7 @@ import {
     ParameterInfoCard,
     ReagentCard,
     SampleInfoCard,
-} from "@/components/shared/manager/detail";
+} from "@/components/shared/order/detail";
 
 import { useClientDashboard } from "@/hooks/useClientDashboard";
 

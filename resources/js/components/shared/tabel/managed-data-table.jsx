@@ -109,6 +109,8 @@ export default function ManagedDataTable({
                     onEdit={handleOpenEdit}
                     onDelete={handleOpenDelete}
                     meta={meta}
+                    sorting={table.sorting}
+                    setSorting={table.setSorting}
                 />
 
                 <DataTablePagination

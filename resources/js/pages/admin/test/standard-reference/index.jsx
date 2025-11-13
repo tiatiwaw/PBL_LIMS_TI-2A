@@ -5,11 +5,10 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getStandardsColumns } from "@/components/shared/admin/test-columns";
 import ReferenceDetailSheet from "@/components/shared/sheet/reference-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { standards } from "@/data/admin/tests";
 import { editStandardFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
-export default function StandardsPage() {
+export default function AdminStandardsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedReference, setSelectedReference] = useState(null);
 

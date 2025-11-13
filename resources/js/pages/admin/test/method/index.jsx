@@ -9,7 +9,7 @@ import { editMethodFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useReferences } from "@/hooks/useReference";
 
-export default function MethodsPage() {
+export default function AdminMethodsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedMethod, setSelectedMethod] = useState(null);
 

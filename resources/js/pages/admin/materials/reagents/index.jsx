@@ -9,9 +9,8 @@ import { useGrades } from "@/hooks/useGrade";
 import { useSuppliers } from "@/hooks/useSupplier";
 import { useReagents } from "@/hooks/useReageants";
 import Loading from "@/components/ui/loading";
-import { create } from "node_modules/axios/index.cjs";
 
-export default function ReagentsPage() {
+export default function AdminReagentsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedReagents, setSelectedReagents] = useState(null);
 

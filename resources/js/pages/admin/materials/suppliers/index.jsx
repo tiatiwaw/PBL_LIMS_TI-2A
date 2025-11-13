@@ -8,7 +8,7 @@ import { useSuppliers } from "@/hooks/useSupplier";
 import { editSupplierFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
-export default function SuppliersPage() {
+export default function AdminSuppliersPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
 

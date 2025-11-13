@@ -388,6 +388,15 @@ export const editUsersFields = [
     {
         name: "role",
         label: "Role Pengguna",
-        placeholder: "Masukkan role pengguna",
+        type: "select",
+        placeholder: "Pilih role pengguna",
+        options: [
+            { value: "admin", label: "Admin" },
+            { value: "analyst", label: "Analis" },
+            { value: "client", label: "Klien" },
+            { value: "manager", label: "Manager" },
+            { value: "staff", label: "Staff" },
+            { value: "supervisor", label: "Supervisor" },
+        ],
     },
 ];

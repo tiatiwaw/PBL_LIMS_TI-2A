@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBrands } from "@/hooks/useBrands";
 import Loading from "@/components/ui/loading";
 
-export default function BrandsPage() {
+export default function AdminBrandsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedBrand, setSelectedBrand] = useState(null);
 

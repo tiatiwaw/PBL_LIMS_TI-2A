@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { ClientInfoCard, OrderDetailHeader, SampleSelector, AnalysisMethodCard, AnalystTeamCard, EquipmentCard, MethodInfoCard, NotesCard, ParameterInfoCard, ReagentCard, SampleInfoCard } from "@/components/shared/manager/detail";
+import { ClientInfoCard, OrderDetailHeader, SampleSelector, AnalysisMethodCard, AnalystTeamCard, EquipmentCard, NotesCard, ReagentCard, SampleInfoCard, OrderValidation, OrderSummary } from "@/components/shared/order/detail";
 import Loading from "@/components/ui/loading";
 import { useAuth } from "@/hooks/useAuth";
 import { useOrder } from "@/hooks/useOrder";
 import { usePage } from "@inertiajs/react";
+import ParameterMethodCard from "@/components/shared/order/detail/parameter-method-card";
 
-export default function DetailOrder() {
+export default function AdminDetailOrder() {
     const { props } = usePage()
     const { id } = props
 
@@ -22,6 +23,10 @@ export default function DetailOrder() {
     }, [order, selectedSampleId]);
 
     const currentUser = user || { name: "Admin", role: "Admin" };
+
+    const handleValidation = () => {
+        console.log("Validasi Order");
+    };
 
     if (isLoadingOrder || authLoading) {
         return (
@@ -63,8 +68,7 @@ export default function DetailOrder() {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <SampleInfoCard sample={selectedSample} />
                             <div className="space-y-6">
-                                <ParameterInfoCard parameter={selectedSample.n_parameter_methods.test_parameters} />
-                                <MethodInfoCard method={selectedSample.n_parameter_methods.test_methods} />
+                                <ParameterMethodCard data={selectedSample.n_parameter_methods} />
                             </div>
                         </div>
 
@@ -75,16 +79,23 @@ export default function DetailOrder() {
                     </>
                 )}
 
+                <AnalysisMethodCard
+                    methods={order.analyses_methods}
+                    reportIssuedAt={order.report_issued_at}
+                    reportFilePath={order.report_file_path}
+                    resultValue={order.result_value}
+                />
+
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                    <AnalystTeamCard analysts={order.analysts} />
-                    <AnalysisMethodCard
-                        methods={order.analyses_methods}
-                        reportIssuedAt={order.report_issued_at}
-                        reportFilePath={order.report_file_path}
-                        resultValue={order.result_value}
-                    />
-                    <NotesCard notes={order.notes} />
+                    <div className="xl:col-span-2">
+                        <AnalystTeamCard analysts={order.analysts} />
+                    </div>
+                    <NotesCard notes={order.notes} resultValue={order.result_value} />
                 </div>
+
+                <OrderValidation handleValidation={handleValidation} />
+
+                <OrderSummary order={order} selectedSample={selectedSample} />
             </div>
         </DashboardLayout>
     );

@@ -10,7 +10,7 @@ import { useMemo, useState } from "react";
 import { useUnits } from "@/hooks/useUnits";
 import { useReferences } from "@/hooks/useReference";
 
-export default function ParametersPage() {
+export default function AdminParametersPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedParameter, setSelectedParameter] = useState(null);
 

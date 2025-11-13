@@ -2,14 +2,13 @@ import { useSertif } from "@/hooks/useSertificate";
 import Loading from "@/components/ui/loading"; 
 import { useAuth } from "@/hooks/useAuth"; 
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { getSertifColumns } from "@/components/shared/admin/test-columns";//
+import { getSertifColumns } from "@/components/shared/admin/test-columns";
 import SertifDetailSheet from "@/components/shared/sheet/sertif-detail-sheets";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { sampleSertificates } from "@/data/admin/tests";//
 import { editSertificateFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
-export default function SampleCategoriesPage() {
+export default function AdminCertificatePage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 

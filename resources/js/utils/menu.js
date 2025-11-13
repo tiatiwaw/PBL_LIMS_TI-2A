@@ -73,39 +73,33 @@ const MENU_CONFIG = {
             href: "/admin",
         },
         {
-            name: "Alat",
+            name: "Alat & Bahan",
             icon: Wrench,
             subItems: [
                 {
                     name: "Peralatan",
                     icon: Microscope,
-                    href: "/admin/tools/equipments",
+                    href: "/admin/resources/equipments",
                 },
                 {
                     name: "Jenis Brand",
                     icon: Factory,
-                    href: "/admin/tools/brands",
+                    href: "/admin/resources/brands",
                 },
-            ],
-        },
-        {
-            name: "Bahan Baku",
-            icon: FlaskConical,
-            subItems: [
                 {
                     name: "Reagen",
                     icon: Beaker,
-                    href: "/admin/materials/reagents",
+                    href: "/admin/resources/reagents",
                 },
                 {
                     name: "Tingkat Reagen",
                     icon: Scale,
-                    href: "/admin/materials/grades",
+                    href: "/admin/resources/grades",
                 },
                 {
                     name: "Pemasok",
                     icon: Building2,
-                    href: "/admin/materials/suppliers",
+                    href: "/admin/resources/suppliers",
                 },
             ],
         },
@@ -165,6 +159,11 @@ const MENU_CONFIG = {
             name: "Pengguna",
             icon: Users,
             href: "/admin/users",
+        },
+        {
+            name: "Laporan",
+            icon: TrendingUp,
+            href: "/admin/reports",
         },
     ],
 

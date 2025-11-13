@@ -8,7 +8,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editTrainingFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
-export default function SampleCategoriesPage() {
+export default function AdminTrainingPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
