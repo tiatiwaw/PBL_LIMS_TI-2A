@@ -202,7 +202,7 @@ Route::controller(ClientController::class)
             ->name('orders.')
             ->group(function () {
                 Route::get('/{id}', 'orderDetail')->name('show');
-                Route::get('status/{id}', 'orderStatus')->name('status');
+                Route::get('/status/{id}', 'orderStatus')->name('status');
             });
     });
 

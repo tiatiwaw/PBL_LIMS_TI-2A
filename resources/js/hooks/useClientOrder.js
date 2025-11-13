@@ -15,7 +15,7 @@ export const useClientOrder = (orderId) => {
 
       try {
         const res = await clientService.order.getById(orderId);
-        return res.data || res; // baseService udah return response.data
+        return res;
       } catch (err) {
         throw new Error(
           err?.response?.data?.message ||
@@ -27,7 +27,7 @@ export const useClientOrder = (orderId) => {
   });
 
   // Ambil data sesuai struktur backend
-  const { order_details, table_data_sample, detail_sample } = response?.data || {};
+  const { order_details, table_data_sample } = response?.data || {};
 
   const errorMessage = isError
     ? error?.message || "Terjadi kesalahan saat memuat data."
@@ -36,7 +36,6 @@ export const useClientOrder = (orderId) => {
   return {
     order_details,
     table_data_sample,
-    detail_sample,
     isLoading,
     isError,
     errorMessage,

@@ -4,8 +4,8 @@ import { Link } from '@inertiajs/react';
 import { FileText, History } from "lucide-react";
 
 const statusVariantMap = {
-    Done: "success",
-    "In Progress": "warning",
+    done: "success",
+    in_progress: "warning",
 };
 
 const conditionVariantMap = {
