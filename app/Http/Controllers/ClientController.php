@@ -45,14 +45,8 @@ class ClientController extends Controller
      */
     public function orderStatus($id)
     {
-        $user = Auth::user();
-        
-        $order = Order::where('id', $id)
-                    ->where('client_id', $user->id)
-                    ->firstOrFail();
-
         return Inertia::render('client/history/index', [
-            'order' => $order->id
+            'orderId' => $id,
         ]);
     }
 }

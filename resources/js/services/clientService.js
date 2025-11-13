@@ -4,10 +4,10 @@ export const clientService = {
     dashboard: serviceMethods("/client", {
         useFormData: false,
     }),
-    order: (id) => serviceMethods(`/client/orders/${id}`, { 
+    order: serviceMethods("/client/orders/", { 
         useFormData: false,
     }),
-    history: (id) => serviceMethods(`/client/orders/${id}/status`, {
+    history: serviceMethods("/client/orders/status", { 
         useFormData: false,
     }),
 

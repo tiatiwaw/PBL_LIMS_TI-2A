@@ -129,7 +129,7 @@ Route::prefix('v1')->group(function () {
                     ->name('orders.')
                     ->group(function () {
                         Route::get('/{id}', [ClientOrderController::class, 'show']);
-                        Route::get('/{id}/status', [ClientHistoryController::class, 'show'])->name('status');
+                        Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
                     });
             });
     });

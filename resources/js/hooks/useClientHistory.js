@@ -16,7 +16,7 @@ export const useClientHistory = (orderId) => {
 
       try {
         const res = await clientService.history.getById(orderId);
-        return res.data.data; // ambil bagian penting dari response
+        return res.data ?? res; // ambil bagian penting dari response
       } catch (err) {
         throw new Error(
           err?.response?.data?.message || "Gagal mengambil riwayat order client."

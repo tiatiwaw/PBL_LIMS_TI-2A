@@ -35,17 +35,17 @@ class DatabaseSeeder extends Seeder
                 $this->call([
                         // EquipmentSeeder::class,
                         // ReagentSeeder::class,
-                        // TestMethodSeeder::class,
-                        // TestParameterSeeder::class,
+                        TestMethodSeeder::class,
+                        TestParameterSeeder::class,
                 ]);
 
                 // Master Data Transaksional
                 $this->call([
-                        // OrderSeeder::class,
-                        // NOrderSampleSeeder::class,
+                        OrderSeeder::class,
+                        NOrderSampleSeeder::class,
                         // NAnalysesMethodsOrdersSeeder::class,
-                        // NAnalystSeeder::class,
-                        // NParameterMethodSeeder::class,
+                        NAnalystSeeder::class,
+                        NParameterMethodSeeder::class,
                         // NEquipmentSeeder::class,
                         // NReagentSeeder::class,
                 ]);
