@@ -5,15 +5,15 @@ import { getBrandsColumns } from "@/components/shared/admin/tool-columns";
 import { editBrandFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useBrands } from "@/hooks/useBrands";
 import Loading from "@/components/ui/loading";
+import { useBrands } from "@/hooks/useAdmin";
 
 export default function AdminBrandsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedBrand, setSelectedBrand] = useState(null);
 
     const { user, loading: authLoading } = useAuth();
-    const { brands, isLoading, error, createBrand, updateBrand, deleteBrand } = useBrands();
+    const { data: brands, isLoading, error, create: createBrand, update: updateBrand, delete: deleteBrand } = useBrands();
 
     const handleShowDetail = (brand) => {
         setSelectedBrand(brand);
@@ -32,7 +32,7 @@ export default function AdminBrandsPage() {
     const handleEdit = async (id, formData) => {
         await updateBrand.mutateAsync({ id, data: formData });
     };
-    
+
     const handleDelete = async (id) => deleteBrand.mutateAsync(id);
 
     if (isLoading || authLoading) {

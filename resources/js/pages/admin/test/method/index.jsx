@@ -1,4 +1,3 @@
-import { useMethods } from "@/hooks/useMethod";
 import Loading from "@/components/ui/loading";
 import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
@@ -7,15 +6,15 @@ import MethodDetailSheet from "@/components/shared/sheet/method-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editMethodFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
-import { useReferences } from "@/hooks/useReference";
+import { useMethods, useReferences } from "@/hooks/useAdmin";
 
 export default function AdminMethodsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedMethod, setSelectedMethod] = useState(null);
 
     const { user, loading: authLoading } = useAuth();
-    const { methods, isLoading, error, createMethod, updateMethod, deleteMethod } = useMethods();
-    const { references, isLoading: referenceLoading, error: referenceError } = useReferences();
+    const { data: methods, isLoading, error, createItem: createMethod, updateItem: updateMethod, deleteItem: deleteMethod } = useMethods();
+    const { data: references, isLoading: referenceLoading, error: referenceError } = useReferences();
 
     const handleShowDetail = (tests) => {
         setSelectedMethod(tests);
@@ -34,7 +33,7 @@ export default function AdminMethodsPage() {
 
     const handleDelete = async (id) => deleteMethod.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading || referenceLoading || authLoading) {
         return (
             <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <Loading />

@@ -82,6 +82,7 @@ Route::middleware(['auth', 'admin'])
         })->name('order.show');
 
         Route::inertia('/users', 'admin/users/index')->name('users');
+        Route::inertia('/reports', 'admin/reports/index')->name('reports');
     });
 
 // Manager

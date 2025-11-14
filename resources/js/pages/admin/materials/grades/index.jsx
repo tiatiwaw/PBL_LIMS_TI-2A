@@ -3,8 +3,8 @@ import { getGradesColumns } from "@/components/shared/admin/material-columns";
 import GradeDetailSheet from "@/components/shared/sheet/grade-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
+import { useGrades } from "@/hooks/useAdmin";
 import { useAuth } from "@/hooks/useAuth";
-import { useGrades } from "@/hooks/useGrade";
 import { editGradeFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
@@ -13,17 +13,17 @@ export default function AdminGradesPage() {
     const [selectedGrades, setSelectedGrades] = useState(null);
 
     const { auth, loading: authLoading } = useAuth();
-    const { grades, isLoading, error, createGrade, updateGrade, deleteGrade } = useGrades();
-    
+    const { data: grades, isLoading, error, createItem: createGrade, updateItem: updateGrade, deleteItem: deleteGrade } = useGrades();
+
     const handleShowDetail = (materials) => {
-            setSelectedGrades(materials);
-            setIsOpen(true);
+        setSelectedGrades(materials);
+        setIsOpen(true);
     };
 
     const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
 
     const columns = useMemo(() => getGradesColumns({ onShowDetail: handleShowDetail }), []);
-    
+
     const handleCreate = async (formData) => createGrade.mutateAsync(formData);
 
     const handleEdit = async (id, formData) => {
@@ -68,7 +68,7 @@ export default function AdminGradesPage() {
                 editTitle="Edit Tingkatan"
                 deleteTitle="Hapus Tingkatan"
             />
-        <GradeDetailSheet data={selectedGrades} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <GradeDetailSheet data={selectedGrades} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }

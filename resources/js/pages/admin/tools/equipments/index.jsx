@@ -3,9 +3,8 @@ import { getEquipmentsColumns } from "@/components/shared/admin/tool-columns";
 import EquipmentDetailSheet from "@/components/shared/sheet/equipment-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
+import { useBrands, useEquipments } from "@/hooks/useAdmin";
 import { useAuth } from "@/hooks/useAuth";
-import { useBrands } from "@/hooks/useBrands";
-import { useEquipments } from "@/hooks/useEquipments";
 import { editEquipmentFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
@@ -20,8 +19,8 @@ export default function AdminEquipmentsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEquipment, setSelectedEquipment] = useState(null);
 
-    const { brands, isLoading: brandLoading, error: brandError } = useBrands();
-    const { equipments, isLoading: equipmentLoading, error: equipmentError, createEquipment, updateEquipment, deleteEquipment } = useEquipments();
+    const { data: brands, isLoading: brandLoading, error: brandError } = useBrands();
+    const { data: equipments, isLoading: equipmentLoading, error: equipmentError, createItem: createEquipment, updateItem: updateEquipment, deleteItem: deleteEquipment } = useEquipments();
     const { user, loading: authLoading } = useAuth();
 
     const handleShowDetail = (equipment) => {

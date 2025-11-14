@@ -3,18 +3,18 @@ import { Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, 
 import StatCard from '@/components/shared/card/stat-card';
 import { stats } from '@/data/admin/beranda';
 import DashboardLayout from '@/components/layouts/dashboard-layout';
-import { useAdmin } from "@/hooks/useAdmin";
 import { useAuth } from "@/hooks/useAuth";
 import Loading from "@/components/ui/loading";
+import { useDashboard } from "@/hooks/useAdmin";
 
 export default function AdminDashboard() {
-  const { dashboard, loading: dashboardLoading, error } = useAdmin();
+  const { data: dashboard, isLoading: dashboardLoading, error } = useDashboard();
   const { user, loading: authLoading } = useAuth();
 
   stats[0].value = dashboard?.totalUser
   stats[1].value = dashboard?.totalEquipment;
   stats[2].value = dashboard?.totalReagent;
-  stats[3].value = dashboard?.totalSample;
+  stats[3].value = dashboard?.totalOrder;
   stats[4].value = dashboard?.totalParameter;
   stats[5].value = dashboard?.totalMethod;
 
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
                   }}
                 />
                 <Legend />
-                <Area type="monotone" dataKey="clients" stroke="#10b981" fillOpacity={1} fill="url(#colorUsers)" name="Clients" strokeWidth={2} />
+                <Area type="monotone" dataKey="clients" stroke="#10b981" fillOpacity={1} fill="url(#colorUsers)" name="Pengguna" strokeWidth={2} />
                 <Area type="monotone" dataKey="sampel" stroke="#3b82f6" fillOpacity={1} fill="url(#colorSampel)" name="Sampel" strokeWidth={2} />
                 <Line type="monotone" dataKey="pengujian" stroke="#8b5cf6" strokeWidth={2} name="Pengujian" dot={{ fill: '#8b5cf6', r: 4 }} />
               </AreaChart>

@@ -8,7 +8,7 @@ import { usePage } from "@inertiajs/react";
 import ParameterMethodCard from "@/components/shared/order/detail/parameter-method-card";
 import { adminService } from "@/services/adminService";
 
-export default function AdminDetailOrder() {
+export default function AdminDetailOrder({ canValidate }) {
     const { props } = usePage()
     const { id } = props
 
@@ -94,7 +94,9 @@ export default function AdminDetailOrder() {
                     <NotesCard notes={order.notes} resultValue={order.result_value} />
                 </div>
 
-                <OrderValidation handleValidation={handleValidation} />
+                {canValidate && (
+                    <OrderValidation handleValidation={handleValidation} />
+                )}
 
                 <OrderSummary order={order} selectedSample={selectedSample} />
             </div>

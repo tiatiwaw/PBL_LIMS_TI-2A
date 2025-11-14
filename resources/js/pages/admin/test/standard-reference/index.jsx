@@ -1,4 +1,3 @@
-import { useReferences } from "@/hooks/useReference";
 import Loading from "@/components/ui/loading";
 import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
@@ -7,13 +6,14 @@ import ReferenceDetailSheet from "@/components/shared/sheet/reference-detail-she
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editStandardFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
+import { useReferences } from "@/hooks/useAdmin";
 
 export default function AdminStandardsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedReference, setSelectedReference] = useState(null);
 
     const { user, loading: authLoading } = useAuth();
-    const { references, isLoading, error, createReference, updateReference, deleteReference } = useReferences();
+    const { data: references, isLoading, error, createItem: createReference, updateItem: updateReference, deleteItem: deleteReference } = useReferences();
 
     const handleShowDetail = (tests) => {
         setSelectedReference(tests);

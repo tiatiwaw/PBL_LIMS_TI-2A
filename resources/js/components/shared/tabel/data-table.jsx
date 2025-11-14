@@ -75,6 +75,7 @@ export function DataTableContent({
     const tableColumns = columns.map((col) => ({
         accessorKey: col.accessorKey,
         header: col.header,
+        enableSorting: col.accessorKey === "no" ? false : true,
         cell: (info) => {
             const row = info.row.original;
             if (col.accessorKey === "no") return startIndex + info.row.index + 1;

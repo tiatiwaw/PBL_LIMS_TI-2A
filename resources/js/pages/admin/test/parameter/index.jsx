@@ -1,4 +1,3 @@
-import { useParameters } from "@/hooks/useParameter";
 import Loading from "@/components/ui/loading";
 import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
@@ -7,17 +6,16 @@ import ParameterDetailSheet from "@/components/shared/sheet/parameter-detail-she
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editParameterFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
-import { useUnits } from "@/hooks/useUnits";
-import { useReferences } from "@/hooks/useReference";
+import { useParameters, useReferences, useUnits } from "@/hooks/useAdmin";
 
 export default function AdminParametersPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedParameter, setSelectedParameter] = useState(null);
 
     const { user, loading: authLoading } = useAuth();
-    const { parameters, isLoading, error, createParameter, updateParameter, deleteParameter, refetch } = useParameters();
-    const { units, isLoading: unitLoading, error: unitError } = useUnits();
-    const { references, isLoading: referenceLoading, error: referenceError } = useReferences();
+    const { data: parameters, isLoading, error, createItem: createParameter, updateItem: updateParameter, deleteItem: deleteParameter } = useParameters();
+    const { data: units, isLoading: unitLoading, error: unitError } = useUnits();
+    const { data: references, isLoading: referenceLoading, error: referenceError } = useReferences();
 
     const handleShowDetail = (brand) => {
         setSelectedParameter(brand);
@@ -39,7 +37,7 @@ export default function AdminParametersPage() {
 
     const handleDelete = async (id) => deleteParameter.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading || unitLoading || referenceLoading || authLoading) {
         return (
             <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
                 <Loading />

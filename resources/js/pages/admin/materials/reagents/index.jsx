@@ -5,10 +5,8 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editReagentFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useGrades } from "@/hooks/useGrade";
-import { useSuppliers } from "@/hooks/useSupplier";
-import { useReagents } from "@/hooks/useReageants";
 import Loading from "@/components/ui/loading";
+import { useGrades, useReagents, useSuppliers } from "@/hooks/useAdmin";
 
 export default function AdminReagentsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -20,9 +18,9 @@ export default function AdminReagentsPage() {
     };
 
     const { user, loading: authLoading } = useAuth();
-    const { grades, isLoading: gradesLoading, error: gradesError } = useGrades();
-    const { suppliers, isLoading: suppliersLoading, error: suppliersError } = useSuppliers();
-    const { reagents, isLoading: regeantsLoading, error: regeantsError, createReagent, updateReagent, deleteReagent } = useReagents();
+    const { data: grades, isLoading: gradesLoading, error: gradesError } = useGrades();
+    const { data: suppliers, isLoading: suppliersLoading, error: suppliersError } = useSuppliers();
+    const { data: reagents, isLoading: regeantsLoading, error: regeantsError, createItem: createReagent, updateItem: updateReagent, deleteItem: deleteReagent } = useReagents();
 
     const currentUser = user || { name: "Admin", role: "Admin" };
 

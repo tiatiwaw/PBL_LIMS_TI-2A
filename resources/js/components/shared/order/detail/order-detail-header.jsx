@@ -9,7 +9,6 @@ import {
     Download,
 } from "lucide-react";
 import {
-    getOrderStatusVariant,
     getOrderTypeVariant,
 } from "@/utils/statusUtils";
 import { formatDate, formatCurrency } from "@/utils/formatters";
@@ -26,25 +25,23 @@ export default function OrderDetailHeader({ order }) {
                         </div>
                         <div>
                             <h1 className="text-3xl font-bold">{order.title}</h1>
-                            <p className="text-teal-100 text-sm mt-1">Order #{order.order_number}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                                <p className="text-teal-100 text-sm">Order #{order.order_number}</p>
+                                <Badge
+                                    variant={getOrderTypeVariant(order.order_type) || "outline"}
+                                    className="capitalize"
+                                >
+                                    {order.order_type}
+                                </Badge>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex gap-3">
-                    <Badge
-                        variant={getOrderTypeVariant(order.order_type) || "outline"}
-                        className="capitalize"
-                    >
-                        {order.order_type}
-                    </Badge>
-                    <Badge
-                        variant={getOrderStatusVariant(order.status) || "outline"}
-                        className="capitalize"
-                    >
-                        {order.status}
-                    </Badge>
-                </div>
+                <Button className="bg-primary-hijauTerang text-primary-hijauTua hover:bg-primary-hijauTerang/80 flex items-center gap-2">
+                    <Download className="w-4 h-4" />
+                    Download Laporan
+                </Button>
             </div>
 
             <div className="grid grid-cols-4 gap-6">
@@ -80,11 +77,6 @@ export default function OrderDetailHeader({ order }) {
                     <p className="font-bold text-lg">{formatCurrency(totalPrice)}</p>
                 </div>
             </div>
-
-            <Button className="bg-primary-hijauTerang text-primary-hijauTua hover:bg-primary-hijauTerang/80 flex items-center gap-2 mt-5">
-                <Download className="w-4 h-4" />
-                Download Laporan
-            </Button>
         </div>
     );
 }

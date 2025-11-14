@@ -5,8 +5,7 @@ import { router } from "@inertiajs/react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { useAuth } from "@/hooks/useAuth";
 import Loading from "@/components/ui/loading";
-import { useOrders } from "@/hooks/useOrders";
-import { adminService } from "@/services/adminService";
+import { useOrders } from "@/hooks/useAdmin";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -20,7 +19,7 @@ const filterData = [
 
 export default function AdminOrdersPage() {
     const { user, loading: authLoading } = useAuth();
-    const { orders, isLoading, error } = useOrders(adminService, "admin");
+    const { data: orders, isLoading, error } = useOrders();
     console.log("order", orders);
 
     const handleShowDetail = (data) => {

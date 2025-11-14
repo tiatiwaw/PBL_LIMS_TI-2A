@@ -3,8 +3,8 @@ import { getUsersColumns } from "@/components/shared/admin/user-columns";
 import UserDetailSheet from "@/components/shared/sheet/user-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
+import { useUsers } from "@/hooks/useAdmin";
 import { useAuth } from "@/hooks/useAuth";
-import { useUser } from "@/hooks/useUser";
 import { editUsersFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
@@ -22,7 +22,7 @@ export default function AdminUsersPage() {
     const [selectedUser, setSelectedUser] = useState(null);
 
     const { user, loading: authLoading } = useAuth();
-    const { users, isLoading, error, createUser, updateUser, deleteUser } = useUser();
+    const { data: users, isLoading, error, createItem: createUser, updateItem: updateUser, deleteItem: deleteUser } = useUsers();
 
     const handleShowDetail = (user) => {
         setSelectedUser(user);
@@ -33,8 +33,7 @@ export default function AdminUsersPage() {
 
     const columns = useMemo(() => getUsersColumns({ onShowDetail: handleShowDetail }), []);
 
-    // const handleCreate = async (formData) => createUser.mutateAsync(formData);
-    const handleCreate = async (formData) => console.log(formData);
+    const handleCreate = async (formData) => createUser.mutateAsync(formData);
 
     const handleEdit = async (id, formData) => {
         await updateUser.mutateAsync({ id, data: formData });

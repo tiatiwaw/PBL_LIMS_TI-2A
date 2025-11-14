@@ -1,4 +1,3 @@
-import { useUnits } from "@/hooks/useUnits";
 import Loading from "@/components/ui/loading";
 import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
@@ -7,13 +6,14 @@ import UnitDetailSheet from "@/components/shared/sheet/unit-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editUnitFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
+import { useUnits } from "@/hooks/useAdmin";
 
 export default function AdminUnitsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
 
     const { user, loading: authLoading } = useAuth();
-    const { units, isLoading, error, createUnit, updateUnit, deleteUnit } = useUnits();
+    const { data: units, isLoading, error, createItem: createUnit, updateItem: updateUnit, deleteItem: deleteUnit } = useUnits();
 
     const handleShowDetail = (tests) => {
         setSelectedUnit(tests);

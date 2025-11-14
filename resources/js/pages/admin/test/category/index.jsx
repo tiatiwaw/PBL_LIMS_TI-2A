@@ -1,23 +1,23 @@
-import { useSampleCategories } from "@/hooks/useCategory";
-import Loading from "@/components/ui/loading"; 
-import { useAuth } from "@/hooks/useAuth"; 
+import Loading from "@/components/ui/loading";
+import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getSampleCategoriesColumns } from "@/components/shared/admin/test-columns";
 import CategoryDetailSheet from "@/components/shared/sheet/category-detail-sheets";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editCategorySampleFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
+import { useCategories } from "@/hooks/useAdmin";
 
 export default function AdminSampleCategoriesPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
     const { user, loading: authLoading } = useAuth();
-    const { categories, isLoading, error, createCategory, updateCategory, deleteCategory } = useSampleCategories();
-            
+    const { data: categories, isLoading, error, createItem: createCategory, updateItem: updateCategory, deleteItem: deleteCategory } = useCategories();
+
     const handleShowDetail = (tests) => {
-            setSelectedCategory(tests);
-            setIsOpen(true);
+        setSelectedCategory(tests);
+        setIsOpen(true);
     };
 
     const columns = useMemo(() => getSampleCategoriesColumns({ onShowDetail: handleShowDetail }), []);
@@ -67,7 +67,7 @@ export default function AdminSampleCategoriesPage() {
                 editTitle="Edit Kategori Sampel"
                 deleteTitle="Hapus Kategori Sampel"
             />
-        <CategoryDetailSheet data={selectedCategory} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <CategoryDetailSheet data={selectedCategory} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }
