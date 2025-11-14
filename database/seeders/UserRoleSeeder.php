@@ -34,22 +34,11 @@ class UserRoleSeeder extends Seeder
         ]);
         $adminUser->assignRole('admin'); // ← INI YANG PERLU DITAMBAHKAN
 
-        // 2️⃣ BUAT ADMIN USER & ASSIGN ROLE
-        $staffUser = User::create([
-            'name' => 'Staff Kelompok 2',
-            'email' => 'staff@example.com',
-            'password' => Hash::make('staff123'),
-            'remember_token' => Str::random(10),
-            'signature' => 'signatures/staff.png', // Ganti fake() dengan path real
-            'email_verified_at' => now(),
-        ]);
-        $staffUser->assignRole('staff'); // ← INI YANG PERLU DITAMBAHKAN
-
         // 3️⃣ BUAT USER LAINNYA & ASSIGN ROLE
         $otherRoles = ['client', 'staff', 'analyst', 'supervisor', 'manager'];
 
         foreach ($otherRoles as $role) {
-            $users = User::factory(10)->create(['role' => $role]);
+            $users = User::factory(5)->create(['role' => $role]);
 
             foreach ($users as $user) {
                 $user->assignRole($role);

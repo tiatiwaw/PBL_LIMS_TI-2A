@@ -29,11 +29,11 @@ export default function ClientPage({ auth }) {
 
     const currentUser = auth?.user || { name: "Client", role: "Client" };
 
-    const handleShowDetail = (data) => {
-        router.visit(route('client.orders.show', { id: data.id }));
+    const handleShowDetail = (orders) => {
+        router.visit(route('client.orders.show', { id: orders.id }));
     };
-    const handleShowHistory = (data) => {
-        router.visit(route('client.orders.status', { id: data.id }));
+    const handleShowHistory = (orders) => {
+        router.visit(route('client.orders.status', { id: orders.id }));
     };
     const columns = useMemo(
         () => getOrdersColumns({

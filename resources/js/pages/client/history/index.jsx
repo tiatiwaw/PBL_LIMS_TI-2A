@@ -2,18 +2,8 @@
 import React from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { Link } from "@inertiajs/react";
-import {
-  ChevronsLeft,
-  FlaskConical,
-  ClipboardCheck,
-  RotateCw,
-  PackageCheck,
-  Clock,
-  CalendarDays,
-  CheckCircle2,
-  Loader2,
-  XCircle,
-} from "lucide-react";
+import {ChevronsLeft, FlaskConical, ClipboardCheck, RotateCw, PackageCheck,
+        Clock, CalendarDays, CheckCircle2, Loader2, XCircle,} from "lucide-react";
 import { useClientHistory } from "@/hooks/useClientHistory";
 
 export default function HistoryPage({ auth, orderId }) {
@@ -164,10 +154,10 @@ export default function HistoryPage({ auth, orderId }) {
             </div>
             <div className="flex flex-col">
               <span className="text-xs text-primary-hijauTua/60 font-medium">
-                Status Saat Ini
+                Estimasi
               </span>
               <span className="text-xl font-bold text-primary-hijauTua">
-                {order?.status_label || "-"}
+                {order?.estimasi || "-"}
               </span>
             </div>
           </div>

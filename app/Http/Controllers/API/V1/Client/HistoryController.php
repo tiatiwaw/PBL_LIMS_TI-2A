@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class HistoryController extends Controller
 {
     /**
      * Tampilkan order detail dengan status aktif
-     */
+     */ 
     public function show($id): JsonResponse
     {
         try {
@@ -44,9 +45,12 @@ class HistoryController extends Controller
                 'data' => [
                     'order' => [
                         'id' => $order->id,
-                        'kode_order' => $order->order_number ?: 'M-' . $order->id,
+                        'order_number' => $order->order_number ?: 'M-' . $order->id,
                         'status' => $currentStatus,
                         'status_label' => $this->getStatusLabel($currentStatus),
+                        'estimasi' => $order->estimate_date
+                        ? ceil(Carbon::now()->floatDiffInDays(Carbon::parse($order->estimate_date))) . ' Hari'
+                        : '-',
                         'created_at' => $order->created_at,
                         'updated_at' => $order->updated_at,
                     ],
@@ -71,11 +75,11 @@ class HistoryController extends Controller
     private function getStatusLabel($status)
     {
         $labels = [
-            'received' => 'Diterima',
-            'approved' => 'Disetujui',
-            'pending' => 'Menunggu',
-            'in_progress' => 'Dalam Proses',
-            'completed' => 'Selesai',
+            'received' => 'Sample Telah Diterima',
+            'approved' => 'Order Telah Disetujui',
+            'pending' => 'Order Sedang Dalam Antrean',
+            'in_progress' => 'Order Sedang Dalam Proses',
+            'completed' => 'Order Selesai',
             'disapproved' => 'Ditolak'
         ];
 

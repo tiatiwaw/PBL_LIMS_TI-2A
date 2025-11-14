@@ -6,13 +6,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { useOrder } from "@/hooks/useOrder";
 import { usePage } from "@inertiajs/react";
 import ParameterMethodCard from "@/components/shared/order/detail/parameter-method-card";
+import { adminService } from "@/services/adminService";
 
 export default function AdminDetailOrder() {
     const { props } = usePage()
     const { id } = props
 
     const { user, loading: authLoading } = useAuth();
-    const { order, isLoadingOrder, errorOrder } = useOrder(id);
+    const { order, isLoadingOrder, errorOrder } = useOrder(id, adminService);
 
     const [selectedSampleId, setSelectedSampleId] = useState(null);
 

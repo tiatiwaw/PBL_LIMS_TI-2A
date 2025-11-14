@@ -32,9 +32,6 @@ Route::prefix('v1')->group(function () {
     Route::prefix('auth')->name('api.auth.')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->name('login');
     });
-    Route::prefix('umum')->name('api.umum.')->group(function () {
-        Route::get('/orders', [V1OrderController::class, 'index'])->name('index');
-    });
 
     Route::middleware('auth:sanctum')->group(function () {
 
@@ -51,9 +48,9 @@ Route::prefix('v1')->group(function () {
 
                 Route::get('/', [DashboardController::class, 'index']);
 
-            Route::apiResource('users', UserController::class);
-            Route::get('orders', [OrdersController::class, 'index']);
-            Route::get('orders/{id}', [OrdersController::class, 'show']);
+                Route::apiResource('users', UserController::class);
+                Route::get('orders', [OrdersController::class, 'index']);
+                Route::get('orders/{id}', [OrdersController::class, 'show']);
 
                 // Tools
                 Route::prefix('tools')
@@ -63,33 +60,33 @@ Route::prefix('v1')->group(function () {
                         Route::apiResource('brands', BrandTypeController::class);
                     });
 
-            // Materials
-            Route::prefix('materials')
-                ->name('materials.')
-                ->group(function () {
-                    Route::apiResource('reagents', ReagentController::class);
-                    Route::apiResource('grades', GradeController::class);
-                    Route::apiResource('suppliers', SupplierController::class);
-                });
+                // Materials
+                Route::prefix('materials')
+                    ->name('materials.')
+                    ->group(function () {
+                        Route::apiResource('reagents', ReagentController::class);
+                        Route::apiResource('grades', GradeController::class);
+                        Route::apiResource('suppliers', SupplierController::class);
+                    });
 
-            // Tests
-            Route::prefix('tests')
-                ->name('tests.')
-                ->group(function () {
-                    Route::apiResource('parameters', ParameterController::class);
-                    Route::apiResource('methods', TestMethodsController::class);
-                    Route::apiResource('units', UnitValueController::class);
-                    Route::apiResource('references', ReferenceController::class);
-                    Route::apiResource('categories', SampleCategoryController::class);
-                });
+                // Tests
+                Route::prefix('tests')
+                    ->name('tests.')
+                    ->group(function () {
+                        Route::apiResource('parameters', ParameterController::class);
+                        Route::apiResource('methods', TestMethodsController::class);
+                        Route::apiResource('units', UnitValueController::class);
+                        Route::apiResource('references', ReferenceController::class);
+                        Route::apiResource('categories', SampleCategoryController::class);
+                    });
 
-            Route::prefix('analyst')
-                ->name('analyst.')
-                ->group(function () {
-                    Route::apiResource('trainings', TrainingController::class);
-                    Route::apiResource('certificates', CertificateController::class);
-                });
-        });
+                Route::prefix('analyst')
+                    ->name('analyst.')
+                    ->group(function () {
+                        Route::apiResource('trainings', TrainingController::class);
+                        Route::apiResource('certificates', CertificateController::class);
+                    });
+            });
 
         // Staff
         Route::prefix('staff')
@@ -132,7 +129,7 @@ Route::prefix('v1')->group(function () {
                     ->name('orders.')
                     ->group(function () {
                         Route::get('/{id}', [ClientOrderController::class, 'show']);
-                        Route::get('/{id}/status', [ClientHistoryController::class, 'show'])->name('status');
+                        Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
                     });
             });
     });

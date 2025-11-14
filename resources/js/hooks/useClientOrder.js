@@ -1,44 +1,44 @@
 import { useQuery } from "@tanstack/react-query";
 import { clientService } from "@/services/clientService";
 
-export const useClientHistory = (orderId) => {
-    const {
-        data: response,
-        isLoading,
-        isError,
-        error,
-        refetch,
-    } = useQuery({
-        queryKey: ["client", "history", orderId],
-        queryFn: async () => {
-            if (!orderId) throw new Error("ID order tidak ditemukan.");
+export const useClientOrder = (orderId) => {
+  const {
+    data: response,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["client", "order", orderId],
+    queryFn: async () => {
+      if (!orderId) throw new Error("ID order tidak ditemukan.");
 
-            try {
-                const res = await clientService.history.show(orderId);
-                return res;
-            } catch (err) {
-                throw new Error(
-                    err?.response?.data?.message ||
-                    "Gagal mengambil riwayat order client."
-                );
-            }
-        },
-        enabled: !!orderId, // hanya jalan kalau orderId ada
-    });
+      try {
+        const res = await clientService.order.getById(orderId);
+        return res;
+      } catch (err) {
+        throw new Error(
+          err?.response?.data?.message ||
+            "Gagal mengambil detail order client."
+        );
+      }
+    },
+    enabled: !!orderId,
+  });
 
-    // Ambil data sesuai response backend
-    const { order, statuses } = response?.data?.data || {};
+  // Ambil data sesuai struktur backend
+  const { order_details, table_data_sample } = response?.data || {};
 
-    const errorMessage = isError
-        ? error?.message || "Terjadi kesalahan saat memuat data."
-        : null;
+  const errorMessage = isError
+    ? error?.message || "Terjadi kesalahan saat memuat data."
+    : null;
 
-    return {
-        order,
-        statuses,
-        isLoading,
-        isError,
-        errorMessage,
-        refetch,
-    };
+  return {
+    order_details,
+    table_data_sample,
+    isLoading,
+    isError,
+    errorMessage,
+    refetch,
+  };
 };
