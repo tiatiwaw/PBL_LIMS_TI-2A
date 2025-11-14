@@ -1,47 +1,59 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import OrderDetailSheet from "@/components/shared/sheet/orders-detail-sheet";
-import { getOrderColumns } from "@/components/shared/supervisor/orders-columns";
+import { getOrdersColumns } from "@/components/shared/supervisor/orders-columns";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { orders } from "@/data/supervisor/orders";
-import { useMemo, useState } from "react";
+import Loading from "@/components/ui/loading";
+import { useAuth } from "@/hooks/useAuth";
+import { useOrders } from "@/hooks/useOrders";
+import { supervisorService } from "@/services/supervisorService";
+import { router } from "@inertiajs/react";
+import { useMemo } from "react";
 
-export default function OrdersPage({ Auth, dataOrder }) {
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedOrder, setSelectedOrder] = useState(null);
-    const currentUser = Auth?.user || {
+export default function OrdersPage() {
+    const { user, loading: authLoading } = useAuth();
+    const { orders, isLoading, error } = useOrders(
+        supervisorService,
+        "supervisor"
+    );
+    const currentUser = user || {
         name: "Indro",
         role: "Supervisor",
     };
 
-    const handleShowDetail = (order) => {
-        setSelectedOrder(order);
-        setIsOpen(true);
+    const handleShowDetail = (data) => {
+        router.visit(route("supervisor.order.detail", data.id));
     };
 
-    const parameter = dataOrder || orders;
-
     const columns = useMemo(
-        () => getOrderColumns({ onShowDetail: handleShowDetail }),
+        () => getOrdersColumns({ onShowDetail: handleShowDetail }),
         []
     );
 
+    if (isLoading || authLoading) {
+        return (
+            <DashboardLayout title="Orders" header="Orders" user={currentUser}>
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Orders" header="Orders" user={currentUser}>
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
+
     return (
-        <DashboardLayout
-            title="Analis"
-            header="Manajemen Analis"
-            user={currentUser}
-        >
+        <DashboardLayout title="Orders" header="Orders" user={currentUser}>
             <ManagedDataTable
-                data={parameter}
+                data={orders}
                 columns={columns}
                 showSearch={true}
                 showFilter={false}
                 showCreate={false}
-            />
-            <OrderDetailSheet
-                data={selectedOrder}
-                isOpen={isOpen}
-                onOpenChange={setIsOpen}
             />
         </DashboardLayout>
     );

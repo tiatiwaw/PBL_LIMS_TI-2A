@@ -27,7 +27,7 @@ class OrderController extends Controller
                 ]);
             }
         ])->get();
-        return response()->json($orders);
+        return response()->json(['orders' => $orders]);
     }
 
     public function show(string $id)
@@ -52,7 +52,7 @@ class OrderController extends Controller
                 }
             ])->findOrFail($id);
 
-            return response()->json($order);
+            return response()->json(['order' => $order]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,

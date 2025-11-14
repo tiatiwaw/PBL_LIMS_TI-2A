@@ -2,7 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Microscope } from "lucide-react";
 import { formatDate, formatCurrency } from "@/utils/formatters";
 
-export default function AnalysisMethodCard({ methods, reportIssuedAt, reportFilePath, resultValue }) {
+export default function AnalysisMethodCard({
+    methods,
+    reportIssuedAt,
+    reportFilePath,
+    resultValue,
+}) {
     return (
         <Card className="border border-slate-200 shadow-xl bg-white">
             <CardHeader className="border-b border-slate-100">
@@ -21,9 +26,11 @@ export default function AnalysisMethodCard({ methods, reportIssuedAt, reportFile
                     >
                         <div className="flex items-start justify-between mb-3">
                             <div className="flex-1">
-                                <p className="text-xs text-slate-500 mb-2">Nama Metode</p>
+                                <p className="text-xs text-slate-500 mb-2">
+                                    Nama Metode
+                                </p>
                                 <p className="font-bold text-primary-hijauTua text-lg">
-                                    {method.name}
+                                    {method.analyses_method}
                                 </p>
                             </div>
                         </div>
@@ -40,21 +47,27 @@ export default function AnalysisMethodCard({ methods, reportIssuedAt, reportFile
 
                 <div className="space-y-3">
                     <div>
-                        <p className="text-xs text-slate-500 mb-1">Laporan Terbit</p>
+                        <p className="text-xs text-slate-500 mb-1">
+                            Laporan Terbit
+                        </p>
                         <p className="font-bold text-primary-hijauTua">
                             {formatDate(reportIssuedAt)}
                         </p>
                     </div>
 
                     <div>
-                        <p className="text-xs text-slate-500 mb-1">Lokasi File</p>
+                        <p className="text-xs text-slate-500 mb-1">
+                            Lokasi File
+                        </p>
                         <p className="font-semibold text-slate-600 text-sm">
                             {reportFilePath}
                         </p>
                     </div>
 
                     <div>
-                        <p className="text-xs text-slate-500 mb-2">Hasil Nilai</p>
+                        <p className="text-xs text-slate-500 mb-2">
+                            Hasil Nilai
+                        </p>
                         <div className="bg-green-50 rounded-lg p-3 border border-green-200">
                             <p className="text-sm text-green-800 font-medium">
                                 {resultValue}

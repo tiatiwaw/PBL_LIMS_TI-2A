@@ -166,27 +166,27 @@ Route::controller(SupervisorController::class)
     ->prefix('supervisor')
     ->name('supervisor.')
     ->group(function () {
-        Route::get('/analysts', function () {
-            return Inertia::render('supervisor/analysts/index');
-        });
-        Route::get('/orders', function () {
-            return Inertia::render('supervisor/orders/index');
-        });
-        Route::get('/orders/parameters/analysts', function () {
-            return Inertia::render('supervisor/orders/parameters/analysts/index');
-        });
-        Route::get('/orders/parameters/detail', function () {
-            return Inertia::render('supervisor/orders/parameters/detail/index');
-        });
-        Route::get('/orders/parameters/first', function () {
-            return Inertia::render('supervisor/orders/parameters/first/index');
-        });
-        Route::get('/orders/parameters/review', function () {
-            return Inertia::render('supervisor/orders/parameters/review/index');
-        });
-        Route::get('/orders/parameters/second', function () {
-            return Inertia::render('supervisor/orders/parameters/second/index');
-        });
+        Route::redirect('/', '/supervisor/orders');
+
+        // Order
+        Route::prefix('orders')
+            ->name('order.')
+            ->group(function () {
+                Route::get('/', 'orders')->name('index');
+                Route::get('/{id}', 'ordersDetail')->name('detail');
+                Route::get('/parameters', 'parameters')->name('parameter');
+                Route::get('/parameters/detail', 'parametersDetail')->name('parameter.detail');
+                Route::get('/parameters/first', 'parametersFirst')->name('parameter.first');
+                Route::get('/parameters/second', 'parametersSecond')->name('parameter.second');
+                Route::get('/parameters/review', 'parametersReview')->name('parameter.review');
+            });
+
+        // Analysts
+        Route::prefix('analysts')
+            ->name('analyst.')
+            ->group(function () {
+                Route::get('/', 'analysts')->name('index');
+            });
     });
 
 

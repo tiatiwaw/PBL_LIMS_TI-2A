@@ -19,7 +19,7 @@ export const orders = [
         estimate_date: "2024-11-01",
         notes: "Data mentah akan disediakan oleh klien.",
         order_type: "external",
-        status: "inprogress",
+        status: "in_progress",
     },
     {
         id: 3,
@@ -41,7 +41,7 @@ export const orders = [
         estimate_date: "2024-10-18",
         notes: "Bandingkan dengan Q3 tahun lalu.",
         order_type: "regular",
-        status: "inprogress",
+        status: "in_progress",
     },
     {
         id: 5,
@@ -63,7 +63,7 @@ export const orders = [
         estimate_date: "2024-10-22",
         notes: "Fokus pada platform X dan Instagram.",
         order_type: "external",
-        status: "inprogress",
+        status: "in_progress",
     },
     {
         id: 7,
@@ -96,7 +96,7 @@ export const orders = [
         estimate_date: "2024-11-20",
         notes: "Proyek jangka panjang, butuh data transaksi 2 tahun.",
         order_type: "regular",
-        status: "inprogress",
+        status: "in_progress",
     },
     {
         id: 10,
@@ -118,7 +118,7 @@ export const orders = [
         estimate_date: "2024-11-01",
         notes: "Menggunakan model internal klien.",
         order_type: "urgent",
-        status: "inprogress",
+        status: "in_progress",
     },
     {
         id: 12,
@@ -173,7 +173,7 @@ export const orders = [
         estimate_date: "2024-11-15",
         notes: "Fokus pada biaya logistik dan waktu pengiriman.",
         order_type: "regular",
-        status: "inprogress",
+        status: "in_progress",
     },
     {
         id: 17,
@@ -206,7 +206,7 @@ export const orders = [
         estimate_date: "2024-11-20",
         notes: "Backtesting dengan data historis.",
         order_type: "urgent",
-        status: "inprogress",
+        status: "in_progress",
     },
     {
         id: 20,

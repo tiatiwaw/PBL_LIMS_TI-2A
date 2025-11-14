@@ -1,30 +1,19 @@
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/utils/formatters";
+import { getOrderTypeLabel, getOrderTypeVariant } from "@/utils/statusUtils";
 
-// Mapping warna untuk STATUS
-const statusVariantMap = {
-    pending: "warning",
-    received: "info",
-    inprogress: "info",
-    completed: "success",
-    disapproved: "error",
-    approved: "approved",
-};
-
-// Mapping warna untuk ORDER TYPE
-const orderTypeVariantMap = {
-    internal: "success",
-    external: "info",
-    regular: "warning",
-    urgent: "error",
-};
-
-export const getOrderColumns = ({ onShowDetail }) => [
+export const getOrdersColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No." },
+    { accessorKey: "order_number", header: "No. Order" },
     { accessorKey: "title", header: "Judul Order" },
-    { accessorKey: "estimate_date", header: "Estimasi Selesai" },
-
-    // Kolom order_type dengan badge
+    {
+        accessorKey: "clients.name",
+        header: "Klien",
+        cell: ({ row }) => {
+            return row.clients.name;
+        },
+    },
     {
         accessorKey: "order_type",
         header: "Tipe Order",
@@ -32,50 +21,30 @@ export const getOrderColumns = ({ onShowDetail }) => [
             const value = row.order_type;
             return (
                 <Badge
-                    variant={
-                        orderTypeVariantMap[value?.toLowerCase()] || "outline"
-                    }
+                    variant={getOrderTypeVariant(value)}
                     className="capitalize"
                 >
-                    {value}
+                    {getOrderTypeLabel(value)}
                 </Badge>
             );
         },
     },
-
-    // Kolom status dengan badge
     {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => {
-            const value = row.status;
-            return (
-                <Badge
-                    variant={
-                        statusVariantMap[value?.toLowerCase()] || "outline"
-                    }
-                    className="capitalize"
-                >
-                    {value}
-                </Badge>
-            );
-        },
+        accessorKey: "order_date",
+        header: "Tanggal Order",
+        cell: ({ row }) => formatDate(row.order_date),
     },
-
     {
-        accessorKey: "select",
+        id: "aksi",
         header: "Aksi",
-        cell: ({ row }) => {
-            const data = row;
-            return (
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onShowDetail(data)}
-                >
-                    Detail
-                </Button>
-            );
-        },
+        cell: ({ row }) => (
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onShowDetail(row)}
+            >
+                Detail
+            </Button>
+        ),
     },
 ];

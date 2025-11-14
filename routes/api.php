@@ -22,10 +22,8 @@ use App\Http\Controllers\API\V1\Client\ClientController as ClientClientControlle
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 // use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
-use App\Http\Controllers\API\V1\OrderController as V1OrderController;
-use App\Http\Controllers\StaffApiController;
+use App\Http\Controllers\API\V1\Supervisor\OrderController as SupervisorOrderController;
 use Illuminate\Support\Facades\Route;
-use League\CommonMark\Reference\Reference;
 
 Route::prefix('v1')->group(function () {
 
@@ -131,6 +129,19 @@ Route::prefix('v1')->group(function () {
                         Route::get('/{id}', [ClientOrderController::class, 'show']);
                         Route::get('/{id}/status', [ClientHistoryController::class, 'show'])->name('status');
                     });
+            });
+
+        // supervisor
+        Route::prefix('supervisor')
+            ->middleware('supervisor')
+            ->name('api.supervisor.')
+            ->group(function () {
+
+                // Orders
+                Route::prefix('orders')->name('orders.')->group(function () {
+                    Route::get('/', [SupervisorOrderController::class, 'index'])->name('index');
+                    Route::get('/{id}', [SupervisorOrderController::class, 'show'])->name('show');
+                });
             });
     });
 });
