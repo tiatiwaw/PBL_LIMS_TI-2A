@@ -4,7 +4,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editClientFields } from "@/utils/fields/staff";
 import { useMemo, useState } from "react";
 import ClientDetailSheet from "@/components/shared/sheet/client-detail-sheet";
-import { useAuth } from "@/hooks/useAuth";
+
 import { useClients } from "@/hooks/useClient";
 import Loading from "@/components/ui/loading";
 
@@ -12,7 +12,7 @@ export default function ClientPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
+    
     const {
         clients,
         isLoading,
@@ -27,7 +27,6 @@ export default function ClientPage() {
         setIsOpen(true);
     };
 
-    const currentUser = user || { name: "Staff", role: "Staff" };
     const handleCreate = async (formData) => createClient.mutateAsync(formData);
     const handleEdit = async (id, formData) => {
         await updateClient.mutateAsync({ id, data: formData });
@@ -39,12 +38,12 @@ export default function ClientPage() {
         []
     );
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
             <DashboardLayout
                 title="Manajemen Client"
                 header="Client"
-                user={currentUser}
+                
             >
                 <Loading />
             </DashboardLayout>
@@ -56,7 +55,7 @@ export default function ClientPage() {
             <DashboardLayout
                 title="Manajemen Client"
                 header="Client"
-                user={currentUser}
+                
             >
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
@@ -68,7 +67,7 @@ export default function ClientPage() {
     return (
         <DashboardLayout
             title="Manajemen Client"
-            user={currentUser}
+            
             header="Client"
         >
             <ManagedDataTable

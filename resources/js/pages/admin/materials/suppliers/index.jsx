@@ -4,7 +4,6 @@ import SupplierDetailSheet from "@/components/shared/sheet/supplier-detail-sheet
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
 import { useSuppliers } from "@/hooks/useAdmin";
-import { useAuth } from "@/hooks/useAuth";
 import { editSupplierFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
@@ -12,15 +11,12 @@ export default function AdminSuppliersPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { data: suppliers, isLoading: suppliersLoading, error: suppliersError, createItem: createSupplier, updateItem: updateSupplier, deleteItem: deleteSupplier } = useSuppliers();
+    const { data: suppliers, isLoading: suppliersLoading, error: suppliersError, create: createSupplier, update: updateSupplier, delete: deleteSupplier } = useSuppliers();
 
     const handleShowDetail = (materials) => {
         setSelectedSupplier(materials);
         setIsOpen(true);
     };
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const columns = useMemo(() => getSuppliersColumns({ onShowDetail: handleShowDetail }), []);
 
@@ -32,9 +28,9 @@ export default function AdminSuppliersPage() {
 
     const handleDelete = async (id) => deleteSupplier.mutateAsync(id);
 
-    if (suppliersLoading || authLoading) {
+    if (suppliersLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -42,7 +38,7 @@ export default function AdminSuppliersPage() {
 
     if (suppliersError) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {suppliersError.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -53,7 +49,6 @@ export default function AdminSuppliersPage() {
     return (
         <DashboardLayout
             title="Manajemen Pemasok Reagent"
-            user={currentUser}
             header="Manajemen Pemasok Reagent"
         >
             <ManagedDataTable

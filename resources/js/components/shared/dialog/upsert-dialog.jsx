@@ -12,6 +12,7 @@ import { ChevronRight } from "lucide-react";
 import SelectField from "../form/select-field";
 import DatePicker from "../form/date-picker";
 import InputField from "../form/input-field";
+import ButtonField from "../form/button-field";
 
 export default function UpsertDialog({
     open,
@@ -50,6 +51,11 @@ export default function UpsertDialog({
                     initialValue = new Date(initialValue);
                 }
 
+               
+                if (field.type === "button") {
+                    initialValue = field.data || [];
+                }
+
                 acc[field.name] = initialValue ?? "";
                 return acc;
             }, {});
@@ -75,6 +81,10 @@ export default function UpsertDialog({
                     dataToSave[formFieldName] = dataToSave[formFieldName].toISOString().split('T')[0];
                 }
 
+                if (field.type === "button") {
+                    dataToSave[formFieldName] = field.data || [];
+                }
+
                 if (saveKey !== formFieldName) {
                     dataToSave[saveKey] = dataToSave[formFieldName];
                     delete dataToSave[formFieldName];
@@ -88,8 +98,30 @@ export default function UpsertDialog({
         }
     };
 
+    const visibleFields = fields.filter(field => {
+        if (field.showIf) {
+            const { field: targetField, value: requiredValue } = field.showIf;
+            return formData[targetField] === requiredValue;
+        }
+        return true;
+    });
+
     const renderField = (field) => {
         const value = formData[field.name] ?? "";
+
+        if (field.type === "button") {
+            return (
+                <ButtonField
+                    key={field.name}
+                    id={field.name}
+                    title={field.title}
+                    label={field.label}
+                    data={field.data}
+                    onClick={() => field.onClick(field.name, formData)}
+                    onRemove={(idToRemove) => field.onRemove(field.name, idToRemove, formData)}
+                />
+            );
+        }
 
         if (field.type === "select") {
             return (
@@ -141,7 +173,7 @@ export default function UpsertDialog({
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
 
-                <div className="grid gap-4 py-4">{fields.map(renderField)}</div>
+                <div className="grid gap-4 py-4">{visibleFields.map(renderField)}</div>
 
                 <DialogFooter>
                     <Button

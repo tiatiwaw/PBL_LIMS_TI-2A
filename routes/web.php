@@ -31,18 +31,8 @@ Route::controller(AuthController::class)
         });
     });
 
-// // API
-// Route::prefix('api/v1/auth')->name('api.auth.')->group(function () {
-//     Route::middleware('guest')->group(function () {
-//         Route::post('/login', [V1AuthController::class, 'login'])->name('login');
-//     });
-//     Route::middleware('auth')->group(function () {
-//         Route::post('/logout', [V1AuthController::class, 'logout'])->name('logout');
-//     });
-// });
-
 // Admin
-Route::middleware(['auth', 'admin'])
+Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->as('admin.')
     ->group(function () {
@@ -86,43 +76,39 @@ Route::middleware(['auth', 'admin'])
     });
 
 // Manager
-Route::controller(ManagerController::class)
-    // ->middleware(['auth', 'manager'])
+Route::middleware(['auth', 'role:manager'])
     ->prefix('manager')
-    ->name('manager.')
+    ->as('manager.')
     ->group(function () {
-        Route::get('/', 'index')->name('index');
+        Route::inertia('/', 'manager/index')->name('index');
 
-        // Report Validation
-        Route::prefix('report-validation')
-            ->name('report.validation.')
-            ->group(function () {
-                Route::get('/', 'reportValidation')->name('index');
-                Route::get('/{id}', 'showReportValidation')->name('show');
-                Route::put('/{id}', 'updateReportValidation')->name('update');
-            });
+        Route::prefix('report-validation')->as('report.validation.')->group(function () {
+            Route::inertia('/', 'manager/report-validation/index')->name('index');
+            Route::get('/{id}', function ($id) {
+                return Inertia::render('manager/detail/index', [
+                    'id' => $id,
+                    'canValidate' => true,
+                ]);
+            })->name('show');
+        });
 
-        // Orders
-        Route::prefix('orders')
-            ->name('orders.')
-            ->group(function () {
-                Route::get('/', 'orders')->name('index');
-                Route::get('/{id}', 'showOrder')->name('show');
-            });
+        Route::prefix('orders')->as('orders.')->group(function () {
+            Route::inertia('/', 'manager/orders/index')->name('index');
+            Route::get('/{id}', function ($id) {
+                return Inertia::render('manager/detail/index', [
+                    'id' => $id,
+                    'canValidate' => false,
+                ]);
+            })->name('show');
+        });
 
-        // Users
-        Route::prefix('users')
-            ->name('users.')
-            ->group(function () {
-                Route::get('/', 'users')->name('index');
-                Route::put('/{id}', 'updateUser')->name('update');
-                Route::delete('/{id}', 'destroyUser')->name('destroy');
-            });
+        Route::inertia('/users', 'manager/users/index')->name('users');
     });
+
 
 // Staff
 Route::controller(StaffController::class)
-    ->middleware(['auth', 'staff'])
+    ->middleware(['auth', 'role:staff'])
     ->prefix('staff')
     ->name('staff.')
     ->group(function () {
@@ -146,7 +132,7 @@ Route::controller(StaffController::class)
 
 // Supervisor
 Route::controller(SupervisorController::class)
-    ->middleware(['auth', 'supervisor'])
+    ->middleware(['auth', 'role:supervisor'])
     ->prefix('supervisor')
     ->name('supervisor.')
     ->group(function () {
@@ -156,7 +142,7 @@ Route::controller(SupervisorController::class)
 
 // Analyst
 Route::controller(AnalystController::class)
-    ->middleware(['auth', 'analyst'])
+    ->middleware(['auth', 'role:analyst'])
     ->prefix('analyst')
     ->name('analyst.')
     ->group(function () {
@@ -194,7 +180,7 @@ Route::controller(AnalystController::class)
 
 // Client
 Route::controller(ClientController::class)
-    ->middleware(['auth', 'client'])
+    ->middleware(['auth', 'role:client'])
     ->prefix('client')
     ->name('client.')
     ->group(function () {

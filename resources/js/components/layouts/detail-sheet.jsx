@@ -42,7 +42,7 @@ export default function DetailSheet({
                             <div className="relative flex-shrink-0 w-36">
                                 <div className="flex items-center gap-2">
                                     <div className="w-1 h-6 bg-primary-hijauTua rounded-full"></div>
-                                    <span className="text-xs font-bold text-primary-hijauTua uppercase tracking-wider">
+                                    <span className="text-xs font-bold text-primary-hijauTua uppercase tracking-wider w-32">
                                         {field.label}
                                     </span>
                                 </div>

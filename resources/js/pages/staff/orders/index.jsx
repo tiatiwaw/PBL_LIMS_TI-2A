@@ -5,7 +5,7 @@ import OrdersForm from "@/components/shared/staff/orders-form1";
 import OrdersForm2 from "@/components/shared/staff/orders-form2";
 import OrderForms3 from "@/components/shared/staff/orders-form3";
 import { CheckSquare } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+
 import { useOrders } from "@/hooks/useOrders";
 import Loading from "@/components/ui/loading";
 import { staffService } from "@/services/staffService";
@@ -13,8 +13,7 @@ import { staffService } from "@/services/staffService";
 export default function OrdersPage() {
     const [step, setStep] = useState(1);
     const [isSaved, setIsSaved] = useState(false);
-    const { user, loading: authLoading } = useAuth();
-    const currentUser = user || { name: "Staff", role: "Staff" };
+    
     const {
         clients,
         methods,
@@ -92,12 +91,12 @@ export default function OrdersPage() {
         }
     };
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
             <DashboardLayout
                 title="Orders"
                 header="Registrasi Order Baru"
-                user={currentUser}
+                
             >
                 <Loading />
             </DashboardLayout>
@@ -109,7 +108,7 @@ export default function OrdersPage() {
             <DashboardLayout
                 title="Orders"
                 header="Registrasi Order Baru"
-                user={currentUser}
+                
             >
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
@@ -121,7 +120,7 @@ export default function OrdersPage() {
     return (
         <DashboardLayout
             title="Orders"
-            user={currentUser}
+            
             header="Registrasi Order Baru"
         >
             <div ref={formTopRef} className="px-4 py-2 rounded-md shadow-sm">

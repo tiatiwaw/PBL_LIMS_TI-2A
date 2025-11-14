@@ -1,5 +1,4 @@
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getMethodsColumns } from "@/components/shared/admin/test-columns";
 import MethodDetailSheet from "@/components/shared/sheet/method-detail-sheet";
@@ -12,16 +11,13 @@ export default function AdminMethodsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedMethod, setSelectedMethod] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { data: methods, isLoading, error, createItem: createMethod, updateItem: updateMethod, deleteItem: deleteMethod } = useMethods();
+    const { data: methods, isLoading, error, create: createMethod, update: updateMethod, delete: deleteMethod } = useMethods();
     const { data: references, isLoading: referenceLoading, error: referenceError } = useReferences();
 
     const handleShowDetail = (tests) => {
         setSelectedMethod(tests);
         setIsOpen(true);
     };
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const columns = useMemo(() => getMethodsColumns({ onShowDetail: handleShowDetail }), []);
 
@@ -33,9 +29,9 @@ export default function AdminMethodsPage() {
 
     const handleDelete = async (id) => deleteMethod.mutateAsync(id);
 
-    if (isLoading || referenceLoading || authLoading) {
+    if (isLoading || referenceLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -43,7 +39,7 @@ export default function AdminMethodsPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -54,7 +50,6 @@ export default function AdminMethodsPage() {
     return (
         <DashboardLayout
             title="Manajemen Metode Uji"
-            user={currentUser}
             header="Manajemen Metode Uji"
         >
             <ManagedDataTable

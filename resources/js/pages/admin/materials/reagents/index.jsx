@@ -4,7 +4,6 @@ import ReagentsDetailSheet from "@/components/shared/sheet/reagen_detail_sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editReagentFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
 import Loading from "@/components/ui/loading";
 import { useGrades, useReagents, useSuppliers } from "@/hooks/useAdmin";
 
@@ -17,12 +16,9 @@ export default function AdminReagentsPage() {
         setIsOpen(true);
     };
 
-    const { user, loading: authLoading } = useAuth();
     const { data: grades, isLoading: gradesLoading, error: gradesError } = useGrades();
     const { data: suppliers, isLoading: suppliersLoading, error: suppliersError } = useSuppliers();
-    const { data: reagents, isLoading: regeantsLoading, error: regeantsError, createItem: createReagent, updateItem: updateReagent, deleteItem: deleteReagent } = useReagents();
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
+    const { data: reagents, isLoading: regeantsLoading, error: regeantsError, create: createReagent, update: updateReagent, delete: deleteReagent } = useReagents();
 
     const columns = useMemo(() => getReagentsColumns({ onShowDetail: handleShowDetail }), []);
 
@@ -34,9 +30,9 @@ export default function AdminReagentsPage() {
 
     const handleDelete = async (id) => deleteReagent.mutateAsync(id);
 
-    if (gradesLoading || suppliersLoading || regeantsLoading || authLoading) {
+    if (gradesLoading || suppliersLoading || regeantsLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -44,7 +40,7 @@ export default function AdminReagentsPage() {
 
     if (regeantsError || suppliersError || gradesError) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {"Terjadi kesalahan saat memuat data"}
                 </div>
@@ -55,7 +51,6 @@ export default function AdminReagentsPage() {
     return (
         <DashboardLayout
             title="Manajemen Reagen"
-            user={currentUser}
             header="Manajemen Reagen"
         >
             <ManagedDataTable

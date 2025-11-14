@@ -1,5 +1,4 @@
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getSampleCategoriesColumns } from "@/components/shared/admin/test-columns";
 import CategoryDetailSheet from "@/components/shared/sheet/category-detail-sheets";
@@ -12,8 +11,7 @@ export default function AdminSampleCategoriesPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { data: categories, isLoading, error, createItem: createCategory, updateItem: updateCategory, deleteItem: deleteCategory } = useCategories();
+    const { data: categories, isLoading, error, create: createCategory, update: updateCategory, delete: deleteCategory } = useCategories();
 
     const handleShowDetail = (tests) => {
         setSelectedCategory(tests);
@@ -21,8 +19,6 @@ export default function AdminSampleCategoriesPage() {
     };
 
     const columns = useMemo(() => getSampleCategoriesColumns({ onShowDetail: handleShowDetail }), []);
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const handleCreate = async (formData) => createCategory.mutateAsync(formData);
 
@@ -32,9 +28,9 @@ export default function AdminSampleCategoriesPage() {
 
     const handleDelete = async (id) => deleteCategory.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -42,7 +38,7 @@ export default function AdminSampleCategoriesPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -53,7 +49,6 @@ export default function AdminSampleCategoriesPage() {
     return (
         <DashboardLayout
             title="Manajemen Kategori Sampel"
-            user={currentUser}
             header="Manajemen Kategori Sampel"
         >
             <ManagedDataTable

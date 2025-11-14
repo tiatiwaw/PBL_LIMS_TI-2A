@@ -2,18 +2,15 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { ClientInfoCard, OrderDetailHeader, SampleSelector, AnalysisMethodCard, AnalystTeamCard, EquipmentCard, NotesCard, ReagentCard, SampleInfoCard, OrderValidation, OrderSummary } from "@/components/shared/order/detail";
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
-import { useOrder } from "@/hooks/useOrder";
 import { usePage } from "@inertiajs/react";
 import ParameterMethodCard from "@/components/shared/order/detail/parameter-method-card";
-import { adminService } from "@/services/adminService";
+import { useOrder } from "@/hooks/useAdmin";
 
 export default function AdminDetailOrder({ canValidate }) {
     const { props } = usePage()
     const { id } = props
 
-    const { user, loading: authLoading } = useAuth();
-    const { order, isLoadingOrder, errorOrder } = useOrder(id, adminService);
+    const { data: order, isLoading, error } = useOrder(id);
 
     const [selectedSampleId, setSelectedSampleId] = useState(null);
 
@@ -23,15 +20,13 @@ export default function AdminDetailOrder({ canValidate }) {
         }
     }, [order, selectedSampleId]);
 
-    const currentUser = user || { name: "Admin", role: "Admin" };
-
     const handleValidation = () => {
         console.log("Validasi Order");
     };
 
-    if (isLoadingOrder || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -41,9 +36,9 @@ export default function AdminDetailOrder({ canValidate }) {
         (sample) => sample.id.toString() === selectedSampleId
     );
 
-    if (errorOrder) {
+    if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {errorOrder.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -52,7 +47,7 @@ export default function AdminDetailOrder({ canValidate }) {
     }
 
     return (
-        <DashboardLayout title="Detail Order" user={currentUser} header="Detail Order">
+        <DashboardLayout title="Detail Order" header="Detail Order">
             <div className="max-w-7xl mx-auto space-y-6">
                 <OrderDetailHeader order={order} />
 

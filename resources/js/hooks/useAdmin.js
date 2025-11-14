@@ -36,7 +36,7 @@ export const useReferences = () =>
     useCrud(adminService.references, "references", "Referensi");
 
 export const useSertif = () =>
-    useCrud(adminService.certificates, "sertif", "Sertifikat");
+    useCrud(adminService.sertif, "sertif", "Sertifikat");
 
 export const useSuppliers = () =>
     useCrud(adminService.suppliers, "suppliers", "Supplier");

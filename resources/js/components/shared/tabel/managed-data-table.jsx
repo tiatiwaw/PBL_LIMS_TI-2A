@@ -15,12 +15,11 @@ export default function ManagedDataTable({
     columns,
     editFields,
 
-    // callback
     onCreate,
     onEdit,
     onDelete,
+    onFormOpen,
 
-    // konfigurasi
     filterOptions = [],
     filterColumn = "status",
     showSearch = true,
@@ -29,7 +28,6 @@ export default function ManagedDataTable({
     pageSize = 10,
     meta = {},
 
-    // teks
     createTitle = "Tambah Data Baru",
     createDescription = "Isi data baru, lalu simpan.",
     editTitle = "Edit Data",
@@ -55,8 +53,16 @@ export default function ManagedDataTable({
         data: null,
     });
 
-    const handleOpenCreate = () => setFormDialog({ open: true, data: null, mode: "create" });
-    const handleOpenEdit = (row) => setFormDialog({ open: true, data: row, mode: "edit" });
+    const handleOpenCreate = () => {
+        onFormOpen?.(null);
+        setFormDialog({ open: true, data: null, mode: "create" });
+    };
+
+    const handleOpenEdit = (row) => {
+        onFormOpen?.(row);
+        setFormDialog({ open: true, data: row, mode: "edit" });
+    };
+
     const handleOpenDelete = (row) => setDeleteDialog({ open: true, data: row });
 
     const handleSave = async (formData) => {

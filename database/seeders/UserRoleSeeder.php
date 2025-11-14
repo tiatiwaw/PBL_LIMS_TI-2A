@@ -34,6 +34,17 @@ class UserRoleSeeder extends Seeder
         ]);
         $adminUser->assignRole('admin'); // ← INI YANG PERLU DITAMBAHKAN
 
+        $staffUser = User::create([
+            'name' => 'King Staff',
+            'email' => 'staff@staff.com',
+            'password' => Hash::make('staff123'),
+            'remember_token' => Str::random(10),
+            'signature' => 'signatures/admin.png', // Ganti fake() dengan path real
+            'email_verified_at' => now(),
+            // HAPUS: 'role' => 'admin' ← INI YANG PERLU DIHAPUS
+        ]);
+        $staffUser->assignRole('staff'); // ← INI YANG PERLU DITAMBAHKAN
+
         // 3️⃣ BUAT USER LAINNYA & ASSIGN ROLE
         $otherRoles = ['client', 'staff', 'analyst', 'supervisor', 'manager'];
 

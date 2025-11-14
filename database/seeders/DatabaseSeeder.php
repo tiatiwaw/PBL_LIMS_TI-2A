@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\NOrderSample;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -24,6 +23,8 @@ class DatabaseSeeder extends Seeder
                         // BrandTypeSeeder::class,
                         // GradeSeeder::class,
                         // SupplierSeeder::class,
+                        // TrainingSeeder::class,
+                        // CertificateSeeder::class,
                         SampleCategorySeeder::class,
                         // UnitValueSeeder::class,
                         // ReferenceStandardSeeder::class,
@@ -48,6 +49,7 @@ class DatabaseSeeder extends Seeder
                         NParameterMethodSeeder::class,
                         // NEquipmentSeeder::class,
                         // NReagentSeeder::class,
+                        // NTrainingAnalystSeeder::class,
                 ]);
         }
 }

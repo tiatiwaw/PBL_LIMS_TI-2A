@@ -42,7 +42,7 @@ Route::prefix('v1')->group(function () {
 
         // Admin
         Route::prefix('admin')
-            ->middleware('admin')
+            ->middleware('role:admin')
             ->name('api.admin.')
             ->group(function () {
 
@@ -90,7 +90,7 @@ Route::prefix('v1')->group(function () {
 
         // Staff
         Route::prefix('staff')
-            ->middleware('staff')
+            ->middleware('role:staff')
             ->name('api.staff.')
             ->group(function () {
 

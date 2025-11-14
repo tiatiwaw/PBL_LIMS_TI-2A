@@ -1,28 +1,25 @@
-import { useTraining } from "@/hooks/useTraining";
-import Loading from "@/components/ui/loading"; 
-import { useAuth } from "@/hooks/useAuth"; 
+import Loading from "@/components/ui/loading";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getTrainingColumns } from "@/components/shared/admin/test-columns";//
 import TrainingDetailSheet from "@/components/shared/sheet/training-detail-sheets";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editTrainingFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
+import { useTrainings } from "@/hooks/useAdmin";
 
 export default function AdminTrainingPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { training, isLoading, error, createTraining, updateTraining, deleteTraining } = useTraining();
-            
+    const { data: training, isLoading, error, create: createTraining, update: updateTraining, delete: deleteTraining } = useTrainings();
+
     const handleShowDetail = (tests) => {
-            setSelectedCategory(tests);
-            setIsOpen(true);
+        setSelectedCategory(tests);
+        setIsOpen(true);
     };
 
     const columns = useMemo(() => getTrainingColumns({ onShowDetail: handleShowDetail }), []);
 
-    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const handleCreate = async (formData) => createTraining.mutateAsync(formData);
 
@@ -32,9 +29,9 @@ export default function AdminTrainingPage() {
 
     const handleDelete = async (id) => deleteTraining.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -42,7 +39,7 @@ export default function AdminTrainingPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -53,7 +50,6 @@ export default function AdminTrainingPage() {
     return (
         <DashboardLayout
             title="Manajemen Pelatihan Sampel"
-            user={currentUser}
             header="Manajemen Pelatihan Sampel"
         >
             <ManagedDataTable
@@ -67,7 +63,7 @@ export default function AdminTrainingPage() {
                 editTitle="Edit Pelatihan"
                 deleteTitle="Hapus Pelatihan"
             />
-        <TrainingDetailSheet data={selectedCategory} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <TrainingDetailSheet data={selectedCategory} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }

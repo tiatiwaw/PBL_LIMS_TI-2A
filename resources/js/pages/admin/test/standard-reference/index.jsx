@@ -1,5 +1,4 @@
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getStandardsColumns } from "@/components/shared/admin/test-columns";
 import ReferenceDetailSheet from "@/components/shared/sheet/reference-detail-sheet";
@@ -12,8 +11,7 @@ export default function AdminStandardsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedReference, setSelectedReference] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { data: references, isLoading, error, createItem: createReference, updateItem: updateReference, deleteItem: deleteReference } = useReferences();
+    const { data: references, isLoading, error, create: createReference, update: updateReference, delete: deleteReference } = useReferences();
 
     const handleShowDetail = (tests) => {
         setSelectedReference(tests);
@@ -21,8 +19,6 @@ export default function AdminStandardsPage() {
     };
 
     const columns = useMemo(() => getStandardsColumns({ onShowDetail: handleShowDetail }), []);
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const handleCreate = async (formData) => createReference.mutateAsync(formData);
 
@@ -32,9 +28,9 @@ export default function AdminStandardsPage() {
 
     const handleDelete = async (id) => deleteReference.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -42,7 +38,7 @@ export default function AdminStandardsPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -53,7 +49,6 @@ export default function AdminStandardsPage() {
     return (
         <DashboardLayout
             title="Manajemen Standar Referensi"
-            user={currentUser}
             header="Manajemen Standar Referensi"
         >
             <ManagedDataTable

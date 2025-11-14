@@ -39,7 +39,7 @@ export const adminService = {
         useFormData: true,
     }),
 
-    training: serviceMethods("/admin/analyst/trainings", {
+    trainings: serviceMethods("/admin/analyst/trainings", {
         useFormData: true,
     }),
 

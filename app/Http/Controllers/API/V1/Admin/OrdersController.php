@@ -42,16 +42,12 @@ class OrdersController extends Controller
                 'analysts.certificates',
                 'analysesMethods',
                 'samples.sample_categories',
-                'samples.n_parameter_methods' => function ($query) {
-                    $query->with([
-                        'test_parameters.unit_values',
-                        'test_parameters.reference_standards',
-                        'test_methods.reference_standards',
-                        'equipments.brand_types',
-                        'reagents.suppliers',
-                        'reagents.grades'
-                    ]);
-                }
+                'samples.n_parameter_methods.test_parameters.unit_values',
+                'samples.n_parameter_methods.test_parameters.reference_standards',
+                'samples.n_parameter_methods.test_methods.reference_standards',
+                'samples.n_parameter_methods.equipments.brand_types',
+                'samples.n_parameter_methods.reagents.suppliers',
+                'samples.n_parameter_methods.reagents.grades',
             ])->findOrFail($id);
 
             return response()->json($order);

@@ -1,5 +1,5 @@
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
+
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getParametersColumns } from "@/components/shared/admin/test-columns";
 import ParameterDetailSheet from "@/components/shared/sheet/parameter-detail-sheet";
@@ -12,8 +12,8 @@ export default function AdminParametersPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedParameter, setSelectedParameter] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { data: parameters, isLoading, error, createItem: createParameter, updateItem: updateParameter, deleteItem: deleteParameter } = useParameters();
+
+    const { data: parameters, isLoading, error, create: createParameter, update: updateParameter, delete: deleteParameter } = useParameters();
     const { data: units, isLoading: unitLoading, error: unitError } = useUnits();
     const { data: references, isLoading: referenceLoading, error: referenceError } = useReferences();
 
@@ -27,7 +27,7 @@ export default function AdminParametersPage() {
         []
     );
 
-    const currentUser = user || { name: "Admin", role: "Admin" };
+
 
     const handleCreate = async (formData) => createParameter.mutateAsync(formData);
 
@@ -37,9 +37,9 @@ export default function AdminParametersPage() {
 
     const handleDelete = async (id) => deleteParameter.mutateAsync(id);
 
-    if (isLoading || unitLoading || referenceLoading || authLoading) {
+    if (isLoading || unitLoading || referenceLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -47,7 +47,7 @@ export default function AdminParametersPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -58,7 +58,6 @@ export default function AdminParametersPage() {
     return (
         <DashboardLayout
             title="Manajemen Tes Parameter"
-            user={currentUser}
             header="Manajemen Tes Parameter"
         >
             <ManagedDataTable

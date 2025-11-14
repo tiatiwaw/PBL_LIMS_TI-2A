@@ -37,7 +37,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
 
 const initialReports = [
     {
@@ -103,7 +102,6 @@ const initialReports = [
 ];
 
 export default function AdminReportsPage() {
-    const { user, loading: authLoading } = useAuth();
     const [reports, setReports] = useState(initialReports);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterType, setFilterType] = useState("all");
@@ -112,8 +110,6 @@ export default function AdminReportsPage() {
     const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
     const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
     const [selectedReport, setSelectedReport] = useState(null);
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const reportTypes = useMemo(() => [...new Set(reports.map((r) => r.type))], [reports]);
 
@@ -144,14 +140,14 @@ export default function AdminReportsPage() {
 
     if (authLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
     }
 
     return (
-        <DashboardLayout title="Manajemen Laporan" user={currentUser} header="Manajemen Laporan">
+        <DashboardLayout title="Manajemen Laporan"  header="Manajemen Laporan">
             <div className="space-y-6">
                 <Card>
                     <CardHeader>

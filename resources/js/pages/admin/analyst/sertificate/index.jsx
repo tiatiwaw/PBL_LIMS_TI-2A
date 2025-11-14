@@ -1,28 +1,24 @@
-import { useSertif } from "@/hooks/useSertificate";
-import Loading from "@/components/ui/loading"; 
-import { useAuth } from "@/hooks/useAuth"; 
+import Loading from "@/components/ui/loading";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getSertifColumns } from "@/components/shared/admin/test-columns";
 import SertifDetailSheet from "@/components/shared/sheet/sertif-detail-sheets";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editSertificateFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
+import { useSertif } from "@/hooks/useAdmin";
 
 export default function AdminCertificatePage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { sertif, isLoading, error, createSertif, updateSertif, deleteSertif } = useSertif();
-            
+    const { data: sertif, isLoading, error, create: createSertif, update: updateSertif, delete: deleteSertif } = useSertif();
+
     const handleShowDetail = (tests) => {
-            setSelectedCategory(tests);
-            setIsOpen(true);
+        setSelectedCategory(tests);
+        setIsOpen(true);
     };
 
     const columns = useMemo(() => getSertifColumns({ onShowDetail: handleShowDetail }), []);
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const handleCreate = async (formData) => createSertif.mutateAsync(formData);
 
@@ -32,9 +28,9 @@ export default function AdminCertificatePage() {
 
     const handleDelete = async (id) => deleteSertif.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -42,7 +38,7 @@ export default function AdminCertificatePage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -53,7 +49,6 @@ export default function AdminCertificatePage() {
     return (
         <DashboardLayout
             title="Manajemen Sertifikat"
-            user={currentUser}
             header="Manajemen Sertifikat"
         >
             <ManagedDataTable
@@ -67,7 +62,7 @@ export default function AdminCertificatePage() {
                 editTitle="Edit Sertifikat"
                 deleteTitle="Hapus Sertifikat"
             />
-        <SertifDetailSheet data={selectedCategory} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <SertifDetailSheet data={selectedCategory} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }

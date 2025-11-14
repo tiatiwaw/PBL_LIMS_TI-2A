@@ -11,7 +11,9 @@ export const editEquipmentFields = (data) => {
             type: "select",
             placeholder: "Masukkan brand / tipe alat",
             initialValuePath: "brand_types.id",
-            options: data ? data.map((item) => ({ value: item.id, label: item.name })) : [],
+            options: data
+                ? data.map((item) => ({ value: item.id, label: item.name }))
+                : [],
             savePath: "brand_type_id",
         },
         {
@@ -374,29 +376,53 @@ export const editTrainingFields = [
     },
 ];
 
-export const editUsersFields = [
-    {
-        name: "name",
-        label: "Nama Pengguna",
-        placeholder: "Masukkan nama pengguna",
-    },
-    {
-        name: "email",
-        label: "Email Pengguna",
-        placeholder: "Masukkan email pengguna",
-    },
-    {
-        name: "role",
-        label: "Role Pengguna",
-        type: "select",
-        placeholder: "Pilih role pengguna",
-        options: [
-            { value: "admin", label: "Admin" },
-            { value: "analyst", label: "Analis" },
-            { value: "client", label: "Klien" },
-            { value: "manager", label: "Manager" },
-            { value: "staff", label: "Staff" },
-            { value: "supervisor", label: "Supervisor" },
-        ],
-    },
-];
+export const editUsersFields = (
+    currentTrainings = [],
+    handleTrainingClick,
+    handleRemoveTraining
+) => {
+    return [
+        {
+            name: "name",
+            label: "Nama Pengguna",
+            placeholder: "Masukkan nama pengguna",
+        },
+        {
+            name: "email",
+            label: "Email Pengguna",
+            placeholder: "Masukkan email pengguna",
+        },
+        {
+            name: "role",
+            label: "Role Pengguna",
+            type: "select",
+            placeholder: "Pilih role pengguna",
+            options: [
+                { value: "admin", label: "Admin" },
+                { value: "analyst", label: "Analyst" },
+                { value: "client", label: "Client" },
+                { value: "manager", label: "Manager" },
+                { value: "staff", label: "Staff" },
+                { value: "supervisor", label: "Supervisor" },
+            ],
+        },
+        {
+            name: "specialist",
+            label: "Spesialisasi Pengguna",
+            initialValuePath: "analyst.specialist",
+            savePath: "analyst.specialist",
+            placeholder: "Masukkan spesialisasi pengguna",
+            showIf: { field: "role", value: "analyst" },
+        },
+        {
+            name: "trainings",
+            title: "Pelatihan",
+            label: "Pilih Pelatihan",
+            type: "button",
+            data: currentTrainings,
+            onClick: handleTrainingClick,
+            onRemove: handleRemoveTraining,
+            showIf: { field: "role", value: "analyst" },
+        },
+    ];
+};

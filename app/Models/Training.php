@@ -23,6 +23,6 @@ class Training extends Model
 
     public function analysts()
     {
-        return $this->belongsToMany(Analyst::class, 'n_training_analysts', 'analyst_id', 'training_id');
+        return $this->belongsToMany(Analyst::class, 'n_training_analysts', 'training_id', 'analyst_id');
     }
 }

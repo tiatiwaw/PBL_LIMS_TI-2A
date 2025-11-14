@@ -4,7 +4,6 @@ import GradeDetailSheet from "@/components/shared/sheet/grade-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
 import { useGrades } from "@/hooks/useAdmin";
-import { useAuth } from "@/hooks/useAuth";
 import { editGradeFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
@@ -12,15 +11,12 @@ export default function AdminGradesPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedGrades, setSelectedGrades] = useState(null);
 
-    const { auth, loading: authLoading } = useAuth();
-    const { data: grades, isLoading, error, createItem: createGrade, updateItem: updateGrade, deleteItem: deleteGrade } = useGrades();
+    const { data: grades, isLoading, error, create: createGrade, update: updateGrade, delete: deleteGrade } = useGrades();
 
     const handleShowDetail = (materials) => {
         setSelectedGrades(materials);
         setIsOpen(true);
     };
-
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
 
     const columns = useMemo(() => getGradesColumns({ onShowDetail: handleShowDetail }), []);
 
@@ -32,9 +28,9 @@ export default function AdminGradesPage() {
 
     const handleDelete = async (id) => deleteGrade.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -42,7 +38,7 @@ export default function AdminGradesPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -54,7 +50,6 @@ export default function AdminGradesPage() {
     return (
         <DashboardLayout
             title="Manajemen Jenis Grade"
-            user={currentUser}
             header="Manajemen Jenis Grade"
         >
             <ManagedDataTable

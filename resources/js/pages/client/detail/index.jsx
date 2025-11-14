@@ -12,8 +12,6 @@ import { useClientOrder } from "@/hooks/useClientOrder";
 export default function ClientOrderDetail({ auth, orderId }) {
   console.log("props dari Inertia:", { auth, orderId });
 
-  // ✅ User dari Inertia
-  const currentUser = auth?.user || { name: "Client", role: "Client" };
 
   // ✅ Ambil data order dari hooks
   const {
@@ -43,7 +41,6 @@ export default function ClientOrderDetail({ auth, orderId }) {
     return (
       <DashboardLayout
         title="Detail Pemesanan"
-        user={currentUser}
         header="Memuat Data..."
       >
         <div className="flex items-center justify-center min-h-[60vh] text-gray-500">
@@ -58,7 +55,6 @@ export default function ClientOrderDetail({ auth, orderId }) {
     return (
       <DashboardLayout
         title="Detail Pemesanan"
-        user={currentUser}
         header="Terjadi Kesalahan"
       >
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
@@ -81,7 +77,6 @@ export default function ClientOrderDetail({ auth, orderId }) {
   return (
     <DashboardLayout
       title="Detail Pemesanan"
-      user={currentUser}
       header="Detail Pemesanan"
     >
       <div className="w-full max-w-5xl mx-auto flex flex-col gap-8 text-primary-hijauTua p-4">

@@ -13,8 +13,6 @@ export default function DetailOrder({ auth, canValidate }) {
         (sample) => sample.id.toString() === selectedSampleId
     );
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-
     const handleValidate = () => {
         alert("Order berhasil divalidasi!");
         // setLoading(true);
@@ -34,7 +32,7 @@ export default function DetailOrder({ auth, canValidate }) {
     };
 
     return (
-        <DashboardLayout title="Detail Order" user={currentUser} header="Detail Order">
+        <DashboardLayout title="Detail Order"  header="Detail Order">
             <div className="max-w-7xl mx-auto space-y-6">
                 <OrderDetailHeader
                     order={detailOrder}

@@ -1,5 +1,4 @@
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getUnitsColumns } from "@/components/shared/admin/test-columns";
 import UnitDetailSheet from "@/components/shared/sheet/unit-detail-sheet";
@@ -12,8 +11,7 @@ export default function AdminUnitsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { data: units, isLoading, error, createItem: createUnit, updateItem: updateUnit, deleteItem: deleteUnit } = useUnits();
+    const { data: units, isLoading, error, create: createUnit, update: updateUnit, delete: deleteUnit } = useUnits();
 
     const handleShowDetail = (tests) => {
         setSelectedUnit(tests);
@@ -21,8 +19,6 @@ export default function AdminUnitsPage() {
     };
 
     const columns = useMemo(() => getUnitsColumns({ onShowDetail: handleShowDetail }), []);
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const handleCreate = async (formData) => createUnit.mutateAsync(formData);
 
@@ -32,9 +28,9 @@ export default function AdminUnitsPage() {
 
     const handleDelete = async (id) => deleteUnit.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -42,7 +38,7 @@ export default function AdminUnitsPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -53,7 +49,6 @@ export default function AdminUnitsPage() {
     return (
         <DashboardLayout
             title="Manajemen Nilai Unit"
-            user={currentUser}
             header="Manajemen Nilai Unit"
         >
             <ManagedDataTable

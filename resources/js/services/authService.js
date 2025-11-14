@@ -6,10 +6,13 @@ const handleAuthError = (error, defaultMessage = "Authentication error occurred"
     throw new Error(message);
 };
 
+let isAuthenticated = false;
+
 export const authService = {
     login: async (credentials) => {
         try {
             const response = await api.post("/auth/login", credentials);
+            isAuthenticated = true;
             return response.data;
         } catch (error) {
             handleAuthError(error, "Login failed");
@@ -19,6 +22,7 @@ export const authService = {
     logout: async () => {
         try {
             await api.post("/auth/logout");
+            isAuthenticated = false;
         } catch (error) {
             console.warn("Logout API failed:", error);
         }
@@ -33,12 +37,12 @@ export const authService = {
         }
     },
 
-    async isAuthenticated() {
+    isAuthenticated: async () => {
         try {
-            await this.getUser();
-            return true;
+            // Optionally, you could verify the token/session with the server here
+            return isAuthenticated;
         } catch (error) {
-            return false;
+            handleAuthError(error, "Failed to verify authentication status");
         }
-    },
+    }
 };

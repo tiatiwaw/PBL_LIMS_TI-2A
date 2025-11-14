@@ -4,7 +4,6 @@ import EquipmentDetailSheet from "@/components/shared/sheet/equipment-detail-she
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
 import { useBrands, useEquipments } from "@/hooks/useAdmin";
-import { useAuth } from "@/hooks/useAuth";
 import { editEquipmentFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
@@ -20,14 +19,12 @@ export default function AdminEquipmentsPage() {
     const [selectedEquipment, setSelectedEquipment] = useState(null);
 
     const { data: brands, isLoading: brandLoading, error: brandError } = useBrands();
-    const { data: equipments, isLoading: equipmentLoading, error: equipmentError, createItem: createEquipment, updateItem: updateEquipment, deleteItem: deleteEquipment } = useEquipments();
-    const { user, loading: authLoading } = useAuth();
+    const { data: equipments, isLoading: equipmentLoading, error: equipmentError, create: createEquipment, update: updateEquipment, delete: deleteEquipment } = useEquipments();
 
     const handleShowDetail = (equipment) => {
         setSelectedEquipment(equipment);
         setIsOpen(true);
     };
-    const currentUser = user || { name: "King Akbar", role: "Manager" };
 
     const columns = useMemo(() => getEquipmentsColumns({ onShowDetail: handleShowDetail }), []);
 
@@ -39,9 +36,9 @@ export default function AdminEquipmentsPage() {
 
     const handleDelete = async (id) => deleteEquipment.mutateAsync(id);
 
-    if (brandLoading || equipmentLoading || authLoading) {
+    if (brandLoading || equipmentLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -49,7 +46,7 @@ export default function AdminEquipmentsPage() {
 
     if (brandError || equipmentError) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {equipmentError.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -60,7 +57,6 @@ export default function AdminEquipmentsPage() {
     return (
         <DashboardLayout
             title="Manajemen Alat"
-            user={currentUser}
             header="Manajemen Alat"
         >
             <ManagedDataTable
