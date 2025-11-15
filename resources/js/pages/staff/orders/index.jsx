@@ -6,26 +6,19 @@ import OrdersForm2 from "@/components/shared/staff/orders-form2";
 import OrderForms3 from "@/components/shared/staff/orders-form3";
 import { CheckSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useOrders } from "@/hooks/useOrders";
 import Loading from "@/components/ui/loading";
-import { staffService } from "@/services/staffService";
+import { useOrders, useSamples } from "@/hooks/useStaff";
 
 export default function OrdersPage() {
     const [step, setStep] = useState(1);
     const [isSaved, setIsSaved] = useState(false);
     const { user, loading: authLoading } = useAuth();
     const currentUser = user || { name: "Staff", role: "Staff" };
-    const {
-        clients,
-        methods,
-        samples,
-        categories,
-        orderNumber,
-        isLoading,
-        error,
-        createOrder,
-        createSample,
-    } = useOrders(staffService, "staff");
+    const { data: orders, isLoading, error, create: createOrder } = useOrders();
+    console.log("order", orders);
+    const { create: createSample } = useSamples();
+
+    const { clients, methods, samples, categories, orderNumber } = orders || {};
 
     const [data, setData] = useState({
         // Step 1 data

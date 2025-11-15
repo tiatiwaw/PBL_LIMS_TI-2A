@@ -5,8 +5,8 @@ import { editClientFields } from "@/utils/fields/staff";
 import { useMemo, useState } from "react";
 import ClientDetailSheet from "@/components/shared/sheet/client-detail-sheet";
 import { useAuth } from "@/hooks/useAuth";
-import { useClients } from "@/hooks/useClient";
 import Loading from "@/components/ui/loading";
+import { useClients } from "@/hooks/useStaff";
 
 export default function ClientPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -14,12 +14,12 @@ export default function ClientPage() {
 
     const { user, loading: authLoading } = useAuth();
     const {
-        clients,
+        data: clients,
         isLoading,
         error,
-        createClient,
-        updateClient,
-        deleteClient,
+        create: createClient,
+        update: updateClient,
+        delete: deleteClient,
     } = useClients();
 
     const handleShowDetail = (client) => {
@@ -78,8 +78,9 @@ export default function ClientPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                editTitle="Edit Client"
-                deleteTitle="Hapus Client"
+                createTitle="Tambah Data Klien"
+                editTitle="Edit Data Klien"
+                deleteTitle="Hapus Data Klien"
             />
             <ClientDetailSheet
                 data={selectedClient}

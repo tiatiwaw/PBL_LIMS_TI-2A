@@ -144,14 +144,14 @@ Route::controller(StaffController::class)
             });
     });
 
-// Supervisor
-Route::controller(SupervisorController::class)
-    ->middleware(['auth', 'supervisor'])
-    ->prefix('supervisor')
-    ->name('supervisor.')
-    ->group(function () {
-        Route::get('/', 'index')->name('index');
-    });
+// // Supervisor
+// Route::controller(SupervisorController::class)
+//     ->middleware(['auth', 'supervisor'])
+//     ->prefix('supervisor')
+//     ->name('supervisor.')
+//     ->group(function () {
+//         Route::get('/', 'index')->name('index');
+//     });
 
 
 // Analyst

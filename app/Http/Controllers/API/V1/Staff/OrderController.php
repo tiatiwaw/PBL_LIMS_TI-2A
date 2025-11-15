@@ -120,6 +120,13 @@ class OrderController extends Controller
             'storage_condition' =>  $validatedData['storage_condition'],
         ]);
 
-        return response()->json(['message' => 'Sample berhasil dibuat.', 'data' => $newSample], 201);
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Sample berhasil dibuat.',
+                'data' => $newSample
+            ], 201);
+        }
+
+        return back();
     }
 }

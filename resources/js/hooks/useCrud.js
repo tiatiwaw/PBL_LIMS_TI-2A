@@ -48,9 +48,9 @@ export const useCrud = (service, key, label, options = {}) => {
         : null;
 
     return {
-        data: getAllQuery.data,
-        isLoading: getAllQuery.isLoading,
-        error: getAllQuery.error,
+        data: getAllQuery?.data,
+        isLoading: getAllQuery?.isLoading,
+        error: getAllQuery?.error,
 
         create: createMutation
             ? {
@@ -76,5 +76,4 @@ export const useCrud = (service, key, label, options = {}) => {
               }
             : null,
     };
-
 };
