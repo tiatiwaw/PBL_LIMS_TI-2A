@@ -59,7 +59,22 @@ export default function UpsertDialog({
                 acc[field.name] = initialValue ?? "";
                 return acc;
             }, {});
-            setFormData(initialData);
+            setFormData((prev) => {
+                if (!prev.role || !Object.keys(prev).length) {
+                    return initialData;
+                }
+
+                const updatedData = { ...prev };
+                fields.forEach(field => {
+                    if (field.type === "button") {
+                        updatedData[field.name] = field.data || [];
+                    }
+                });
+
+                return updatedData;
+            })
+        } else {
+            setFormData({});
         }
     }, [data, fields, open]);
 
@@ -86,8 +101,7 @@ export default function UpsertDialog({
                 }
 
                 if (saveKey !== formFieldName) {
-                    dataToSave[saveKey] = dataToSave[formFieldName];
-                    delete dataToSave[formFieldName];
+                    dataToSave[formFieldName];
                 }
             });
 

@@ -32,9 +32,9 @@ export default function ButtonField({
                     </h3>
                 </div>
 
-                <div className="p-6 min-h-[400px] bg-gradient-to-b from-white to-gray-50/30">
+                <div className="p-6 min-h-56 bg-gradient-to-b from-white to-gray-50/30">
                     {data && data.length > 0 ? (
-                        <div className="space-y-3">
+                        <div className="space-y-3 overflow-y-auto max-h-56">
                             {data.map((item, index) => (
                                 <div
                                     key={item.id}

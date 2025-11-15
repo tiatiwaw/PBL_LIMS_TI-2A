@@ -379,7 +379,10 @@ export const editTrainingFields = [
 export const editUsersFields = (
     currentTrainings = [],
     handleTrainingClick,
-    handleRemoveTraining
+    handleRemoveTraining,
+    currentCertificates = [],
+    handleCertificateClick,
+    handleRemoveCertificate
 ) => {
     return [
         {
@@ -422,6 +425,16 @@ export const editUsersFields = (
             data: currentTrainings,
             onClick: handleTrainingClick,
             onRemove: handleRemoveTraining,
+            showIf: { field: "role", value: "analyst" },
+        },
+        {
+            name: "certificates",
+            title: "Sertifikat",
+            label: "Pilih Sertifikat",
+            type: "button",
+            data: currentCertificates,
+            onClick: handleCertificateClick,
+            onRemove: handleRemoveCertificate,
             showIf: { field: "role", value: "analyst" },
         },
     ];
