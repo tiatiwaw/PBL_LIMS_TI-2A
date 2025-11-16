@@ -36,68 +36,67 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import Loading from "@/components/ui/loading";
 
 const initialReports = [
     {
         id: "RPT-001",
-        title: "Laporan Hasil Uji Mikrobiologi Batch A-102",
-        type: "Mikrobiologi",
+        title: "Sample Tracking Report – Batch A-102",
+        type: "Sample Tracking",
         status: "completed",
         author: "Dr. Anisa Putri",
         date: "2025-11-10",
         size: "2.4 MB",
-        contentSnippet: "Ringkasan hasil uji menunjukkan tidak ada kontaminasi bakteri. Semua parameter memenuhi standar kualitas.",
+        content: "All samples from Batch A-102 have been logged, processed, and archived. No discrepancies found.",
     },
     {
         id: "RPT-002",
-        title: "Analisis Kualitas Sampel Air Sungai Periode November",
-        type: "Kimia Analitik",
+        title: "Test Results – River Water Analysis (Nov)",
+        type: "Test Results",
         status: "pending",
         author: "Ir. Satria Nugraha",
         date: "2025-11-12",
         size: "1.8 MB",
-        contentSnippet: "Menunggu hasil akhir dari parameter logam berat. Analisis pH dan TSS telah selesai.",
+        content: "Heavy metal analysis is in progress. pH and TSS parameters have been validated.",
     },
     {
         id: "RPT-003",
-        title: "Laporan Stabilitas Produk Farmasi – Batch F-221",
-        type: "Stabilitas",
+        title: "Quality Control Summary – Product F-221",
+        type: "Quality Control",
         status: "completed",
         author: "Dr. Bima Pratama",
         date: "2025-11-08",
         size: "3.2 MB",
-        contentSnippet: "Data pengujian 6 bulan menunjukkan produk stabil pada suhu ruang. Shelf life diperkirakan 24 bulan.",
+        content: "QC checks confirm product stability over 6 months. All specifications within acceptable limits.",
     },
     {
         id: "RPT-004",
-        title: "Evaluasi QC: Validasi Metode HPLC",
-        type: "Quality Control",
+        title: "Instrument Usage Log – HPLC System",
+        type: "Instrument Usage",
         status: "review",
         author: "Dewi Lestari, M.Sc",
         date: "2025-11-13",
         size: "1.5 MB",
-        contentSnippet: "Draft laporan validasi metode kromatografi cair kinerja tinggi (HPLC) untuk penentuan kadar obat.",
+        content: "HPLC system operated for 120 hours this month. Maintenance due in 2 weeks.",
     },
     {
         id: "RPT-005",
-        title: "Ringkasan Pemeriksaan Residual Solvent – Produk X12",
-        type: "Instrumentasi",
+        title: "Audit Trail – Sample ID X12",
+        type: "Audit Trail",
         status: "completed",
         author: "Rudi Hermawan",
         date: "2025-11-14",
         size: "2.1 MB",
-        contentSnippet: "Hasil pemeriksaan pelarut residual berada di bawah batas yang diizinkan sesuai regulasi BPOM.",
+        content: "All user actions and data modifications for Sample X12 have been logged and verified.",
     },
     {
         id: "RPT-006",
-        title: "Audit Kepatuhan GLP Semester 2",
-        type: "Audit Laboratorium",
+        title: "Inventory Report – Reagents & Consumables (Q4)",
+        type: "Inventory",
         status: "pending",
         author: "Nina Septiani",
         date: "2025-11-11",
         size: "4.5 MB",
-        contentSnippet: "Dokumen persiapan untuk audit kepatuhan Good Laboratory Practice (GLP) semester kedua tahun ini.",
+        content: "Stock levels for critical reagents are below threshold. Reorder recommendations included.",
     }
 ];
 
@@ -138,16 +137,8 @@ export default function AdminReportsPage() {
         setIsDownloadDialogOpen(false);
     };
 
-    if (authLoading) {
-        return (
-            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
-                <Loading />
-            </DashboardLayout>
-        );
-    }
-
     return (
-        <DashboardLayout title="Manajemen Laporan"  header="Manajemen Laporan">
+        <DashboardLayout title="Manajemen Laporan" header="Manajemen Laporan">
             <div className="space-y-6">
                 <Card>
                     <CardHeader>
@@ -259,7 +250,7 @@ export default function AdminReportsPage() {
                         </div>
                         <div className="grid grid-cols-4 items-start pt-2">
                             <span className="text-gray-500 font-medium">Ringkasan</span>
-                            <p className="col-span-3 italic text-gray-700">{selectedReport?.contentSnippet}</p>
+                            <p className="col-span-3 italic text-gray-700">{selectedReport?.content}</p>
                         </div>
                     </div>
                     <DialogFooter>

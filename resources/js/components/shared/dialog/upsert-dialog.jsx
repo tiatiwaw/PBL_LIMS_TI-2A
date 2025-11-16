@@ -13,6 +13,7 @@ import SelectField from "../form/select-field";
 import DatePicker from "../form/date-picker";
 import InputField from "../form/input-field";
 import ButtonField from "../form/button-field";
+import UploadField from "../form/upload-field";
 
 export default function UpsertDialog({
     open,
@@ -24,6 +25,7 @@ export default function UpsertDialog({
     description,
 }) {
     const [formData, setFormData] = useState({});
+    const [fileErrors, setFileErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const getNestedValue = (obj, path) => {
@@ -51,14 +53,22 @@ export default function UpsertDialog({
                     initialValue = new Date(initialValue);
                 }
 
-               
                 if (field.type === "button") {
                     initialValue = field.data || [];
+                }
+
+                if (field.type === "file") {
+                    if (data && data[field.name]) {
+                        initialValue = data[field.name];
+                    } else {
+                        initialValue = null;
+                    }
                 }
 
                 acc[field.name] = initialValue ?? "";
                 return acc;
             }, {});
+
             setFormData((prev) => {
                 if (!prev.role || !Object.keys(prev).length) {
                     return initialData;
@@ -72,14 +82,47 @@ export default function UpsertDialog({
                 });
 
                 return updatedData;
-            })
+            });
+
+            setFileErrors({});
         } else {
             setFormData({});
+            setFileErrors({});
         }
     }, [data, fields, open]);
 
     const handleChange = (field, value) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
+        if (fileErrors[field]) {
+            setFileErrors((prev) => {
+                const updated = { ...prev };
+                delete updated[field];
+                return updated;
+            });
+        }
+    };
+
+    const handleFileChange = (fieldName, file, error) => {
+        if (error) {
+            setFileErrors((prev) => ({ ...prev, [fieldName]: error }));
+            setFormData((prev) => ({ ...prev, [fieldName]: null }));
+        } else {
+            setFileErrors((prev) => {
+                const updated = { ...prev };
+                delete updated[fieldName];
+                return updated;
+            });
+            setFormData((prev) => ({ ...prev, [fieldName]: file }));
+        }
+    };
+
+    const handleFileClear = (fieldName) => {
+        setFormData((prev) => ({ ...prev, [fieldName]: null }));
+        setFileErrors((prev) => {
+            const updated = { ...prev };
+            delete updated[fieldName];
+            return updated;
+        });
     };
 
     const handleSubmit = async () => {
@@ -161,6 +204,25 @@ export default function UpsertDialog({
                     placeholder={field.placeholder || "Pilih tanggal"}
                     selected={value}
                     onSelect={(date) => handleChange(field.name, date)}
+                />
+            );
+        }
+
+        if (field.type === "file") {
+            return (
+                <UploadField
+                    key={field.name}
+                    id={field.name}
+                    name={field.name}
+                    label={field.label}
+                    placeholder={field.placeholder || "Choose a file or drag it here"}
+                    accept={field.accept}
+                    multiple={field.multiple}
+                    maxSize={field.maxSize}
+                    value={value}
+                    onChange={(file, error) => handleFileChange(field.name, file, error)}
+                    onClear={() => handleFileClear(field.name)}
+                    error={fileErrors[field.name]}
                 />
             );
         }

@@ -239,7 +239,7 @@ export const editParameterFields = (unitData, referenceData) => {
                       label: item.name,
                   }))
                 : [],
-            savePath: "reference_standard_id",
+            savePath: "reference_id",
         },
         {
             name: "category",
@@ -290,7 +290,7 @@ export const editMethodFields = (referenceData) => {
                       label: item.name,
                   }))
                 : [],
-            savePath: "reference_standard_id",
+            savePath: "reference_id",
         },
         {
             name: "applicable_parameter",
@@ -326,31 +326,43 @@ export const editStandardFields = [
     },
 ];
 
-export const editSertificateFields = [
+export const editSertificateFields = (analyst) => [
     {
         name: "name",
         label: "Nama Sertifikat",
         placeholder: "Masukkan nama sertifikat",
     },
     {
-        name: "analyst_id",
-        label: "ID Analis",
-        placeholder: "Masukkan ID analis",
+        name: "analyst",
+        label: "Analis",
+        type: "select",
+        initialValuePath: "analyst.id",
+        placeholder: "Pilih analis",
+        options: analyst
+            ? analyst.map((item) => ({
+                value: item.id,
+                label: item.name,
+            }))
+            : [],
+        savePath: "analyst_id",
     },
     {
-        name: "certificate_id",
-        label: "ID Sertifikat",
-        placeholder: "Masukkan ID sertifikat",
-    },
-    {
-        name: "tanggal_terbit",
+        name: "issued_date",
         label: "Tanggal Terbit",
         placeholder: "Masukkan tanggal terbit sertifikat",
     },
     {
-        name: "tanggal_kadaluarsa",
+        name: "expired_date",
         label: "Tanggal Kadaluarsa",
         placeholder: "Masukkan tanggal kadaluarsa sertifikat",
+    },
+    {
+        name: "file_path",
+        type: "file",
+        label: "Upload Sertifikat",
+        placeholder: "Upload file sertifikat",
+        accept: ".pdf",
+        maxSize: 5 * 1024 * 1024, // 5MB
     },
 ];
 export const editTrainingFields = [
@@ -380,9 +392,6 @@ export const editUsersFields = (
     currentTrainings = [],
     handleTrainingClick,
     handleRemoveTraining,
-    currentCertificates = [],
-    handleCertificateClick,
-    handleRemoveCertificate
 ) => {
     return [
         {
@@ -425,16 +434,6 @@ export const editUsersFields = (
             data: currentTrainings,
             onClick: handleTrainingClick,
             onRemove: handleRemoveTraining,
-            showIf: { field: "role", value: "analyst" },
-        },
-        {
-            name: "certificates",
-            title: "Sertifikat",
-            label: "Pilih Sertifikat",
-            type: "button",
-            data: currentCertificates,
-            onClick: handleCertificateClick,
-            onRemove: handleRemoveCertificate,
             showIf: { field: "role", value: "analyst" },
         },
     ];

@@ -20,7 +20,7 @@ export default function UserDetailSheet({ data, isOpen, onOpenChange }) {
         const diffTime = expiry - now;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        if (diffDays < 0) return { text: 'Kedaluwarsa', variant: 'destructive' };
+        if (diffDays < 0) return { text: 'Kedaluwarsa', variant: 'error' };
         if (diffDays <= 30) return { text: `${diffDays} hari lagi`, variant: 'warning' };
         if (diffDays <= 90) return { text: 'Segera berakhir', variant: 'warning' };
         return { text: 'Aktif', variant: 'success' };
@@ -30,19 +30,17 @@ export default function UserDetailSheet({ data, isOpen, onOpenChange }) {
         const status = getCertificateStatus(cert.expired_date);
         return {
             label: cert.name,
-            value: `${formatDate(cert.issued_date)} - ${formatDate(cert.expired_date)}`,
+            value: status.text,
             badge: true,
-            badgeText: status.text,
             variant: status.variant,
         };
     }) || [];
 
     const trainingDetails = data.analyst?.trainings?.map(training => ({
         label: training.name,
-        value: `${training.provider} | ${formatDate(training.date)}`,
+        value: `${training.provider}`,
         badge: training.result === 'Lulus',
-        badgeText: training.result,
-        variant: training.result === 'Lulus' ? 'success' : 'destructive',
+        variant: training.result === 'Lulus' ? 'success' : 'error',
     })) || [];
 
     const roleVariant = {
@@ -77,12 +75,10 @@ export default function UserDetailSheet({ data, isOpen, onOpenChange }) {
     ] : [];
 
     const certificateSection = certificateDetails.length > 0 ? [
-        { label: "Sertifikat", value: null, section: true },
         ...certificateDetails
     ] : [];
 
     const trainingSection = trainingDetails.length > 0 ? [
-        { label: "Riwayat Pelatihan", value: null, section: true },
         ...trainingDetails
     ] : [];
 

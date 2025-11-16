@@ -53,13 +53,11 @@ Route::middleware(['auth', 'role:admin'])
             Route::inertia('/units', 'admin/test/unit-value/index')->name('units');
             Route::inertia('/references', 'admin/test/standard-reference/index')->name('references');
             Route::inertia('/categories', 'admin/test/category/index')->name('categories');
-            Route::inertia('/sertif', 'admin/test/sertif/index')->name('sertif');
-            Route::inertia('/training', 'admin/test/training/index')->name('training');
         });
 
         Route::prefix('analyst')->as('analyst.')->group(function () {
-            Route::inertia('/trainings', 'admin/analyst/training/index')->name('trainings');
-            Route::inertia('/sertificates', 'admin/analyst/sertificate/index')->name('sertificates');
+            Route::inertia('/trainings', 'admin/analyst/trainings/index')->name('trainings');
+            Route::inertia('/certificates', 'admin/analyst/certificates/index')->name('certificates');
         });
 
         Route::inertia('/orders', 'admin/orders/index')->name('orders');

@@ -59,6 +59,10 @@ export const adminService = {
         useFormData: true,
     }),
 
+    analysts: serviceMethods("/admin/analysts", {
+        useFormData: false,
+    }),
+
     orders: serviceMethods("/admin/orders", {
         useFormData: false,
     }),

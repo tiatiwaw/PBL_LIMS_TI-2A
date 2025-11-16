@@ -44,26 +44,19 @@ export default function AdminUsersPage() {
                 formState.trainings.confirmed,
                 formState.trainings.openDialog,
                 formState.trainings.remove,
-                formState.certificates.confirmed,
-                formState.certificates.openDialog,
-                formState.certificates.remove
             ),
         [
             formState.trainings.confirmed,
             formState.trainings.openDialog,
             formState.trainings.remove,
-            formState.certificates.confirmed,
-            formState.certificates.openDialog,
-            formState.certificates.remove,
         ]
     );
 
     const handleFormOpen = useCallback(
         (user) => {
             formState.trainings.initialize(user?.analyst?.trainings || []);
-            formState.certificates.initialize(user?.analyst?.certificates || []);
         },
-        [formState.trainings, formState.certificates]
+        [formState.trainings]
     );
 
     if (isLoading) {
@@ -117,14 +110,6 @@ export default function AdminUsersPage() {
                 onConfirm={formState.trainings.confirm}
             />
 
-            <EntitySelectorDialog
-                type="certificate"
-                isOpen={formState.certificates.isDialogOpen}
-                onOpenChange={formState.certificates.setDialogOpen}
-                selectedItems={formState.certificates.temp}
-                onSelect={formState.certificates.toggleTemp}
-                onConfirm={formState.certificates.confirm}
-            />
         </DashboardLayout>
     );
 }

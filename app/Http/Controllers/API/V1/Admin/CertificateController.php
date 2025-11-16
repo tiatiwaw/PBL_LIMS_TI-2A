@@ -16,7 +16,7 @@ class CertificateController extends Controller
     public function index()
     {
         try {
-            $certificates = Certificate::all();
+            $certificates = Certificate::with('analyst')->get();
 
             return response()->json($certificates);
         } catch (Exception $e) {

@@ -61,7 +61,7 @@ export default function SelectField({
                                 "--tw-ring-color": error ? "#ef4444" : "#2CACAD",
                             }}
                         >
-                            <span className={cn(!selectedLabel && "text-gray-400")}>
+                            <span className={cn(!selectedLabel && "text-gray-500")}>
                                 {selectedLabel || placeholder}
                             </span>
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

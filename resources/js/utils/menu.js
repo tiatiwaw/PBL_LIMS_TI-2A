@@ -146,7 +146,7 @@ const MENU_CONFIG = {
                 {
                     name: "Sertifikat",
                     icon: Award,
-                    href: "/admin/analyst/sertificates",
+                    href: "/admin/analyst/certificates",
                 },
             ],
         },

@@ -20,10 +20,8 @@ import SearchFilter from "./searchfilter";
 import {
     useReactTable,
     getCoreRowModel,
-    getSortedRowModel,
     flexRender,
 } from "@tanstack/react-table";
-import { useState, useMemo } from "react";
 
 export function DataTableCard({ className, ...props }) {
     return (
@@ -75,7 +73,7 @@ export function DataTableContent({
     const tableColumns = columns.map((col) => ({
         accessorKey: col.accessorKey,
         header: col.header,
-        enableSorting: col.accessorKey === "no" ? false : true,
+        enableSorting: !["no", "select"].includes(col.accessorKey),
         cell: (info) => {
             const row = info.row.original;
             if (col.accessorKey === "no") return startIndex + info.row.index + 1;
@@ -206,6 +204,30 @@ export function DataTableContent({
 export function DataTablePagination({ currentPage, totalPages, goToPage }) {
     if (totalPages <= 1) return null;
 
+    const getPageNumbers = () => {
+        const pages = [];
+
+        const add = (p) => pages.push(p);
+
+        if (currentPage > 3) {
+            add(1);
+            if (currentPage !== 4) add("...");
+        }
+
+        for (let p = currentPage - 1; p <= currentPage + 1; p++) {
+            if (p > 0 && p <= totalPages) add(p);
+        }
+
+        if (currentPage < totalPages - 2) {
+            if (currentPage !== totalPages - 3) add("...");
+            add(totalPages);
+        }
+
+        return pages;
+    };
+
+    const pages = getPageNumbers();
+
     return (
         <CardFooter className="flex justify-between items-center p-6 pt-4">
             <p className="text-sm text-gray-500">
@@ -220,20 +242,31 @@ export function DataTablePagination({ currentPage, totalPages, goToPage }) {
                 >
                     <ChevronLeft size={16} />
                 </Button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <Button
-                        key={page}
-                        size="sm"
-                        variant={currentPage === page ? "default" : "ghost"}
-                        onClick={() => goToPage(page)}
-                        className={cn(
-                            currentPage === page &&
-                            "bg-primary-hijauTua hover:bg-primary-hijauTua/90"
-                        )}
-                    >
-                        {page}
-                    </Button>
-                ))}
+                {pages.map((page, idx) =>
+                    page === "..." ? (
+                        <span
+                            key={idx}
+                            className="px-2 text-gray-400 select-none"
+                        >
+                            ...
+                        </span>
+                    ) : (
+                        <Button
+                            key={page}
+                            size="sm"
+                            variant={
+                                currentPage === page ? "default" : "ghost"
+                            }
+                            onClick={() => goToPage(page)}
+                            className={cn(
+                                currentPage === page &&
+                                "bg-primary-hijauTua hover:bg-primary-hijauTua/90"
+                            )}
+                        >
+                            {page}
+                        </Button>
+                    )
+                )}
                 <Button
                     variant="outline"
                     size="sm"

@@ -6,14 +6,12 @@ export function useUserActions({ createUser, updateUser, deleteUser, formState }
       const dataToSave = {
         ...formData,
         trainings: formState.trainings.confirmed,
-        certificates: formState.certificates.confirmed,
       };
 
-      console.log("Creating user with:", dataToSave);
-      // await createUser.mutateAsync(dataToSave);
+      // console.log("Creating user with:", dataToSave);
+      await createUser.mutateAsync(dataToSave);
 
       formState.trainings.initialize([]);
-      formState.certificates.initialize([]);
     },
     [formState, createUser]
   );
@@ -23,19 +21,26 @@ export function useUserActions({ createUser, updateUser, deleteUser, formState }
       const dataToSave = {
         ...formData,
         trainings: formState.trainings.confirmed,
-        certificates: formState.certificates.confirmed,
       };
 
+      if (dataToSave.role === "analyst") {
+        dataToSave.trainings = formState.trainings.confirmed;
+      } else {
+        dataToSave.trainings = [];
+        dataToSave.specialist = "";
+      }
+
+      // console.log("Updating user with:", dataToSave);
       await updateUser.mutateAsync({ id, data: dataToSave });
 
       formState.trainings.initialize([]);
-      formState.certificates.initialize([]);
     },
     [formState, updateUser]
   );
 
   const handleDelete = useCallback(
     async (id) => {
+      // console.log("Deleting user with ID:", id);
       await deleteUser.mutateAsync(id);
     },
     [deleteUser]

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\V1\Admin\AnalystController;
 use App\Http\Controllers\API\V1\Admin\BrandTypeController;
 use App\Http\Controllers\API\V1\Admin\CertificateController;
 use App\Http\Controllers\API\V1\Admin\DashboardController;
@@ -49,6 +50,7 @@ Route::prefix('v1')->group(function () {
                 Route::get('/', [DashboardController::class, 'index']);
 
                 Route::apiResource('users', UserController::class);
+                Route::get('analysts', [AnalystController::class, 'index']);
                 Route::get('orders', [OrdersController::class, 'index']);
                 Route::get('orders/{id}', [OrdersController::class, 'show']);
 

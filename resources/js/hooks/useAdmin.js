@@ -48,4 +48,8 @@ export const useUnits = () => useCrud(adminService.units, "units", "Satuan");
 
 export const useUsers = () => useCrud(adminService.users, "users", "Pengguna");
 
+export const useAnalysts = () => useCrud(adminService.analysts, "analysts", "Analyst", {
+    only: ["getAll"],
+});
+
 export const useOrder = (id) => useGetById(adminService.orders, "orders", id);

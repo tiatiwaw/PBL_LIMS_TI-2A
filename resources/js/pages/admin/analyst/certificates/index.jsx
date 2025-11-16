@@ -5,13 +5,14 @@ import SertifDetailSheet from "@/components/shared/sheet/sertif-detail-sheets";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editSertificateFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
-import { useSertif } from "@/hooks/useAdmin";
+import { useSertif, useAnalysts } from "@/hooks/useAdmin";
 
 export default function AdminCertificatePage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
     const { data: sertif, isLoading, error, create: createSertif, update: updateSertif, delete: deleteSertif } = useSertif();
+    const { data: analysts, isLoading: isLoadingAnalysts, error: errorAnalysts } = useAnalysts();
 
     const handleShowDetail = (tests) => {
         setSelectedCategory(tests);
@@ -28,7 +29,7 @@ export default function AdminCertificatePage() {
 
     const handleDelete = async (id) => deleteSertif.mutateAsync(id);
 
-    if (isLoading) {
+    if (isLoading || isLoadingAnalysts) {
         return (
             <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
@@ -36,11 +37,11 @@ export default function AdminCertificatePage() {
         );
     }
 
-    if (error) {
+    if (error || errorAnalysts) {
         return (
             <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
-                    {error.message || "Terjadi kesalahan saat memuat data"}
+                    {error.message || errorAnalysts.message || "Terjadi kesalahan saat memuat data"}
                 </div>
             </DashboardLayout>
         );
@@ -54,7 +55,7 @@ export default function AdminCertificatePage() {
             <ManagedDataTable
                 data={sertif}
                 columns={columns}
-                editFields={editSertificateFields}
+                editFields={editSertificateFields(analysts)}
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}

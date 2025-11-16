@@ -12,8 +12,8 @@ export const useCrud = (service, key, label, options = {}) => {
 
     const getAllQuery = allow("getAll")
         ? useQuery({
-              queryKey: [key],
-              queryFn: () => service.getAll(),
+              queryKey: [key, options.query],
+              queryFn: () => service.getAll(options.query || {}),
           })
         : null;
 

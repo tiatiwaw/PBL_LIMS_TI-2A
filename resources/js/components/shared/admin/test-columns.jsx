@@ -107,10 +107,16 @@ export const getSampleCategoriesColumns = ({ onShowDetail }) => [
 export const getSertifColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No.", enableSorting: false },
     { accessorKey: "name", header: "Nama Sertifikat", enableSorting: true },
-    { accessorKey: "analyst_id", header: "Nama Analis", enableSorting: true },
-    { accessorKey: "certificate_id", header: "No Sertifikat", enableSorting: true },
-    { accessorKey: "tanggal_terbit", header: "Tanggal Terbit", enableSorting: true },
-    { accessorKey: "tanggal_kadaluarsa", header: "Tanggal Kadaluarsa", enableSorting: true },
+    {
+        accessorKey: "analyst.name",
+        header: "Analis",
+        enableSorting: true,
+        cell: ({ row }) => {
+            return row.analyst?.name || "-";
+        },
+    },
+    { accessorKey: "issued_date", header: "Tanggal Terbit", enableSorting: true },
+    { accessorKey: "expired_date", header: "Tanggal Kadaluarsa", enableSorting: true },
     {
         accessorKey: "file_path",
         header: "File",

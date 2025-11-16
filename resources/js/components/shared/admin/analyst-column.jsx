@@ -9,6 +9,7 @@ export const getTrainingAnalystColumns = ({ selectedTrainings, onSelectTraining 
     {
         accessorKey: "select",
         header: "Pilih",
+        enableSorting: false,
         cell: ({ row }) => {
             const data = row;
             const isSelected = selectedTrainings.some((s) => s.id === data.id);
@@ -30,6 +31,7 @@ export const getCertificateAnalystColumns = ({ selectedCertificates, onSelectCer
     {
         accessorKey: "select",
         header: "Pilih",
+        enableSorting: false,
         cell: ({ row }) => {
             const data = row;
             const isSelected = selectedCertificates.some((s) => s.id === data.id);
