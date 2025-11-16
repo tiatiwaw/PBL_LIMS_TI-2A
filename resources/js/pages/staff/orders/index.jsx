@@ -13,8 +13,6 @@ import { useOrders, useSamples } from "@/hooks/useStaff";
 export default function OrdersPage() {
     const [step, setStep] = useState(1);
     const [isSaved, setIsSaved] = useState(false);
-    const { user, loading: authLoading } = useAuth();
-    const currentUser = user || { name: "Staff", role: "Staff" };
     const { data: orders, isLoading, error, create: createOrder } = useOrders();
     console.log("order", orders);
     const { create: createSample } = useSamples();
@@ -91,7 +89,6 @@ export default function OrdersPage() {
             <DashboardLayout
                 title="Orders"
                 header="Registrasi Order Baru"
-                
             >
                 <Loading />
             </DashboardLayout>
@@ -103,7 +100,6 @@ export default function OrdersPage() {
             <DashboardLayout
                 title="Orders"
                 header="Registrasi Order Baru"
-                
             >
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
@@ -115,7 +111,6 @@ export default function OrdersPage() {
     return (
         <DashboardLayout
             title="Orders"
-            
             header="Registrasi Order Baru"
         >
             <div ref={formTopRef} className="px-4 py-2 rounded-md shadow-sm">

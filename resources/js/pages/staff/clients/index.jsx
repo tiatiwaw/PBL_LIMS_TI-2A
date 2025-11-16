@@ -13,7 +13,6 @@ export default function ClientPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
 
-    
     const {
         data: clients,
         isLoading,
@@ -44,7 +43,6 @@ export default function ClientPage() {
             <DashboardLayout
                 title="Manajemen Client"
                 header="Client"
-                
             >
                 <Loading />
             </DashboardLayout>
@@ -56,7 +54,6 @@ export default function ClientPage() {
             <DashboardLayout
                 title="Manajemen Client"
                 header="Client"
-                
             >
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
@@ -68,7 +65,6 @@ export default function ClientPage() {
     return (
         <DashboardLayout
             title="Manajemen Client"
-            
             header="Client"
         >
             <ManagedDataTable
