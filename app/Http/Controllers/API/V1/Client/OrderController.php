@@ -58,19 +58,26 @@ class OrderController extends Controller
         $tableDataSamples = $order->samples->map(function ($sample) {
             return [
                 'id' => $sample->id,
-                'nama_sampel' => $sample->name,
+                'name' => $sample->name,
+                'cathegory' => $sample->sample_categories->name ?? '-',
                 'status' => $sample->status,
                 'tanggal_masuk' => $sample->created_at ? Carbon::parse($sample->created_at)->format('d/m/Y') : null,
+                'kategori_sampel' => $sample->sample_categories->name ?? '-',
+                'form' => $sample->form,
+                'preservation_method' => $sample->preservation_method,
+                'volume' => $sample->pivot->sample_volume ?? '-',
+                'condition' => $sample->condition,
+                'status' => $sample->status,
             ];
         });
 
         $detailSample = $order->samples->map(function ($sample)  {
             return [
                 'kategori_sampel' => $sample->sample_categories->name ?? '-',
-                'wujud' => $sample->form,
-                'metode_penyimpanan' => $sample->preservation_method,
+                'form' => $sample->form,
+                'preservation_method' => $sample->preservation_method,
                 'volume' => $sample->pivot->sample_volume ?? '-',
-                'kondisi' => $sample->condition,
+                'condition' => $sample->condition,
                 'status' => $sample->status,
             ];
         }); 
@@ -80,7 +87,6 @@ class OrderController extends Controller
             'data' => [
                 'order_details' => $orderData,
                 'table_data_sample' => $tableDataSamples,
-                'detail_sample' => $detailSample,
             ]
         ]);
     }

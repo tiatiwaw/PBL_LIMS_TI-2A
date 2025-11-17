@@ -1,28 +1,23 @@
-import { useMethods } from "@/hooks/useMethod";
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getMethodsColumns } from "@/components/shared/admin/test-columns";
 import MethodDetailSheet from "@/components/shared/sheet/method-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editMethodFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
-import { useReferences } from "@/hooks/useReference";
+import { useMethods, useReferences } from "@/hooks/useAdmin";
 
-export default function MethodsPage() {
+export default function AdminMethodsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedMethod, setSelectedMethod] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { methods, isLoading, error, createMethod, updateMethod, deleteMethod } = useMethods();
-    const { references, isLoading: referenceLoading, error: referenceError } = useReferences();
+    const { data: methods, isLoading, error, create: createMethod, update: updateMethod, delete: deleteMethod } = useMethods();
+    const { data: references, isLoading: referenceLoading, error: referenceError } = useReferences();
 
     const handleShowDetail = (tests) => {
         setSelectedMethod(tests);
         setIsOpen(true);
     };
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const columns = useMemo(() => getMethodsColumns({ onShowDetail: handleShowDetail }), []);
 
@@ -34,9 +29,9 @@ export default function MethodsPage() {
 
     const handleDelete = async (id) => deleteMethod.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading || referenceLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -44,7 +39,7 @@ export default function MethodsPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -55,7 +50,6 @@ export default function MethodsPage() {
     return (
         <DashboardLayout
             title="Manajemen Metode Uji"
-            user={currentUser}
             header="Manajemen Metode Uji"
         >
             <ManagedDataTable
@@ -65,6 +59,7 @@ export default function MethodsPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                createTitle="Tambah Metode Uji"
                 editTitle="Edit Metode Uji"
                 deleteTitle="Hapus Metode Uji"
             />

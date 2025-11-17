@@ -1,6 +1,6 @@
 import { Checkbox } from "@/components/ui/checkbox";
 
-export const getMethodColumns = ({ selectedMethods, onSelectMethod }) => [
+export const getMethodColumns = ({ selectedItems, onSelect }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "analyses_method", header: "Nama Metode Analisis" },
     {
@@ -21,11 +21,11 @@ export const getMethodColumns = ({ selectedMethods, onSelectMethod }) => [
         header: "Aksi",
         cell: ({ row }) => {
             const data = row; // pastikan ambil data lengkap
-            const isSelected = selectedMethods.some((s) => s.id === data.id);
+            const isSelected = selectedItems?.some((s) => s.id === data.id);
             return (
                 <Checkbox
                     checked={isSelected}
-                    onCheckedChange={() => onSelectMethod(data)}
+                    onCheckedChange={() => onSelect(data)}
                 />
             );
         },

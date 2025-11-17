@@ -32,94 +32,82 @@ Route::controller(AuthController::class)
         });
     });
 
-// // API
-// Route::prefix('api/v1/auth')->name('api.auth.')->group(function () {
-//     Route::middleware('guest')->group(function () {
-//         Route::post('/login', [V1AuthController::class, 'login'])->name('login');
-//     });
-//     Route::middleware('auth')->group(function () {
-//         Route::post('/logout', [V1AuthController::class, 'logout'])->name('logout');
-//     });
-// });
-
 // Admin
-Route::controller(AdminController::class)
-    ->middleware(['auth', 'admin'])
+Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
-    ->name('admin.')
+    ->as('admin.')
     ->group(function () {
-        Route::get('/', 'index')->name('index');
+        Route::get('/', fn() => Inertia::render('admin/index'))
+            ->name('index');
 
-        Route::prefix('tools')->name('tools.')->group(function () {
-            Route::get('/equipments', 'equipments')->name('equipments');
-            Route::get('/brands', 'brands')->name('brands');
+        Route::prefix('resources')->as('resources.')->group(function () {
+            Route::inertia('/equipments', 'admin/tools/equipments/index')->name('equipments');
+            Route::inertia('/brands', 'admin/tools/brands/index')->name('brands');
+            Route::inertia('/reagents', 'admin/materials/reagents/index')->name('reagents');
+            Route::inertia('/grades', 'admin/materials/grades/index')->name('grades');
+            Route::inertia('/suppliers', 'admin/materials/suppliers/index')->name('suppliers');
         });
 
-        Route::prefix('materials')->name('materials.')->group(function () {
-            Route::get('/reagents', 'reagents')->name('reagents');
-            Route::get('/grades', 'grades')->name('grades');
-            Route::get('/suppliers', 'suppliers')->name('suppliers');
+        Route::prefix('tests')->as('tests.')->group(function () {
+            Route::inertia('/parameters', 'admin/test/parameter/index')->name('parameters');
+            Route::inertia('/methods', 'admin/test/method/index')->name('methods');
+            Route::inertia('/units', 'admin/test/unit-value/index')->name('units');
+            Route::inertia('/references', 'admin/test/standard-reference/index')->name('references');
+            Route::inertia('/categories', 'admin/test/category/index')->name('categories');
         });
 
-        Route::prefix('tests')->name('tests.')->group(function () {
-            Route::get('/parameters', 'parameters')->name('parameters');
-            Route::get('/methods', 'methods')->name('methods');
-            Route::get('/units', 'units')->name('units');
-            Route::get('/references', 'references')->name('references');
-            Route::get('/categories', 'categories')->name('categories');
-            Route::get('/sertif', 'sertif')->name('sertif');
-            Route::get('/training', 'training')->name('training');
+        Route::prefix('analyst')->as('analyst.')->group(function () {
+            Route::inertia('/trainings', 'admin/analyst/trainings/index')->name('trainings');
+            Route::inertia('/certificates', 'admin/analyst/certificates/index')->name('certificates');
         });
 
-        Route::prefix('analyst')->name('analyst.')->group(function () {
-            Route::get('/trainings', 'trainings')->name('trainings');
-            Route::get('/sertificates', 'sertificates')->name('sertificates');
-        });
+        Route::inertia('/orders', 'admin/orders/index')->name('orders');
 
-        Route::get('/orders',  'orders')->name('orders');
-        Route::get('/orders/{id}',  'showOrder')->name('order.show');
-        Route::get('/activities',  'activities')->name('activities');
-        Route::get('/users',  'users')->name('users');
+        Route::get('/orders/{id}', function ($id) {
+            return Inertia::render('admin/detail/index', [
+                'id' => $id,
+                'canValidate' => false,
+            ]);
+        })->name('order.show');
+
+        Route::inertia('/users', 'admin/users/index')->name('users');
+        Route::inertia('/reports', 'admin/reports/index')->name('reports');
     });
 
 // Manager
-Route::controller(ManagerController::class)
-    // ->middleware(['auth', 'manager'])
+Route::middleware(['auth', 'role:manager'])
     ->prefix('manager')
-    ->name('manager.')
+    ->as('manager.')
     ->group(function () {
-        Route::get('/', 'index')->name('index');
+        Route::inertia('/', 'manager/index')->name('index');
 
-        // Report Validation
-        Route::prefix('report-validation')
-            ->name('report.validation.')
-            ->group(function () {
-                Route::get('/', 'reportValidation')->name('index');
-                Route::get('/{id}', 'showReportValidation')->name('show');
-                Route::put('/{id}', 'updateReportValidation')->name('update');
-            });
+        Route::prefix('report-validation')->as('report.validation.')->group(function () {
+            Route::inertia('/', 'manager/report-validation/index')->name('index');
+            Route::get('/{id}', function ($id) {
+                return Inertia::render('manager/detail/index', [
+                    'id' => $id,
+                    'canValidate' => true,
+                ]);
+            })->name('show');
+        });
 
-        // Orders
-        Route::prefix('orders')
-            ->name('orders.')
-            ->group(function () {
-                Route::get('/', 'orders')->name('index');
-                Route::get('/{id}', 'showOrder')->name('show');
-            });
+        Route::prefix('orders')->as('orders.')->group(function () {
+            Route::inertia('/', 'manager/orders/index')->name('index');
+            Route::get('/{id}', function ($id) {
+                return Inertia::render('manager/detail/index', [
+                    'id' => $id,
+                    'canValidate' => false,
+                ]);
+            })->name('show');
+        });
 
-        // Users
-        Route::prefix('users')
-            ->name('users.')
-            ->group(function () {
-                Route::get('/', 'users')->name('index');
-                Route::put('/{id}', 'updateUser')->name('update');
-                Route::delete('/{id}', 'destroyUser')->name('destroy');
-            });
+        Route::inertia('/users', 'manager/users/index')->name('users');
     });
+
 
 // Staff
 Route::controller(StaffController::class)
-    ->middleware(['auth', 'staff'])
+    ->middleware(['auth', 'role:staff'])
     ->prefix('staff')
     ->name('staff.')
     ->group(function () {
@@ -162,7 +150,7 @@ Route::controller(StaffController::class)
 
 // Supervisor
 Route::controller(SupervisorController::class)
-    ->middleware(['auth', 'supervisor'])
+    ->middleware(['auth', 'role:supervisor'])
     ->prefix('supervisor')
     ->name('supervisor.')
     ->group(function () {
@@ -192,7 +180,7 @@ Route::controller(SupervisorController::class)
 
 // Analyst
 Route::controller(AnalystController::class)
-    ->middleware(['auth', 'analyst'])
+    ->middleware(['auth', 'role:analyst'])
     ->prefix('analyst')
     ->name('analyst.')
     ->group(function () {
@@ -230,7 +218,7 @@ Route::controller(AnalystController::class)
 
 // Client
 Route::controller(ClientController::class)
-    ->middleware(['auth', 'client'])
+    ->middleware(['auth', 'role:client'])
     ->prefix('client')
     ->name('client.')
     ->group(function () {
@@ -242,8 +230,8 @@ Route::controller(ClientController::class)
         Route::prefix('orders')
             ->name('orders.')
             ->group(function () {
-                Route::get('/', 'orders')->name('index');
-                Route::inertia('/detail', 'client/detail/index')->name('detail');
+                Route::get('/{id}', 'orderDetail')->name('show');
+                Route::get('/status/{id}', 'orderStatus')->name('status');
             });
 
         // History

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { detailOrder } from "@/data/manager/detail";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { ClientInfoCard, OrderDetailHeader, SampleSelector, AnalysisMethodCard, AnalystTeamCard, EquipmentCard, MethodInfoCard, NotesCard, ParameterInfoCard, ReagentCard, SampleInfoCard } from "@/components/shared/manager/detail";
+import { ClientInfoCard, OrderDetailHeader, SampleSelector, AnalysisMethodCard, AnalystTeamCard, EquipmentCard, MethodInfoCard, NotesCard, ParameterInfoCard, ReagentCard, SampleInfoCard } from "@/components/shared/order/detail";
 
 export default function DetailOrder({ auth, canValidate }) {
     const [loading, setLoading] = useState(false);
@@ -12,8 +12,6 @@ export default function DetailOrder({ auth, canValidate }) {
     const selectedSample = detailOrder.parameter_methods.find(
         (sample) => sample.id.toString() === selectedSampleId
     );
-
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
 
     const handleValidate = () => {
         alert("Order berhasil divalidasi!");
@@ -34,7 +32,7 @@ export default function DetailOrder({ auth, canValidate }) {
     };
 
     return (
-        <DashboardLayout title="Detail Order" user={currentUser} header="Detail Order">
+        <DashboardLayout title="Detail Order"  header="Detail Order">
             <div className="max-w-7xl mx-auto space-y-6">
                 <OrderDetailHeader
                     order={detailOrder}

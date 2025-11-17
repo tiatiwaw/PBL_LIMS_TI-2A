@@ -3,10 +3,8 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
 import { router } from "@inertiajs/react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { useAuth } from "@/hooks/useAuth";
 import Loading from "@/components/ui/loading";
-import { useOrders } from "@/hooks/useOrders";
-import { adminService } from "@/services/adminService";
+import { useOrders } from "@/hooks/useAdmin";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -19,24 +17,20 @@ const filterData = [
 ];
 
 export default function AdminOrdersPage() {
-    const { user, loading: authLoading } = useAuth();
-    const { orders, isLoading, error } = useOrders(adminService, "admin");
-    console.log("order", orders);
+    const { data: orders, isLoading, error } = useOrders();
 
     const handleShowDetail = (data) => {
         router.visit(route("admin.order.show", data.id));
     };
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const columns = useMemo(
         () => getOrdersColumns({ onShowDetail: handleShowDetail }),
         []
     );
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -44,7 +38,7 @@ export default function AdminOrdersPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -55,7 +49,6 @@ export default function AdminOrdersPage() {
     return (
         <DashboardLayout
             title="Manajemen Orderan"
-            user={currentUser}
             header="Manajemen Orderan"
         >
             <ManagedDataTable

@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $totalUser = User::count();
         $totalEquipment = Equipment::count();
         $totalReagent = Reagent::count();
-        $totalSample = Sample::count();
+        $totalOrder = Order::count();
         $totalParameter = TestParameter::count();
         $totalMethod = TestMethod::count();
 
@@ -34,24 +34,21 @@ class DashboardController extends Controller
         $weeklyActivity = $this->weeklyActivity();
 
         return response()->json([
-            'success' => true,
-            'data' => [
-                'totalUser' => $totalUser,
-                'totalEquipment' => $totalEquipment,
-                'totalReagent' => $totalReagent,
-                'totalSample' => $totalSample,
-                'totalParameter' => $totalParameter,
-                'totalMethod' => $totalMethod,
-                'quickSummary' => [
-                    'totalResources' => $totalResources,
-                    'pengujianBulanIni' => $pengujianBulanIni,
-                    'rataRataHarian' => $rataRataHarian,
-                    'efisiensi' => $efisiensi,
-                ],
-                'monthlyTrendData' => $monthlyTrendData,
-                'resourceDistribution' => $resourceDistribution,
-                'weeklyActivity' => $weeklyActivity,
+            'totalUser' => $totalUser,
+            'totalEquipment' => $totalEquipment,
+            'totalReagent' => $totalReagent,
+            'totalOrder' => $totalOrder,
+            'totalParameter' => $totalParameter,
+            'totalMethod' => $totalMethod,
+            'quickSummary' => [
+                'totalResources' => $totalResources,
+                'pengujianBulanIni' => $pengujianBulanIni,
+                'rataRataHarian' => $rataRataHarian,
+                'efisiensi' => $efisiensi,
             ],
+            'monthlyTrendData' => $monthlyTrendData,
+            'resourceDistribution' => $resourceDistribution,
+            'weeklyActivity' => $weeklyActivity,
         ], 200);
     }
 

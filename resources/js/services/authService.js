@@ -1,11 +1,5 @@
 import api from "@/lib/api";
 
-const handleAuthError = (error, defaultMessage = "Authentication error occurred") => {
-    console.error("Auth service error:", error);
-    const message = error.response?.data?.message || error.message || defaultMessage;
-    throw new Error(message);
-};
-
 export const authService = {
     login: async (credentials) => {
         try {
@@ -30,15 +24,6 @@ export const authService = {
             return response.data;
         } catch (error) {
             handleAuthError(error, "Failed to fetch user data");
-        }
-    },
-
-    async isAuthenticated() {
-        try {
-            await this.getUser();
-            return true;
-        } catch (error) {
-            return false;
         }
     },
 };

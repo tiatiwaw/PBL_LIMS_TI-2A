@@ -1,20 +1,17 @@
-import { useUnits } from "@/hooks/useUnits";
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getUnitsColumns } from "@/components/shared/admin/test-columns";
 import UnitDetailSheet from "@/components/shared/sheet/unit-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { units } from "@/data/admin/tests";
 import { editUnitFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
+import { useUnits } from "@/hooks/useAdmin";
 
-export default function UnitsPage() {
+export default function AdminUnitsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { units, isLoading, error, createUnit, updateUnit, deleteUnit } = useUnits();
+    const { data: units, isLoading, error, create: createUnit, update: updateUnit, delete: deleteUnit } = useUnits();
 
     const handleShowDetail = (tests) => {
         setSelectedUnit(tests);
@@ -22,8 +19,6 @@ export default function UnitsPage() {
     };
 
     const columns = useMemo(() => getUnitsColumns({ onShowDetail: handleShowDetail }), []);
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
 
     const handleCreate = async (formData) => createUnit.mutateAsync(formData);
 
@@ -33,9 +28,9 @@ export default function UnitsPage() {
 
     const handleDelete = async (id) => deleteUnit.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -43,7 +38,7 @@ export default function UnitsPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -54,7 +49,6 @@ export default function UnitsPage() {
     return (
         <DashboardLayout
             title="Manajemen Nilai Unit"
-            user={currentUser}
             header="Manajemen Nilai Unit"
         >
             <ManagedDataTable
@@ -64,6 +58,7 @@ export default function UnitsPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                createTitle="Tambah Nilai Satuan"
                 editTitle="Edit Nilai Satuan"
                 deleteTitle="Hapus Nilai Satuan"
             />

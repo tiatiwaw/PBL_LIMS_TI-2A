@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\V1\Admin\AnalystController;
 use App\Http\Controllers\API\V1\Admin\BrandTypeController;
 use App\Http\Controllers\API\V1\Admin\CertificateController;
 use App\Http\Controllers\API\V1\Admin\DashboardController;
@@ -23,30 +24,33 @@ use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 // use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
 use App\Http\Controllers\API\V1\Supervisor\OrderController as SupervisorOrderController;
+use App\Http\Controllers\API\V1\Staff\SampleController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
 
     Route::prefix('auth')->name('api.auth.')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->name('login');
+        Route::get('/user', [AuthController::class, 'user'])->name('user');
     });
 
     Route::middleware('auth:sanctum')->group(function () {
 
         Route::prefix('auth')->name('api.auth.')->group(function () {
-            Route::get('/user', [AuthController::class, 'user'])->name('user');
+            // Route::get('/user', [AuthController::class, 'user'])->name('user');
             Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         });
 
         // Admin
         Route::prefix('admin')
-            ->middleware('admin')
+            ->middleware('role:admin')
             ->name('api.admin.')
             ->group(function () {
 
                 Route::get('/', [DashboardController::class, 'index']);
 
                 Route::apiResource('users', UserController::class);
+                Route::get('analysts', [AnalystController::class, 'index']);
                 Route::get('orders', [OrdersController::class, 'index']);
                 Route::get('orders/{id}', [OrdersController::class, 'show']);
 
@@ -88,7 +92,7 @@ Route::prefix('v1')->group(function () {
 
         // Staff
         Route::prefix('staff')
-            ->middleware('staff')
+            ->middleware('role:staff')
             ->name('api.staff.')
             ->group(function () {
 
@@ -109,7 +113,8 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/', [OrderController::class, 'index'])->name('index');
                     Route::post('/', [OrderController::class, 'store'])->name('store');
-                    Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
+                    Route::get('/samples', [SampleController::class, 'index'])->name('indexSample');
+                    Route::post('/samples', [SampleController::class, 'store'])->name('storeSample');
                 });
             });
 
@@ -127,7 +132,7 @@ Route::prefix('v1')->group(function () {
                     ->name('orders.')
                     ->group(function () {
                         Route::get('/{id}', [ClientOrderController::class, 'show']);
-                        Route::get('/{id}/status', [ClientHistoryController::class, 'show'])->name('status');
+                        Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
                     });
             });
 

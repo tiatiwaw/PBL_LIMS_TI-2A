@@ -3,22 +3,13 @@ import React from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { Link } from "@inertiajs/react";
 import {
-  ChevronsLeft,
-  FlaskConical,
-  ClipboardCheck,
-  RotateCw,
-  PackageCheck,
-  Clock,
-  CalendarDays,
-  CheckCircle2,
-  Loader2,
-  XCircle,
+  ChevronsLeft, FlaskConical, ClipboardCheck, RotateCw, PackageCheck,
+  Clock, CalendarDays, CheckCircle2, Loader2, XCircle,
 } from "lucide-react";
 import { useClientHistory } from "@/hooks/useClientHistory";
 
 export default function HistoryPage({ auth, orderId }) {
-    console.log("props dari Inertia:", orderId);
-  const currentUser = auth?.user || { name: "Client", role: "Client" };
+  console.log("props dari Inertia:", orderId);
   const { order, statuses, isLoading, isError, errorMessage } =
     useClientHistory(orderId);
 
@@ -35,7 +26,6 @@ export default function HistoryPage({ auth, orderId }) {
     return (
       <DashboardLayout
         title="Riwayat"
-        user={currentUser}
         header="Memuat Data..."
       >
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -47,7 +37,7 @@ export default function HistoryPage({ auth, orderId }) {
 
   if (isError) {
     return (
-      <DashboardLayout title="Riwayat" user={currentUser}>
+      <DashboardLayout title="Riwayat">
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
           <XCircle className="w-12 h-12 text-red-500 mb-4" />
           <p className="text-lg font-semibold text-red-600">
@@ -73,7 +63,6 @@ export default function HistoryPage({ auth, orderId }) {
   return (
     <DashboardLayout
       title={`Riwayat ${order?.order_number || ""}`}
-      user={currentUser}
       header="Status Pesanan Anda"
     >
       <div className="w-full flex flex-col px-8 pt-8 pb-6 bg-gradient-to-br from-primary-hijauTerang via-white to-primary-toska overflow-auto rounded-3xl shadow-xl border border-primary-hijauPudar min-h-[75vh]">
@@ -164,10 +153,10 @@ export default function HistoryPage({ auth, orderId }) {
             </div>
             <div className="flex flex-col">
               <span className="text-xs text-primary-hijauTua/60 font-medium">
-                Status Saat Ini
+                Estimasi
               </span>
               <span className="text-xl font-bold text-primary-hijauTua">
-                {order?.status_label || "-"}
+                {order?.estimasi || "-"}
               </span>
             </div>
           </div>

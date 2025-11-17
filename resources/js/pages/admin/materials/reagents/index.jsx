@@ -4,14 +4,10 @@ import ReagentsDetailSheet from "@/components/shared/sheet/reagen_detail_sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editReagentFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { useGrades } from "@/hooks/useGrade";
-import { useSuppliers } from "@/hooks/useSupplier";
-import { useReagents } from "@/hooks/useReageants";
 import Loading from "@/components/ui/loading";
-import { create } from "node_modules/axios/index.cjs";
+import { useGrades, useReagents, useSuppliers } from "@/hooks/useAdmin";
 
-export default function ReagentsPage() {
+export default function AdminReagentsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedReagents, setSelectedReagents] = useState(null);
 
@@ -20,12 +16,9 @@ export default function ReagentsPage() {
         setIsOpen(true);
     };
 
-    const { user, loading: authLoading } = useAuth();
-    const { grades, isLoading: gradesLoading, error: gradesError } = useGrades();
-    const { suppliers, isLoading: suppliersLoading, error: suppliersError } = useSuppliers();
-    const { reagents, isLoading: regeantsLoading, error: regeantsError, createReagent, updateReagent, deleteReagent } = useReagents();
-
-    const currentUser = user || { name: "Admin", role: "Admin" };
+    const { data: grades, isLoading: gradesLoading, error: gradesError } = useGrades();
+    const { data: suppliers, isLoading: suppliersLoading, error: suppliersError } = useSuppliers();
+    const { data: reagents, isLoading: regeantsLoading, error: regeantsError, create: createReagent, update: updateReagent, delete: deleteReagent } = useReagents();
 
     const columns = useMemo(() => getReagentsColumns({ onShowDetail: handleShowDetail }), []);
 
@@ -37,9 +30,9 @@ export default function ReagentsPage() {
 
     const handleDelete = async (id) => deleteReagent.mutateAsync(id);
 
-    if (gradesLoading || suppliersLoading || regeantsLoading || authLoading) {
+    if (gradesLoading || suppliersLoading || regeantsLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -47,7 +40,7 @@ export default function ReagentsPage() {
 
     if (regeantsError || suppliersError || gradesError) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {"Terjadi kesalahan saat memuat data"}
                 </div>
@@ -58,7 +51,6 @@ export default function ReagentsPage() {
     return (
         <DashboardLayout
             title="Manajemen Reagen"
-            user={currentUser}
             header="Manajemen Reagen"
         >
             <ManagedDataTable
@@ -67,10 +59,8 @@ export default function ReagentsPage() {
                 editFields={editReagentFields(suppliers, grades)}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                createUrl="admin.materials.reagent.create"
-                editUrl="admin.materials.reagent.update"
                 onCreate={handleCreate}
-                deleteUrl="admin.materials.reagent.destroy"
+                createTitle="Tambah Reagent"
                 editTitle="Edit Reagent"
                 deleteTitle="Hapus Reagent"
             />

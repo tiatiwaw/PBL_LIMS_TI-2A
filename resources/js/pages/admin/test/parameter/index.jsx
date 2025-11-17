@@ -1,23 +1,21 @@
-import { useParameters } from "@/hooks/useParameter";
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
+
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getParametersColumns } from "@/components/shared/admin/test-columns";
 import ParameterDetailSheet from "@/components/shared/sheet/parameter-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editParameterFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
-import { useUnits } from "@/hooks/useUnits";
-import { useReferences } from "@/hooks/useReference";
+import { useParameters, useReferences, useUnits } from "@/hooks/useAdmin";
 
-export default function ParametersPage() {
+export default function AdminParametersPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedParameter, setSelectedParameter] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { parameters, isLoading, error, createParameter, updateParameter, deleteParameter, refetch } = useParameters();
-    const { units, isLoading: unitLoading, error: unitError } = useUnits();
-    const { references, isLoading: referenceLoading, error: referenceError } = useReferences();
+
+    const { data: parameters, isLoading, error, create: createParameter, update: updateParameter, delete: deleteParameter } = useParameters();
+    const { data: units, isLoading: unitLoading, error: unitError } = useUnits();
+    const { data: references, isLoading: referenceLoading, error: referenceError } = useReferences();
 
     const handleShowDetail = (brand) => {
         setSelectedParameter(brand);
@@ -29,7 +27,7 @@ export default function ParametersPage() {
         []
     );
 
-    const currentUser = user || { name: "Admin", role: "Admin" };
+
 
     const handleCreate = async (formData) => createParameter.mutateAsync(formData);
 
@@ -39,9 +37,9 @@ export default function ParametersPage() {
 
     const handleDelete = async (id) => deleteParameter.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading || unitLoading || referenceLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -49,7 +47,7 @@ export default function ParametersPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -60,7 +58,6 @@ export default function ParametersPage() {
     return (
         <DashboardLayout
             title="Manajemen Tes Parameter"
-            user={currentUser}
             header="Manajemen Tes Parameter"
         >
             <ManagedDataTable
@@ -70,6 +67,7 @@ export default function ParametersPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                createTitle="Tambah Tes Parameter"
                 editTitle="Edit Tes Parameter"
                 deleteTitle="Hapus Tes Parameter"
             />

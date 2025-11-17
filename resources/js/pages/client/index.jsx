@@ -27,13 +27,11 @@ export default function ClientPage({ auth }) {
         error 
     } = useClientDashboard();
 
-    const currentUser = auth?.user || { name: "Client", role: "Client" };
-
-    const handleShowDetail = (data) => {
-        router.visit(route('client.orders.show', { id: data.id }));
+    const handleShowDetail = (orders) => {
+        router.visit(route('client.orders.show', { id: orders.id }));
     };
-    const handleShowHistory = (data) => {
-        router.visit(route('client.orders.status', { id: data.id }));
+    const handleShowHistory = (orders) => {
+        router.visit(route('client.orders.status', { id: orders.id }));
     };
     const columns = useMemo(
         () => getOrdersColumns({
@@ -65,7 +63,7 @@ export default function ClientPage({ auth }) {
 
     if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Client" user={currentUser} header="Selamat Datang, Client!">
+            <DashboardLayout title="Dashboard Client"  header="Selamat Datang, Client!">
                 <Loading />
             </DashboardLayout>
         );
@@ -73,7 +71,7 @@ export default function ClientPage({ auth }) {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Client" user={currentUser} header="Selamat Datang, Client!">
+            <DashboardLayout title="Dashboard Client"  header="Selamat Datang, Client!">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Gagal memuat dashboard."}
                 </div>
@@ -82,7 +80,7 @@ export default function ClientPage({ auth }) {
     }
 
     return (
-        <DashboardLayout title="Dashboard Client" user={currentUser} header="Selamat Datang, Client!">
+        <DashboardLayout title="Dashboard Client"  header="Selamat Datang, Client!">
             <div className="max-w-7xl mx-auto space-y-8">
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

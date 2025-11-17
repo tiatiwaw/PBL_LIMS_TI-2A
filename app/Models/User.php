@@ -54,7 +54,7 @@ class User extends Authenticatable
         return $this->hasOne(Client::class, 'user_id');
     }
 
-    public function analysts()
+    public function analyst()
     {
         return $this->hasOne(Analyst::class, 'user_id');
     }

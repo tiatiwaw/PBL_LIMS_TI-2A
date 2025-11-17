@@ -1,49 +1,69 @@
+import { useMemo, useCallback } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getUsersColumns } from "@/components/shared/admin/user-columns";
 import UserDetailSheet from "@/components/shared/sheet/user-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
-import { useUser } from "@/hooks/useUser";
-import { editUsersFields } from "@/utils/fields/admin";
-import { useMemo, useState } from "react";
-
-const filterData = [
-    { value: "all", label: "All Role" },
-    { value: "Client", label: "Client" },
-    { value: "Staff", label: "Staff" },
-    { value: "Analis", label: "Analis" },
-    { value: "Supervisor", label: "Supervisor" },
-    { value: "Manager", label: "Manager" },
-];
+import { useTrainings, useUsers } from "@/hooks/useAdmin";
+import { editTrainingFields, editUsersFields } from "@/utils/fields/admin";
+import { useUserDetail } from "./hooks/useUserDetail";
+import { useUserFormState } from "./hooks/useUserFormState";
+import { useUserActions } from "./hooks/useUserAction";
+import { FILTER_OPTIONS } from "@/utils/constant/users";
+import EntitySelectorDialog from "@/components/shared/dialog/entity-selector-dialog";
+import { getTrainingAnalystColumns } from "@/components/shared/admin/analyst-column";
 
 export default function AdminUsersPage() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null);
+    const {
+        data: users,
+        isLoading,
+        error,
+        create: createUser,
+        update: updateUser,
+        delete: deleteUser,
+    } = useUsers();
 
-    const { user, loading: authLoading } = useAuth();
-    const { users, isLoading, error, createUser, updateUser, deleteUser } = useUser();
+    const { selectedUser, isOpen, handleShowDetail, handleClose } =
+        useUserDetail();
 
-    const handleShowDetail = (user) => {
-        setSelectedUser(user);
-        setIsOpen(true);
-    };
+    const formState = useUserFormState();
 
-    const currentUser = user || { name: "Admin", role: "Admin" };
+    const { handleCreate, handleEdit, handleDelete } = useUserActions({
+        createUser,
+        updateUser,
+        deleteUser,
+        formState,
+    });
 
-    const columns = useMemo(() => getUsersColumns({ onShowDetail: handleShowDetail }), []);
+    const columns = useMemo(
+        () => getUsersColumns({ onShowDetail: handleShowDetail }),
+        [handleShowDetail]
+    );
 
-    const handleCreate = async (formData) => createUser.mutateAsync(formData);
+    const editFields = useMemo(
+        () =>
+            editUsersFields(
+                formState.trainings.confirmed,
+                formState.trainings.openDialog,
+                formState.trainings.remove
+            ),
+        [
+            formState.trainings.confirmed,
+            formState.trainings.openDialog,
+            formState.trainings.remove,
+        ]
+    );
 
-    const handleEdit = async (id, formData) => {
-        await updateUser.mutateAsync({ id, data: formData });
-    };
+    const handleFormOpen = useCallback(
+        (user) => {
+            formState.trainings.initialize(user?.analyst?.trainings || []);
+        },
+        [formState.trainings]
+    );
 
-    const handleDelete = async (id) => deleteUser.mutateAsync(id);
-
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -51,33 +71,48 @@ export default function AdminUsersPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
-                    {error.message || "Terjadi kesalahan saat memuat data"}
+                    {error?.message || "Terjadi kesalahan saat memuat data"}
                 </div>
             </DashboardLayout>
         );
     }
 
     return (
-        <DashboardLayout title="Manajemen Pengguna" user={currentUser} header="Manajemen Pengguna">
+        <DashboardLayout title="Manajemen Pengguna" header="Manajemen Pengguna">
             <ManagedDataTable
                 data={users}
                 columns={columns}
-                editFields={editUsersFields}
+                editFields={editFields}
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                showFilter={true}
+                onFormOpen={handleFormOpen}
+                showFilter
                 filterColumn="role"
-                filterOptions={filterData}
+                filterOptions={FILTER_OPTIONS}
+                createTitle="Tambah Pengguna"
                 editTitle="Edit Pengguna"
                 deleteTitle="Hapus Pengguna"
             />
+
             <UserDetailSheet
                 data={selectedUser}
                 isOpen={isOpen}
-                onOpenChange={setIsOpen}
+                onOpenChange={handleClose}
+            />
+
+            <EntitySelectorDialog
+                type={"training"}
+                hook={useTrainings}
+                isOpen={formState.trainings.isDialogOpen}
+                onOpenChange={formState.trainings.setDialogOpen}
+                selectedItems={formState.trainings.temp}
+                onSelect={formState.trainings.toggleTemp}
+                onConfirm={formState.trainings.confirm}
+                getColumns={getTrainingAnalystColumns}
+                editFields={editTrainingFields}
             />
         </DashboardLayout>
     );

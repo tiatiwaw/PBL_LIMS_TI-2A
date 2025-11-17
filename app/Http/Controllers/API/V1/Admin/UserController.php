@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Analyst;
+use App\Models\NTrainingAnalyst;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -18,15 +19,14 @@ class UserController extends Controller
     public function index()
     {
         try {
-            // Relasi jamak -> analysts
-            $users = User::with(['analysts.certificates', 'analysts.trainings'])->get();
+            $users = User::with(['analyst.certificates', 'analyst.trainings'])->get();
 
             return response()->json($users);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengambil data pengguna.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -38,31 +38,49 @@ class UserController extends Controller
     {
         try {
             $validated = $request->validate([
-                'name'     => 'required|string|max:255',
-                'email'    => 'required|email|unique:users,email',
-                'password' => 'required|min:6',
-                'role'     => [
+                'name'       => 'required|string|max:255',
+                'email'      => 'required|email|unique:users,email',
+                'role'       => [
                     'required',
                     Rule::in(['admin', 'manager', 'supervisor', 'staff', 'analyst', 'client']),
                 ],
+                'specialist' => 'nullable|string|max:255',
+
+                'trainings'        => 'nullable|array',
+                'trainings.*.id'   => 'required|integer',
             ]);
 
-            $validated['password'] = Hash::make($validated['password']);
+            $trainings = collect($request->trainings ?? [])
+                ->pluck('id')
+                ->map(fn($id) => (int)$id)
+                ->toArray();
+
+            unset($validated['trainings']);
+
+            $validated['password'] = Hash::make('password123');
+
             $user = User::create($validated);
 
-            // Jika role-nya analyst, buatkan data di tabel analysts
             if ($user->role === 'analyst') {
-                Analyst::create([
+
+                $analyst = Analyst::create([
                     'user_id'    => $user->id,
                     'name'       => $user->name,
                     'specialist' => $request->input('specialist', 'Umum'),
                 ]);
+
+                foreach ($trainings as $trainingId) {
+                    NTrainingAnalyst::create([
+                        'analyst_id'  => $analyst->id,
+                        'training_id' => $trainingId,
+                    ]);
+                }
             }
 
             return response()->json([
                 'success' => true,
                 'message' => 'User berhasil dibuat.',
-                'data'    => $user->load('analysts'),
+                'data'    => $user->load('analyst.trainings'),
             ], 201);
         } catch (Exception $e) {
             return response()->json([
@@ -73,77 +91,91 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Menambahkan sertifikasi ke analis.
-     */
-    public function addCertification(Request $request, $id)
+    public function update(Request $request, $id)
     {
         try {
-            $user = User::with('analysts')->findOrFail($id);
-
-            if ($user->role !== 'analyst' || $user->analysts->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User ini bukan analis atau belum memiliki data analis.',
-                ], 403);
-            }
+            $user = User::findOrFail($id);
 
             $validated = $request->validate([
-                'name'         => 'required|string|max:255',
-                'issued_by'    => 'required|string|max:255',
-                'issued_date'  => 'required|date',
-                'expired_date' => 'nullable|date',
-                'file_path'    => 'nullable|string',
+                'name'       => 'sometimes|string|max:255',
+                'email'      => 'sometimes|email|unique:users,email,' . $user->id,
+                'role'       => [
+                    'sometimes',
+                    Rule::in(['admin', 'manager', 'supervisor', 'staff', 'analyst', 'client']),
+                ],
+                'password'   => 'sometimes|min:6',
             ]);
 
-            // Ambil instance analis pertama (karena relasi hasOne)
-            $analyst = $user->analysts->first();
-            $certificate = $analyst->certificates()->create($validated);
+            $oldRole = $user->role;
+
+            $trainings = null;
+            if ($request->has('trainings')) {
+                $trainings = collect($request->trainings)
+                    ->pluck('id')
+                    ->map(fn($id) => (int) $id)
+                    ->toArray();
+            }
+
+            unset($validated['trainings']);
+
+            if ($request->filled('password')) {
+                $validated['password'] = Hash::make($request->password);
+            } else {
+                unset($validated['password']);
+            }
+
+            $user->update($validated);
+
+            $newRole = $validated['role'] ?? $user->role;
+
+            if ($oldRole === 'analyst' && $newRole !== 'analyst') {
+
+                $analyst = Analyst::where('user_id', $user->id)->first();
+
+                if ($analyst) {
+                    NTrainingAnalyst::where('analyst_id', $analyst->id)->delete();
+                    $analyst->delete();
+                }
+            }
+
+            if ($newRole === 'analyst') {
+
+                $analyst = Analyst::firstOrCreate(
+                    ['user_id' => $user->id],
+                    ['name' => $user->name]
+                );
+
+                $analyst->update([
+                    'name'       => $validated['name'] ?? $analyst->name,
+                    'specialist' => $request->input('specialist', $analyst->specialist),
+                ]);
+
+                if (!is_null($trainings)) {
+
+                    $incomingIds = collect($trainings);
+
+                    NTrainingAnalyst::where('analyst_id', $analyst->id)
+                        ->whereNotIn('training_id', $incomingIds)
+                        ->delete();
+
+                    foreach ($incomingIds as $trainingId) {
+                        NTrainingAnalyst::firstOrCreate([
+                            'analyst_id'  => $analyst->id,
+                            'training_id' => $trainingId,
+                        ]);
+                    }
+                }
+            }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Sertifikasi berhasil ditambahkan.',
-                'data'    => $certificate,
-            ], 201);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menambahkan sertifikasi.',
-                'error'   => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
-     * Menambahkan pelatihan ke analis.
-     */
-    public function attachTraining(Request $request, $id)
-    {
-        try {
-            $user = User::with('analysts')->findOrFail($id);
-
-            if ($user->role !== 'analyst' || $user->analysts->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User ini bukan analis atau belum memiliki data analis.',
-                ], 403);
-            }
-
-            $validated = $request->validate([
-                'training_id' => 'required|exists:trainings,id',
-            ]);
-
-            $analyst = $user->analysts->first();
-            $analyst->trainings()->syncWithoutDetaching($validated['training_id']);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Pelatihan berhasil ditambahkan ke analis.',
+                'message' => 'User berhasil diperbarui.',
+                'data'    => $user->load('analyst.trainings'),
             ], 200);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menambahkan pelatihan.',
+                'message' => 'Gagal memperbarui user.',
                 'error'   => $e->getMessage(),
             ], 500);
         }
@@ -152,24 +184,12 @@ class UserController extends Controller
     /**
      * Menghapus user.
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
         try {
-            $user = User::with('analysts')->findOrFail($id);
-
-            if ($user->role === 'analyst' && !$user->analysts->isEmpty()) {
-                // Hapus data analis (dan dependensinya)
-                foreach ($user->analysts as $analyst) {
-                    $analyst->delete();
-                }
-            }
-
+            $user = User::findOrFail($id);
             $user->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'User berhasil dihapus.',
-            ], 200);
+            return response()->json([ 'success' => true, 'message' => 'User berhasil dihapus beserta data analyst.', ], 200);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,

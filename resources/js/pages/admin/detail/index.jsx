@@ -1,18 +1,16 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { ClientInfoCard, OrderDetailHeader, SampleSelector, AnalysisMethodCard, AnalystTeamCard, EquipmentCard, MethodInfoCard, NotesCard, ParameterInfoCard, ReagentCard, SampleInfoCard } from "@/components/shared/manager/detail";
+import { ClientInfoCard, OrderDetailHeader, SampleSelector, AnalysisMethodCard, AnalystTeamCard, EquipmentCard, NotesCard, ReagentCard, SampleInfoCard, OrderValidation, OrderSummary } from "@/components/shared/order/detail";
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
-import { useOrder } from "@/hooks/useOrder";
 import { usePage } from "@inertiajs/react";
-import { adminService } from "@/services/adminService";
+import ParameterMethodCard from "@/components/shared/order/detail/parameter-method-card";
+import { useOrder } from "@/hooks/useAdmin";
 
-export default function DetailOrder() {
+export default function AdminDetailOrder({ canValidate }) {
     const { props } = usePage()
     const { id } = props
 
-    const { user, loading: authLoading } = useAuth();
-    const { order, isLoadingOrder, errorOrder } = useOrder(id, adminService);
+    const { data: order, isLoading, error } = useOrder(id);
 
     const [selectedSampleId, setSelectedSampleId] = useState(null);
 
@@ -22,11 +20,13 @@ export default function DetailOrder() {
         }
     }, [order, selectedSampleId]);
 
-    const currentUser = user || { name: "Admin", role: "Admin" };
+    const handleValidation = () => {
+        console.log("Validasi Order");
+    };
 
-    if (isLoadingOrder || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -36,9 +36,9 @@ export default function DetailOrder() {
         (sample) => sample.id.toString() === selectedSampleId
     );
 
-    if (errorOrder) {
+    if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {errorOrder.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -47,7 +47,7 @@ export default function DetailOrder() {
     }
 
     return (
-        <DashboardLayout title="Detail Order" user={currentUser} header="Detail Order">
+        <DashboardLayout title="Detail Order" header="Detail Order">
             <div className="max-w-7xl mx-auto space-y-6">
                 <OrderDetailHeader order={order} />
 
@@ -64,8 +64,7 @@ export default function DetailOrder() {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <SampleInfoCard sample={selectedSample} />
                             <div className="space-y-6">
-                                <ParameterInfoCard parameter={selectedSample.n_parameter_methods.test_parameters} />
-                                <MethodInfoCard method={selectedSample.n_parameter_methods.test_methods} />
+                                <ParameterMethodCard data={selectedSample.n_parameter_methods} />
                             </div>
                         </div>
 
@@ -76,16 +75,25 @@ export default function DetailOrder() {
                     </>
                 )}
 
+                <AnalysisMethodCard
+                    methods={order.analyses_methods}
+                    reportIssuedAt={order.report_issued_at}
+                    reportFilePath={order.report_file_path}
+                    resultValue={order.result_value}
+                />
+
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                    <AnalystTeamCard analysts={order.analysts} />
-                    <AnalysisMethodCard
-                        methods={order.analyses_methods}
-                        reportIssuedAt={order.report_issued_at}
-                        reportFilePath={order.report_file_path}
-                        resultValue={order.result_value}
-                    />
-                    <NotesCard notes={order.notes} />
+                    <div className="xl:col-span-2">
+                        <AnalystTeamCard analysts={order.analysts} />
+                    </div>
+                    <NotesCard notes={order.notes} resultValue={order.result_value} />
                 </div>
+
+                {canValidate && (
+                    <OrderValidation handleValidation={handleValidation} />
+                )}
+
+                <OrderSummary order={order} selectedSample={selectedSample} />
             </div>
         </DashboardLayout>
     );

@@ -11,7 +11,10 @@ export const editEquipmentFields = (data) => {
             type: "select",
             placeholder: "Masukkan brand / tipe alat",
             initialValuePath: "brand_types.id",
-            options: data.map((item) => ({ value: item.id, label: item.name })),
+            options: data
+                ? data.map((item) => ({ value: item.id, label: item.name }))
+                : [],
+            savePath: "brand_type_id",
         },
         {
             name: "serial_number",
@@ -80,6 +83,7 @@ export const editReagentFields = (dataSupplier, dataGrade) => {
                       label: item.name,
                   }))
                 : [],
+            savePath: "supplier_id",
         },
         {
             name: "grade",
@@ -93,6 +97,7 @@ export const editReagentFields = (dataSupplier, dataGrade) => {
                       label: item.name,
                   }))
                 : [],
+            savePath: "grade_id",
         },
         {
             name: "formula",
@@ -220,6 +225,7 @@ export const editParameterFields = (unitData, referenceData) => {
                       label: item.value,
                   }))
                 : [],
+            savePath: "unit_value_id",
         },
         {
             name: "reference",
@@ -233,6 +239,7 @@ export const editParameterFields = (unitData, referenceData) => {
                       label: item.name,
                   }))
                 : [],
+            savePath: "reference_id",
         },
         {
             name: "category",
@@ -283,6 +290,7 @@ export const editMethodFields = (referenceData) => {
                       label: item.name,
                   }))
                 : [],
+            savePath: "reference_id",
         },
         {
             name: "applicable_parameter",
@@ -318,31 +326,43 @@ export const editStandardFields = [
     },
 ];
 
-export const editSertificateFields = [
+export const editSertificateFields = (analyst) => [
     {
         name: "name",
         label: "Nama Sertifikat",
         placeholder: "Masukkan nama sertifikat",
     },
     {
-        name: "analyst_id",
-        label: "ID Analis",
-        placeholder: "Masukkan ID analis",
+        name: "analyst",
+        label: "Analis",
+        type: "select",
+        initialValuePath: "analyst.id",
+        placeholder: "Pilih analis",
+        options: analyst
+            ? analyst.map((item) => ({
+                  value: item.id,
+                  label: item.name,
+              }))
+            : [],
+        savePath: "analyst_id",
     },
     {
-        name: "certificate_id",
-        label: "ID Sertifikat",
-        placeholder: "Masukkan ID sertifikat",
-    },
-    {
-        name: "tanggal_terbit",
+        name: "issued_date",
         label: "Tanggal Terbit",
         placeholder: "Masukkan tanggal terbit sertifikat",
     },
     {
-        name: "tanggal_kadaluarsa",
+        name: "expired_date",
         label: "Tanggal Kadaluarsa",
         placeholder: "Masukkan tanggal kadaluarsa sertifikat",
+    },
+    {
+        name: "file_path",
+        type: "file",
+        label: "Upload Sertifikat",
+        placeholder: "Upload file sertifikat",
+        accept: ".pdf",
+        maxSize: 5 * 1024 * 1024, // 5MB
     },
 ];
 export const editTrainingFields = [
@@ -359,6 +379,7 @@ export const editTrainingFields = [
     {
         name: "date",
         label: "Tanggal",
+        type: "date",
         placeholder: "Masukkan tanggal",
     },
     {
@@ -368,20 +389,53 @@ export const editTrainingFields = [
     },
 ];
 
-export const editUsersFields = [
-    {
-        name: "name",
-        label: "Nama Pengguna",
-        placeholder: "Masukkan nama pengguna",
-    },
-    {
-        name: "email",
-        label: "Email Pengguna",
-        placeholder: "Masukkan email pengguna",
-    },
-    {
-        name: "role",
-        label: "Role Pengguna",
-        placeholder: "Masukkan role pengguna",
-    },
-];
+export const editUsersFields = (
+    currentTrainings = [],
+    handleTrainingClick,
+    handleRemoveTraining
+) => {
+    return [
+        {
+            name: "name",
+            label: "Nama Pengguna",
+            placeholder: "Masukkan nama pengguna",
+        },
+        {
+            name: "email",
+            label: "Email Pengguna",
+            placeholder: "Masukkan email pengguna",
+        },
+        {
+            name: "role",
+            label: "Role Pengguna",
+            type: "select",
+            placeholder: "Pilih role pengguna",
+            options: [
+                { value: "admin", label: "Admin" },
+                { value: "analyst", label: "Analyst" },
+                { value: "client", label: "Client" },
+                { value: "manager", label: "Manager" },
+                { value: "staff", label: "Staff" },
+                { value: "supervisor", label: "Supervisor" },
+            ],
+        },
+        {
+            name: "specialist",
+            label: "Spesialisasi Pengguna",
+            initialValuePath: "analyst.specialist",
+            savePath: "analyst.specialist",
+            placeholder: "Masukkan spesialisasi pengguna",
+            showIf: { field: "role", value: "analyst" },
+        },
+        {
+            name: "trainings",
+            title: "Pelatihan",
+            label: "Pilih Pelatihan",
+            type: "button",
+            data: currentTrainings,
+            onClick: handleTrainingClick,
+            onRemove: handleRemoveTraining,
+            showIf: { field: "role", value: "analyst" },
+        },
+    ];
+};

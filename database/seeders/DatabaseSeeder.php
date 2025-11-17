@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\NOrderSample;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -24,6 +23,8 @@ class DatabaseSeeder extends Seeder
                         // BrandTypeSeeder::class,
                         // GradeSeeder::class,
                         // SupplierSeeder::class,
+                        // TrainingSeeder::class,
+                        // CertificateSeeder::class,
                         SampleCategorySeeder::class,
                         // UnitValueSeeder::class,
                         // ReferenceStandardSeeder::class,
@@ -35,19 +36,20 @@ class DatabaseSeeder extends Seeder
                 $this->call([
                         // EquipmentSeeder::class,
                         // ReagentSeeder::class,
-                        // TestMethodSeeder::class,
-                        // TestParameterSeeder::class,
+                        TestMethodSeeder::class,
+                        TestParameterSeeder::class,
                 ]);
 
                 // Master Data Transaksional
                 $this->call([
-                        // OrderSeeder::class,
-                        // NOrderSampleSeeder::class,
+                        OrderSeeder::class,
+                        NOrderSampleSeeder::class,
                         // NAnalysesMethodsOrdersSeeder::class,
-                        // NAnalystSeeder::class,
-                        // NParameterMethodSeeder::class,
+                        NAnalystSeeder::class,
+                        NParameterMethodSeeder::class,
                         // NEquipmentSeeder::class,
                         // NReagentSeeder::class,
+                        // NTrainingAnalystSeeder::class,
                 ]);
         }
 }

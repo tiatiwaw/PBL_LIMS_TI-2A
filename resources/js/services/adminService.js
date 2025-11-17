@@ -39,7 +39,7 @@ export const adminService = {
         useFormData: true,
     }),
 
-    training: serviceMethods("/admin/analyst/trainings", {
+    trainings: serviceMethods("/admin/analyst/trainings", {
         useFormData: true,
     }),
 
@@ -57,6 +57,10 @@ export const adminService = {
 
     users: serviceMethods("/admin/users", {
         useFormData: true,
+    }),
+
+    analysts: serviceMethods("/admin/analysts", {
+        useFormData: false,
     }),
 
     orders: serviceMethods("/admin/orders", {

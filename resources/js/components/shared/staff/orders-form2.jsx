@@ -13,9 +13,10 @@ import { getSampleColumnsOrder } from "./sample-order-colums";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { editSampleFields } from "@/utils/fields/staff";
+import { useSamples } from "@/hooks/useStaff";
+import EntitySelectorDialog from "../dialog/entity-selector-dialog";
 
 export default function OrdersForm2({
-    samples,
     categories,
     createSample,
     data,
@@ -302,8 +303,20 @@ export default function OrdersForm2({
                 </div>
             </div>
 
+            <EntitySelectorDialog
+                type={"samples"}
+                hook={useSamples}
+                isOpen={isSampleDialogOpen}
+                onOpenChange={handleDialogChange}
+                selectedItems={selectedSamples}
+                onSelect={handleSampleSelect}
+                onConfirm={handleTambahSamples}
+                getColumns={getSampleColumnsOrder}
+                editFields={editSampleFields(categories)}
+            />
+
             {/* Dialog Pilih Sampel */}
-            <Dialog open={isSampleDialogOpen} onOpenChange={handleDialogChange}>
+            {/* <Dialog open={isSampleDialogOpen} onOpenChange={handleDialogChange}>
                 <DialogContent className="max-w-4xl flex flex-col max-h-[90vh]">
                     <DialogHeader>
                         <DialogTitle>Pilih Sampel</DialogTitle>
@@ -343,7 +356,7 @@ export default function OrdersForm2({
                         </Button>
                     </DialogFooter>
                 </DialogContent>
-            </Dialog>
+            </Dialog> */}
         </div>
     );
 }
