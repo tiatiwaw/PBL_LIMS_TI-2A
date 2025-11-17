@@ -18,7 +18,6 @@ class OrderController extends Controller
 
     public function index()
     {
-        $samples = Sample::with('sample_categories')->get();
         $methods = AnalysesMethod::all();
         $clients = Client::all();
         $categories = SampleCategory::all();
@@ -28,7 +27,6 @@ class OrderController extends Controller
         $orderNumber = 'ORD-' . now('Asia/Jakarta')->format('Ymd') . '-' . $nextNumber;
 
         return response()->json([
-            'samples' => $samples,
             'methods' => $methods,
             'clients' => $clients,
             'categories' => $categories,
@@ -99,34 +97,5 @@ class OrderController extends Controller
             'message' => 'Order berhasil dibuat.',
             'data' => $data,
         ], 201);
-    }
-    public function storeSample(Request $request)
-    {
-        $validatedData = $request->validate([
-            'sample_category_id' => ['required', 'exists:sample_categories,id'],
-            'name' => ['required', 'string', 'max:255'],
-            'form' => ['required', 'string'],
-            'preservation_method' => ['required', 'string'],
-            'condition' => ['required', 'string'],
-            'storage_condition' => ['required', 'string'],
-        ]);
-
-        $newSample = Sample::create([
-            'sample_category_id' => $validatedData['sample_category_id'],
-            'name' => $validatedData['name'],
-            'form' => $validatedData['form'],
-            'preservation_method' => $validatedData['preservation_method'],
-            'condition' => $validatedData['condition'],
-            'storage_condition' =>  $validatedData['storage_condition'],
-        ]);
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'message' => 'Sample berhasil dibuat.',
-                'data' => $newSample
-            ], 201);
-        }
-
-        return back();
     }
 }

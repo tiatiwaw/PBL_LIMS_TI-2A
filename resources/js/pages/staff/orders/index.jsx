@@ -5,8 +5,6 @@ import OrdersForm from "@/components/shared/staff/orders-form1";
 import OrdersForm2 from "@/components/shared/staff/orders-form2";
 import OrderForms3 from "@/components/shared/staff/orders-form3";
 import { CheckSquare } from "lucide-react";
-
-import { useOrders } from "@/hooks/useOrders";
 import Loading from "@/components/ui/loading";
 import { useOrders, useSamples } from "@/hooks/useStaff";
 
@@ -14,10 +12,10 @@ export default function OrdersPage() {
     const [step, setStep] = useState(1);
     const [isSaved, setIsSaved] = useState(false);
     const { data: orders, isLoading, error, create: createOrder } = useOrders();
-    console.log("order", orders);
+    // console.log("order", orders);
     const { create: createSample } = useSamples();
 
-    const { clients, methods, samples, categories, orderNumber } = orders || {};
+    const { clients, methods, categories, orderNumber } = orders || {};
 
     const [data, setData] = useState({
         // Step 1 data
@@ -86,10 +84,7 @@ export default function OrdersPage() {
 
     if (isLoading) {
         return (
-            <DashboardLayout
-                title="Orders"
-                header="Registrasi Order Baru"
-            >
+            <DashboardLayout title="Orders" header="Registrasi Order Baru">
                 <Loading />
             </DashboardLayout>
         );
@@ -97,10 +92,7 @@ export default function OrdersPage() {
 
     if (error) {
         return (
-            <DashboardLayout
-                title="Orders"
-                header="Registrasi Order Baru"
-            >
+            <DashboardLayout title="Orders" header="Registrasi Order Baru">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -109,10 +101,7 @@ export default function OrdersPage() {
     }
 
     return (
-        <DashboardLayout
-            title="Orders"
-            header="Registrasi Order Baru"
-        >
+        <DashboardLayout title="Orders" header="Registrasi Order Baru">
             <div ref={formTopRef} className="px-4 py-2 rounded-md shadow-sm">
                 <StepperFirst currentStep={step} />
             </div>
@@ -163,7 +152,6 @@ export default function OrdersPage() {
                         )}
                         {step === 2 && (
                             <OrdersForm2
-                                samples={samples}
                                 categories={categories}
                                 createSample={createSample}
                                 data={data}

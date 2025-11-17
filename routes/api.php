@@ -24,6 +24,7 @@ use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 // use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
 use App\Http\Controllers\API\V1\OrderController as V1OrderController;
+use App\Http\Controllers\API\V1\Staff\SampleController;
 use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
 use League\CommonMark\Reference\Reference;
@@ -114,7 +115,8 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/', [OrderController::class, 'index'])->name('index');
                     Route::post('/', [OrderController::class, 'store'])->name('store');
-                    Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
+                    Route::get('/samples', [SampleController::class, 'index'])->name('indexSample');
+                    Route::post('/samples', [SampleController::class, 'store'])->name('storeSample');
                 });
             });
 

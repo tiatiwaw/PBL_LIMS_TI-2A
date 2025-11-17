@@ -7,7 +7,7 @@ const conditionVariantMap = {
     expired: "error",
 };
 
-export const getSampleColumnsOrder = ({ selectedSamples, onSelectSample }) => [
+export const getSampleColumnsOrder = ({ selectedItems, onSelect }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "name", header: "Nama Sampel" },
     {
@@ -37,11 +37,11 @@ export const getSampleColumnsOrder = ({ selectedSamples, onSelectSample }) => [
         header: "Pilih",
         cell: ({ row }) => {
             const data = row; // pastikan ambil data lengkap
-            const isSelected = selectedSamples.some((s) => s.id === data.id);
+            const isSelected = selectedItems?.some((s) => s.id === data.id);
             return (
                 <Checkbox
                     checked={isSelected}
-                    onCheckedChange={() => onSelectSample(data)}
+                    onCheckedChange={() => onSelect(data)}
                 />
             );
         },
