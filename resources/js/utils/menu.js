@@ -179,15 +179,52 @@ const MENU_CONFIG = {
             href: "/manager/report-validation",
         },
         {
+            name: "Pengujian",
+            icon: ClipboardList,
+            subItems: [
+                {
+                    name: "Parameter",
+                    icon: Gauge,
+                    href: "/manager/tests/parameters",
+                },
+                {
+                    name: "Metode Uji",
+                    icon: Microscope,
+                    href: "/manager/tests/methods",
+                },
+                {
+                    name: "Nilai Satuan",
+                    icon: Ruler,
+                    href: "/manager/tests/units",
+                },
+                {
+                    name: "Standard Referensi",
+                    icon: FileText,
+                    href: "/manager/tests/references",
+                },
+                {
+                    name: "Kategori Sampel",
+                    icon: TestTube2,
+                    href: "/manager/tests/categories",
+                },
+            ],
+        },
+        {
             name: "Order",
             icon: ShoppingCart,
             href: "/manager/orders",
         },
         {
+            name: "Laporan",
+            icon: ChartArea,
+            href: "/manager/reports",
+
+        },
+        {
             name: "Karyawan",
             icon: Users,
             href: "/manager/users",
-        },
+        }
     ],
 
     staff: [
