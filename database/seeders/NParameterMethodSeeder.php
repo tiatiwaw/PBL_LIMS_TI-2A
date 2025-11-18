@@ -28,18 +28,29 @@ class NParameterMethodSeeder extends Seeder
         // Loop untuk buat data kombinasi
         foreach ($sampleIds as $sampleId) {
             foreach ($parameterIds as $parameterId) {
-                // Ambil method random dari daftar method yang ada
+
                 $methodId = $methodIds->random();
 
-                NParameterMethod::create([
-                    'sample_id' => $sampleId,
-                    'test_parameter_id' => $parameterId,
-                    'test_method_id' => $methodId,
-                    'result' => null,
-                    'status' => fake()->randomElement(['success', 'failed']),
-                ]);
+                try {
+                    NParameterMethod::create([
+                        'sample_id' => $sampleId,
+                        'test_parameter_id' => $parameterId,
+                        'test_method_id' => $methodId,
+                        'result' => null,
+                        'status' => fake()->randomElement(['success', 'failed']),
+                    ]);
+                } catch (\Throwable $e) {
+                    dd([
+                        'error' => $e->getMessage(),
+                        'sample_id' => $sampleId,
+                        'parameter_id' => $parameterId,
+                        'method_id' => $methodId,
+                    ]);
+                }
+
             }
         }
+
 
         $this->command->info('✅ NParameterMethodSeeder berhasil dijalankan.');
     }

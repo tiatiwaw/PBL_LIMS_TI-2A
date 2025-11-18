@@ -11,6 +11,7 @@ use App\Http\Controllers\API\V1\Client\ClientController as ClientClientControlle
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 // use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
+use App\Http\Controllers\API\V1\Profile\ProfileDetailController;
 use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,8 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware('auth:sanctum')->group(function () {
+
+        Route::get('profile/{user}', [ProfileDetailController::class, 'index'])->name('profile');
 
         Route::prefix('auth')->name('api.auth.')->group(function () {
             Route::get('/user', [AuthController::class, 'user'])->name('user');

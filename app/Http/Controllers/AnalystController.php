@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NParameterMethod;
 use Inertia\Inertia;
+use App\Models\Sample;
 
 class AnalystController extends Controller
 {
     public function index()
     {
+        dd(NParameterMethod::pluck('sample_id')->toArray());
         return redirect()->route('analyst.dashboard');
     }
 

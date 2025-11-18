@@ -80,10 +80,6 @@ export default function OrderDetail({ orderId }) {
             });
         });
     };
-    
-    // Fungsi untuk mendapatkan sampleIndex dan paramIndex yang benar dari ID
-    // Diganti dengan cara yang lebih aman, yaitu dengan langsung memanipulasi state berdasarkan ID,
-    // namun untuk menjaga kesamaan dengan struktur awal, kita buat penyesuaian di `handleResultChange` di atas.
 
     const handleShowDetail = (sample) => {
         setSelectedSample(sample);
@@ -96,7 +92,6 @@ export default function OrderDetail({ orderId }) {
     };
 
     const handleConfirmAction = (sample) => {
-        // Menggunakan mutate dari React Query hook
         confirmSample.mutate(sample.id);
         setIsConfirmDialogOpen(false);
     };
@@ -107,7 +102,6 @@ export default function OrderDetail({ orderId }) {
     };
 
     const handleUnConfirmAction = (sample) => {
-        // Menggunakan mutate dari React Query hook
         unconfirmSample.mutate(sample.id);
         setIsUnConfirmDialogOpen(false);
     };
@@ -116,7 +110,7 @@ export default function OrderDetail({ orderId }) {
         const payload = testResults.flatMap((sample) =>
             sample.parameter.map((param) => ({
                 sample_id: sample.id,
-                parameter: { id: param.id }, // Pastikan kunci di sini sesuai dengan backend
+                parameter: { id: param.id }, 
                 result: param.result,
             }))
         );
@@ -128,14 +122,12 @@ export default function OrderDetail({ orderId }) {
             payload: payload 
         }, {
             onSuccess: () => {
-                // Atur isEditing menjadi false hanya jika mutasi sukses
                 setIsEditing(false);
             }
         });
     };
 
     const handleSubmitResults = () => {
-        // router.post(route('analyst.submitReport', order.id));
 		submitResult(order.id);
     };
 
@@ -154,10 +146,9 @@ export default function OrderDetail({ orderId }) {
                 onShowConfirm: handleShowConfirm,
                 onShowUnConfirm: handleShowUnConfirm,
             }),
-        [confirmSample.isLoading, unconfirmSample.isLoading] // Tambahkan dependensi loading state
+        [confirmSample.isLoading, unconfirmSample.isLoading] 
     );
 
-    // Tampilkan loading saat data sedang diambil
     if (isLoading) {
         return (
             <DashboardLayout title="Detail Pesanan" user={usePage().props.auth.user} header="Kelola Data Pesanan">
@@ -168,7 +159,6 @@ export default function OrderDetail({ orderId }) {
         );
     }
 
-    // Tampilkan jika order atau samples tidak ada
     if (!order || !samples) {
         return (
             <DashboardLayout title="Detail Pesanan" user={usePage().props.auth.user} header="Kelola Data Pesanan">
@@ -184,7 +174,6 @@ export default function OrderDetail({ orderId }) {
 
     const orderDetails = [
         { label: "ID Pemesanan", value: order.order_number ?? "-" },
-        { label: "ID Klien", value: order.client_id ?? "-" },
         { label: "Judul", value: order.title ?? "-" },
         { label: "Tipe Pemesanan", value: tipeLabelMap[order.order_type] ?? "-" },
         { label: "Tanggal Order", value: order.order_date ? new Date(order.order_date).toLocaleDateString("id-ID") : "-" },
@@ -256,7 +245,7 @@ export default function OrderDetail({ orderId }) {
                         </h2>
 
                         <div className="flex flex-col gap-4 p-4 bg-white rounded-lg">
-                            {samples.map((sample, sampleIndex) => {
+                            {samples.map((sample) => {
                                 // Temukan hasil uji yang sesuai dari testResults state
                                 const currentTestResults = testResults.find(tr => tr.id === sample.id);
                                 
@@ -266,6 +255,8 @@ export default function OrderDetail({ orderId }) {
                                         Hasil Sample ({sample.name ?? "Tanpa Nama"})
                                     </h1>
 
+                                    {console.log(sample.id)}
+                                    {console.log(sample.parameter)}
                                     <div className="flex flex-col gap-2 p-3 py-6">
                                         {sample.parameter.map((param) => {
                                             const currentParamResult = currentTestResults?.parameter.find(p => p.id === param.id);
@@ -330,18 +321,6 @@ export default function OrderDetail({ orderId }) {
 									Submit & Generate Laporan (PDF)
 								</Button>)
 							}
-                        </div>
-
-                        {/* Tombol Download PDF */}
-                        <div className="flex justify-end mt-6">
-                            {/* Ganti form dengan Button dan panggil handleDownloadPDF, atau gunakan Link Inertia jika route sudah terdefinisi untuk GET */}
-                            <Button
-                                onClick={handleDownloadPDF}
-                                className="flex items-center gap-2 bg-blue-600 text-white"
-                            >
-                                <FileDown size={18} />
-                                Download PDF
-                            </Button>
                         </div>
                     </div>
                 )}

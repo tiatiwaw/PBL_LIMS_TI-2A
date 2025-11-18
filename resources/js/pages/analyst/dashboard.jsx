@@ -35,7 +35,7 @@ const Dashboard = () => {
 
   const { user, loading: authLoading } = useAuth();
   const currentUser = user 
-  
+
   if (authLoading || isDashboardLoading) return <Loading/>;
   return (
     <DashboardLayout title="Dashboard Analis" header="Dashboard Analis" user={currentUser}>

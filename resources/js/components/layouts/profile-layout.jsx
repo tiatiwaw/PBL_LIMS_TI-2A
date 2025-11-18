@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { UserCog, Users, BarChart3, ClipboardList, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth"; // pastikan hook ini ada dan mengembalikan user & status login
 import Loading from "@/components/ui/loading";
+import { useProfile } from "@/hooks/useProfile";
 export default function ProfileLayout() {
   const { user, isLoading } = useAuth();
-
+console.log(useProfile())
   // Jika masih loading atau belum ada user
   if (isLoading || !user) {
     return (

@@ -41,6 +41,10 @@ export default function SampleDetailsDialog({ sample, isOpen, onOpenChange }) {
                     variant: conditionVariantMap[sample.condition] || "outline",
                 },
                 {
+                    label: "Metode Pengujian",
+                    value: statusLabelMap[sample.test_method.name],
+                },
+                {
                     label: "Status",
                     value: statusLabelMap[sample.status],
                     badge: true,

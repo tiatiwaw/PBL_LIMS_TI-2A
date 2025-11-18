@@ -46,7 +46,7 @@ class AnalystController extends Controller
         $analyst = $this->analyst();
 
         $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id))
-            ->whereNot('status', 'pending')
+            // ->whereNot('status', 'pending')
             ->latest()
             ->get();
 
@@ -59,6 +59,7 @@ class AnalystController extends Controller
             'samples',
             'samples.sample_categories',
             'samples.parameter.unit_values',
+            'samples.test_method',
         ]);
 
         return response()->json([
