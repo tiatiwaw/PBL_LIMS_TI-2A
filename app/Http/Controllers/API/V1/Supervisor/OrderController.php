@@ -14,7 +14,7 @@ class OrderController extends Controller
             'analysesMethods',
             'samples.sample_categories',
         ])->where('status', 'received')->get();
-        return response()->json(['orders' => $orders]);
+        return response()->json($orders);
     }
 
     public function show(string $id)

@@ -5,31 +5,23 @@ import {
     OrderDetailHeader,
     SampleSelector,
     AnalysisMethodCard,
-    AnalystTeamCard,
-    EquipmentCard,
-    MethodInfoCard,
     NotesCard,
-    ParameterInfoCard,
-    ReagentCard,
     SampleInfoCard,
-} from "@/components/shared/manager/detail";
+    OrderValidation,
+} from "@/components/shared/order/detail";
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
-import { useOrder } from "@/hooks/useOrder";
 import { usePage } from "@inertiajs/react";
-import { supervisorService } from "@/services/supervisorService";
+import { useOrder } from "@/hooks/useSupervisor";
 
-export default function DetailOrder() {
+export default function DetailOrder({ canValidate }) {
     const { props } = usePage();
     const { id } = props;
 
-    const { user, loading: authLoading } = useAuth();
-    const { order, isLoadingOrder, errorOrder } = useOrder(
-        id,
-        supervisorService
-    );
+    const { data: order, isLoading, error } = useOrder(id);
 
     const [selectedSampleId, setSelectedSampleId] = useState(null);
+
+    const handleValidation = () => {};
 
     useEffect(() => {
         if (
@@ -42,38 +34,32 @@ export default function DetailOrder() {
         }
     }, [order, selectedSampleId]);
 
-    const currentUser = user || { name: "Admin", role: "Admin" };
-
-    if (isLoadingOrder || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin">
                 <Loading />
             </DashboardLayout>
         );
     }
 
-    const selectedSample = order.samples.find(
+    const selectedSample = order?.samples?.find(
         (sample) => sample.id.toString() === selectedSampleId
     );
 
-    if (errorOrder) {
+    if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin">
                 <div className="text-center text-red-500 py-8">
-                    {errorOrder.message || "Terjadi kesalahan saat memuat data"}
+                    {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
             </DashboardLayout>
         );
     }
 
     return (
-        <DashboardLayout
-            title="Detail Order"
-            user={currentUser}
-            header="Detail Order"
-        >
+        <DashboardLayout title="Detail Order" header="Detail Order">
             <div className="max-w-7xl mx-auto space-y-6">
-                <OrderDetailHeader order={order} canValidate={true} />
+                <OrderDetailHeader order={order} />
 
                 <ClientInfoCard client={order.clients} />
 
@@ -96,8 +82,14 @@ export default function DetailOrder() {
                         reportFilePath={order.report_file_path}
                         resultValue={order.result_value}
                     />
-                    <NotesCard notes={order.notes} />
+                    <NotesCard
+                        notes={order.notes}
+                        resultValue={order.result_value}
+                    />
                 </div>
+                {canValidate && (
+                    <OrderValidation handleValidation={handleValidation} />
+                )}
             </div>
         </DashboardLayout>
     );

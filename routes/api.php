@@ -138,7 +138,7 @@ Route::prefix('v1')->group(function () {
 
         // supervisor
         Route::prefix('supervisor')
-            ->middleware('supervisor')
+            ->middleware('role:supervisor')
             ->name('api.supervisor.')
             ->group(function () {
 
