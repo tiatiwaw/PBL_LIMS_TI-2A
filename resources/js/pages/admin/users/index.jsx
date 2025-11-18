@@ -1,40 +1,115 @@
+import { useMemo, useCallback } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getUsersColumns } from "@/components/shared/admin/user-columns";
+import UserDetailSheet from "@/components/shared/sheet/user-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { users } from "@/data/admin/users";
+import Loading from "@/components/ui/loading";
+import { useUsers } from "@/hooks/useAdmin";
 import { editUsersFields } from "@/utils/fields/admin";
-import { useMemo } from "react";
+import { useUserDetail } from "./hooks/useUserDetail";
+import { useUserFormState } from "./hooks/useUserFormState";
+import { useUserActions } from "./hooks/useUserAction";
+import { FILTER_OPTIONS } from "@/utils/constant/users";
+import EntitySelectorDialog from "@/components/shared/dialog/entity-selector-dialog";
 
-const filterData = [
-    { value: "all", label: "All Role" },
-    { value: "Client", label: "Client" },
-    { value: "Staff", label: "Staff" },
-    { value: "Analis", label: "Analis" },
-    { value: "Supervisor", label: "Supervisor" },
-    { value: "Manager", label: "Manager" },
-];
+export default function AdminUsersPage() {
+    const {
+        data: users,
+        isLoading,
+        error,
+        create: createUser,
+        update: updateUser,
+        delete: deleteUser,
+    } = useUsers();
 
-export default function AdminUsersPage({ auth, usersData }) {
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = usersData || users;
+    const { selectedUser, isOpen, handleShowDetail, handleClose } = useUserDetail();
 
-    const columns = useMemo(() => getUsersColumns(), []);
+    const formState = useUserFormState();
+
+    const { handleCreate, handleEdit, handleDelete } = useUserActions({
+        createUser,
+        updateUser,
+        deleteUser,
+        formState,
+    });
+
+    const columns = useMemo(
+        () => getUsersColumns({ onShowDetail: handleShowDetail }),
+        [handleShowDetail]
+    );
+
+    const editFields = useMemo(
+        () =>
+            editUsersFields(
+                formState.trainings.confirmed,
+                formState.trainings.openDialog,
+                formState.trainings.remove,
+            ),
+        [
+            formState.trainings.confirmed,
+            formState.trainings.openDialog,
+            formState.trainings.remove,
+        ]
+    );
+
+    const handleFormOpen = useCallback(
+        (user) => {
+            formState.trainings.initialize(user?.analyst?.trainings || []);
+        },
+        [formState.trainings]
+    );
+
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+                <div className="text-center text-red-500 py-8">
+                    {error?.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
-        <DashboardLayout title="Users" user={currentUser} header="Users">
+        <DashboardLayout title="Manajemen Pengguna" header="Manajemen Pengguna">
             <ManagedDataTable
-                data={parameters}
+                data={users}
                 columns={columns}
-                editFields={editUsersFields}
-                editUrl="admin.user.update"
-                deleteUrl="admin.user.destroy"
-                searchColumn="name"
-                showFilter={true}
+                editFields={editFields}
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onFormOpen={handleFormOpen}
+                showFilter
                 filterColumn="role"
-                filterOptions={filterData}
+                filterOptions={FILTER_OPTIONS}
+                createTitle="Tambah Pengguna"
                 editTitle="Edit Pengguna"
                 deleteTitle="Hapus Pengguna"
             />
+
+            <UserDetailSheet
+                data={selectedUser}
+                isOpen={isOpen}
+                onOpenChange={handleClose}
+            />
+
+            <EntitySelectorDialog
+                type="training"
+                isOpen={formState.trainings.isDialogOpen}
+                onOpenChange={formState.trainings.setDialogOpen}
+                selectedItems={formState.trainings.temp}
+                onSelect={formState.trainings.toggleTemp}
+                onConfirm={formState.trainings.confirm}
+            />
+
         </DashboardLayout>
     );
 }

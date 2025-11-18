@@ -73,7 +73,7 @@ export default function DashboardHeader({ header, user }) {
                                 <Avatar className="w-9 h-9 ring-2 ring-white/30 ring-offset-2 ring-offset-transparent">
                                     <AvatarImage src="/placeholder-avatar.jpg" alt={user.name} />
                                     <AvatarFallback className="bg-primary-hijauMuda text-white font-semibold">
-                                        {userInitial}
+                                        {userInitial}p
                                     </AvatarFallback>
                                 </Avatar>
                                 <div className="text-left">

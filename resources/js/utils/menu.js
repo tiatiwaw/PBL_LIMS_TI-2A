@@ -9,18 +9,19 @@ import {
     FileCheck2,
     TrendingUp,
     Users,
-    Database,
     ShoppingCart,
-    Inbox,
-    History,
     Factory,
     Building2,
     Ruler,
     FileText,
     ClipboardList,
-    TestTubes,
-    TestTube,
     TestTube2,
+    ChartArea,
+    ListCheck,
+    ScrollText,
+    GraduationCap,
+    Award,
+    BarChart3,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -31,7 +32,8 @@ const isActive = (currentUrl, href, subItems = []) => {
         href !== "/manager" &&
         href !== "/analyst" &&
         href !== "/staff" &&
-        href !== "/supervisor"
+        href !== "/supervisor" &&
+        href !== "/client"
     )
         return true;
     if (subItems.length > 0) {
@@ -44,20 +46,23 @@ const getRoleFromUrl = (url) => {
     if (url.startsWith("/analyst")) return "analyst";
     if (url.startsWith("/admin")) return "admin";
     if (url.startsWith("/manager")) return "manager";
+    if (url.startsWith("/staff")) return "staff";
+    if (url.startsWith("/client")) return "client";
+    if (url.startsWith("/supervisor")) return "supervisor";
     return null;
 };
 
 const MENU_CONFIG = {
     analyst: [
         {
-            name: "Kotak Masuk",
-            icon: Inbox,
-            href: "/analyst/inbox",
+            name: "Beranda",
+            icon: Home,
+            href: "/analyst/dashboard",
         },
         {
-            name: "Riwayat",
-            icon: History,
-            href: "/analyst/history",
+            name: "Daftar Pesanan",
+            icon: ScrollText,
+            href: "/analyst/order",
         },
     ],
 
@@ -68,55 +73,33 @@ const MENU_CONFIG = {
             href: "/admin",
         },
         {
-            name: "Alat",
+            name: "Alat & Bahan",
             icon: Wrench,
             subItems: [
                 {
                     name: "Peralatan",
                     icon: Microscope,
-                    href: "/admin/tools/equipments",
+                    href: "/admin/resources/equipments",
                 },
                 {
                     name: "Jenis Brand",
                     icon: Factory,
-                    href: "/admin/tools/brands",
+                    href: "/admin/resources/brands",
                 },
-            ],
-        },
-        {
-            name: "Bahan Baku",
-            icon: FlaskConical,
-            subItems: [
                 {
                     name: "Reagen",
                     icon: Beaker,
-                    href: "/admin/materials/reagents",
+                    href: "/admin/resources/reagents",
                 },
                 {
-                    name: "Grade",
+                    name: "Tingkat Reagen",
                     icon: Scale,
-                    href: "/admin/materials/grades",
+                    href: "/admin/resources/grades",
                 },
                 {
                     name: "Pemasok",
                     icon: Building2,
-                    href: "/admin/materials/suppliers",
-                },
-            ],
-        },
-        {
-            name: "Sampling",
-            icon: TestTubes,
-            subItems: [
-                {
-                    name: "Sampel",
-                    icon: TestTube,
-                    href: "/admin/sampling/sample",
-                },
-                {
-                    name: "Kategori Sampel",
-                    icon: TestTube2,
-                    href: "/admin/sampling/category",
+                    href: "/admin/resources/suppliers",
                 },
             ],
         },
@@ -127,34 +110,60 @@ const MENU_CONFIG = {
                 {
                     name: "Parameter",
                     icon: Gauge,
-                    href: "/admin/test/parameter",
+                    href: "/admin/tests/parameters",
                 },
                 {
                     name: "Metode Uji",
                     icon: Microscope,
-                    href: "/admin/test/test-method",
+                    href: "/admin/tests/methods",
                 },
                 {
                     name: "Nilai Satuan",
                     icon: Ruler,
-                    href: "/admin/test/unit-value",
+                    href: "/admin/tests/units",
                 },
                 {
                     name: "Standard Referensi",
                     icon: FileText,
-                    href: "/admin/test/standard-reference",
+                    href: "/admin/tests/references",
+                },
+                {
+                    name: "Kategori Sampel",
+                    icon: TestTube2,
+                    href: "/admin/tests/categories",
                 },
             ],
         },
         {
-            name: "Aktivitas Log",
-            icon: TrendingUp,
-            href: "/admin/log-activity",
+            name: "Analis",
+            icon: BarChart3,
+            subItems: [
+                {
+                    name: "Pelatihan",
+                    icon: GraduationCap,
+                    href: "/admin/analyst/trainings",
+                },
+                {
+                    name: "Sertifikat",
+                    icon: Award,
+                    href: "/admin/analyst/certificates",
+                },
+            ],
+        },
+        {
+            name: "Order",
+            icon: ShoppingCart,
+            href: "/admin/orders",
         },
         {
             name: "Pengguna",
             icon: Users,
             href: "/admin/users",
+        },
+        {
+            name: "Laporan",
+            icon: TrendingUp,
+            href: "/admin/reports",
         },
     ],
 
@@ -170,16 +179,81 @@ const MENU_CONFIG = {
             href: "/manager/report-validation",
         },
         {
-            name: "Orders",
+            name: "Pengujian",
+            icon: ClipboardList,
+            subItems: [
+                {
+                    name: "Parameter",
+                    icon: Gauge,
+                    href: "/manager/tests/parameters",
+                },
+                {
+                    name: "Metode Uji",
+                    icon: Microscope,
+                    href: "/manager/tests/methods",
+                },
+                {
+                    name: "Nilai Satuan",
+                    icon: Ruler,
+                    href: "/manager/tests/units",
+                },
+                {
+                    name: "Standard Referensi",
+                    icon: FileText,
+                    href: "/manager/tests/references",
+                },
+                {
+                    name: "Kategori Sampel",
+                    icon: TestTube2,
+                    href: "/manager/tests/categories",
+                },
+            ],
+        },
+        {
+            name: "Order",
             icon: ShoppingCart,
             href: "/manager/orders",
         },
         {
-            name: "Users",
+            name: "Laporan",
+            icon: ChartArea,
+            href: "/manager/reports",
+
+        },
+        {
+            name: "Karyawan",
             icon: Users,
             href: "/manager/users",
+        }
+    ],
+
+    staff: [
+        {
+            name: "Orders",
+            icon: ChartArea,
+            href: "/staff/orders",
+        },
+        {
+            name: "Manajemen Klien",
+            icon: ListCheck,
+            href: "/staff/manage-clients",
         },
     ],
+
+    client: [
+        {
+            name: "Beranda",
+            icon: Home,
+            href: "/client",
+        },
+        {
+            name: "Riwayat",
+            icon: ChartArea,
+            href: "/client/history",
+        },
+    ],
+
+    supervisor: [{ name: "Beranda", icon: Home, href: "/supervisor" }],
 };
 
 export function menuItems(url) {

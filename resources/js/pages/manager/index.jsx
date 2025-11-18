@@ -1,83 +1,93 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import StatCard from "@/components/shared/card/stat-card";
-import { Wallet } from "lucide-react";
-import { BookText, Users as UsersIcon, Clock, FileText } from "lucide-react";
-import { usePage } from "@inertiajs/react";
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
+import { stats, Pendapatan, TotalOrder } from "@/data/manager/beranda";
+import React from 'react';
+import { TrendingUp } from "lucide-react";
+import { Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label, Area, AreaChart } from 'recharts';
 
 export default function ManagerPage() {
-    const page = usePage();
-    const user = page?.props?.auth?.user || { name: 'Manager', role: 'Manager' };
-    const { totalOrders = 0, totalUsers = 0, ordersToday = 0, pendingReports = 0, totalPrice = 0, grandTotal = 0, recentOrders = [] } = page.props;
-    
-    // const cards = [
-    //     { title: "Total Orders", value: String(totalOrders), subtitle: "Updated live", icon: BookText },
-    //     { title: "Total Users", value: String(totalUsers), subtitle: "Registered users", icon: UsersIcon },
-    //     { title: "Orders Today", value: String(ordersToday), subtitle: "Created today", icon: Clock },
-    //     { title: "Pending Reports", value: String(pendingReports), subtitle: "Awaiting validation", icon: FileText },
-    // ];
+  const user = {
+    name: 'Yapi',
+    role: 'Manager',
+    avatar: 'https://i.pravatar.cc/150?img=3',
+  }
 
-    const cards = [
-        {
-        title: "Total Orders",
-        value: String(totalOrders),
-        subtitle: "Increased from last month",
-        icon: BookText,
-        },
-        {
-            title: "Pendapatan",
-            value: "Rp. " + grandTotal.toLocaleString("id-ID"),
-            subtitle: "Increased from last month",
-            icon: Wallet,
-        },
-    ];
-    return (
-        <DashboardLayout title="Dashboard Manager" user={user} header='Selamat Datang, Manager!'>
-            <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                    {cards.map((stat, index) => (
-                        <StatCard key={index} stat={stat} />
-                    ))}
-                </div>
+  return (
+    <DashboardLayout title="Dashboard Manager" user={user} header='Selamat Datang, Manager!'>
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+          {stats.map((stat, index) => (
+            <StatCard key={index} stat={stat} />
+          ))}
+        </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
-                        <h2 className="text-xl font-bold text-primary-hijauTua mb-4">Recent Orders</h2>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>ID</TableHead>
-                                    <TableHead>Client</TableHead>
-                                    <TableHead>Title</TableHead>
-                                    <TableHead>Type</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Estimate</TableHead>
-                                    <TableHead>Report Date</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {(recentOrders || []).length > 0 ? (
-                                    recentOrders.map((o) => (
-                                        <TableRow key={o.id}>
-                                            <TableCell>{o.id}</TableCell>
-                                            <TableCell>{o.user || '-'}</TableCell>
-                                            <TableCell>{o.title || '-'}</TableCell>
-                                            <TableCell>{o.tipe || '-'}</TableCell>
-                                            <TableCell>{o.status || '-'}</TableCell>
-                                            <TableCell>{o.estimasi || '-'}</TableCell>
-                                            <TableCell>{o.report_issued_at || '-'}</TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={7} className="text-center">No recent orders.</TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </div>
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex-1 text-center">
+              <h2 className="text-xl font-bold text-gray-900">Pendapatan</h2>
+              <p className="text-sm text-gray-500 mt-1">Data 6 bulan terakhir</p>
             </div>
-        </DashboardLayout>
-    );
+            <TrendingUp className="w-6 h-6 text-emerald-600" />
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={Pendapatan} margin={{ left: 40, top: 5, right: 30, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 8" stroke="#594f4fff" />
+              <XAxis dataKey="month" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af">
+                <Label
+                  value="Total Pendapatan (IDR)"
+                  offset={30}
+                  angle={-90}
+                  position="left"
+                  style={{ textAnchor: 'middle', fontWeight: 'bold', fill: 'black', fontSize: '15px' }}
+                />
+              </YAxis>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'white',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                }}
+              />
+              <Line type="dashed" dataKey="penjualan" stroke="#8b5cf6" strokeWidth={2} name="Pendapatan" dot={{ fill: '#8b5cf6', r: 4 }} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex-1 text-center">
+              <h2 className="text-xl font-bold text-gray-900">Total Order</h2>
+              <p className="text-sm text-gray-500 mt-1">Total pesanan per bulan</p>
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={TotalOrder} margin={{ left: 40, top: 5, right: 30, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="months" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af">
+                <Label
+                  value="Jumlah Pesanan"
+                  angle={-90}
+                  position="left"
+                  offset={30}
+                  style={{ textAnchor: 'middle', fontWeight: 'bold', fill: 'black', fontSize: '15px' }}
+                />
+              </YAxis>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'white',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                }}
+              />
+              <Bar dataKey="pesanan" fill="#10b981" radius={[8, 8, 0, 0]} name="Pesanan" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+    </DashboardLayout>
+  );
 }

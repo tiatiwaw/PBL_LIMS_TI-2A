@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
-import { usePage } from "@inertiajs/react";
+import { orders } from "@/data/manager/orders";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import OrderDetailsDialog from "@/components/shared/dialog/order-detail-dialog";
+import { router } from "@inertiajs/react";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -16,34 +16,22 @@ const filterData = [
 ];
 
 export default function OrdersPage({ auth, ordersData }) {
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [selectedOrder, setSelectedOrder] = useState(null);
-
-    const handleShowDetail = (order) => {
-        setSelectedOrder(order);
-        setIsDialogOpen(true);
+    const handleShowDetail = () => {
+        router.visit(route("manager.orders.detail"));
     };
 
-    const page = usePage();
-    const currentUser = auth?.user || page?.props?.auth?.user || { name: "Manager", role: "Manager" };
-    const parameters = ordersData || page?.props?.ordersData || [];
+    const parameters = ordersData || orders;
 
-    const columns = useMemo(() => getOrdersColumns({  onShowDetail: handleShowDetail}), []);
+    const columns = useMemo(() => getOrdersColumns({ onShowDetail: handleShowDetail }), []);
 
     return (
-        <DashboardLayout title="Orders" user={currentUser} header="Orders">
+        <DashboardLayout title="Orders"  header="Orders">
             <ManagedDataTable
                 data={parameters}
                 columns={columns}
-                searchColumn="user"
                 showFilter={true}
                 filterColumn="status"
                 filterOptions={filterData}
-            />
-            <OrderDetailsDialog
-                order={selectedOrder}
-                isOpen={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
             />
         </DashboardLayout>
     );
