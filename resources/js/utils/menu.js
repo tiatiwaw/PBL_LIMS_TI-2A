@@ -204,16 +204,6 @@ const MENU_CONFIG = {
     ],
 
     client: [
-        {
-            name: "Beranda",
-            icon: Home,
-            href: "/client",
-        },
-        {
-            name: "Riwayat",
-            icon: ChartArea,
-            href: "/client/history",
-        },
     ],
 
     supervisor: [{ name: "Beranda", icon: Home, href: "/supervisor" }],

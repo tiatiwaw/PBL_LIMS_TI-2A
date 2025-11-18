@@ -7,20 +7,17 @@ import { getSampleColumns } from "@/components/shared/client/sample-columns";
 import SampleDetailsDialog from "@/components/shared/dialog/sample-detail-dialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "@inertiajs/react";
-import { useClientOrder } from "@/hooks/useClientOrder";
+import { useOrderDetail } from "@/hooks/useClient";
 
 export default function ClientOrderDetail({ auth, orderId }) {
   console.log("props dari Inertia:", { auth, orderId });
 
-
-  // ✅ Ambil data order dari hooks
   const {
-    order_details,
-    table_data_sample,
+    data: order,
     isLoading,
     isError,
     errorMessage,
-  } = useClientOrder(orderId);
+  } = useOrderDetail(orderId);
 
   // 🔸 State dialog sample
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -89,22 +86,22 @@ export default function ClientOrderDetail({ auth, orderId }) {
 
           <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-y-2 text-sm font-medium">
             <span className="text-gray-600">Kode Pemesanan</span>
-            <span>: {order_details?.id_pemesanan || "-"}</span>
+            <span>: {order?.data?.order_details?.id_pemesanan || "-"}</span>
 
             <span className="text-gray-600">Judul</span>
-            <span>: {order_details?.judul || "-"}</span>
+            <span>: {order?.data?.order_details?.judul || "-"}</span>
 
             <span className="text-gray-600">Metode Analisis</span>
-            <span>: {order_details?.metode_analisis || "-"}</span>
+            <span>: {order?.data?.order_details?.metode_analisis || "-"}</span>
 
             <span className="text-gray-600">Tanggal Order</span>
-            <span>: {order_details?.tanggal_order || "-"}</span>
+            <span>: {order?.data?.order_details?.tanggal_order || "-"}</span>
 
             <span className="text-gray-600">Estimasi Selesai</span>
-            <span>: {order_details?.tanggal_estimasi || "-"}</span>
+            <span>: {order?.data?.order_details?.tanggal_estimasi || "-"}</span>
 
             <span className="text-gray-600">Catatan</span>
-            <span>: {order_details?.catatan || "-"}</span>
+            <span>: {order?.data?.order_details?.catatan || "-"}</span>
           </div>
         </div>
 
@@ -123,7 +120,7 @@ export default function ClientOrderDetail({ auth, orderId }) {
           </div>
 
           <a
-            href={order_details?.direktori_file || "#"}
+            href={order?.order_details?.direktori_file || "#"}
             download
             className="px-3 py-1.5 rounded-lg bg-primary-hijauTua text-white text-sm hover:bg-primary-hijauTua/90"
           >
@@ -133,10 +130,11 @@ export default function ClientOrderDetail({ auth, orderId }) {
 
         {/* --- Tabel Sampel --- */}
         <ManagedDataTable
-          data={table_data_sample || []}
+          data={order?.data?.table_data_sample || []}
           columns={columns}
           searchColumn="name"
           showFilter={true}
+          showCreate={false}
           filterColumn="status"
           filterOptions={[
             { value: "all", label: "Semua" },

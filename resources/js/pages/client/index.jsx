@@ -4,9 +4,9 @@ import { useMemo } from "react";
 import StatCard from "@/components/shared/card/stat-card";
 import { CheckIcon, ClipboardList, Clock10Icon } from "lucide-react";
 import { getOrdersColumns } from "@/components/shared/client/order-columns";
-import { useClientDashboard } from "@/hooks/useClientDashboard";
 import Loading from "@/components/ui/loading";
 import { router } from "@inertiajs/react";
+import { useDashboard } from "@/hooks/useClient";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -21,11 +21,10 @@ const filterData = [
 export default function ClientPage({ auth }) {
 
     const { 
-        stats: statsData, 
-        orders: ordersData, 
+        data: dashboard, 
         isLoading,
-        error 
-    } = useClientDashboard();
+        error,
+    } = useDashboard();
 
     const handleShowDetail = (orders) => {
         router.visit(route('client.orders.show', { id: orders.id }));
@@ -43,19 +42,19 @@ export default function ClientPage({ auth }) {
     const stats = [
         { 
             title: 'Total Order', 
-            value: statsData?.total_orders || 0, 
+            value: dashboard?.data?.stats?.total_orders || 0, 
             subtitle: 'Semua order terdaftar', 
             IconComponent: ClipboardList 
         },
         { 
             title: 'Sedang Diuji', 
-            value: statsData?.processing_orders || 0, 
+            value: dashboard?.data?.stats?.processing_orders || 0, 
             subtitle: 'Order dalam proses', 
             IconComponent: Clock10Icon 
         },
         { 
             title: 'Selesai', 
-            value: statsData?.completed_orders || 0, 
+            value: dashboard?.data?.stats?.completed_orders || 0, 
             subtitle: 'Order telah selesai', 
             IconComponent: CheckIcon 
         },
@@ -97,7 +96,7 @@ export default function ClientPage({ auth }) {
                         </div>
                     </div>
                     <ManagedDataTable
-                        data={ordersData || []}
+                        data={dashboard?.data?.orders || []}
                         columns={columns}
                         showFilter={true}
                         showCreate={false}
