@@ -3,8 +3,14 @@ import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 
 const statusVariantMap = {
-  Done: "success",
-  "In Progress": "warning",
+    done: "success",
+    in_progress: "warning",
+};
+
+const conditionVariantMap = {
+    Eksternal: "warning",
+    Internal: "info",
+    Urgent: "error",
 };
 
 export const getSampleColumns = ({ onShowDetail }) => [

@@ -18,8 +18,10 @@ import {
     TestTube2,
     ChartArea,
     ListCheck,
-    Inbox,
     ScrollText,
+    GraduationCap,
+    Award,
+    BarChart3,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -71,39 +73,33 @@ const MENU_CONFIG = {
             href: "/admin",
         },
         {
-            name: "Alat",
+            name: "Alat & Bahan",
             icon: Wrench,
             subItems: [
                 {
                     name: "Peralatan",
                     icon: Microscope,
-                    href: "/admin/tools/equipments",
+                    href: "/admin/resources/equipments",
                 },
                 {
                     name: "Jenis Brand",
                     icon: Factory,
-                    href: "/admin/tools/brands",
+                    href: "/admin/resources/brands",
                 },
-            ],
-        },
-        {
-            name: "Bahan Baku",
-            icon: FlaskConical,
-            subItems: [
                 {
                     name: "Reagen",
                     icon: Beaker,
-                    href: "/admin/materials/reagents",
+                    href: "/admin/resources/reagents",
                 },
                 {
-                    name: "Grade",
+                    name: "Tingkat Reagen",
                     icon: Scale,
-                    href: "/admin/materials/grades",
+                    href: "/admin/resources/grades",
                 },
                 {
                     name: "Pemasok",
                     icon: Building2,
-                    href: "/admin/materials/suppliers",
+                    href: "/admin/resources/suppliers",
                 },
             ],
         },
@@ -139,19 +135,35 @@ const MENU_CONFIG = {
             ],
         },
         {
+            name: "Analis",
+            icon: BarChart3,
+            subItems: [
+                {
+                    name: "Pelatihan",
+                    icon: GraduationCap,
+                    href: "/admin/analyst/trainings",
+                },
+                {
+                    name: "Sertifikat",
+                    icon: Award,
+                    href: "/admin/analyst/certificates",
+                },
+            ],
+        },
+        {
             name: "Order",
             icon: ShoppingCart,
             href: "/admin/orders",
         },
         {
-            name: "Aktivitas Log",
-            icon: TrendingUp,
-            href: "/admin/activities",
-        },
-        {
             name: "Pengguna",
             icon: Users,
             href: "/admin/users",
+        },
+        {
+            name: "Laporan",
+            icon: TrendingUp,
+            href: "/admin/reports",
         },
     ],
 
@@ -192,16 +204,6 @@ const MENU_CONFIG = {
     ],
 
     client: [
-        {
-            name: "Beranda",
-            icon: Home,
-            href: "/client",
-        },
-        {
-            name: "Riwayat",
-            icon: ChartArea,
-            href: "/client/history",
-        },
     ],
 
     supervisor: [{ name: "Beranda", icon: Home, href: "/supervisor" }],

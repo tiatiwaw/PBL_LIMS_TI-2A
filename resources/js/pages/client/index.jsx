@@ -4,9 +4,9 @@ import { useMemo } from "react";
 import StatCard from "@/components/shared/card/stat-card";
 import { CheckIcon, ClipboardList, Clock10Icon } from "lucide-react";
 import { getOrdersColumns } from "@/components/shared/client/order-columns";
-import { useClientDashboard } from "@/hooks/useClientDashboard";
 import Loading from "@/components/ui/loading";
 import { router } from "@inertiajs/react";
+import { useDashboard } from "@/hooks/useClient";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -21,19 +21,16 @@ const filterData = [
 export default function ClientPage({ auth }) {
 
     const { 
-        stats: statsData, 
-        orders: ordersData, 
+        data: dashboard, 
         isLoading,
-        error 
-    } = useClientDashboard();
+        error,
+    } = useDashboard();
 
-    const currentUser = auth?.user || { name: "Client", role: "Client" };
-
-    const handleShowDetail = (data) => {
-        router.visit(route('client.orders.show', { id: data.id }));
+    const handleShowDetail = (orders) => {
+        router.visit(route('client.orders.show', { id: orders.id }));
     };
-    const handleShowHistory = (data) => {
-        router.visit(route('client.orders.status', { id: data.id }));
+    const handleShowHistory = (orders) => {
+        router.visit(route('client.orders.status', { id: orders.id }));
     };
     const columns = useMemo(
         () => getOrdersColumns({
@@ -45,19 +42,19 @@ export default function ClientPage({ auth }) {
     const stats = [
         { 
             title: 'Total Order', 
-            value: statsData?.total_orders || 0, 
+            value: dashboard?.data?.stats?.total_orders || 0, 
             subtitle: 'Semua order terdaftar', 
             IconComponent: ClipboardList 
         },
         { 
             title: 'Sedang Diuji', 
-            value: statsData?.processing_orders || 0, 
+            value: dashboard?.data?.stats?.processing_orders || 0, 
             subtitle: 'Order dalam proses', 
             IconComponent: Clock10Icon 
         },
         { 
             title: 'Selesai', 
-            value: statsData?.completed_orders || 0, 
+            value: dashboard?.data?.stats?.completed_orders || 0, 
             subtitle: 'Order telah selesai', 
             IconComponent: CheckIcon 
         },
@@ -65,7 +62,7 @@ export default function ClientPage({ auth }) {
 
     if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Client" user={currentUser} header="Selamat Datang, Client!">
+            <DashboardLayout title="Dashboard Client"  header="Selamat Datang, Client!">
                 <Loading />
             </DashboardLayout>
         );
@@ -73,7 +70,7 @@ export default function ClientPage({ auth }) {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Client" user={currentUser} header="Selamat Datang, Client!">
+            <DashboardLayout title="Dashboard Client"  header="Selamat Datang, Client!">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Gagal memuat dashboard."}
                 </div>
@@ -82,7 +79,7 @@ export default function ClientPage({ auth }) {
     }
 
     return (
-        <DashboardLayout title="Dashboard Client" user={currentUser} header="Selamat Datang, Client!">
+        <DashboardLayout title="Dashboard Client"  header="Selamat Datang, Client!">
             <div className="max-w-7xl mx-auto space-y-8">
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -99,7 +96,7 @@ export default function ClientPage({ auth }) {
                         </div>
                     </div>
                     <ManagedDataTable
-                        data={ordersData || []}
+                        data={dashboard?.data?.orders || []}
                         columns={columns}
                         showFilter={true}
                         showCreate={false}

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('test_parameter_id')->constrained('test_parameters')->cascadeOnDelete();
             $table->foreignId('test_method_id')->constrained('test_methods')->cascadeOnDelete();
             $table->string('result')->nullable();
-            $table->enum('status', ['failed', 'success']);
+            $table->enum('status', ['in_progress', 'failed', 'success'])->default('in_progress');
             $table->timestamps();
         });
     }

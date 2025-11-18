@@ -2,13 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\UnitValue;
-use App\Models\TestParameter;
-use App\Models\NOrderSample;
 use Illuminate\Database\Seeder;
-use App\Models\NParameterMethod;
+use Database\Seeders\SampleSeeder;
+use Database\Seeders\NAnalystSeeder;
+use Database\Seeders\TrainingSeeder;
 use Database\Seeders\UserRoleSeeder;
+use Database\Seeders\UnitValueSeeder;
+use Database\Seeders\CertificateSeeder;
+use Database\Seeders\AnalysesMethodSeeder;
 use League\CommonMark\Reference\Reference;
+use Database\Seeders\NParameterMethodSeeder;
+use Database\Seeders\NTrainingAnalystSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,25 +25,18 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserRoleSeeder::class,
             ClientSeeder::class,
-            OrderSeeder::class,
             AnalystSeeder::class,
-            CertificateSeeder::class,
-            TrainingSeeder::class,
-            NTrainingAnalystSeeder::class,
-            NAnalystSeeder::class,
         ]);
 
         // Master Data Independen
         $this->call([
-            BrandTypeSeeder::class,
-            GradeSeeder::class,
-            SupplierSeeder::class,
+            // BrandTypeSeeder::class,
+            // GradeSeeder::class,
+            // SupplierSeeder::class,
             SampleCategorySeeder::class,
             UnitValueSeeder::class,
             AnalysesMethodSeeder::class,
             SampleSeeder::class,
-            NOrderSampleSeeder::class,
-            NAnalysesMethodsOrdersSeeder::class,
         ]);
 
         // Master Data Dependen
@@ -48,14 +45,20 @@ class DatabaseSeeder extends Seeder
             ReagentSeeder::class,
             TestMethodSeeder::class,
             TestParameterSeeder::class,
-            NParameterMethodSeeder::class,
+            CertificateSeeder::class,
+            TrainingSeeder::class,
         ]);
 
-        // // Data Transaksional
-        // $this->call([
-        //     AnalystSeeder::class,
-        //     ClientSeeder::class,
-        //     SampleSeeder::class,
-        // ]);
+        // Data Transaksional
+        $this->call([
+            OrderSeeder::class,
+            NOrderSampleSeeder::class,
+            NAnalysesMethodsOrdersSeeder::class,
+            NAnalystSeeder::class,
+            NParameterMethodSeeder::class,
+            NEquipmentSeeder::class,
+            NReagentSeeder::class,
+            NTrainingAnalystSeeder::class,
+        ]);
     }
 }

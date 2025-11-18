@@ -24,14 +24,21 @@ const LABELS = {
     orderType: {
         eksternal: "Eksternal",
         internal: "Internal",
+        regular: "Reguler",
         urgent: "Urgent",
     },
+    conditionType: {
+        good: "Baik",
+        damaged: "Rusak",
+        expired: "Kadaluarsa",
+    }
 };
 
 const VARIANTS = {
     orderType: {
-        eksternal: "warning",
-        internal: "info",
+        external: "warning",
+        internal: "success",
+        regular: "info",
         urgent: "error",
     },
     orderStatus: {
@@ -91,6 +98,8 @@ export const getOrderStatusLabel = (status) =>
     getValue(LABELS, "orderStatus", status, status);
 export const getOrderTypeLabel = (type) =>
     getValue(LABELS, "orderType", type, type);
+export const getConditionTypeLabel = (type) =>
+    getValue(LABELS, "conditionType", type, type);
 
 export const getOrderTypeVariant = (type) =>
     getValue(VARIANTS, "orderType", type);

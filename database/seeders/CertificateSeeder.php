@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Analyst;
-use App\Models\Certificate;
 use Illuminate\Support\Carbon;
+use App\Models\Certificate;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
 class CertificateSeeder extends Seeder
 {

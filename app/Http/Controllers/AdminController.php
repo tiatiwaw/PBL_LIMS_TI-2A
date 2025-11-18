@@ -71,6 +71,16 @@ class AdminController extends Controller
         return Inertia::render('admin/test/category/index');
     }
 
+    public function sertificates()
+    {
+        return Inertia::render('admin/analyst/sertificate/index');
+    }
+    
+    public function trainings()
+    {
+        return Inertia::render('admin/analyst/training/index');
+    }
+
     public function orders()
     {
         return Inertia::render('admin/orders/index');
@@ -78,14 +88,10 @@ class AdminController extends Controller
 
     public function showOrder($id)
     {
-        return inertia('admin/orders/detail', [
+        return inertia('admin/detail/index', [
             'canValidate' => false,
+            'id' => $id
         ]);
-    }
-
-    public function activities()
-    {
-        return Inertia::render('admin/log-activity/index');
     }
 
     public function users()

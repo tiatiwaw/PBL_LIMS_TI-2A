@@ -13,7 +13,7 @@ const statusVariantMap = {
 };
 
 
-export const getOrdersColumns = () => [
+export const getOrdersColumns = ({ onShowDetail, onShowHistory }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "order_number", header: "Kode Pesanan" },
     { accessorKey: "title", header: "Judul Pesanan" },

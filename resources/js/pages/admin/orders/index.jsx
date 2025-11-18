@@ -3,7 +3,8 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
 import { router } from "@inertiajs/react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { orders } from "@/data/manager/detail";
+import Loading from "@/components/ui/loading";
+import { useOrders } from "@/hooks/useAdmin";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -15,20 +16,43 @@ const filterData = [
     { value: "received", label: "Received" },
 ];
 
-export default function AdminOrdersPage({ auth, ordersData }) {
+export default function AdminOrdersPage() {
+    const { data: orders, isLoading, error } = useOrders();
+
     const handleShowDetail = (data) => {
-        router.visit(route("admin.orders.detail", data.id));
+        router.visit(route("admin.order.show", data.id));
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = ordersData || orders;
+    const columns = useMemo(
+        () => getOrdersColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
-    const columns = useMemo(() => getOrdersColumns({ onShowDetail: handleShowDetail }), []);
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
-        <DashboardLayout title="Manajemen Orderan" user={currentUser} header="Manajemen Orderan">
+        <DashboardLayout
+            title="Manajemen Orderan"
+            header="Manajemen Orderan"
+        >
             <ManagedDataTable
-                data={parameters}
+                data={orders}
                 columns={columns}
                 showFilter={true}
                 showCreate={false}

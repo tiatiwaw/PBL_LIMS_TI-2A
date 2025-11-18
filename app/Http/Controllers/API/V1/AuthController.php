@@ -69,16 +69,26 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'user' => [
-                    'id' => $request->user()->id,
-                    'name' => $request->user()->name,
-                    'email' => $request->user()->email,
-                    'role' => $request->user()->role,
+        try {
+            $request;
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'user' => [
+                        'id' => $request->user()->id,
+                        'name' => $request->user()->name,
+                        'email' => $request->user()->email,
+                        'role' => $request->user()->role,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'data' => [
+                    'user' => [],
+                ],
+            ]);
+        }
     }
 }

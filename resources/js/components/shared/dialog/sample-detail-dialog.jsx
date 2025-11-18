@@ -7,19 +7,8 @@ const statusVariantMap = {
 
 const conditionVariantMap = {
     good: "success",
-    damaged: "error",
+    gamaged: "error",
     expired: "error",
-};
-
-const conditionLabelMap = {
-    good: "Good",
-    damaged: "Damaged",
-    expired: "Error",
-};
-
-const statusLabelMap = {
-    in_progress: "In Progress",
-    done: "Done",
 };
 
 export default function SampleDetailsDialog({ sample, isOpen, onOpenChange }) {
