@@ -13,6 +13,16 @@ export default {
 
     theme: {
         extend: {
+            animation: {
+                "spin-slow": "spin 3s linear infinite",
+                shimmer: "shimmer 2s infinite",
+            },
+            keyframes: {
+                shimmer: {
+                    "0%": { transform: "translateX(-100%)" },
+                    "100%": { transform: "translateX(100%)" },
+                },
+            },
             fontFamily: {
                 sans: ["Figtree", ...defaultTheme.fontFamily.sans],
             },
@@ -35,9 +45,11 @@ export default {
                 primary: {
                     DEFAULT: "hsl(var(--primary))",
                     foreground: "hsl(var(--primary-foreground))",
+                    hijauGelap: "#02364B",
                     hijauTua: "#024D60",
                     hijauMuda: "#2CACAD",
                     hijauTerang: "#F0FFFC",
+                    hijauPudar: "#d6f6f5",
                     toska: "#DDFFF9",
                 },
                 secondary: {
