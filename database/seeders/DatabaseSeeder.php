@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
 
         // 2) Entities that depend on users
         $this->call(ClientSeeder::class);
+        $this->call(OrderSeeder::class);
         $this->call(AnalystSeeder::class);
 
         // 3) Independent lookups
