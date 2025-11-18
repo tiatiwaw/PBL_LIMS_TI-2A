@@ -340,9 +340,9 @@ export const editSertificateFields = (analyst) => [
         placeholder: "Pilih analis",
         options: analyst
             ? analyst.map((item) => ({
-                value: item.id,
-                label: item.name,
-            }))
+                  value: item.id,
+                  label: item.name,
+              }))
             : [],
         savePath: "analyst_id",
     },
@@ -379,6 +379,7 @@ export const editTrainingFields = [
     {
         name: "date",
         label: "Tanggal",
+        type: "date",
         placeholder: "Masukkan tanggal",
     },
     {
@@ -391,7 +392,7 @@ export const editTrainingFields = [
 export const editUsersFields = (
     currentTrainings = [],
     handleTrainingClick,
-    handleRemoveTraining,
+    handleRemoveTraining
 ) => {
     return [
         {

@@ -1,3 +1,5 @@
+import { methods } from "@/data/staff/methods";
+
 export const FILTER_OPTIONS = [
     { value: "all", label: "All Role" },
     { value: "client", label: "Client" },
@@ -20,5 +22,18 @@ export const ENTITY_CONFIG = {
         description: "Pilih satu atau lebih sertifikat untuk pengguna ini",
         createTitle: "Tambah Sertifikat Baru",
         emptyMessage: "Tidak ada sertifikat tersedia",
+    },
+    methods: {
+        title: "Pilih Metode Analisis",
+        description:
+            "Pilih salah satu atau beberapa metode analisis untuk order ini",
+        createTitle: "Tambah Metode Analisis Baru",
+        emptyMessage: "Tidak ada metode tersedia",
+    },
+    samples: {
+        title: "Pilih Sampel",
+        description: "Pilih salah satu atau beberapa sampel untuk order ini",
+        createTitle: "Tambah Sampel Baru",
+        emptyMessage: "Tidak ada sampel tersedia",
     },
 };

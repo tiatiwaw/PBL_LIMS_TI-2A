@@ -10,38 +10,25 @@ import {
 import { Button } from "@/components/ui/button";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
-import { useTrainings, useSertif } from "@/hooks/useAdmin";
-import { getCertificateAnalystColumns, getTrainingAnalystColumns } from "@/components/shared/admin/analyst-column";
-import { editTrainingFields, editSertificateFields } from "@/utils/fields/admin";
 import { ENTITY_CONFIG } from "@/utils/constant/users";
 
 export default function EntitySelectorDialog({
     type,
+    hook,
     isOpen,
     onOpenChange,
     selectedItems,
     onSelect,
     onConfirm,
+    getColumns,
+    editFields,
+    showCreate = true,
 }) {
-    const useDataHook = type === "training" ? useTrainings : useSertif;
-    const { data, isLoading, error, create } = useDataHook();
-
+    const { data, isLoading, error, create } = hook();
     const config = ENTITY_CONFIG[type];
-
     const columns = useMemo(() => {
-        if (type === "training") {
-            return getTrainingAnalystColumns({
-                selectedTrainings: selectedItems,
-                onSelectTraining: onSelect,
-            });
-        }
-        return getCertificateAnalystColumns({
-            selectedCertificates: selectedItems,
-            onSelectCertificate: onSelect,
-        });
-    }, [type, selectedItems, onSelect]);
-
-    const editFields = type === "training" ? editTrainingFields : editSertificateFields;
+        return getColumns({ selectedItems, onSelect });
+    }, [getColumns, selectedItems, onSelect]);
 
     const handleCreate = useCallback(
         async (formData) => {
@@ -71,16 +58,17 @@ export default function EntitySelectorDialog({
                         <Loading />
                     ) : error ? (
                         <div className="text-center text-red-500 py-8">
-                            {error?.message || "Terjadi kesalahan saat memuat data"}
+                            {error?.message ||
+                                "Terjadi kesalahan saat memuat data"}
                         </div>
                     ) : (
                         <ManagedDataTable
                             data={data || []}
                             columns={columns}
-                            editFields={editFields}
+                            editFields={editFields || []}
                             showFilter={false}
                             showSearch
-                            showCreate
+                            showCreate={showCreate}
                             onCreate={handleCreate}
                             createTitle={config.createTitle}
                         />

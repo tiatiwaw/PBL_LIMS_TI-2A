@@ -8,4 +8,4 @@ export const useOrders = () =>
     useCrud(staffService.orders, "orders", "pesanan");
 
 export const useSamples = () =>
-    useCrud(staffService.samples, "samples", "sampel", { only: ["create"] });
+    useCrud(staffService.samples, "samples", "sampel");

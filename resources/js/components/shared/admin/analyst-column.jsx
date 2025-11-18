@@ -1,6 +1,6 @@
 import { Checkbox } from "@/components/ui/checkbox";
 
-export const getTrainingAnalystColumns = ({ selectedTrainings, onSelectTraining }) => [
+export const getTrainingAnalystColumns = ({ selectedItems, onSelect }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "name", header: "Nama Pelatihan" },
     { accessorKey: "provider", header: "Penyedia" },
@@ -12,18 +12,21 @@ export const getTrainingAnalystColumns = ({ selectedTrainings, onSelectTraining 
         enableSorting: false,
         cell: ({ row }) => {
             const data = row;
-            const isSelected = selectedTrainings.some((s) => s.id === data.id);
+            const isSelected = selectedItems?.some((s) => s.id === data.id);
             return (
                 <Checkbox
                     checked={isSelected}
-                    onCheckedChange={() => onSelectTraining(data)}
+                    onCheckedChange={() => onSelect(data)}
                 />
             );
         },
     },
 ];
 
-export const getCertificateAnalystColumns = ({ selectedCertificates, onSelectCertificate }) => [
+export const getCertificateAnalystColumns = ({
+    selectedCertificates,
+    onSelectCertificate,
+}) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "name", header: "Nama Sertifikat" },
     { accessorKey: "issued_date", header: "Tanggal Terbit" },
@@ -34,7 +37,9 @@ export const getCertificateAnalystColumns = ({ selectedCertificates, onSelectCer
         enableSorting: false,
         cell: ({ row }) => {
             const data = row;
-            const isSelected = selectedCertificates.some((s) => s.id === data.id);
+            const isSelected = selectedCertificates.some(
+                (s) => s.id === data.id
+            );
             return (
                 <Checkbox
                     checked={isSelected}

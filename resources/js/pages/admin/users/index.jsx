@@ -4,13 +4,14 @@ import { getUsersColumns } from "@/components/shared/admin/user-columns";
 import UserDetailSheet from "@/components/shared/sheet/user-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
-import { useUsers } from "@/hooks/useAdmin";
-import { editUsersFields } from "@/utils/fields/admin";
+import { useTrainings, useUsers } from "@/hooks/useAdmin";
+import { editTrainingFields, editUsersFields } from "@/utils/fields/admin";
 import { useUserDetail } from "./hooks/useUserDetail";
 import { useUserFormState } from "./hooks/useUserFormState";
 import { useUserActions } from "./hooks/useUserAction";
 import { FILTER_OPTIONS } from "@/utils/constant/users";
 import EntitySelectorDialog from "@/components/shared/dialog/entity-selector-dialog";
+import { getTrainingAnalystColumns } from "@/components/shared/admin/analyst-column";
 
 export default function AdminUsersPage() {
     const {
@@ -22,7 +23,8 @@ export default function AdminUsersPage() {
         delete: deleteUser,
     } = useUsers();
 
-    const { selectedUser, isOpen, handleShowDetail, handleClose } = useUserDetail();
+    const { selectedUser, isOpen, handleShowDetail, handleClose } =
+        useUserDetail();
 
     const formState = useUserFormState();
 
@@ -43,7 +45,7 @@ export default function AdminUsersPage() {
             editUsersFields(
                 formState.trainings.confirmed,
                 formState.trainings.openDialog,
-                formState.trainings.remove,
+                formState.trainings.remove
             ),
         [
             formState.trainings.confirmed,
@@ -102,14 +104,16 @@ export default function AdminUsersPage() {
             />
 
             <EntitySelectorDialog
-                type="training"
+                type={"training"}
+                hook={useTrainings}
                 isOpen={formState.trainings.isDialogOpen}
                 onOpenChange={formState.trainings.setDialogOpen}
                 selectedItems={formState.trainings.temp}
                 onSelect={formState.trainings.toggleTemp}
                 onConfirm={formState.trainings.confirm}
+                getColumns={getTrainingAnalystColumns}
+                editFields={editTrainingFields}
             />
-
         </DashboardLayout>
     );
 }

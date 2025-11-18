@@ -4,8 +4,6 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editClientFields } from "@/utils/fields/staff";
 import { useMemo, useState } from "react";
 import ClientDetailSheet from "@/components/shared/sheet/client-detail-sheet";
-
-import { useClients } from "@/hooks/useClient";
 import Loading from "@/components/ui/loading";
 import { useClients } from "@/hooks/useStaff";
 
@@ -40,10 +38,7 @@ export default function ClientPage() {
 
     if (isLoading) {
         return (
-            <DashboardLayout
-                title="Manajemen Client"
-                header="Client"
-            >
+            <DashboardLayout title="Manajemen Client" header="Client">
                 <Loading />
             </DashboardLayout>
         );
@@ -51,10 +46,7 @@ export default function ClientPage() {
 
     if (error) {
         return (
-            <DashboardLayout
-                title="Manajemen Client"
-                header="Client"
-            >
+            <DashboardLayout title="Manajemen Client" header="Client">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -63,10 +55,7 @@ export default function ClientPage() {
     }
 
     return (
-        <DashboardLayout
-            title="Manajemen Client"
-            header="Client"
-        >
+        <DashboardLayout title="Manajemen Client" header="Client">
             <ManagedDataTable
                 data={clients}
                 columns={columns}

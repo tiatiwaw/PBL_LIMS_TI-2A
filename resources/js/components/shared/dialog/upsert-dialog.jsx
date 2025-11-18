@@ -30,8 +30,14 @@ export default function UpsertDialog({
 
     const getNestedValue = (obj, path) => {
         if (!obj || !path) return undefined;
-        const pathArray = path.split('.');
-        return pathArray.reduce((current, key) => (current && current[key] !== undefined ? current[key] : undefined), obj);
+        const pathArray = path.split(".");
+        return pathArray.reduce(
+            (current, key) =>
+                current && current[key] !== undefined
+                    ? current[key]
+                    : undefined,
+            obj
+        );
     };
 
     useEffect(() => {
@@ -41,15 +47,27 @@ export default function UpsertDialog({
 
                 if (data) {
                     if (field.initialValuePath) {
-                        initialValue = getNestedValue(data, field.initialValuePath) ?? initialValue;
+                        initialValue =
+                            getNestedValue(data, field.initialValuePath) ??
+                            initialValue;
                     }
 
-                    if (initialValue === (field.defaultValue ?? "") || initialValue === "") {
-                        initialValue = data[field.name] ?? data[field.value] ?? initialValue;
+                    if (
+                        initialValue === (field.defaultValue ?? "") ||
+                        initialValue === ""
+                    ) {
+                        initialValue =
+                            data[field.name] ??
+                            data[field.value] ??
+                            initialValue;
                     }
                 }
 
-                if (field.type === "date" && initialValue && typeof initialValue === 'string') {
+                if (
+                    field.type === "date" &&
+                    initialValue &&
+                    typeof initialValue === "string"
+                ) {
                     initialValue = new Date(initialValue);
                 }
 
@@ -75,7 +93,7 @@ export default function UpsertDialog({
                 }
 
                 const updatedData = { ...prev };
-                fields.forEach(field => {
+                fields.forEach((field) => {
                     if (field.type === "button") {
                         updatedData[field.name] = field.data || [];
                     }
@@ -89,7 +107,7 @@ export default function UpsertDialog({
             setFormData({});
             setFileErrors({});
         }
-    }, [data, fields, open]);
+    }, [data, open]);
 
     const handleChange = (field, value) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
@@ -131,12 +149,17 @@ export default function UpsertDialog({
 
             const dataToSave = { ...formData };
 
-            fields.forEach(field => {
+            fields.forEach((field) => {
                 const formFieldName = field.name;
                 const saveKey = field.savePath || formFieldName;
 
-                if (field.type === "date" && dataToSave[formFieldName] instanceof Date) {
-                    dataToSave[formFieldName] = dataToSave[formFieldName].toISOString().split('T')[0];
+                if (
+                    field.type === "date" &&
+                    dataToSave[formFieldName] instanceof Date
+                ) {
+                    dataToSave[formFieldName] = dataToSave[formFieldName]
+                        .toISOString()
+                        .split("T")[0];
                 }
 
                 if (field.type === "button") {
@@ -156,7 +179,7 @@ export default function UpsertDialog({
         }
     };
 
-    const visibleFields = fields.filter(field => {
+    const visibleFields = fields.filter((field) => {
         if (field.showIf) {
             const { field: targetField, value: requiredValue } = field.showIf;
             return formData[targetField] === requiredValue;
@@ -176,7 +199,9 @@ export default function UpsertDialog({
                     label={field.label}
                     data={field.data}
                     onClick={() => field.onClick(field.name, formData)}
-                    onRemove={(idToRemove) => field.onRemove(field.name, idToRemove, formData)}
+                    onRemove={(idToRemove) =>
+                        field.onRemove(field.name, idToRemove, formData)
+                    }
                 />
             );
         }
@@ -216,12 +241,16 @@ export default function UpsertDialog({
                     id={field.name}
                     name={field.name}
                     label={field.label}
-                    placeholder={field.placeholder || "Choose a file or drag it here"}
+                    placeholder={
+                        field.placeholder || "Choose a file or drag it here"
+                    }
                     accept={field.accept}
                     multiple={field.multiple}
                     maxSize={field.maxSize}
                     value={value}
-                    onChange={(file, error) => handleFileChange(field.name, file, error)}
+                    onChange={(file, error) =>
+                        handleFileChange(field.name, file, error)
+                    }
                     onClear={() => handleFileClear(field.name)}
                     error={fileErrors[field.name]}
                 />
@@ -250,7 +279,9 @@ export default function UpsertDialog({
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
 
-                <div className="grid gap-4 py-4">{visibleFields.map(renderField)}</div>
+                <div className="grid gap-4 py-4">
+                    {visibleFields.map(renderField)}
+                </div>
 
                 <DialogFooter>
                     <Button
