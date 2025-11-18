@@ -144,7 +144,8 @@ export default function UpsertDialog({
                 }
 
                 if (saveKey !== formFieldName) {
-                    dataToSave[formFieldName];
+                    dataToSave[saveKey] = dataToSave[formFieldName];
+                    delete dataToSave[formFieldName];
                 }
             });
 
