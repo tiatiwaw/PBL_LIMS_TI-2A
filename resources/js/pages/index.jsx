@@ -1,7 +1,35 @@
-import { Head, Link } from "@inertiajs/react";
+import { Button } from "@/components/ui/button";
+import { Head, router, usePage } from "@inertiajs/react";
 import { FlaskConical, ArrowRight, Sparkles, Shield, Zap } from "lucide-react";
 
 export default function HomePage() {
+    const { props } = usePage();
+    const role = props?.auth?.user?.role || null;
+    const handleRedirect = () => {
+        switch (role) {
+            case "admin":
+                router.visit(route("admin.index"));
+                break;
+            case "manager":
+                router.visit(route("manager.index"));
+                break;
+            case "staff":
+                router.visit(route("staff.client.index"));
+                break;
+            case "client":
+                router.visit(route("client.index"));
+                break;
+            case "supervisor":
+                router.visit(route("supervisor.index"));
+                break;
+            case "analyst":
+                router.visit(route("analyst.index"));
+                break;
+            default:
+                router.visit("/");
+                break;
+        }
+    }
     return (
         <div className="min-h-screen bg-gradient-to-br from-primary-hijauGelap via-primary-hijauTua to-primary-hijauGelap relative overflow-hidden">
             <Head title="Home" />
@@ -45,15 +73,15 @@ export default function HomePage() {
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <Link
-                                href="/auth/login"
-                                className="group relative px-8 py-4 bg-gradient-to-r from-primary-hijauMuda to-primary-hijauMuda/70 rounded-full font-semibold text-white shadow-2xl shadow-primary-hijauMuda/30 hover:shadow-primary-hijauMuda/50 transition-all duration-300 hover:scale-105"
+                            <Button
+                                onClick={handleRedirect}
+                                className="group relative px-8 py-6 bg-gradient-to-r from-primary-hijauMuda to-primary-hijauMuda/70 rounded-full font-semibold text-white shadow-2xl shadow-primary-hijauMuda/30 hover:shadow-primary-hijauMuda/50 transition-all duration-300 hover:scale-105"
                             >
                                 <span className="flex items-center gap-2 justify-center">
                                     Get Started
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 </span>
-                            </Link>
+                            </Button>
                         </div>
 
                         <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/10">

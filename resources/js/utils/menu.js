@@ -22,6 +22,8 @@ import {
     GraduationCap,
     Award,
     BarChart3,
+    Box,
+    DollarSign,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -163,7 +165,28 @@ const MENU_CONFIG = {
         {
             name: "Laporan",
             icon: TrendingUp,
-            href: "/admin/reports",
+            subItems: [
+                {
+                    name: "Pesanan",
+                    icon: GraduationCap,
+                    href: "/admin/analyst/trainings",
+                },
+                {
+                    name: "Inventaris",
+                    icon: Box,
+                    href: "/admin/analyst/certificates",
+                },
+                {
+                    name: "Pengguna",
+                    icon: Users,
+                    href: "/admin/analyst/certificates",
+                },
+                {
+                    name: "Transaksi",
+                    icon: DollarSign,
+                    href: "/admin/analyst/certificates",
+                },
+            ],
         },
     ],
 

@@ -43,7 +43,8 @@ class AuthController extends Controller
                     'email' => $user->email,
                     'role' => $user->role,
                 ],
-                'token' => $token
+                'token' => $token,
+                'redirect_url' => $user->getRedirectRoute(),
             ],
 
         ]);
@@ -60,35 +61,10 @@ class AuthController extends Controller
         try {
             Auth::guard('web')->logout();
             $request->session()->invalidate();
-            $request->session()->regenerateToken();
+            // $request->session()->regenerateToken();
         } catch (\Throwable $e) {
         }
 
         return response()->json(['message' => 'Logged out']);
-    }
-
-    public function user(Request $request)
-    {
-        try {
-            $request;
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'user' => [
-                        'id' => $request->user()->id,
-                        'name' => $request->user()->name,
-                        'email' => $request->user()->email,
-                        'role' => $request->user()->role,
-                    ],
-                ],
-            ]);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'data' => [
-                    'user' => [],
-                ],
-            ]);
-        }
     }
 }

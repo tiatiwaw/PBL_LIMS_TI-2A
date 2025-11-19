@@ -24,8 +24,8 @@ class RoleMiddleware
 
         if (!in_array(Auth::user()->role, $roles)) {
             return $request->expectsJson()
-                ? response()->json(['message' => 'Forbidden'], 403)
-                : abort(403, 'Unauthorized access.');
+                ? response()->json(['message' => 'Access Denied'], 403)
+                : abort(403, 'You do not have permission to access this resource.');
         }
 
         return $next($request);
