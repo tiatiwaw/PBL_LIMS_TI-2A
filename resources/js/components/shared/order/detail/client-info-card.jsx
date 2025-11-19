@@ -6,6 +6,7 @@ import {
     Mail,
     Barcode,
     SquareUser,
+    Building2,
 } from "lucide-react";
 
 export default function ClientInfoCard({ client }) {
@@ -20,14 +21,24 @@ export default function ClientInfoCard({ client }) {
                 </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div className="space-y-2">
                         <div className="flex items-center gap-2 text-slate-500 text-sm">
-                            <User className="w-4 h-4" />
-                            <span>Kontak Person</span>
+                            <Building2 className="w-4 h-4" />
+                            <span>Nama Perusahaan</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua text-lg">
                             {client.name}
+                        </p>
+                    </div>
+
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-slate-500 text-sm">
+                            <User className="w-4 h-4" />
+                            <span>Narahubung</span>
+                        </div>
+                        <p className="font-bold text-primary-hijauTua text-lg">
+                            {client.users.name}
                         </p>
                     </div>
 

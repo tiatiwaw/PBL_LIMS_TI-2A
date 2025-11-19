@@ -220,14 +220,13 @@ const MENU_CONFIG = {
             href: "/staff/orders",
         },
         {
-            name: "Manajemen Klien",
+            name: "Manajemen Client",
             icon: ListCheck,
             href: "/staff/manage-clients",
         },
     ],
 
-    client: [
-    ],
+    client: [],
 
     supervisor: [{ name: "Beranda", icon: Home, href: "/supervisor" }],
 };
