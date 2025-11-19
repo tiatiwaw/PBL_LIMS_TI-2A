@@ -118,7 +118,7 @@ Route::prefix('v1')->group(function () {
 
         // Client
         Route::prefix('client')
-            ->middleware(['auth:sanctum', 'client'])
+            ->middleware(['role:client'])
             ->name('api.client.')
             ->group(function () {
 

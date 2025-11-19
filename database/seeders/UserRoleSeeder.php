@@ -12,9 +12,10 @@ class UserRoleSeeder extends Seeder
 {
     public function run()
     {
-        // 1️⃣ BUAT ROLES
+        // 1️⃣ DAFTAR ROLE
         $roles = ['admin', 'client', 'staff', 'analyst', 'supervisor', 'manager'];
 
+        // BUAT ROLES JIKA BELUM ADA
         foreach ($roles as $role) {
             Role::firstOrCreate([
                 'name' => $role,
@@ -22,7 +23,7 @@ class UserRoleSeeder extends Seeder
             ]);
         }
 
-        // 2️⃣ BUAT 1 USER UTAMA UNTUK TIAP ROLE
+        // 2️⃣ USER UTAMA PER ROLE
         $mainUsers = [
             'admin'      => ['name' => 'Admin Utama',      'email' => 'admin@example.com',      'password' => 'admin123'],
             'client'     => ['name' => 'Client Utama',     'email' => 'client@example.com',     'password' => 'client123'],
@@ -40,23 +41,25 @@ class UserRoleSeeder extends Seeder
                 'remember_token'    => Str::random(10),
                 'signature'         => 'signatures/default.png',
                 'email_verified_at' => now(),
+                'role' => $role,
             ]);
 
             $user->assignRole($role);
         }
 
-        // 3️⃣ BUAT DUMMY USERS SETIAP ROLE (5 user per role)
+        // 3️⃣ USER DUMMY SETIAP ROLE
         foreach ($roles as $role) {
-            $dummyUsers = User::factory(5)->create();
+            $dummyUsers = User::factory(5)->create(['role' => $role]);
             foreach ($dummyUsers as $user) {
                 $user->assignRole($role);
             }
         }
 
-        // 4️⃣ OUTPUT
+        // 4️⃣ OUTPUT INFORMASI KE TERMINAL
         $this->command->info("🎉 UserRoleSeeder completed!");
+
         foreach ($mainUsers as $role => $data) {
-            $this->command->info("👤 {$role} → {$data['email']} / {$data['password']}");
+            $this->command->info("👤 $role → {$data['email']} / {$data['password']}");
         }
     }
 }
