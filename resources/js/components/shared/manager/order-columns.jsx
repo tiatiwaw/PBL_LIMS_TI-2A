@@ -1,50 +1,41 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { getOrderStatusLabel, getOrderStatusVariant, getOrderTypeLabel, getOrderTypeVariant } from "@/utils/statusUtils";
-
 export const getOrdersColumns = ({ onShowDetail }) => [
-    { accessorKey: "no", header: "No." },
-    { accessorKey: "order_number", header: "No. Order" },
-    { accessorKey: "title", header: "Judul Analisis" },
-    { accessorKey: "estimated_date", header: "Estimasi Selesai" },
-    { accessorKey: "report_issued_at", header: "Tanggal Laporan" },
     {
-        accessorKey: "order_type",
-        header: "Tipe Order",
+        accessorKey: "no",
+        header: "No",
+        cell: ({ row }) => row.index + 1,
+    },
+
+    {
+        accessorKey: "samples",
+        header: "Sample",
         cell: ({ row }) => {
-            const value = row.order_type;
-            return (
-                <Badge
-                    variant={getOrderTypeVariant(value)}
-                >
-                    {getOrderTypeLabel(value)}
-                </Badge>
-            );
+            const samples = row.original.samples;
+            return samples?.length > 0 ? samples[0].name : "-";
         },
     },
+
     {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => {
-            const value = row.status;
-            return (
-                <Badge variant={getOrderStatusVariant(value)}>
-                    {getOrderStatusLabel(value)}
-                </Badge>
-            );
-        },
+        accessorKey: "clients",
+        header: "Client",
+        cell: ({ row }) => row.original.clients?.name || "-",
     },
+
+    {
+        accessorKey: "analysts",
+        header: "Analis",
+        cell: ({ row }) => row.original.analysts?.name || "-",
+    },
+
     {
         id: "aksi",
         header: "Aksi",
         cell: ({ row }) => (
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onShowDetail(row)}
+            <button
+                onClick={() => onShowDetail(row.original.id)}w
+                className="px-3 py-1 rounded-lg border"
             >
                 Detail
-            </Button>
+            </button>
         ),
     },
 ];

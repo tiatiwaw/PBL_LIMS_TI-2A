@@ -11,28 +11,30 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link } from '@inertiajs/react';
 
-export const UserMenu = ({ user, onLogout }) => {
-    const userInitial = user?.name?.charAt(0)?.toUpperCase() || 'U';
+export const UserMenu = ({ auth, user, onLogout }) => {
+    const User = user || auth?.user;
+
+    if (!User) {
+        console.warn("UserMenu: user tidak ditemukan");
+        return null;
+    }
+
+    const userInitial = User.name?.charAt(0)?.toUpperCase() || "U";
+    const role = User.role || "user";
 
     const getProfileUrl = (role) => {
-        const normalized = role?.toLowerCase();
+        const normalized = role.toLowerCase();
         switch (normalized) {
-            case 'manager':
-                return '/manager/profile';
-            case 'staff':
-                return '/staff/profile';
-            case 'supervisor':
-                return '/supervisor/profile';
-            case 'analyst':
-                return '/analyst/profile';
-            case 'client':
-                return '/client/profile';
-            default:
-                return '/profile';
+            case "manager": return "/manager/profile";
+            case "staff": return "/staff/profile";
+            case "supervisor": return "/supervisor/profile";
+            case "analyst": return "/analyst/profile";
+            case "client": return "/client/profile";
+            default: return "/profile";
         }
     };
 
-    const profileUrl = getProfileUrl(user?.role);
+    const profileUrl = getProfileUrl(role);
 
     return (
         <DropdownMenu>

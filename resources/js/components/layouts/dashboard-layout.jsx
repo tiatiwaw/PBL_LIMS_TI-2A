@@ -1,5 +1,4 @@
-import { Head, router } from '@inertiajs/react';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { useCallback } from 'react';
 import { menuItems } from '@/utils/menu';
 import { Sidebar } from './sidebar';
@@ -9,16 +8,14 @@ import { useAuth } from '@/hooks/useAuth';
 export default function DashboardLayout({
     children,
     title,
-    user,
     header = "Hello World!",
     notificationCount = 3,
 }) {
-    const { url } = usePage();
+    const { url, props } = usePage();
     const { logout } = useAuth();
 
-    const handleLogout = useCallback(() => {
-        logout();
-    }, [logout]);
+    const user = props.auth?.user;   // ✅ AMBIL USER DARI INERTIA
+    const handleLogout = useCallback(() => logout(), [logout]);
 
     const getMenuItems = menuItems(url);
 
@@ -32,7 +29,7 @@ export default function DashboardLayout({
                 <header className="mb-6">
                     <HeaderCard
                         title={header}
-                        user={user}
+                        user={user}                // ✅ SEKARANG USER TERISI
                         notificationCount={notificationCount}
                         onLogout={handleLogout}
                     />

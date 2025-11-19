@@ -21,7 +21,7 @@ export const getReportsColumns = ({ onShowDetail }) => [
             </div>
         ),
     },
-    {
+    {   
         accessorKey: "analis",
         header: (
             <div className="flex items-center gap-2">

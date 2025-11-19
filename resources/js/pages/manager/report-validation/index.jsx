@@ -1,7 +1,6 @@
 import DashboardLayout from "../../../components/layouts/dashboard-layout";
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { getReportsColumns } from "@/components/shared/manager/report-columns";
-import { reports } from "@/data/manager/reports";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { router } from "@inertiajs/react";
 
@@ -15,7 +14,15 @@ const filterData = [
     { value: "Received", label: "Received" },
 ];
 
-export default function ReportValidationPage({ auth, reportData }) {
+export default function ReportValidationPage({ auth }) {
+    const [reportData, setReportData] = useState([]);
+
+    useEffect(() => {
+        fetch("/api/v1/manager/report-validations")
+            .then(res => res.json())
+            .then(json => setReportData(json.data ?? []));
+    }, []);
+
     const handleShowDetail = () => {
         router.visit(route("manager.report.detail"));
     };
@@ -25,17 +32,14 @@ export default function ReportValidationPage({ auth, reportData }) {
         []
     );
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = reportData || reports;
-
     return (
         <DashboardLayout
             title="Validasi Laporan"
-            user={currentUser}
             header="Validasi Laporan"
+            user={auth.user}
         >
             <ManagedDataTable
-                data={parameters}
+                data={reportData}
                 columns={columns}
                 showFilter={true}
                 filterColumn="status"

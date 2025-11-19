@@ -1,104 +1,114 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
+// Admin
 use App\Http\Controllers\API\V1\Admin\BrandTypeController;
 use App\Http\Controllers\API\V1\Admin\DashboardController;
 use App\Http\Controllers\API\V1\Admin\EquipmentController;
+
+// Auth
 use App\Http\Controllers\Api\V1\AuthController;
+
+// Staff
 use App\Http\Controllers\API\V1\Staff\ClientController;
 use App\Http\Controllers\API\V1\Staff\OrderController;
+
+// Client
 use App\Http\Controllers\API\V1\Client\ClientController as ClientClientController;
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
-// use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
-use App\Http\Controllers\StaffApiController;
-use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+// Manager (ADA DI ManagerController.php)
+use App\Http\Controllers\ManagerController;
+
+// Route::prefix('v1')->group(function () {
+//     Route::prefix('manager')->group(function () {
+//         Route::get('/report-validations', [ManagerController::class, 'reportValidations']);
+//     });
+// });
+
+
+Route::prefix('v1')
+    // ->middleware('auth:sanctum')
+    ->group(function () {
 
     Route::get('/auth/user', [AuthController::class, 'user']);
 
-    // Admin
+    /**
+     * ==========================
+     * ADMIN API
+     * ==========================
+     */
     Route::prefix('admin')
         ->middleware('admin')
         ->name('api.admin.')
         ->group(function () {
 
-            Route::get('/', [DashboardController::class, 'index']);
+        Route::get('/', [DashboardController::class, 'index']);
 
-            // Route::apiResource('users', AdminApiUser::class);
-            // Route::apiResource('orders', AdminApiOrder::class)->except(['index', 'show']);
-            // Route::apiResource('activities', AdminApiActivity::class);
-
-            // Tools
-            Route::prefix('tools')
-                ->name('tools.')
-                ->group(function () {
-                    Route::apiResource('equipments', EquipmentController::class);
-                    Route::apiResource('brands', BrandTypeController::class);
-                });
-
-            // Materials
-            // Route::prefix('materials')->name('materials.')->group(function () {
-            //     Route::apiResource('reagents', AdminApiReagent::class)->except(['index']);
-            //     Route::apiResource('grades', AdminApiGrade::class)->except(['index']);
-            //     Route::apiResource('suppliers', AdminApiSupplier::class)->except(['index']);
-            // });
-
-            // Tests
-            // Route::prefix('tests')->name('tests.')->group(function () {
-            //     Route::apiResource('parameters', AdminApiParameter::class)->except(['index']);
-            //     Route::apiResource('methods', AdminApiMethod::class)->except(['index']);
-            //     Route::apiResource('units', AdminApiUnit::class)->except(['index']);
-            //     Route::apiResource('references', AdminApiReference::class)->except(['index']);
-            //     Route::apiResource('categories', AdminApiCategory::class)->except(['index']);
-            // });
+        Route::prefix('tools')->name('tools.')->group(function () {
+            Route::apiResource('equipments', EquipmentController::class);
+            Route::apiResource('brands', BrandTypeController::class);
         });
+    });
 
-    // Staff
+
+    /**
+     * ==========================
+     * STAFF API
+     * ==========================
+     */
     Route::prefix('staff')
         ->middleware('staff')
         ->name('api.staff.')
         ->group(function () {
 
-            // Resource untuk manage-clients
-            Route::apiResource('manage-clients', ClientController::class)
-                ->names([
-                    'index'   => 'clients.index',
-                    'store'   => 'clients.store',
-                    'update'  => 'clients.update',
-                    'destroy' => 'clients.destroy',
-                ])
-                ->parameters([
-                    'manage-clients' => 'client', // supaya param jadi {client}, bukan {manage_client}
-                ]);
+        Route::apiResource('manage-clients', ClientController::class)
+            ->names([
+                'index'   => 'clients.index',
+                'store'   => 'clients.store',
+                'update'  => 'clients.update',
+                'destroy' => 'clients.destroy',
+            ])
+            ->parameters([
+                'manage-clients' => 'client'
+            ]);
 
-            // Orders
-
-            Route::prefix('orders')->name('orders.')->group(function () {
-                Route::get('/', [OrderController::class, 'index'])->name('index');
-                Route::post('/', [OrderController::class, 'store'])->name('store');
-                Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
-            });
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', [OrderController::class, 'index']);
+            Route::post('/', [OrderController::class, 'store']);
+            Route::post('/samples', [OrderController::class, 'storeSample']);
         });
+    });
 
-        // Client
+
+    /**
+     * ==========================
+     * CLIENT API
+     * ==========================
+     */
     Route::prefix('client')
-        ->middleware(['auth:sanctum', 'client'])
+        ->middleware('client')
         ->name('api.client.')
         ->group(function () {
-            
-            // Dashboard & Profile
-            Route::get('/', [ClientClientController::class, 'index'])->name('index');
-            Route::get('/history/{order}', [ClientHistoryController::class, 'history'])->name('history');
 
-            // Route::get('/profile', [ClientProfileController::class, 'profile'])->name('profile');
+        Route::get('/', [ClientClientController::class, 'index']);
+        Route::get('/history/{order}', [ClientHistoryController::class, 'history']);
 
-            // Orders - menggunakan apiResource untuk efisiensi
-            Route::prefix('orders')
-                ->name('orders.')
-                ->group(function () {
-                    Route::get('/detail/{order}', [ClientOrderController::class, 'index'])->name('indexDetail');
-                    // Route::get('/', [ClientOrderController::class, 'show'])->name('show');
-                });
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/detail/{order}', [ClientOrderController::class, 'index']);
         });
+    });
+
+
+    /**
+     * ==========================
+     * MANAGER API
+     * ==========================
+     */
+    Route::prefix('manager')
+        ->group(function () {
+        Route::get('/report-validations', [ManagerController::class, 'reportValidations']);
+    });
 });
