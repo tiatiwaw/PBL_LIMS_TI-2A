@@ -44,8 +44,7 @@ use App\Http\Controllers\API\V1\Manager\TestMethodsController as ManagerTestMeth
 use App\Http\Controllers\API\V1\Manager\UnitValueController as ManagerUnitValueController;
 use App\Http\Controllers\API\V1\Manager\ReferenceController as ManagerReferenceController;
 use App\Http\Controllers\API\V1\Manager\SampleCategoryController as ManagerSampleCategoryController;
-use App\Http\Controllers\API\V1\Manager\TrainingController as ManagerTrainingController;
-use App\Http\Controllers\API\V1\Manager\CertificateController as ManagerCertificateController;
+
 
 
 Route::prefix('v1')->group(function () {
