@@ -12,7 +12,7 @@ class UserRoleSeeder extends Seeder
 {
     public function run()
     {
-        // 1️⃣ BUAT ROLES
+        // 1️⃣ BUAT ROLES TERLEBIH DAHULU
         $roles = ['admin', 'client', 'staff', 'analyst', 'supervisor', 'manager'];
 
         foreach ($roles as $role) {
@@ -22,41 +22,31 @@ class UserRoleSeeder extends Seeder
             ]);
         }
 
-        // 2️⃣ BUAT 1 USER UTAMA UNTUK TIAP ROLE
-        $mainUsers = [
-            'admin'      => ['name' => 'Admin Utama',      'email' => 'admin@example.com',      'password' => 'admin123'],
-            'client'     => ['name' => 'Client Utama',     'email' => 'client@example.com',     'password' => 'client123'],
-            'staff'      => ['name' => 'Staff Utama',      'email' => 'staff@example.com',      'password' => 'staff123'],
-            'analyst'    => ['name' => 'Analyst Utama',    'email' => 'analyst@example.com',    'password' => 'analyst123'],
-            'supervisor' => ['name' => 'Supervisor Utama', 'email' => 'supervisor@example.com', 'password' => 'super123'],
-            'manager'    => ['name' => 'Manager Utama',    'email' => 'manager@example.com',    'password' => 'manager123'],
-        ];
+        // 2️⃣ BUAT ADMIN USER & ASSIGN ROLE
+        $adminUser = User::create([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('admin123'),
+            'remember_token' => Str::random(10),
+            'signature' => 'signatures/admin.png', // Ganti fake() dengan path real
+            'email_verified_at' => now(),
+            // HAPUS: 'role' => 'admin' ← INI YANG PERLU DIHAPUS
+        ]);
+        $adminUser->assignRole('admin'); // ← INI YANG PERLU DITAMBAHKAN
 
-        foreach ($mainUsers as $role => $data) {
-            $user = User::create([
-                'name'              => $data['name'],
-                'email'             => $data['email'],
-                'password'          => Hash::make($data['password']),
-                'remember_token'    => Str::random(10),
-                'signature'         => 'signatures/default.png',
-                'email_verified_at' => now(),
-            ]);
+        // 3️⃣ BUAT USER LAINNYA & ASSIGN ROLE
+        $otherRoles = ['client', 'staff', 'analyst', 'supervisor', 'manager'];
 
-            $user->assignRole($role);
-        }
+        foreach ($otherRoles as $role) {
+            $users = User::factory(5)->create(['role' => $role]);
 
-        // 3️⃣ BUAT DUMMY USERS SETIAP ROLE (5 user per role)
-        foreach ($roles as $role) {
-            $dummyUsers = User::factory(5)->create();
-            foreach ($dummyUsers as $user) {
+            foreach ($users as $user) {
                 $user->assignRole($role);
             }
         }
 
-        // 4️⃣ OUTPUT
-        $this->command->info("🎉 UserRoleSeeder completed!");
-        foreach ($mainUsers as $role => $data) {
-            $this->command->info("👤 {$role} → {$data['email']} / {$data['password']}");
-        }
+        $this->command->info('🎉 UserRoleSeeder completed!');
+        $this->command->info('👤 Admin: admin@lims.com / admin123');
+        $this->command->info('🔐 Other users: check database for random emails / password');
     }
 }
