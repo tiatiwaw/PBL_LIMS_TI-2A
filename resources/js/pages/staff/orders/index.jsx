@@ -53,6 +53,49 @@ export default function OrdersPage() {
         }
     }, [isSaved]);
 
+    useEffect(() => {
+        const isUrgent = data.tipeOrder === "urgent"; // Pastikan value-nya sesuai select option (lowercase/uppercase)
+
+        let isDataChanged = false;
+
+        const updatedMethods = data.metodeAnalisis.map((method) => {
+            const basePrice =
+                method.original_price !== undefined
+                    ? method.original_price
+                    : method.price;
+
+            const targetPrice = isUrgent
+                ? Math.ceil(basePrice * 1.3)
+                : basePrice;
+
+            if (
+                method.price !== targetPrice ||
+                method.original_price === undefined
+            ) {
+                isDataChanged = true;
+                return {
+                    ...method,
+                    original_price: basePrice,
+                    price: targetPrice,
+                };
+            }
+            return method;
+        });
+
+        const newTotal = updatedMethods.reduce(
+            (sum, m) => sum + (m.price || 0),
+            0
+        );
+
+        if (isDataChanged || data.totalHarga !== newTotal) {
+            setData((prev) => ({
+                ...prev,
+                metodeAnalisis: updatedMethods,
+                totalHarga: newTotal,
+            }));
+        }
+    }, [data.tipeOrder, data.metodeAnalisis]);
+
     const handleNext = () => {
         setStep((prev) => prev + 1);
     };

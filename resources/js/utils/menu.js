@@ -22,6 +22,8 @@ import {
     GraduationCap,
     Award,
     BarChart3,
+    Box,
+    DollarSign,
     User,
 } from "lucide-react";
 
@@ -164,7 +166,28 @@ const MENU_CONFIG = {
         {
             name: "Laporan",
             icon: TrendingUp,
-            href: "/admin/reports",
+            subItems: [
+                {
+                    name: "Pesanan",
+                    icon: GraduationCap,
+                    href: "/admin/analyst/trainings",
+                },
+                {
+                    name: "Inventaris",
+                    icon: Box,
+                    href: "/admin/analyst/certificates",
+                },
+                {
+                    name: "Pengguna",
+                    icon: Users,
+                    href: "/admin/analyst/certificates",
+                },
+                {
+                    name: "Transaksi",
+                    icon: DollarSign,
+                    href: "/admin/analyst/certificates",
+                },
+            ],
         },
     ],
 
@@ -198,24 +221,13 @@ const MENU_CONFIG = {
             href: "/staff/orders",
         },
         {
-            name: "Manajemen Klien",
+            name: "Manajemen Client",
             icon: ListCheck,
             href: "/staff/manage-clients",
         },
     ],
 
-    client: [
-        {
-            name: "Beranda",
-            icon: Home,
-            href: "/client",
-        },
-        {
-            name: "Riwayat",
-            icon: ChartArea,
-            href: "/client/history",
-        },
-    ],
+    client: [],
 
     supervisor: [
         { name: "Orders", icon: Home, href: "/supervisor/orders" },

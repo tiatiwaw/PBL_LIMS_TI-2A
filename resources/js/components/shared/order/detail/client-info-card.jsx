@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     User,
-    Building2,
     MapPin,
     Phone,
     Mail,
     Barcode,
+    SquareUser,
+    Building2,
 } from "lucide-react";
 
 export default function ClientInfoCard({ client }) {
@@ -14,7 +15,7 @@ export default function ClientInfoCard({ client }) {
             <CardHeader className="border-b border-slate-100">
                 <CardTitle className="text-xl font-bold text-primary-hijauTua flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-primary-hijauTua flex items-center justify-center">
-                        <Building2 className="w-5 h-5 text-white" />
+                        <SquareUser className="w-5 h-5 text-white" />
                     </div>
                     Informasi Klien
                 </CardTitle>
@@ -34,9 +35,9 @@ export default function ClientInfoCard({ client }) {
                     <div className="space-y-2">
                         <div className="flex items-center gap-2 text-slate-500 text-sm">
                             <User className="w-4 h-4" />
-                            <span>Kontak Person</span>
+                            <span>Narahubung</span>
                         </div>
-                        <p className="font-semibold text-primary-hijauTua">
+                        <p className="font-bold text-primary-hijauTua text-lg">
                             {client.users.name}
                         </p>
                     </div>

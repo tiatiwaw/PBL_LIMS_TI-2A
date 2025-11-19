@@ -22,30 +22,3 @@ export const getTrainingAnalystColumns = ({ selectedItems, onSelect }) => [
         },
     },
 ];
-
-export const getCertificateAnalystColumns = ({
-    selectedCertificates,
-    onSelectCertificate,
-}) => [
-    { accessorKey: "no", header: "No." },
-    { accessorKey: "name", header: "Nama Sertifikat" },
-    { accessorKey: "issued_date", header: "Tanggal Terbit" },
-    { accessorKey: "expired_date", header: "Tanggal Kadaluarsa" },
-    {
-        accessorKey: "select",
-        header: "Pilih",
-        enableSorting: false,
-        cell: ({ row }) => {
-            const data = row;
-            const isSelected = selectedCertificates.some(
-                (s) => s.id === data.id
-            );
-            return (
-                <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={() => onSelectCertificate(data)}
-                />
-            );
-        },
-    },
-];

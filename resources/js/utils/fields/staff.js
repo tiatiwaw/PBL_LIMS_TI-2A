@@ -1,33 +1,38 @@
 export const editClientFields = [
     {
         name: "name",
-        label: "Nama Client",
-        placeholder: "Masukkan nama client",
+        label: "Nama Perusahaan",
+        placeholder: "Masukkan nama perusahaan",
+    },
+    {
+        name: "contact_person",
+        label: "Narahubung",
+        placeholder: "Masukkan nama narahubung",
     },
     {
         name: "email",
-        label: "Email Client",
-        placeholder: "Masukkan email client",
+        label: "Email Klien",
+        placeholder: "Masukkan email",
     },
     {
         name: "password",
-        label: "Password Client",
-        placeholder: "Masukkan password client",
+        label: "Password Klien",
+        placeholder: "Masukkan password",
     },
     {
         name: "address",
-        label: "Alamat Client",
-        placeholder: "Masukkan alamat client",
+        label: "Alamat Klien",
+        placeholder: "Masukkan alamat",
     },
     {
         name: "phone_number",
-        label: "Nomor Telepon Client",
-        placeholder: "Masukkan Nomor Telepon client",
+        label: "Nomor Telepon Klien",
+        placeholder: "Masukkan Nomor Telepon",
     },
     {
         name: "npwp_number",
-        label: "NPWP Client",
-        placeholder: "Masukkan NPWP client",
+        label: "NPWP Klien",
+        placeholder: "Masukkan NPWP",
     },
 ];
 

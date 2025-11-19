@@ -32,14 +32,17 @@ class HistoryController extends Controller
             // Buat array status dengan boolean aktif
             $statuses = [];
             foreach ($steps as $step) {
-                $isActive = array_search($step, $steps) <= array_search($currentStatus, $steps);
-                $statuses[] = [
-                    'name' => $step,
-                    'is_active' => $isActive,
-                    'label' => $this->getStatusLabel($step)
-                ];
-            }
-
+                        if ($currentStatus === 'disapproved') {
+                            $isActive = in_array($step, ['received', 'disapproved']);
+                        } else {
+                            $isActive = array_search($step, $steps) <= array_search($currentStatus, $steps);
+                        }
+                        $statuses[] = [
+                            'name' => $step,
+                            'is_active' => $isActive,
+                            'label' => $this->getStatusLabel($step)
+                        ];
+                    }
             return response()->json([
                 'success' => true,
                 'data' => [

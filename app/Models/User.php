@@ -49,6 +49,35 @@ class User extends Authenticatable
         ];
     }
 
+    public function getRedirectRoute(): string
+    {
+        if ($this->hasRole('admin')) {
+            return route('admin.index');
+        }
+
+        if ($this->hasRole('manager')) {
+            return route('manager.index');
+        }
+
+        if ($this->hasRole('analyst')) {
+            return route('analyst.index');
+        }
+
+        if ($this->hasRole('supervisor')) {
+            return route('supervisor.index');
+        }
+
+        if ($this->hasRole('staff')) {
+            return route('staff.client.index');
+        }
+
+        if ($this->hasRole('client')) {
+            return route('client.index');
+        }
+
+        return '/';
+    }
+
     public function clients()
     {
         return $this->hasOne(Client::class, 'user_id');

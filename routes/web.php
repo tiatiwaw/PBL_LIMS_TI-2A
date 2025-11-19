@@ -19,18 +19,9 @@ Route::controller(HomeController::class)->group(function () {
 
 
 // Auth
-Route::controller(AuthController::class)
-    ->prefix('auth')
-    ->name('auth.')
-    ->group(function () {
-        Route::middleware('guest')->group(function () {
-            Route::get('/login', 'index')->name('login.form');
-        });
-        Route::middleware('auth')->group(function () {
-            Route::post('/logout', 'logout')->name('logout');
-            Route::get('/logout', 'logout');
-        });
-    });
+Route::middleware('guest')->group(function () {
+    Route::inertia('/auth/login', 'auth/login/index')->name('auth.login.form');
+});
 
 // Admin
 Route::middleware(['auth', 'role:admin'])
@@ -71,7 +62,11 @@ Route::middleware(['auth', 'role:admin'])
         })->name('order.show');
 
         Route::inertia('/users', 'admin/users/index')->name('users');
-        Route::inertia('/reports', 'admin/reports/index')->name('reports');
+        Route::prefix('reports')->as('reports.')->group(function () {
+            Route::inertia('/', 'admin/reports/index')->name('index');
+            Route::inertia('/orders', 'admin/reports/orders/index')->name('orders');
+            Route::inertia('/inventory', 'admin/reports/inventory/index')->name('inventory');
+        });
     });
 
 // Manager

@@ -31,15 +31,11 @@ Route::prefix('v1')->group(function () {
 
     Route::prefix('auth')->name('api.auth.')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->name('login');
-        Route::get('/user', [AuthController::class, 'user'])->name('user');
     });
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth')->group(function () {
 
-        Route::prefix('auth')->name('api.auth.')->group(function () {
-            // Route::get('/user', [AuthController::class, 'user'])->name('user');
-            Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-        });
+        Route::post('/auth/logout', [AuthController::class, 'logout'])->name('api.auth.logout');
 
         // Admin
         Route::prefix('admin')
@@ -120,7 +116,7 @@ Route::prefix('v1')->group(function () {
 
         // Client
         Route::prefix('client')
-            ->middleware(['auth:sanctum', 'client'])
+            ->middleware(['role:client'])
             ->name('api.client.')
             ->group(function () {
 
