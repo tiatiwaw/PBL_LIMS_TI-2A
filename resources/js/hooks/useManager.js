@@ -52,7 +52,6 @@ export const useReferences = () =>
         only: ["getAll"],
     });
 
-
 export const useSuppliers = () =>
     useCrud(managerService.suppliers, "suppliers", "Supplier", {
         only: ["getAll"],

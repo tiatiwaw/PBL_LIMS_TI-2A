@@ -179,6 +179,37 @@ const MENU_CONFIG = {
             href: "/manager/report-validation",
         },
         {
+            name: "Alat & Bahan",
+            icon: Wrench,
+            subItems: [
+                {
+                    name: "Peralatan",
+                    icon: Microscope,
+                    href: "/manager/resources/equipments",
+                },
+                {
+                    name: "Jenis Brand",
+                    icon: Factory,
+                    href: "/manager/resources/brands",
+                },
+                {
+                    name: "Reagen",
+                    icon: Beaker,
+                    href: "/manager/resources/reagents",
+                },
+                {
+                    name: "Tingkat Reagen",
+                    icon: Scale,
+                    href: "/manager/resources/grades",
+                },
+                {
+                    name: "Pemasok",
+                    icon: Building2,
+                    href: "/manager/resources/suppliers",
+                },
+            ]
+        },
+        {
             name: "Pengujian",
             icon: ClipboardList,
             subItems: [
@@ -190,7 +221,7 @@ const MENU_CONFIG = {
                 {
                     name: "Metode Uji",
                     icon: Microscope,
-                    href: "/manager/tests/methods",
+                    href: "/manager/orders",
                 },
                 {
                     name: "Nilai Satuan",
