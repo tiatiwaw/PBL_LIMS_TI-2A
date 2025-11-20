@@ -13,7 +13,11 @@ class OrderController extends Controller
             'clients.users',
             'analysesMethods',
             'samples.sample_categories',
-        ])->where('status', 'received')->get();
+        ])
+            ->whereIn('status', ['received', 'paid', 'received_test'])
+            ->orderByRaw("CASE WHEN order_type = 'urgent' THEN 0 ELSE 1 END")
+            ->orderBy('order_date', 'asc')
+            ->get();
         return response()->json($orders);
     }
 
