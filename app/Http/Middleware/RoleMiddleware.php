@@ -16,18 +16,30 @@ class RoleMiddleware
      */
     public function handle($request, Closure $next, ...$roles)
     {
+        // Ensure user is authenticated
         if (!Auth::check()) {
             return $request->expectsJson()
                 ? response()->json(['message' => 'Unauthenticated'], 401)
                 : redirect()->route('auth.login.form');
         }
 
-        if (!in_array(Auth::user()->role, $roles)) {
-            return $request->expectsJson()
-                ? response()->json(['message' => 'Access Denied'], 403)
-                : abort(403, 'You do not have permission to access this resource.');
+        $user = Auth::user();
+
+        // If no roles specified, allow access
+        if (empty($roles)) {
+            return $next($request);
         }
 
-        return $next($request);
+        // Check roles using Spatie Permission (safer & more flexible)
+        foreach ($roles as $role) {
+            if ($user->hasRole($role)) {
+                return $next($request);
+            }
+        }
+
+        // If we reach here, user doesn't have any of the required roles
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Access Denied. Required roles: ' . implode(', ', $roles)], 403)
+            : abort(403, 'You do not have permission to access this resource.');
     }
 }
