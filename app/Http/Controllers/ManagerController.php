@@ -22,6 +22,7 @@ class ManagerController extends Controller
     public function reportValidations()
     {
         $reports = Order::with('clients:id,name')
+            ->where('status', 'pending')
             ->select('id', 'order_number', 'client_id', 'status')
             ->latest()
             ->get()

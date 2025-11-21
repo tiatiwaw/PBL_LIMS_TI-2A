@@ -22,10 +22,10 @@ export const getReportsColumns = ({ onShowDetail }) => [
         ),
     },
     {   
-        accessorKey: "analis",
+        accessorKey: "status",
         header: (
             <div className="flex items-center gap-2">
-                Analis
+                Status
                 <ListFilter size={16} />
             </div>
         ),
