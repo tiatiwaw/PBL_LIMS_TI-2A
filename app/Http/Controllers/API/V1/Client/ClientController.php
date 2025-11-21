@@ -68,4 +68,25 @@ class ClientController extends Controller
             ]
         ]);
     }
+    public function downloadReport($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        if (!$order->result_value) {
+            abort(404, 'Laporan belum digenerate.');
+        }
+
+        // Path langsung ke folder public/storage/...
+        $filePath = public_path('storage/reports/client/' . $order->result_value);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File laporan tidak ditemukan.');
+        }
+
+        return response()->download(
+            $filePath,
+            'Laporan_Order_' . $order->id . '.pdf',
+            ['Content-Type' => 'application/pdf']
+        );
+    }
 }
