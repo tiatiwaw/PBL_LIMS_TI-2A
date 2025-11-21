@@ -1,7 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/utils/formatters";
-import { getOrderTypeLabel, getOrderTypeVariant } from "@/utils/statusUtils";
+import {
+    getOrderStatusLabel,
+    getOrderStatusVariant,
+    getOrderTypeLabel,
+    getOrderTypeVariant,
+} from "@/utils/statusUtils";
 
 export const getOrdersColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No." },
@@ -30,6 +35,18 @@ export const getOrdersColumns = ({ onShowDetail }) => [
         },
     },
     {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => {
+            const value = row.status;
+            return (
+                <Badge variant={getOrderStatusVariant(value)}>
+                    {getOrderStatusLabel(value)}
+                </Badge>
+            );
+        },
+    },
+    {
         accessorKey: "order_date",
         header: "Tanggal Order",
         cell: ({ row }) => formatDate(row.order_date),
@@ -37,14 +54,32 @@ export const getOrdersColumns = ({ onShowDetail }) => [
     {
         id: "aksi",
         header: "Aksi",
-        cell: ({ row }) => (
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onShowDetail(row)}
-            >
-                Detail
-            </Button>
-        ),
+        cell: ({ row }) => {
+            let label = "";
+
+            switch (row.status) {
+                case "received":
+                    label = "Detail";
+                    break;
+                case "paid":
+                    label = "Isi Data";
+                    break;
+                case "received_test":
+                    label = "QC";
+                    break;
+                default:
+                    label = "Detail";
+            }
+
+            return (
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onShowDetail(row)}
+                >
+                    {label}
+                </Button>
+            );
+        },
     },
 ];

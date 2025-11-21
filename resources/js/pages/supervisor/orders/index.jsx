@@ -6,6 +6,13 @@ import { useOrders } from "@/hooks/useSupervisor";
 import { router } from "@inertiajs/react";
 import { useMemo } from "react";
 
+const filterData = [
+    { value: "all", label: "All Status" },
+    { value: "received", label: "Diterima" },
+    { value: "paid", label: "Dibayar" },
+    { value: "received_test", label: "Selesai Pengujian" },
+];
+
 export default function OrdersPage() {
     const { data: orders, isLoading, error } = useOrders();
 
@@ -42,8 +49,10 @@ export default function OrdersPage() {
                 data={orders}
                 columns={columns}
                 showSearch={true}
-                showFilter={false}
+                showFilter={true}
                 showCreate={false}
+                filterColumn="status"
+                filterOptions={filterData}
             />
         </DashboardLayout>
     );
