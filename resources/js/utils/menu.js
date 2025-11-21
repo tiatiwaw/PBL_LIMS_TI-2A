@@ -169,22 +169,22 @@ const MENU_CONFIG = {
                 {
                     name: "Pesanan",
                     icon: GraduationCap,
-                    href: "/admin/analyst/trainings",
+                    href: "/admin/reports/orders",
                 },
                 {
-                    name: "Inventaris",
+                    name: "Inventory",
                     icon: Box,
-                    href: "/admin/analyst/certificates",
+                    href: "/admin/reports/inventory",
                 },
                 {
                     name: "Pengguna",
                     icon: Users,
-                    href: "/admin/analyst/certificates",
+                    href: "/admin/reports/users",
                 },
                 {
                     name: "Transaksi",
                     icon: DollarSign,
-                    href: "/admin/analyst/certificates",
+                    href: "/admin/reports/transactions",
                 },
             ],
         },

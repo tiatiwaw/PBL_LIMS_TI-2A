@@ -62,9 +62,10 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::inertia('/users', 'admin/users/index')->name('users');
         Route::prefix('reports')->as('reports.')->group(function () {
-            Route::inertia('/', 'admin/reports/index')->name('index');
-            Route::inertia('/orders', 'admin/reports/orders/index')->name('orders');
-            Route::inertia('/inventory', 'admin/reports/inventory/index')->name('inventory');
+            Route::inertia('/orders', 'admin/reports/orders')->name('orders');
+            Route::inertia('/inventory', 'admin/reports/inventory')->name('inventory');
+            Route::inertia('/transactions', 'admin/reports/transactions')->name('transactions');
+            Route::inertia('/users', 'admin/reports/users')->name('users');
         });
     });
 
