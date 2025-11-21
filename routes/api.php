@@ -16,6 +16,7 @@ use App\Http\Controllers\API\V1\Admin\UnitValueController;
 use App\Http\Controllers\API\V1\Admin\UserController;
 use App\Http\Controllers\API\V1\Admin\SupplierController;
 use App\Http\Controllers\API\V1\Admin\OrdersController;
+use App\Http\Controllers\API\V1\Admin\ReportController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\API\V1\Staff\ClientController;
 use App\Http\Controllers\API\V1\Staff\OrderController;
@@ -85,6 +86,15 @@ Route::prefix('v1')->group(function () {
                     ->group(function () {
                         Route::apiResource('trainings', TrainingController::class);
                         Route::apiResource('certificates', CertificateController::class);
+                    });
+
+                Route::prefix('reports')
+                    ->name('reports.')
+                    ->group(function () {
+                        Route::get('orders', [ReportController::class, 'orders']);
+                        Route::get('inventory', [ReportController::class, 'inventory']);
+                        Route::get('transactions', [ReportController::class, 'transactions']);
+                        Route::get('users', [ReportController::class, 'users']);
                     });
             });
 

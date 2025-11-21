@@ -23,6 +23,10 @@ const badgeVariants = cva(
                 approved: "bg-teal-100/70 border border-teal-500 text-teal-800",
                 received:
                     "bg-purple-100/70 border border-purple-500 text-purple-800",
+                received_test: "bg-indigo-100/70 border border-indigo-500 text-indigo-800",
+                pending_payment: "bg-orange-100/70 border border-orange-500 text-orange-800",
+                paid: "bg-blue-100/70 border border-blue-600 text-blue-800",
+                revision_test: "bg-amber-200/70 border border-amber-600 text-amber-900",
             },
         },
         defaultVariants: {
