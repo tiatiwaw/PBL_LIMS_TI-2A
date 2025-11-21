@@ -20,12 +20,10 @@ const LABELS = {
         disapproved: "Ditolak",
         approved: "Disetujui",
         received: "Diterima",
-    },
-    orderType: {
-        eksternal: "Eksternal",
-        internal: "Internal",
-        regular: "Reguler",
-        urgent: "Urgent",
+        pending_payment: "Menunggu Pembayaran",
+        paid: "Sudah Dibayar",
+        received_test: "Sampel Diterima",
+        revision_test: "Revisi Pengujian",
     },
     conditionType: {
         good: "Baik",
@@ -48,6 +46,10 @@ const VARIANTS = {
         disapproved: "error",
         approved: "approved",
         received: "received",
+        pending_payment: "pending_payment",
+        paid: "paid",
+        received_test: "received_test",
+        revision_test: "revision_test",
     },
     sampleStatus: {
         success: "success",
@@ -96,8 +98,6 @@ export const getEquipmentStatusLabel = (status) =>
     getValue(LABELS, "equipmentStatus", status, status);
 export const getOrderStatusLabel = (status) =>
     getValue(LABELS, "orderStatus", status, status);
-export const getOrderTypeLabel = (type) =>
-    getValue(LABELS, "orderType", type, type);
 export const getConditionTypeLabel = (type) =>
     getValue(LABELS, "conditionType", type, type);
 
