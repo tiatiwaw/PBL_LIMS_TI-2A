@@ -6,7 +6,6 @@ import { Sidebar } from './sidebar';
 import { HeaderCard } from '../shared/dashboard/header-card';
 
 import { useAuth } from '@/hooks/useAuth';
-import Loading from '../ui/loading';
 
 export default function DashboardLayout({
     children,
@@ -15,7 +14,7 @@ export default function DashboardLayout({
     notificationCount = 3,
 }) {
     const { url } = usePage();
-    const { user, loading, logout } = useAuth();
+    const { user, logout } = useAuth();
 
     const currentUser = useMemo(() => user ?? { name: "Guest", role: "guest" }, [user]);
 
@@ -42,7 +41,7 @@ export default function DashboardLayout({
 
                 <main className="flex-1 overflow-auto">
                     <div className="max-w-[1600px] mx-auto px-1">
-                        {loading ? <Loading /> : children}
+                        {children}
                     </div>
                 </main>
             </div>

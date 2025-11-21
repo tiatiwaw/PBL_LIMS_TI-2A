@@ -87,7 +87,7 @@ class OrderController extends Controller
                 NAnalysesMethodsOrder::create([
                     'order_id' => $order->id,
                     'analyses_method_id' => $methodData['id'],
-                    'price' => $data['totalHarga'],
+                    'price' => $methodData['price'],
                     'description' => $methodData['description'] ?? '-',
                 ]);
             }

@@ -24,7 +24,7 @@ class OrderSeeder extends Seeder
 
         foreach ($clients as $client) {
             // Buat beberapa order untuk setiap client
-            for ($i = 1; $i <= 3; $i++) {
+            for ($i = 1; $i <= 2; $i++) {
                 Order::create([
                     'client_id' => $client->id,
                     'order_number' => strtoupper(Str::random(8)),
@@ -36,7 +36,7 @@ class OrderSeeder extends Seeder
                     'report_file_path' => null,
                     'notes' => fake()->sentence(),
                     'order_type' => fake()->randomElement(['internal', 'regular', 'external', 'urgent']),
-                    'status' => fake()->randomElement(['received', 'in_progress', 'pending', 'disapproved', 'approved', 'completed']),
+                    'status' => fake()->randomElement(['received', 'disapproved', 'pending_payment', 'paid', 'in_progress', 'received_test', 'revision_test', 'pending', 'completed']),
                 ]);
             }
         }

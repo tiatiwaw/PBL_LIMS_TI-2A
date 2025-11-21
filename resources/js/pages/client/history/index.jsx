@@ -3,15 +3,23 @@ import React from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { Link } from "@inertiajs/react";
 import {
-  ChevronsLeft, FlaskConical, ClipboardCheck, RotateCw, PackageCheck,
-  Clock, CalendarDays, CheckCircle2, Loader2, XCircle,
+  ChevronsLeft,
+  FlaskConical,
+  ClipboardCheck,
+  RotateCw,
+  PackageCheck,
+  Clock,
+  CalendarDays,
+  CheckCircle2,
+  Loader2,
+  XCircle,
 } from "lucide-react";
-import { useClientHistory } from "@/hooks/useClientHistory";
+import { useHistory } from "@/hooks/useClient";
 
 export default function HistoryPage({ auth, orderId }) {
   console.log("props dari Inertia:", orderId);
-  const { order, statuses, isLoading, isError, errorMessage } =
-    useClientHistory(orderId);
+  const { data: history, isLoading, isError, errorMessage } =
+    useHistory(orderId);
 
   const iconMap = {
     received: FlaskConical,
@@ -24,10 +32,7 @@ export default function HistoryPage({ auth, orderId }) {
 
   if (isLoading) {
     return (
-      <DashboardLayout
-        title="Riwayat"
-        header="Memuat Data..."
-      >
+      <DashboardLayout title="Riwayat" header="Memuat Data...">
         <div className="flex items-center justify-center min-h-[60vh]">
           <Loader2 className="w-10 h-10 animate-spin text-primary-hijauTua" />
         </div>
@@ -54,41 +59,47 @@ export default function HistoryPage({ auth, orderId }) {
     );
   }
 
-  const activeStatuses = statuses.filter((s) => s.is_active);
+  const activeStatuses = history?.data?.statuses.filter((s) => s.is_active);
+
+  const statusNow = history?.data?.order?.status;
+
   const progressPercent =
-    statuses.length > 0
-      ? (activeStatuses.length / statuses.length) * 100
+    statusNow === "completed" || statusNow === "disapproved"
+      ? 100
+      : history?.data?.statuses.length > 0
+      ? (activeStatuses.length / history?.data?.statuses.length) * 100
       : 0;
 
   return (
     <DashboardLayout
-      title={`Riwayat ${order?.order_number || ""}`}
+      title={`Riwayat ${history?.data?.order?.order_number || ""}`}
       header="Status Pesanan Anda"
     >
       <div className="w-full flex flex-col px-8 pt-8 pb-6 bg-gradient-to-br from-primary-hijauTerang via-white to-primary-toska overflow-auto rounded-3xl shadow-xl border border-primary-hijauPudar min-h-[75vh]">
-        {/* Header Order */}
+        
         <div className="flex-shrink-0 mb-8">
           <div className="inline-flex items-center gap-3 bg-primary-hijauTua text-white px-6 py-3 rounded-2xl shadow-md">
             <div className="w-2 h-2 rounded-full bg-primary-hijauMuda animate-pulse" />
             <span className="text-lg font-bold tracking-wide">
-              Kode Order: {order?.order_number || "M-XX"}
+              Kode Order: {history?.data?.order?.order_number || "M-XX"}
             </span>
           </div>
         </div>
 
-        {/* Timeline */}
         <div className="flex-grow flex flex-col justify-center w-full">
           <div className="relative w-full py-8 overflow-x-auto">
-            <div className="relative flex flex-col lg:flex-row items-start lg:items-center gap-8 lg:gap-16 min-w-max px-6">
-              <div className="hidden lg:block absolute top-[52px] left-0 right-0 h-1.5 bg-primary-hijauPudar rounded-full">
+            <div className="relative flex flex-col lg:flex-row items-start lg:items-center gap-8 lg:gap-40 min-w-max px-5">
+
+              <div className="hidden lg:block absolute top-[52px] left-5 right-5 h-1.5 bg-primary-hijauPudar rounded-full">
                 <div
                   className="h-full bg-gradient-to-r from-primary-hijauTua to-primary-hijauMuda rounded-full transition-all duration-1000"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
 
-              {statuses.map((item, index) => {
+              {activeStatuses.map((item, index) => {
                 const Icon = iconMap[item.name] || FlaskConical;
+
                 return (
                   <div
                     key={index}
@@ -103,6 +114,7 @@ export default function HistoryPage({ auth, orderId }) {
                       }`}
                     >
                       <Icon size={28} strokeWidth={2.5} />
+
                       {item.is_active && (
                         <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary-hijauMuda rounded-full flex items-center justify-center border-2 border-white">
                           <CheckCircle2
@@ -124,17 +136,17 @@ export default function HistoryPage({ auth, orderId }) {
                       >
                         {item.label}
                       </h3>
+
                       <div className="flex justify-center items-center gap-2 text-sm text-primary-hijauTua/70">
                         <CalendarDays size={16} />
                         <span className="whitespace-nowrap font-medium">
-                          {new Date(order?.updated_at).toLocaleDateString(
-                            "id-ID",
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            }
-                          )}
+                          {new Date(
+                            history?.data?.order?.updated_at
+                          ).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
                         </span>
                       </div>
                     </div>
@@ -145,7 +157,6 @@ export default function HistoryPage({ auth, orderId }) {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="flex-shrink-0 w-full flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 mt-6 border-t-2 border-primary-hijauPudar">
           <div className="flex items-center gap-3 bg-white px-6 py-3 rounded-2xl shadow-md border border-primary-hijauPudar">
             <div className="w-10 h-10 rounded-xl bg-primary-hijauTua flex items-center justify-center">
@@ -156,7 +167,7 @@ export default function HistoryPage({ auth, orderId }) {
                 Estimasi
               </span>
               <span className="text-xl font-bold text-primary-hijauTua">
-                {order?.estimasi || "-"}
+                {history?.data?.order?.estimasi || "-"}
               </span>
             </div>
           </div>

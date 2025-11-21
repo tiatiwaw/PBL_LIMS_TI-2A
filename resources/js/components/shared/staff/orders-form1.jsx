@@ -122,19 +122,19 @@ export default function OrdersForm({
         }).format(number);
     };
 
-    const totalHarga = useMemo(() => {
-        return data.metodeAnalisis.reduce(
-            (sum, method) => sum + (method.price || 0),
-            0
-        );
-    }, [data.metodeAnalisis]);
+    // const totalHarga = useMemo(() => {
+    //     return data.metodeAnalisis.reduce(
+    //         (sum, method) => sum + (method.price || 0),
+    //         0
+    //     );
+    // }, [data.metodeAnalisis]);
 
-    useEffect(() => {
-        setData((prev) => ({
-            ...prev,
-            totalHarga: totalHarga,
-        }));
-    }, [totalHarga, setData]);
+    // useEffect(() => {
+    //     setData((prev) => ({
+    //         ...prev,
+    //         totalHarga: totalHarga,
+    //     }));
+    // }, [totalHarga, setData]);
 
     return (
         <div className="p-6 rounded-lg">
@@ -304,8 +304,14 @@ export default function OrdersForm({
                             {data.metodeAnalisis.length > 0 && (
                                 <div className="text-right pt-3 border-t border-gray-300 mt-3">
                                     <span className="text-md font-bold text-gray-800">
-                                        Total Harga: {formatRupiah(totalHarga)}
+                                        Total Harga:{" "}
+                                        {formatRupiah(data.totalHarga)}
                                     </span>
+                                    {data.tipeOrder === "urgent" && (
+                                        <span className="text-xs text-red-500 block">
+                                            (Termasuk biaya Urgent 30%)
+                                        </span>
+                                    )}
                                 </div>
                             )}
                         </div>
