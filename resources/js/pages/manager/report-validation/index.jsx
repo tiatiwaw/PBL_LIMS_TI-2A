@@ -1,4 +1,4 @@
-import DashboardLayout from "../../../components/layouts/dashboard-layout";
+import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { useMemo } from "react";
 import { getReportsColumns } from "@/components/shared/manager/report-columns";
 import { reports } from "@/data/manager/reports";

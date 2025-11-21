@@ -86,6 +86,25 @@ Route::middleware(['auth', 'role:manager'])
             })->name('show');
         });
 
+        Route::prefix('resources')->as('resources.')->group(function () {
+            Route::inertia('/equipments', 'manager/tools/equipments/index')->name('equipments');
+            Route::inertia('/brands', 'manager/tools/brands/index')->name('brands');
+            Route::inertia('/reagents', 'manager/materials/reagents/index')->name('reagents');
+            Route::inertia('/grades', 'manager/materials/grades/index')->name('grades');
+            Route::inertia('/suppliers', 'manager/materials/suppliers/index')->name('suppliers');
+        });
+
+
+        Route::prefix('tests')->as('tests.')->group(function () {
+            Route::inertia('/categories', 'manager/test/category/index')->name('categories');
+            Route::inertia('/parameters', 'manager/test/parameter/index')->name('parameters');
+            Route::inertia('/methods', 'manager/test/method/index')->name('methods');
+            Route::inertia('/units', 'manager/test/unit-value/index')->name('units');
+            Route::inertia('/references', 'manager/test/standard-reference/index')->name('references');
+        });
+
+        Route::inertia('/reports', 'manager/reports/index')->name('reports');
+
         Route::prefix('orders')->as('orders.')->group(function () {
             Route::inertia('/', 'manager/orders/index')->name('index');
             Route::get('/{id}', function ($id) {
