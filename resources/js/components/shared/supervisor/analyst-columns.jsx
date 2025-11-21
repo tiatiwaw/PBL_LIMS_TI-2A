@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const getAnalystColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No." },
@@ -19,6 +20,26 @@ export const getAnalystColumns = ({ onShowDetail }) => [
                 >
                     Detail
                 </Button>
+            );
+        },
+    },
+];
+
+export const getParameterAnalystColumns = ({ selectedItems, onSelect }) => [
+    { accessorKey: "no", header: "No." },
+    { accessorKey: "name", header: "Nama Analis" },
+    { accessorKey: "spesialist", header: "Spesialis" },
+    {
+        accessorKey: "select",
+        header: "Pilih",
+        cell: ({ row }) => {
+            const data = row; // pastikan ambil data lengkap
+            const isSelected = selectedItems?.some((s) => s.id === data.id);
+            return (
+                <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => onSelect(data)}
+                />
             );
         },
     },
