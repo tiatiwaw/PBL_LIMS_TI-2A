@@ -88,15 +88,15 @@ export default function OrdersReportDashboard() {
                     />
                     <KPICard
                         icon={Activity}
-                        title="Metode Tes Digunakan"
-                        value={analytics.totalMethods}
-                        subtitle="Total metode tes aktif"
+                        title="Metode Tes Paling Sering Digunakan"
+                        value={analytics.topTestMethods[0]}
+                        subtitle="Metode tes pada sampel"
                         delay={0.3}
                     />
                     <KPICard
                         icon={CheckCircle}
-                        title="Parameter Diterapkan"
-                        value={analytics.totalParameters}
+                        title="Parameter Paling Sering Digunakan"
+                        value={analytics.topTestParameters[0]}
                         subtitle="Parameter pada sampel"
                         delay={0.35}
                     />

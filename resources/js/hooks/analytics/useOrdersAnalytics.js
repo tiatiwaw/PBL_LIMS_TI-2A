@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
-import { safeGet } from '@/utils/report-helpers';
-import { STATUS_CONFIG, TYPE_LABELS } from '@/utils/constant/report';
+import { useMemo } from "react";
+import { safeGet } from "@/utils/report-helpers";
+import { STATUS_CONFIG, TYPE_LABELS } from "@/utils/constant/report";
 
 export const useOrdersAnalytics = (orders = [], dateFilter) => {
     return useMemo(() => {
-        const filteredOrders = orders.filter(order => {
+        const filteredOrders = orders.filter((order) => {
             const orderDate = order.order_date;
             if (!orderDate) return false;
 
@@ -28,19 +28,37 @@ export const useOrdersAnalytics = (orders = [], dateFilter) => {
             methodsRank: {},
             categoryDist: {},
             equipmentRank: {},
-            supplierRank: {}
+            supplierRank: {},
         };
 
-        Object.keys(STATUS_CONFIG).forEach(key => {
+        Object.keys(STATUS_CONFIG).forEach((key) => {
             stats.statusDist[STATUS_CONFIG[key].label] = 0;
         });
 
-        filteredOrders.forEach(order => {
+        const methodStats = {};
+        const paramStats = {};
+
+        const updateStat = (collection, name, timestamp) => {
+            if (!name) return;
+
+            if (!collection[name]) {
+                collection[name] = { count: 0, firstSeen: timestamp };
+            }
+
+            collection[name].count += 1;
+
+            if (timestamp < collection[name].firstSeen) {
+                collection[name].firstSeen = timestamp;
+            }
+        };
+
+        filteredOrders.forEach((order) => {
+            const orderTs = new Date(order.order_date).getTime();
             if (stats.typeCounts.hasOwnProperty(order.order_type)) {
                 stats.typeCounts[order.order_type]++;
             }
 
-            if (order.status === 'completed') {
+            if (order.status === "completed") {
                 stats.completedOrders++;
             }
 
@@ -48,54 +66,73 @@ export const useOrdersAnalytics = (orders = [], dateFilter) => {
             stats.totalSamples += sampleCount;
             stats.samplesPerOrder.push({
                 order: order.order_number,
-                count: sampleCount
+                count: sampleCount,
             });
 
-            const statusLabel = STATUS_CONFIG[order.status]?.label || order.status;
-            stats.statusDist[statusLabel] = (stats.statusDist[statusLabel] || 0) + 1;
+            const statusLabel =
+                STATUS_CONFIG[order.status]?.label || order.status;
+            stats.statusDist[statusLabel] =
+                (stats.statusDist[statusLabel] || 0) + 1;
 
             const typeLabel = TYPE_LABELS[order.order_type] || order.order_type;
             stats.typeDist[typeLabel] = (stats.typeDist[typeLabel] || 0) + 1;
 
-            order.analyses_methods?.forEach(method => {
+            order.analyses_methods?.forEach((method) => {
                 stats.totalAnalysisMethods++;
-                const methodName = method.analyses_method || 'Metode Tidak Diketahui';
-                stats.methodsRank[methodName] = (stats.methodsRank[methodName] || 0) + 1;
+                const methodName =
+                    method.analyses_method || "Metode Tidak Diketahui";
+                stats.methodsRank[methodName] =
+                    (stats.methodsRank[methodName] || 0) + 1;
             });
 
-            order.samples?.forEach(sample => {
-                const categoryName = safeGet(sample, 'sample_categories.name', 'Tanpa Kategori');
-                stats.categoryDist[categoryName] = (stats.categoryDist[categoryName] || 0) + 1;
+            order.samples?.forEach((sample) => {
+                const categoryName = safeGet(
+                    sample,
+                    "sample_categories.name",
+                    "Tanpa Kategori"
+                );
+                stats.categoryDist[categoryName] =
+                    (stats.categoryDist[categoryName] || 0) + 1;
+                let rawData = sample.n_parameter_methods;
+                const pmList = Array.isArray(rawData)
+                    ? rawData
+                    : rawData
+                    ? [rawData]
+                    : [];
 
-                const parameterMethods = sample.n_parameter_methods;
-                if (Array.isArray(parameterMethods)) {
-                    stats.totalParameters += parameterMethods.length;
-
-                    parameterMethods.forEach(method => {
-                        method.equipments?.forEach(eq => {
-                            const eqName = eq.name || 'Tanpa Nama';
-                            stats.equipmentRank[eqName] = (stats.equipmentRank[eqName] || 0) + 1;
-                        });
-
-                        method.reagents?.forEach(rg => {
-                            const supplierName = safeGet(rg, 'suppliers.name', 'Unknown');
-                            if (supplierName !== 'Unknown') {
-                                stats.supplierRank[supplierName] = (stats.supplierRank[supplierName] || 0) + 1;
-                            }
-                        });
-                    });
-                } else if (parameterMethods) {
-                    stats.totalParameters += 1;
-                }
+                pmList.forEach((pm) => {
+                    if (pm.test_parameters?.name) {
+                        updateStat(
+                            paramStats,
+                            pm.test_parameters.name,
+                            orderTs
+                        );
+                    }
+                    if (pm.test_methods?.name) {
+                        updateStat(methodStats, pm.test_methods.name, orderTs);
+                    }
+                });
             });
         });
 
         const formatForChart = (obj, limit = 5) => {
             return Object.entries(obj)
                 .map(([name, value]) => ({ name, value }))
-                .filter(item => item.value > 0)
+                .filter((item) => item.value > 0)
                 .sort((a, b) => b.value - a.value)
                 .slice(0, limit);
+        };
+
+        const getSortedList = (collection, limit = 5) => {
+            return Object.entries(collection)
+                .sort(([, a], [, b]) => {
+                    if (b.count !== a.count) {
+                        return b.count - a.count;
+                    }
+                    return a.firstSeen - b.firstSeen;
+                })
+                .slice(0, limit)
+                .map(([name]) => name);
         };
 
         const statusChart = formatForChart(stats.statusDist, 9);
@@ -110,8 +147,8 @@ export const useOrdersAnalytics = (orders = [], dateFilter) => {
             completedOrders: stats.completedOrders,
             totalSamples: stats.totalSamples,
             totalAnalysisMethods: stats.totalAnalysisMethods,
-            totalMethods: stats.totalMethods,
-            totalParameters: stats.totalParameters,
+            topTestParameters: getSortedList(paramStats),
+            topTestMethods: getSortedList(methodStats),
 
             typeCounts: stats.typeCounts,
 
@@ -123,7 +160,7 @@ export const useOrdersAnalytics = (orders = [], dateFilter) => {
             supplierChart,
             samplesPerOrder: stats.samplesPerOrder.slice(0, 10),
 
-            filteredOrders
+            filteredOrders,
         };
     }, [orders, dateFilter]);
 };
