@@ -55,9 +55,7 @@ Route::prefix('v1')->group(function () {
      * AUTHENTICATION (PUBLIC)
      * ============================
      */
-    Route::prefix('auth')->name('api.auth.')->group(function () {
-        Route::post('/login', [AuthController::class, 'login'])->name('login');
-    });
+    Route::post('/auth/login', [AuthController::class, 'login'])->name('api.auth.login');
 
     /**
      * ============================
