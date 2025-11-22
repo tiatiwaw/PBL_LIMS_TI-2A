@@ -54,6 +54,7 @@ export const useOrdersAnalytics = (orders = [], dateFilter) => {
 
         filteredOrders.forEach((order) => {
             const orderTs = new Date(order.order_date).getTime();
+
             if (stats.typeCounts.hasOwnProperty(order.order_type)) {
                 stats.typeCounts[order.order_type]++;
             }
@@ -93,6 +94,7 @@ export const useOrdersAnalytics = (orders = [], dateFilter) => {
                 );
                 stats.categoryDist[categoryName] =
                     (stats.categoryDist[categoryName] || 0) + 1;
+
                 let rawData = sample.n_parameter_methods;
                 const pmList = Array.isArray(rawData)
                     ? rawData
@@ -108,6 +110,7 @@ export const useOrdersAnalytics = (orders = [], dateFilter) => {
                             orderTs
                         );
                     }
+
                     if (pm.test_methods?.name) {
                         updateStat(methodStats, pm.test_methods.name, orderTs);
                     }
@@ -147,6 +150,7 @@ export const useOrdersAnalytics = (orders = [], dateFilter) => {
             completedOrders: stats.completedOrders,
             totalSamples: stats.totalSamples,
             totalAnalysisMethods: stats.totalAnalysisMethods,
+
             topTestParameters: getSortedList(paramStats),
             topTestMethods: getSortedList(methodStats),
 

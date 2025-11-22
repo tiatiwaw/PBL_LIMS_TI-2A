@@ -90,14 +90,18 @@ export default function OrdersReportDashboard() {
                         icon={Activity}
                         title="Metode Tes Paling Sering Digunakan"
                         value={analytics.topTestMethods[0]}
-                        subtitle="Metode tes pada sampel"
+                        subtitle={`${analytics.topTestMethods
+                            .map((i) => i)
+                            .join(" | ")}`}
                         delay={0.3}
                     />
                     <KPICard
                         icon={CheckCircle}
                         title="Parameter Paling Sering Digunakan"
                         value={analytics.topTestParameters[0]}
-                        subtitle="Parameter pada sampel"
+                        subtitle={`${analytics.topTestParameters
+                            .map((i) => i)
+                            .join(" | ")}`}
                         delay={0.35}
                     />
                 </>

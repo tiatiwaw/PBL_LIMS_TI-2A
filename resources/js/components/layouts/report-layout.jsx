@@ -1,8 +1,8 @@
-import React from 'react';
-import DashboardLayout from '@/components/layouts/dashboard-layout';
-import Loading from '@/components/ui/loading';
-import { ReportHeader } from '@/components/shared/admin/report-filters';
-import { EmptyState } from '@/components/shared/admin/report-components';
+import React from "react";
+import DashboardLayout from "@/components/layouts/dashboard-layout";
+import Loading from "@/components/ui/loading";
+import { ReportHeader } from "@/components/shared/admin/report-filters";
+import { EmptyState } from "@/components/shared/admin/report-components";
 
 export default function ReportLayout({
     isLoading,
@@ -20,11 +20,11 @@ export default function ReportLayout({
 
     emptyStateIcon,
     emptyStateTitle,
-    emptyStateDescription
+    emptyStateDescription,
 }) {
     if (isLoading) {
         return (
-            <DashboardLayout>
+            <DashboardLayout title="Memuat" header="Memuat...">
                 <Loading />
             </DashboardLayout>
         );
@@ -32,10 +32,15 @@ export default function ReportLayout({
 
     if (error) {
         return (
-            <DashboardLayout>
+            <DashboardLayout
+                title="Terjadi Kesalahan"
+                header="Terjadi Kesalahan"
+            >
                 <div className="p-8 text-center text-red-500 bg-red-50 rounded-xl border border-red-200">
                     <p className="font-bold">Gagal memuat data.</p>
-                    <p className="text-sm">{error?.message || 'Terjadi kesalahan server'}</p>
+                    <p className="text-sm">
+                        {error?.message || "Terjadi kesalahan server"}
+                    </p>
                 </div>
             </DashboardLayout>
         );
@@ -55,14 +60,15 @@ export default function ReportLayout({
                 </div>
 
                 {hasData ? (
-                    <div className="space-y-6">
-                        {chartContent}
-                    </div>
+                    <div className="space-y-6">{chartContent}</div>
                 ) : (
                     <EmptyState
                         icon={emptyStateIcon}
                         title={emptyStateTitle || "Data Tidak Ditemukan"}
-                        description={emptyStateDescription || "Belum ada data yang terekam pada periode ini."}
+                        description={
+                            emptyStateDescription ||
+                            "Belum ada data yang terekam pada periode ini."
+                        }
                         onReset={filterProps.onClearFilters}
                     />
                 )}
