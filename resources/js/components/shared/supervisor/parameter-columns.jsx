@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-    getConditionTypeLabel,
-    getConditionTypeVariant,
+    getEquipmentStatusVariant,
+    getEquipmentStatusLabel,
 } from "@/utils/statusUtils";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const getParameterColumns = ({ onSelectParameter }) => [
     { accessorKey: "no", header: "No." },
@@ -52,36 +53,168 @@ export const getMetodeColumns = ({ onSelectMetode }) => [
     },
 ];
 
-export const getReagenColumns = () => [
-    { accessorKey: "no", header: "No." },
-    { accessorKey: "id", header: "ID" },
-    { accessorKey: "nama", header: "Nama Reagen" },
-    { accessorKey: "formula", header: "Formula" },
-    { accessorKey: "supplier", header: "Supplier" },
-    { accessorKey: "grade", header: "Grade" },
-    { accessorKey: "storage_location", header: "Lokasi Penyimpanan" },
+export const getReagenColumns = [
+    { accessorKey: "no", header: "No.", size: 80 },
+    { accessorKey: "name", header: "Nama Reagen", size: 150 },
+    { accessorKey: "supplier", header: "Supplier", size: 120 },
+    { accessorKey: "batch_number", header: "Batch Number", size: 120 },
+    {
+        accessorKey: "storage_location",
+        header: "Lokasi Penyimpanan",
+        size: 150,
+    },
 ];
 
-export const getEquipmentColumns = () => [
-    { accessorKey: "no", header: "No." },
-    { accessorKey: "id", header: "ID" },
-    { accessorKey: "nama", header: "Nama Equipment" },
-    { accessorKey: "brand_type", header: "Brand" },
-    { accessorKey: "serial_number", header: "Nomor Serial" },
+export const getEquipmentColumns = [
+    { accessorKey: "no", header: "No.", size: 80 },
+    {
+        accessorKey: "name",
+        header: "Nama Equipment",
+        size: 150,
+    },
+    {
+        accessorKey: "brand_type",
+        header: "Brand",
+        size: 120,
+    },
+    {
+        accessorKey: "serial_number",
+        header: "Serial Number",
+        size: 130,
+    },
     {
         accessorKey: "status",
         header: "Status",
+        size: 100,
         cell: ({ row }) => {
             const status = row.status;
             return (
                 <Badge
-                    variant={getConditionTypeVariant(status)}
+                    variant={getEquipmentStatusVariant(status)}
                     className="capitalize"
                 >
-                    {getConditionTypeLabel(status)}
+                    {getEquipmentStatusLabel(status)}
                 </Badge>
             );
         },
     },
-    { accessorKey: "location", header: "Lokasi Peralatan" },
+];
+
+export const getAnalystColumns = [
+    { accessorKey: "no", header: "No." },
+    { accessorKey: "name", header: "Nama Analis" },
+    { accessorKey: "spesialist", header: "Spesialis" },
+];
+
+// Column definitions untuk ManagedDataTable
+export const getReagentSelectorColumns = ({ selectedItems, onSelect }) => [
+    {
+        accessorKey: "no",
+        header: "No.",
+        size: 80,
+    },
+    {
+        accessorKey: "name",
+        header: "Nama Reagen",
+        size: 150,
+    },
+    {
+        accessorKey: "supplier",
+        header: "Supplier",
+        size: 120,
+    },
+    {
+        accessorKey: "batch_number",
+        header: "Batch Number",
+        size: 120,
+    },
+    {
+        accessorKey: "select",
+        header: "Pilih",
+        size: 100,
+        cell: ({ row }) => {
+            const data = row;
+            const isSelected = selectedItems?.some((s) => s.id === data.id);
+            return (
+                <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => onSelect(data)}
+                />
+            );
+        },
+    },
+];
+
+export const getEquipmentSelectorColumns = ({ selectedItems, onSelect }) => [
+    {
+        accessorKey: "no",
+        header: "No.",
+        size: 80,
+    },
+    {
+        accessorKey: "name",
+        header: "Nama Equipment",
+        size: 150,
+    },
+    {
+        accessorKey: "brand_type",
+        header: "Brand",
+        size: 120,
+    },
+    {
+        accessorKey: "serial_number",
+        header: "Serial Number",
+        size: 130,
+    },
+    {
+        accessorKey: "status",
+        header: "Status",
+        size: 100,
+        cell: ({ row }) => {
+            const status = row.status;
+            return (
+                <Badge
+                    variant={getEquipmentStatusVariant(status)}
+                    className="capitalize"
+                >
+                    {getEquipmentStatusLabel(status)}
+                </Badge>
+            );
+        },
+    },
+    {
+        accessorKey: "select",
+        header: "Pilih",
+        size: 100,
+        cell: ({ row }) => {
+            const data = row;
+            const isSelected = selectedItems?.some((s) => s.id === data.id);
+            return (
+                <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => onSelect(data)}
+                />
+            );
+        },
+    },
+];
+
+export const getParameterAnalystColumns = ({ selectedItems, onSelect }) => [
+    { accessorKey: "no", header: "No." },
+    { accessorKey: "name", header: "Nama Analis" },
+    { accessorKey: "spesialist", header: "Spesialis" },
+    {
+        accessorKey: "select",
+        header: "Pilih",
+        cell: ({ row }) => {
+            const data = row; // pastikan ambil data lengkap
+            const isSelected = selectedItems?.some((s) => s.id === data.id);
+            return (
+                <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => onSelect(data)}
+                />
+            );
+        },
+    },
 ];

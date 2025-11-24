@@ -22,9 +22,11 @@ class SupervisorController extends Controller
             'id' => $id
         ]);
     }
-    public function parameters()
+    public function parameters($id)
     {
-        return Inertia::render('supervisor/orders/index');
+        return Inertia::render('supervisor/orders/parameters/index', [
+            'id' => $id
+        ]);
     }
     public function parametersDetail()
     {

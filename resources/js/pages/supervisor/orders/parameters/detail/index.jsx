@@ -114,8 +114,8 @@ export default function ParameterDetailPage({ auth }) {
     ];
 
     // Columns
-    const reagenColumns = useMemo(() => getReagenColumns(), []);
-    const equipmentColumns = useMemo(() => getEquipmentColumns(), []);
+    const reagenColumns = useMemo(() => getReagenColumns, []);
+    const equipmentColumns = useMemo(() => getEquipmentColumns, []);
 
     return (
         <DashboardLayout
@@ -242,8 +242,8 @@ export default function ParameterDetailPage({ auth }) {
                 {/* BUTTON BACK */}
                 <div className="absolute bottom-6 right-6">
                     <Link href="/supervisor/parameters">
-                        <Button className="bg-gray-200 hover:bg-gray-300 text-black px-8 rounded-lg">
-                            Back
+                        <Button className="bg-gray-400 hover:bg-gray-500 text-white px-8 rounded-lg">
+                            Kembali
                         </Button>
                     </Link>
                 </div>

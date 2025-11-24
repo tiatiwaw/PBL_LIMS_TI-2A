@@ -64,7 +64,7 @@ class User extends Authenticatable
         }
 
         if ($this->hasRole('supervisor')) {
-            return route('supervisor.index');
+            return route('supervisor.order.index');
         }
 
         if ($this->hasRole('staff')) {

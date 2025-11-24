@@ -157,11 +157,8 @@ Route::controller(SupervisorController::class)
             ->group(function () {
                 Route::get('/', 'orders')->name('index');
                 Route::get('/{id}', 'ordersDetail')->name('detail');
-                Route::get('/parameters', 'parameters')->name('parameter');
-                Route::get('/parameters/detail', 'parametersDetail')->name('parameter.detail');
-                Route::get('/parameters/first', 'parametersFirst')->name('parameter.first');
-                Route::get('/parameters/second', 'parametersSecond')->name('parameter.second');
-                Route::get('/parameters/review', 'parametersReview')->name('parameter.review');
+                Route::get('/{id}/parameters', 'parameters')->name('parameter.index');
+                Route::get('/{id}/parameters/detail', 'parametersDetail')->name('parameter.detail');
             });
 
         // Analysts
