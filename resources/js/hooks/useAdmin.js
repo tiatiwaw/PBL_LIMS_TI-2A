@@ -53,3 +53,19 @@ export const useAnalysts = () => useCrud(adminService.analysts, "analysts", "Ana
 });
 
 export const useOrder = (id) => useGetById(adminService.orders, "orders", id);
+
+export const useOrderReports = () => useCrud(adminService.reports_orders, "order-reports", "Laporan Pesanan", {
+    only: ["getAll"],
+});
+
+export const useInventoryReports = () => useCrud(adminService.reports_inventory, "inventory-reports", "Laporan Inventaris", {
+    only: ["getAll"],
+});
+
+export const useTransactionReports = () => useCrud(adminService.reports_transactions, "transaction-reports", "Laporan Transaksi", {
+    only: ["getAll"],
+});
+
+export const useUserReports = () => useCrud(adminService.reports_users, "user-reports", "Laporan Pengguna", {
+    only: ["getAll"],
+});

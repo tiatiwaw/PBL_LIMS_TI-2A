@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('n_parameter_method_id')->constrained('n_parameter_methods')->cascadeOnDelete();
             $table->foreignId('reagent_id')->constrained('reagents')->cascadeOnDelete();
+            $table->integer('reagent_used')->default(0);
             $table->timestamps();
         });
     }

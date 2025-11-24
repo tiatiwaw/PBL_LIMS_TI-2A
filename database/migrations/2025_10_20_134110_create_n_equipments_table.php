@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('n_parameter_method_id')->constrained('n_parameter_methods')->cascadeOnDelete();
             $table->foreignId('equipment_id')->constrained('equipments')->cascadeOnDelete();
+            $table->integer('equipment_used')->default(0);
             $table->timestamps();
         });
     }

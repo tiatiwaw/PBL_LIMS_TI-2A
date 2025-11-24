@@ -170,22 +170,22 @@ const MENU_CONFIG = {
                 {
                     name: "Pesanan",
                     icon: GraduationCap,
-                    href: "/admin/analyst/trainings",
+                    href: "/admin/reports/orders",
                 },
                 {
-                    name: "Inventaris",
+                    name: "Inventory",
                     icon: Box,
-                    href: "/admin/analyst/certificates",
+                    href: "/admin/reports/inventory",
                 },
                 {
                     name: "Pengguna",
                     icon: Users,
-                    href: "/admin/analyst/certificates",
+                    href: "/admin/reports/users",
                 },
                 {
                     name: "Transaksi",
                     icon: DollarSign,
-                    href: "/admin/analyst/certificates",
+                    href: "/admin/reports/transactions",
                 },
             ],
         },
@@ -203,15 +203,83 @@ const MENU_CONFIG = {
             href: "/manager/report-validation",
         },
         {
+            name: "Alat & Bahan",
+            icon: Wrench,
+            subItems: [
+                {
+                    name: "Peralatan",
+                    icon: Microscope,
+                    href: "/manager/resources/equipments",
+                },
+                {
+                    name: "Jenis Brand",
+                    icon: Factory,
+                    href: "/manager/resources/brands",
+                },
+                {
+                    name: "Reagen",
+                    icon: Beaker,
+                    href: "/manager/resources/reagents",
+                },
+                {
+                    name: "Tingkat Reagen",
+                    icon: Scale,
+                    href: "/manager/resources/grades",
+                },
+                {
+                    name: "Pemasok",
+                    icon: Building2,
+                    href: "/manager/resources/suppliers",
+                },
+            ]
+        },
+        {
+            name: "Pengujian",
+            icon: ClipboardList,
+            subItems: [
+                {
+                    name: "Parameter",
+                    icon: Gauge,
+                    href: "/manager/tests/parameters",
+                },
+                {
+                    name: "Metode Uji",
+                    icon: Microscope,
+                    href: "/manager/orders",
+                },
+                {
+                    name: "Nilai Satuan",
+                    icon: Ruler,
+                    href: "/manager/tests/units",
+                },
+                {
+                    name: "Standard Referensi",
+                    icon: FileText,
+                    href: "/manager/tests/references",
+                },
+                {
+                    name: "Kategori Sampel",
+                    icon: TestTube2,
+                    href: "/manager/tests/categories",
+                },
+            ],
+        },
+        {
             name: "Order",
             icon: ShoppingCart,
             href: "/manager/orders",
         },
         {
+            name: "Laporan",
+            icon: ChartArea,
+            href: "/manager/reports",
+
+        },
+        {
             name: "Karyawan",
             icon: Users,
             href: "/manager/users",
-        },
+        }
     ],
 
     staff: [
