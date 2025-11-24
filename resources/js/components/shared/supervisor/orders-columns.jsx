@@ -4,7 +4,6 @@ import { formatDate } from "@/utils/formatters";
 import {
     getOrderStatusLabel,
     getOrderStatusVariant,
-    getOrderTypeLabel,
     getOrderTypeVariant,
 } from "@/utils/statusUtils";
 
@@ -29,7 +28,7 @@ export const getOrdersColumns = ({ onShowDetail }) => [
                     variant={getOrderTypeVariant(value)}
                     className="capitalize"
                 >
-                    {getOrderTypeLabel(value)}
+                    {value}
                 </Badge>
             );
         },
