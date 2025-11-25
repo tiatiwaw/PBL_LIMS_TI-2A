@@ -1,15 +1,13 @@
 // resources/js/pages/client/detail/index.jsx
 import React, { useState, useMemo } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { FileDown, XCircle } from "lucide-react";
 import { getSampleColumns } from "@/components/shared/client/sample-columns";
-import SampleDetailsDialog from "@/components/shared/dialog/sample-detail-dialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "@inertiajs/react";
 import { useOrderDetail } from "@/hooks/useClient";
 import PaymentSummary from '@/components/shared/client/payment-summary.jsx';
-import AnalysisMethodList from "@/components/shared/client/analysis-method-list";
+import AnalysisMethodList from "@/components/shared/client/analysis-method-list.jsx";
 import { methods } from "@/data/client/methods";
 
 
