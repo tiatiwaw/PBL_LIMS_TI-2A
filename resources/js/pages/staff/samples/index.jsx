@@ -21,7 +21,6 @@ export default function SamplesPage({ auth, samplesData }) {
         setIsDialogOpen(true);
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Staff" };
     const parameters = samplesData || samples;
 
     const columns = useMemo(
@@ -32,7 +31,6 @@ export default function SamplesPage({ auth, samplesData }) {
     return (
         <DashboardLayout
             title="Manajemen Sample"
-            user={currentUser}
             header="Manajemen Sample"
         >
             <ManagedDataTable

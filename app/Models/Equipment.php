@@ -21,6 +21,7 @@ class Equipment extends Model
         'brand_type_id',
         'name',
         'serial_number',
+        'stock',
         'purchase_year',
         'calibration_schedule',
         'status',

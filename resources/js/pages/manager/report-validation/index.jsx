@@ -1,4 +1,4 @@
-import DashboardLayout from "../../../components/layouts/dashboard-layout";
+import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { useMemo } from "react";
 import { getReportsColumns } from "@/components/shared/manager/report-columns";
 import { reports } from "@/data/manager/reports";
@@ -25,13 +25,11 @@ export default function ReportValidationPage({ auth, reportData }) {
         []
     );
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
     const parameters = reportData || reports;
 
     return (
         <DashboardLayout
             title="Validasi Laporan"
-            user={currentUser}
             header="Validasi Laporan"
         >
             <ManagedDataTable

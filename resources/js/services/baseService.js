@@ -24,7 +24,6 @@ const handleServiceError = (
     throw new ServiceError(message, status, data);
 };
 
-
 const createFormData = (data) => {
     const formData = new FormData();
 
@@ -50,7 +49,6 @@ const createFormData = (data) => {
     appendToFormData(data);
     return formData;
 };
-
 
 export const serviceMethods = (
     baseUrl,
@@ -99,6 +97,15 @@ export const serviceMethods = (
                 null,
                 config,
                 "Failed to fetch resource"
+            ),
+
+        getRelated: (id, endpoint, params = {}, config = {}) =>
+            handleRequest(
+                "get",
+                `${baseUrl}/${id}/${endpoint}`,
+                null,
+                { params, ...config },
+                `Failed to fetch ${endpoint}`
             ),
 
         create: (data, config = {}) =>
@@ -170,4 +177,3 @@ export const serviceMethods = (
         },
     };
 };
-

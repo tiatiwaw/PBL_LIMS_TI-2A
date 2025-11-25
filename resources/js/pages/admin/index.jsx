@@ -1,28 +1,35 @@
-import { TrendingUp, Activity, AlertCircle } from "lucide-react";
+import { TrendingUp, Activity, AlertCircle, Beaker, Gauge, Microscope, TestTube, Users, Wrench } from "lucide-react";
 import { Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import StatCard from '@/components/shared/card/stat-card';
-import { stats } from '@/data/admin/beranda';
 import DashboardLayout from '@/components/layouts/dashboard-layout';
-import { useAdmin } from "@/hooks/useAdmin";
-import { useAuth } from "@/hooks/useAuth";
 import Loading from "@/components/ui/loading";
+import { useDashboard } from "@/hooks/useAdmin";
+import { useMemo } from "react";
+
+const baseStats = [
+  { key: "totalUser", title: "Total User", icon: Users },
+  { key: "totalEquipment", title: "Total Peralatan", icon: Wrench },
+  { key: "totalReagent", title: "Total Reagen", icon: Beaker },
+  { key: "totalOrder", title: "Total Order", icon: TestTube },
+  { key: "totalParameter", title: "Total Parameter", icon: Gauge },
+  { key: "totalMethod", title: "Total Metode Uji", icon: Microscope },
+];
 
 export default function AdminDashboard() {
-  const { dashboard, loading: dashboardLoading, error } = useAdmin();
-  const { user, loading: authLoading } = useAuth();
+  const { data: dashboard, isLoading: dashboardLoading, error } = useDashboard();
 
-  stats[0].value = dashboard?.totalUser
-  stats[1].value = dashboard?.totalEquipment;
-  stats[2].value = dashboard?.totalReagent;
-  stats[3].value = dashboard?.totalSample;
-  stats[4].value = dashboard?.totalParameter;
-  stats[5].value = dashboard?.totalMethod;
+  const stats = useMemo(
+    () =>
+      baseStats.map((item) => ({
+        ...item,
+        value: dashboard?.[item.key] ?? "0",
+      })),
+    [dashboard]
+  );
 
-  const currentUser = user || { name: "Admin", role: "Admin" };
-
-  if (dashboardLoading || authLoading) {
+  if (dashboardLoading) {
     return (
-      <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang, Admin!">
+      <DashboardLayout title="Dashboard Admin" header="Selamat Datang, Admin!">
         <Loading />
       </DashboardLayout>
     );
@@ -30,7 +37,7 @@ export default function AdminDashboard() {
 
   if (error) {
     return (
-      <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang, Admin!">
+      <DashboardLayout title="Dashboard Admin" header="Selamat Datang, Admin!">
         <div className="text-center text-red-500 py-8">
           {error.message}
         </div>
@@ -39,7 +46,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <DashboardLayout title="Dashboard Admin" user={currentUser} header="Selamat Datang, Admin!">
+    <DashboardLayout title="Dashboard Admin" header="Selamat Datang, Admin!">
       <div className="max-w-7xl mx-auto space-y-8">
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -81,7 +88,7 @@ export default function AdminDashboard() {
                   }}
                 />
                 <Legend />
-                <Area type="monotone" dataKey="clients" stroke="#10b981" fillOpacity={1} fill="url(#colorUsers)" name="Clients" strokeWidth={2} />
+                <Area type="monotone" dataKey="clients" stroke="#10b981" fillOpacity={1} fill="url(#colorUsers)" name="Pengguna" strokeWidth={2} />
                 <Area type="monotone" dataKey="sampel" stroke="#3b82f6" fillOpacity={1} fill="url(#colorSampel)" name="Sampel" strokeWidth={2} />
                 <Line type="monotone" dataKey="pengujian" stroke="#8b5cf6" strokeWidth={2} name="Pengujian" dot={{ fill: '#8b5cf6', r: 4 }} />
               </AreaChart>

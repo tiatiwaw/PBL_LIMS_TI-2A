@@ -12,6 +12,7 @@ import { Trash2 } from "lucide-react"; // Import Search icon
 import ManagedDataTable from "../tabel/managed-data-table";
 import { getMethodColumns } from "./analyses-method-colums";
 import { getClientOrderColumns } from "./client-colums";
+import EntitySelectorDialog from "../dialog/entity-selector-dialog";
 
 export default function OrdersForm({
     clients,
@@ -23,6 +24,11 @@ export default function OrdersForm({
     const [isMethodDialogOpen, setIsMethodDialogOpen] = useState(false);
     const [dialogClientOpen, setDialogClientOpen] = useState(false);
     const [dialogSelectedMethods, setDialogSelectedMethods] = useState([]);
+    const useMethods = () => {
+        return {
+            data: methods,
+        };
+    };
 
     useEffect(() => {
         if (isMethodDialogOpen) {
@@ -116,19 +122,19 @@ export default function OrdersForm({
         }).format(number);
     };
 
-    const totalHarga = useMemo(() => {
-        return data.metodeAnalisis.reduce(
-            (sum, method) => sum + (method.price || 0),
-            0
-        );
-    }, [data.metodeAnalisis]);
+    // const totalHarga = useMemo(() => {
+    //     return data.metodeAnalisis.reduce(
+    //         (sum, method) => sum + (method.price || 0),
+    //         0
+    //     );
+    // }, [data.metodeAnalisis]);
 
-    useEffect(() => {
-        setData((prev) => ({
-            ...prev,
-            totalHarga: totalHarga,
-        }));
-    }, [totalHarga, setData]);
+    // useEffect(() => {
+    //     setData((prev) => ({
+    //         ...prev,
+    //         totalHarga: totalHarga,
+    //     }));
+    // }, [totalHarga, setData]);
 
     return (
         <div className="p-6 rounded-lg">
@@ -298,8 +304,14 @@ export default function OrdersForm({
                             {data.metodeAnalisis.length > 0 && (
                                 <div className="text-right pt-3 border-t border-gray-300 mt-3">
                                     <span className="text-md font-bold text-gray-800">
-                                        Total Harga: {formatRupiah(totalHarga)}
+                                        Total Harga:{" "}
+                                        {formatRupiah(data.totalHarga)}
                                     </span>
+                                    {data.tipeOrder === "urgent" && (
+                                        <span className="text-xs text-red-500 block">
+                                            (Termasuk biaya Urgent 30%)
+                                        </span>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -341,50 +353,17 @@ export default function OrdersForm({
                 </DialogContent>
             </Dialog>
 
-            {/* Dialog Pilih Metode Analisis (Tetap) */}
-            <Dialog open={isMethodDialogOpen} onOpenChange={handleDialogChange}>
-                <DialogContent className="max-w-4xl flex flex-col max-h-[90vh]">
-                    {/* ... (Konten Dialog Metode Analisis Tetap) ... */}
-                    <DialogHeader>
-                        <DialogTitle>Pilih Metode Analisis</DialogTitle>
-                        <DialogDescription className="sr-only">
-                            Dialog untuk memilih metode analisis yang akan
-                            ditambahkan ke order
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="flex-grow overflow-y-auto">
-                        <ManagedDataTable
-                            data={methods}
-                            columns={getMethodColumns({
-                                selectedMethods: dialogSelectedMethods,
-                                onSelectMethod: handleSelectionUpdate,
-                            })}
-                            showFilter={false}
-                            showSearch={true}
-                            showCreate={false}
-                            pageSize={5}
-                        />
-                    </div>
-
-                    <DialogFooter className="flex justify-between">
-                        <Button
-                            variant="outline"
-                            onClick={() => setIsMethodDialogOpen(false)}
-                            className="bg-gray-200 hover:bg-gray-300"
-                        >
-                            Tutup
-                        </Button>
-                        <Button
-                            onClick={handleTambahkanMetode}
-                            disabled={dialogSelectedMethods.length === 0}
-                            className="!bg-teal-500 hover:!bg-teal-600"
-                        >
-                            Tambahkan ({dialogSelectedMethods.length})
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <EntitySelectorDialog
+                type={"methods"}
+                hook={useMethods}
+                isOpen={isMethodDialogOpen}
+                onOpenChange={handleDialogChange}
+                selectedItems={dialogSelectedMethods}
+                onSelect={handleSelectionUpdate}
+                onConfirm={handleTambahkanMetode}
+                getColumns={getMethodColumns}
+                showCreate={false}
+            />
         </div>
     );
 }

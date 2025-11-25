@@ -1,38 +1,39 @@
-import { Head, router } from '@inertiajs/react';
-import { usePage } from '@inertiajs/react';
-import { useCallback } from 'react';
+import { Head, usePage } from '@inertiajs/react';
+import { useCallback, useMemo } from 'react';
+
 import { menuItems } from '@/utils/menu';
 import { Sidebar } from './sidebar';
 import { HeaderCard } from '../shared/dashboard/header-card';
+
 import { useAuth } from '@/hooks/useAuth';
 
 export default function DashboardLayout({
     children,
     title,
-    user,
     header = "Hello World!",
     notificationCount = 3,
 }) {
     const { url } = usePage();
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
 
-    const handleLogout = useCallback(() => {
-        logout();
-    }, [logout]);
+    const currentUser = useMemo(() => user ?? { name: "Guest", role: "guest" }, [user]);
 
-    const getMenuItems = menuItems(url);
+    const sidebarMenu = useMemo(() => menuItems(url), [url]);
+
+    const handleLogout = useCallback(() => logout(), [logout]);
 
     return (
         <div className="p-4 flex gap-4 h-screen bg-primary-hijauTerang">
             <Head title={title} />
 
-            <Sidebar menuItems={getMenuItems} onLogout={handleLogout} />
+            <Sidebar menuItems={sidebarMenu} onLogout={handleLogout} />
 
             <div className="flex-1 flex flex-col overflow-hidden">
+
                 <header className="mb-6">
                     <HeaderCard
                         title={header}
-                        user={user}
+                        user={currentUser}
                         notificationCount={notificationCount}
                         onLogout={handleLogout}
                     />

@@ -31,19 +31,30 @@ class Order extends Model
         'order_date' => 'date',
     ];
 
-    public function clients()
+    public function analysesMethods()
     {
-        return $this->belongsTo(Client::class, 'client_id');
+        return $this->belongsToMany(
+            AnalysesMethod::class,
+            'n_analyses_methods_orders', // nama pivot table
+            'order_id',                  // foreign key di pivot table
+            'analyses_method_id'         // related key di pivot table
+        )->withPivot('description', 'price') // kolom tambahan di pivot
+         ->withTimestamps();            // jika pivot table memiliki timestamps
     }
 
     public function samples()
     {
-        return $this->belongsToMany(Sample::class, 'n_order_samples');
+        return $this->belongsToMany(
+            Sample::class, 
+            'n_order_samples',
+            'order_id',
+            'sample_id'
+            )->withPivot('sample_volume', 'created_at', 'updated_at'); // Tambahkan pivot columns
     }
 
-    public function n_order_samples()
+    public function clients()
     {
-        return $this->hasMany(NOrderSample::class, 'order_id');
+        return $this->belongsTo(Client::class, 'client_id');
     }
 
     public function n_analyses_methods_orders()

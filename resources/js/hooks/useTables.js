@@ -10,6 +10,7 @@ export function useTable({
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const [filterValue, setFilterValue] = useState("all");
+    const [sorting, setSorting] = useState([]);
 
     const filteredData = useMemo(() => {
         let result = data;
@@ -27,22 +28,29 @@ export function useTable({
             });
         }
         return result;
-    }, [
-        data,
-        filterValue,
-        searchTerm,
-        showFilter,
-        showSearch,
-        filterColumn,
-    ]);
+    }, [data, filterValue, searchTerm, showFilter, showSearch, filterColumn]);
 
-    const totalPages = Math.ceil(filteredData.length / defaultPageSize) || 1;
+    const sortedData = useMemo(() => {
+        if (sorting.length === 0) return filteredData;
+        const { id, desc } = sorting[0];
+        return [...filteredData].sort((a, b) => {
+            const valA = a[id];
+            const valB = b[id];
+            if (valA === null || valA === undefined) return 1;
+            if (valB === null || valB === undefined) return -1;
+            if (valA < valB) return desc ? 1 : -1;
+            if (valA > valB) return desc ? -1 : 1;
+            return 0;
+        });
+    }, [filteredData, sorting]);
+
+    const totalPages = Math.ceil(sortedData.length / defaultPageSize) || 1;
 
     const startIndex = (currentPage - 1) * defaultPageSize;
     const currentData = useMemo(() => {
         const endIndex = startIndex + defaultPageSize;
-        return filteredData.slice(startIndex, endIndex);
-    }, [filteredData, startIndex, defaultPageSize]);
+        return sortedData.slice(startIndex, endIndex);
+    }, [sortedData, startIndex, defaultPageSize]);
 
     const goToPage = (page) => {
         if (page >= 1 && page <= totalPages) {
@@ -64,5 +72,7 @@ export function useTable({
         setFilterValue,
         currentData,
         startIndex,
+        sorting,
+        setSorting,
     };
 }

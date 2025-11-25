@@ -103,13 +103,18 @@ export default function OrderForms3({ data }) {
                             value={data.tanggalOrder}
                         />
                         <DetailRow
-                            label="Total Harga"
-                            value={formatRupiah(data.totalHarga)}
-                        />
-                        <DetailRow
                             label="Estimasi Selesai"
                             value={data.estimasiSelesai}
                         />
+                        <DetailRow
+                            label="Total Harga"
+                            value={formatRupiah(data.totalHarga)}
+                        />
+                        {data.tipeOrder === "urgent" && (
+                            <span className="text-xs text-red-500 block">
+                                (Termasuk biaya Urgent 30%)
+                            </span>
+                        )}
                     </div>
                 </div>
             </div>

@@ -1,0 +1,220 @@
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+    getEquipmentStatusVariant,
+    getEquipmentStatusLabel,
+} from "@/utils/statusUtils";
+import { Checkbox } from "@/components/ui/checkbox";
+
+export const getParameterColumns = ({ onSelectParameter }) => [
+    { accessorKey: "no", header: "No." },
+    { accessorKey: "name", header: "Nama Parameter" },
+    { accessorKey: "kategori", header: "Kategori" },
+    { accessorKey: "unit_value", header: "Unit" },
+    { accessorKey: "reference", header: "Standar Mutu" },
+    {
+        accessorKey: "select",
+        header: "Aksi",
+        cell: ({ row }) => {
+            const data = row;
+            return (
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onSelectParameter(data)}
+                >
+                    Pilih
+                </Button>
+            );
+        },
+    },
+];
+
+export const getMetodeColumns = ({ onSelectMetode }) => [
+    { accessorKey: "no", header: "No." },
+    { accessorKey: "name", header: "Nama Metode" },
+    { accessorKey: "applicable_parameter", header: "Cakupan Parameter" },
+    { accessorKey: "reference", header: "Standar Mutu" },
+    {
+        accessorKey: "select",
+        header: "Aksi",
+        cell: ({ row }) => {
+            const data = row;
+            return (
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onSelectMetode(data)}
+                >
+                    Pilih
+                </Button>
+            );
+        },
+    },
+];
+
+export const getReagenColumns = [
+    { accessorKey: "no", header: "No.", size: 80 },
+    { accessorKey: "name", header: "Nama Reagen", size: 150 },
+    { accessorKey: "supplier", header: "Supplier", size: 120 },
+    { accessorKey: "batch_number", header: "Batch Number", size: 120 },
+    {
+        accessorKey: "storage_location",
+        header: "Lokasi Penyimpanan",
+        size: 150,
+    },
+];
+
+export const getEquipmentColumns = [
+    { accessorKey: "no", header: "No.", size: 80 },
+    {
+        accessorKey: "name",
+        header: "Nama Equipment",
+        size: 150,
+    },
+    {
+        accessorKey: "brand_type",
+        header: "Brand",
+        size: 120,
+    },
+    {
+        accessorKey: "serial_number",
+        header: "Serial Number",
+        size: 130,
+    },
+    {
+        accessorKey: "status",
+        header: "Status",
+        size: 100,
+        cell: ({ row }) => {
+            const status = row.status;
+            return (
+                <Badge
+                    variant={getEquipmentStatusVariant(status)}
+                    className="capitalize"
+                >
+                    {getEquipmentStatusLabel(status)}
+                </Badge>
+            );
+        },
+    },
+];
+
+export const getAnalystColumns = [
+    { accessorKey: "no", header: "No." },
+    { accessorKey: "name", header: "Nama Analis" },
+    { accessorKey: "spesialist", header: "Spesialis" },
+];
+
+// Column definitions untuk ManagedDataTable
+export const getReagentSelectorColumns = ({ selectedItems, onSelect }) => [
+    {
+        accessorKey: "no",
+        header: "No.",
+        size: 80,
+    },
+    {
+        accessorKey: "name",
+        header: "Nama Reagen",
+        size: 150,
+    },
+    {
+        accessorKey: "supplier",
+        header: "Supplier",
+        size: 120,
+    },
+    {
+        accessorKey: "batch_number",
+        header: "Batch Number",
+        size: 120,
+    },
+    {
+        accessorKey: "select",
+        header: "Pilih",
+        size: 100,
+        cell: ({ row }) => {
+            const data = row;
+            const isSelected = selectedItems?.some((s) => s.id === data.id);
+            return (
+                <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => onSelect(data)}
+                />
+            );
+        },
+    },
+];
+
+export const getEquipmentSelectorColumns = ({ selectedItems, onSelect }) => [
+    {
+        accessorKey: "no",
+        header: "No.",
+        size: 80,
+    },
+    {
+        accessorKey: "name",
+        header: "Nama Equipment",
+        size: 150,
+    },
+    {
+        accessorKey: "brand_type",
+        header: "Brand",
+        size: 120,
+    },
+    {
+        accessorKey: "serial_number",
+        header: "Serial Number",
+        size: 130,
+    },
+    {
+        accessorKey: "status",
+        header: "Status",
+        size: 100,
+        cell: ({ row }) => {
+            const status = row.status;
+            return (
+                <Badge
+                    variant={getEquipmentStatusVariant(status)}
+                    className="capitalize"
+                >
+                    {getEquipmentStatusLabel(status)}
+                </Badge>
+            );
+        },
+    },
+    {
+        accessorKey: "select",
+        header: "Pilih",
+        size: 100,
+        cell: ({ row }) => {
+            const data = row;
+            const isSelected = selectedItems?.some((s) => s.id === data.id);
+            return (
+                <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => onSelect(data)}
+                />
+            );
+        },
+    },
+];
+
+export const getParameterAnalystColumns = ({ selectedItems, onSelect }) => [
+    { accessorKey: "no", header: "No." },
+    { accessorKey: "name", header: "Nama Analis" },
+    { accessorKey: "spesialist", header: "Spesialis" },
+    {
+        accessorKey: "select",
+        header: "Pilih",
+        cell: ({ row }) => {
+            const data = row; // pastikan ambil data lengkap
+            const isSelected = selectedItems?.some((s) => s.id === data.id);
+            return (
+                <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => onSelect(data)}
+                />
+            );
+        },
+    },
+];

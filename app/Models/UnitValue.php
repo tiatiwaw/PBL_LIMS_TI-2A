@@ -15,4 +15,8 @@ class UnitValue extends Model
     {
         return $this->hasMany(TestParameter::class, 'unit_value_id');
     }
+    public function reagent()
+    {
+        return $this->hasMany(Reagent::class, 'unit_value_id');
+    }
 }

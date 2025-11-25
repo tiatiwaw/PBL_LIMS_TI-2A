@@ -22,13 +22,12 @@ export default function ManagerUsersPage({ auth, usersData }) {
         setIsDialogOpen(true);
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
     const parameters = usersData || users;
 
     const columns = useMemo(() => getUsersColumns({ onShowDetail: handleShowDetail }), []);
 
     return (
-        <DashboardLayout title="Users" user={currentUser} header="Users">
+        <DashboardLayout title="Users"  header="Users">
             <ManagedDataTable
                 data={parameters}
                 columns={columns}

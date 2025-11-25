@@ -1,12 +1,12 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { useMemo } from "react";
-import { stats } from "@/data/client/dashboard";
 import StatCard from "@/components/shared/card/stat-card";
 import { CheckIcon, ClipboardList, Clock10Icon } from "lucide-react";
+import { getOrdersColumns } from "@/components/shared/client/order-columns";
+import Loading from "@/components/ui/loading";
 import { router } from "@inertiajs/react";
-import { orders } from "@/data/manager/detail";
-import { getOrdersColumns } from "@/components/shared/manager/order-columns";
+import { useDashboard } from "@/hooks/useClient";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -18,33 +18,69 @@ const filterData = [
     { value: "Received", label: "Received" },
 ];
 
-export default function ClientPage({ auth, ordersData }) {
-    const handleShowDetail = (data) => {
-        router.visit(`/client/orders/${data.id}`);
+export default function ClientPage({ auth }) {
+
+    const { 
+        data: dashboard, 
+        isLoading,
+        error,
+    } = useDashboard();
+
+    const handleShowDetail = (orders) => {
+        router.visit(route('client.orders.show', { id: orders.id }));
     };
+    const handleShowHistory = (orders) => {
+        router.visit(route('client.orders.status', { id: orders.id }));
+    };
+    const columns = useMemo(
+        () => getOrdersColumns({
+            onShowDetail: handleShowDetail, 
+            onShowHistory: handleShowHistory 
+        }),
+        []
+    );
+    const stats = [
+        { 
+            title: 'Total Order', 
+            value: dashboard?.data?.stats?.total_orders || 0, 
+            subtitle: 'Semua order terdaftar', 
+            IconComponent: ClipboardList 
+        },
+        { 
+            title: 'Sedang Diuji', 
+            value: dashboard?.data?.stats?.processing_orders || 0, 
+            subtitle: 'Order dalam proses', 
+            IconComponent: Clock10Icon 
+        },
+        { 
+            title: 'Selesai', 
+            value: dashboard?.data?.stats?.completed_orders || 0, 
+            subtitle: 'Order telah selesai', 
+            IconComponent: CheckIcon 
+        },
+    ];
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Client" };
-    const parameters = ordersData || orders;
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Dashboard Client"  header="Selamat Datang, Client!">
+                <Loading />
+            </DashboardLayout>
+        );
+    }
 
-    const columns = useMemo(() => getOrdersColumns({ onShowDetail: handleShowDetail }), []);
-
-    // const statCardsData = [
-    //     { title: 'Total Sampel', value: 20, subtitle: 'Berdasarkan Bulan Terakhir', IconComponent: ClipboardList },
-    //     { title: 'Sedang Diuji', value: 20, subtitle: 'Berdasarkan Bulan Terakhir', IconComponent: Clock10Icon },
-    //     { title: 'Selesai', value: 20, subtitle: 'Berdasarkan Bulan Terakhir', IconComponent: CheckIcon },
-    // ];
-
-    // const tableData = [
-    //     { kode: 'M-10', status: 'Sedang Diuji', tanggal: '12/10/25' },
-    //     { kode: 'M-09', status: 'Sedang Diuji', tanggal: '10/10/25' },
-    //     { kode: 'M-08', status: 'Selesai', tanggal: '07/10/25' },
-    //     { kode: 'M-07', status: 'Selesai', tanggal: '12/10/25' },
-    //     { kode: 'M-02', status: 'Selesai', tanggal: '12/10/25' },
-    // ];
+    if (error) {
+        return (
+            <DashboardLayout title="Dashboard Client"  header="Selamat Datang, Client!">
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Gagal memuat dashboard."}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
-        <DashboardLayout title="Client" user={currentUser} header='Selamat Datang Client!'>
-            <div className="space-y-5">
+        <DashboardLayout title="Dashboard Client"  header="Selamat Datang, Client!">
+            <div className="max-w-7xl mx-auto space-y-8">
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {stats.map((stat, index) => (
@@ -52,14 +88,23 @@ export default function ClientPage({ auth, ordersData }) {
                     ))}
                 </div>
 
-                <ManagedDataTable
-                    data={parameters}
-                    columns={columns}
-                    showFilter={true}
-                    showCreate={false}
-                    filterColumn="status"
-                    filterOptions={filterData}
-                />
+                <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 className="text-xl font-bold text-gray-900">Riwayat Order</h2>
+                            <p className="text-sm text-gray-500 mt-1">Status order dan progres terbaru</p>
+                        </div>
+                    </div>
+                    <ManagedDataTable
+                        data={dashboard?.data?.orders || []}
+                        columns={columns}
+                        showFilter={true}
+                        showCreate={false}
+                        filterColumn="status"
+                        filterOptions={filterData}
+                    />
+                </div>
+
             </div>
         </DashboardLayout>
     )

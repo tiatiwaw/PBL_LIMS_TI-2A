@@ -20,13 +20,12 @@ export default function OrdersPage({ auth, ordersData }) {
         router.visit(route("manager.orders.detail"));
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
     const parameters = ordersData || orders;
 
     const columns = useMemo(() => getOrdersColumns({ onShowDetail: handleShowDetail }), []);
 
     return (
-        <DashboardLayout title="Orders" user={currentUser} header="Orders">
+        <DashboardLayout title="Orders"  header="Orders">
             <ManagedDataTable
                 data={parameters}
                 columns={columns}
