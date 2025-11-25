@@ -46,7 +46,7 @@ export default function OrdersPage() {
     return (
         <DashboardLayout title="Orders" header="Orders">
             <ManagedDataTable
-                data={orders}
+                data={orders || []}
                 columns={columns}
                 showSearch={true}
                 showFilter={true}

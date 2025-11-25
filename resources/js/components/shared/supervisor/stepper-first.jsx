@@ -3,7 +3,7 @@ import { Check, Edit, Users } from "lucide-react";
 
 const steps = [
     { number: 1, name: "Metode, Peralatan, & Bahan Kimia", icon: Edit },
-    { number: 2, name: "Analis", icon: Users },
+    { number: 2, name: "Estimasi Selesai & Analis", icon: Users },
     { number: 3, name: "Konfirmasi", icon: Check },
 ];
 

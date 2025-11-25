@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import ManagedDataTable from "../tabel/managed-data-table";
-import { getAnalystColumns } from "./parameter-columns";
 
 export default function ParameterReview({
     formData,
@@ -92,7 +90,6 @@ export default function ParameterReview({
                                     <th className="px-6 py-3 w-[40%]">
                                         Spesialis
                                     </th>
-                                    <th className="px-6 py-3 w-[20%]">ID</th>
                                 </tr>
                             </thead>
 
@@ -122,22 +119,44 @@ export default function ParameterReview({
                                             <td className="px-6 py-3">
                                                 {a.spesialist}
                                             </td>
-                                            <td className="px-6 py-3 text-gray-600">
-                                                {a.id}
-                                            </td>
                                         </tr>
                                     ))
                                 )}
                             </tbody>
                         </table>
                     </div>
-                    {/* <ManagedDataTable
-                        data={selectedAnalysts || []}
-                        columns={getAnalystColumns}
-                        showSearch={false}
-                        showCreate={false}
-                        showFilter={false}
-                    /> */}
+                </SectionCard>
+
+                {/* Section Estimasi & Catatan */}
+                <SectionCard title="Informasi Tambahan">
+                    <div className="grid grid-cols-2 gap-6">
+                        <div className="border rounded-lg p-4 bg-white">
+                            <div className="text-sm font-semibold text-gray-700 mb-2">
+                                Estimasi Order Selesai
+                            </div>
+                            <div className="text-lg text-gray-800 font-semibold">
+                                {formData?.estimasiSelesai
+                                    ? new Date(
+                                          formData.estimasiSelesai
+                                      ).toLocaleDateString("id-ID", {
+                                          weekday: "long",
+                                          year: "numeric",
+                                          month: "long",
+                                          day: "numeric",
+                                      })
+                                    : "-"}
+                            </div>
+                        </div>
+
+                        <div className="border rounded-lg p-4 bg-white">
+                            <div className="text-sm font-semibold text-gray-700 mb-2">
+                                Catatan
+                            </div>
+                            <div className="text-base text-gray-800 whitespace-pre-wrap break-words max-h-24 overflow-y-auto">
+                                {formData?.catatan || "-"}
+                            </div>
+                        </div>
+                    </div>
                 </SectionCard>
 
                 {/* Button Actions */}

@@ -106,6 +106,8 @@ export default function ParameterSecond({
 }) {
     const [selectedReagents, setSelectedReagents] = useState([]);
     const [selectedEquipments, setSelectedEquipments] = useState([]);
+    const [dialogReagents, setDialogReagents] = useState([]);
+    const [dialogEquipments, setDialogEquipments] = useState([]);
     const [reagentDialogOpen, setReagentDialogOpen] = useState(false);
     const [equipmentDialogOpen, setEquipmentDialogOpen] = useState(false);
 
@@ -126,7 +128,20 @@ export default function ParameterSecond({
                 setSelectedEquipments(equipments);
             }
         }
-    }, [sampleId, formData]);
+        if (reagentDialogOpen) {
+            setDialogReagents([...selectedReagents]);
+        }
+        if (equipmentDialogOpen) {
+            setDialogEquipments([...selectedEquipments]);
+        }
+    }, [
+        sampleId,
+        formData,
+        reagentDialogOpen,
+        selectedReagents,
+        equipmentDialogOpen,
+        selectedEquipments,
+    ]);
 
     // Hook untuk reagents (dummy implementation)
     const useReagents = () => ({
@@ -139,7 +154,7 @@ export default function ParameterSecond({
     });
 
     const handleReagentSelect = (reagent) => {
-        setSelectedReagents((prev) => {
+        setDialogReagents((prev) => {
             const exists = prev.find((r) => r.id === reagent.id);
             return exists
                 ? prev.filter((r) => r.id !== reagent.id)
@@ -148,7 +163,7 @@ export default function ParameterSecond({
     };
 
     const handleEquipmentSelect = (equipment) => {
-        setSelectedEquipments((prev) => {
+        setDialogEquipments((prev) => {
             const exists = prev.find((e) => e.id === equipment.id);
             return exists
                 ? prev.filter((e) => e.id !== equipment.id)
@@ -157,10 +172,12 @@ export default function ParameterSecond({
     };
 
     const handleReagentConfirm = () => {
+        setSelectedReagents(dialogReagents);
         setReagentDialogOpen(false);
     };
 
     const handleEquipmentConfirm = () => {
+        setSelectedEquipments(dialogEquipments);
         setEquipmentDialogOpen(false);
     };
 
@@ -262,7 +279,7 @@ export default function ParameterSecond({
                 hook={useReagents}
                 isOpen={reagentDialogOpen}
                 onOpenChange={setReagentDialogOpen}
-                selectedItems={selectedReagents}
+                selectedItems={dialogReagents}
                 onSelect={handleReagentSelect}
                 onConfirm={handleReagentConfirm}
                 getColumns={getReagentSelectorColumns}
@@ -275,7 +292,7 @@ export default function ParameterSecond({
                 hook={useEquipments}
                 isOpen={equipmentDialogOpen}
                 onOpenChange={setEquipmentDialogOpen}
-                selectedItems={selectedEquipments}
+                selectedItems={dialogEquipments}
                 onSelect={handleEquipmentSelect}
                 onConfirm={handleEquipmentConfirm}
                 getColumns={getEquipmentSelectorColumns}

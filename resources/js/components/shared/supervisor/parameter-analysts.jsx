@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Plus } from "lucide-react";
 import EntitySelectorDialog from "@/components/shared/dialog/entity-selector-dialog";
 import {
     getAnalystColumns,
     getParameterAnalystColumns,
 } from "./parameter-columns";
 import ManagedDataTable from "../tabel/managed-data-table";
+import { DatePicker } from "@/components/ui/date-picker";
+import { toast } from "sonner";
 
 export default function ParameterAnalysts({
     formData,
@@ -17,17 +17,35 @@ export default function ParameterAnalysts({
 }) {
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedAnalysts, setSelectedAnalysts] = useState([]);
+    const [dialogAnalysts, setDialogAnalysts] = useState([]);
+    const [localFormData, setLocalFormData] = useState({
+        estimasiSelesai: formData?.estimasiSelesai || "",
+        catatan: formData?.catatan || "",
+    });
 
-    // Initialize dari formData
     useEffect(() => {
         if (formData?.analysts && Array.isArray(formData.analysts)) {
             const analystIds = formData.analysts;
+
             const selected = dummyAnalysts.filter((a) =>
                 analystIds.includes(a.id)
             );
             setSelectedAnalysts(selected);
         }
     }, [formData?.analysts]);
+
+    useEffect(() => {
+        setLocalFormData({
+            estimasiSelesai: formData?.estimasiSelesai || "",
+            catatan: formData?.catatan || "",
+        });
+    }, [formData]);
+
+    useEffect(() => {
+        if (openDialog) {
+            setDialogAnalysts([...selectedAnalysts]);
+        }
+    }, [openDialog, selectedAnalysts]);
 
     const dummyAnalysts = [
         { id: 1, name: "Bambang", spesialist: "Uji Makanan" },
@@ -45,17 +63,10 @@ export default function ParameterAnalysts({
         };
     };
 
-    const handleDialogChange = (open) => {
-        if (!open) {
-            setSelectedAnalysts([].map((s) => ({ ...s })));
-        }
-        setOpenDialog(open);
-    };
-
     const handleAnaystsSelect = (analysts) => {
-        if (!analysts) return console.log(`analist ${analysts} tidak terkirim`);
+        if (!analysts) return toast.error(`analist ${analysts} tidak terkirim`);
 
-        setSelectedAnalysts((prev) => {
+        setDialogAnalysts((prev) => {
             const exists = prev.find((s) => s.id === analysts.id);
             return exists
                 ? prev.filter((s) => s.id !== analysts.id)
@@ -64,43 +75,90 @@ export default function ParameterAnalysts({
     };
 
     const handleTambahAnalysts = () => {
-        const normalized = selectedAnalysts.map((s) =>
-            s.hasOwnProperty("value") ? s : { ...s, value: "" }
-        );
-        setSelectedAnalysts(normalized);
+        setSelectedAnalysts(dialogAnalysts);
         setOpenDialog(false);
     };
 
     const handleNextClick = () => {
-        // Save to formData sebelum lanjut
+        // Save analysts dan form data sebelum lanjut
         const analystIds = selectedAnalysts.map((a) => a.id);
-        onAnalystsSelect(analystIds);
+        const data = {
+            analysts: analystIds,
+            estimasiSelesai: localFormData.estimasiSelesai,
+            catatan: localFormData.catatan,
+        };
+        onAnalystsSelect(data);
+
         onNext();
     };
 
+    const handleEstimasiChange = (date) => {
+        const dateString = date ? date.toISOString().split("T")[0] : "";
+        setLocalFormData((prev) => ({
+            ...prev,
+            estimasiSelesai: dateString,
+        }));
+    };
+
+    const handleCatatanChange = (e) => {
+        setLocalFormData((prev) => ({
+            ...prev,
+            catatan: e.target.value,
+        }));
+    };
+
     return (
-        <div>
-            {/* Pilih Analist */}
-            <div className="rounded-2xl">
-                <div className="flex flex-row justify-between items-center mb-4">
-                    <h2 className="text-2xl font-bold text-primary-hijauGelap">
-                        Analis
-                    </h2>
-                    <Button
-                        onClick={() => setOpenDialog(true)}
-                        className="bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-colors px-6 py-2 rounded-lg"
-                    >
-                        + Tambah Analis
-                    </Button>
+        <div className="space-y-6">
+            {/* Grid Layout: 2 kolom */}
+            <div className="grid grid-cols-2 gap-6">
+                {/* KOLOM KIRI: Form Fields */}
+                <div className="space-y-6">
+                    {/* Estimasi Order Selesai */}
+                    <DatePicker
+                        label="Estimasi Order Selesai"
+                        value={localFormData.estimasiSelesai}
+                        onChange={handleEstimasiChange}
+                    />
+
+                    {/* Catatan */}
+                    <div>
+                        <label className="block text-sm font-semibold mb-2">
+                            Catatan
+                        </label>
+                        <textarea
+                            value={localFormData.catatan}
+                            onChange={handleCatatanChange}
+                            placeholder="Catatan untuk pengujian"
+                            rows="4"
+                            className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 resize-none"
+                        />
+                    </div>
                 </div>
 
-                <ManagedDataTable
-                    data={selectedAnalysts || []}
-                    columns={getAnalystColumns}
-                    showSearch={false}
-                    showCreate={false}
-                    showFilter={false}
-                />
+                {/* KOLOM KANAN: Analis */}
+                <div className="space-y-4">
+                    {/* Header dengan button */}
+                    <div className="flex font-semibold items-center justify-between">
+                        <h2 className="text-xl text-primary-hijauGelap">
+                            Analis
+                        </h2>
+                        <Button
+                            onClick={() => setOpenDialog(true)}
+                            className="bg-teal-600 hover:bg-teal-700 text-white font-semibold transition-colors px-6 py-2 rounded-lg"
+                        >
+                            + Tambah Analis
+                        </Button>
+                    </div>
+
+                    {/* Tabel Analis */}
+                    <ManagedDataTable
+                        data={selectedAnalysts || []}
+                        columns={getAnalystColumns}
+                        showSearch={false}
+                        showCreate={false}
+                        showFilter={false}
+                    />
+                </div>
             </div>
 
             {/* Navigation Buttons */}
@@ -123,8 +181,8 @@ export default function ParameterAnalysts({
                 type={"analysts"}
                 hook={useAnalysts}
                 isOpen={openDialog}
-                onOpenChange={handleDialogChange}
-                selectedItems={selectedAnalysts}
+                onOpenChange={setOpenDialog}
+                selectedItems={dialogAnalysts}
                 onSelect={handleAnaystsSelect}
                 onConfirm={handleTambahAnalysts}
                 getColumns={getParameterAnalystColumns}
