@@ -6,31 +6,16 @@ import { Separator } from "@/components/ui/separator";
 
 export default function ParameterReview({
     formData,
+    orderData,
+    analystsData,
+    nParameterData,
     samples,
     onSubmit,
     onNext,
     onBack,
 }) {
-    const dummyClient = {
-        id: "A1234567890GGS",
-        name: "Putro Raja Kenjoko",
-        address: "Semarang",
-        phone: "081234567856",
-    };
-
-    // Get analyst objects from IDs
-    const dummyAnalysts = [
-        { id: 1, name: "Bambang", spesialist: "Uji Makanan" },
-        { id: 2, name: "Siti", spesialist: "Uji Kimia" },
-        { id: 3, name: "Andi", spesialist: "Uji Logam" },
-        { id: 4, name: "Joni", spesialist: "Uji Api" },
-        { id: 5, name: "Agus", spesialist: "Uji Makan" },
-        { id: 7, name: "Ope", spesialist: "Uji Makan" },
-        { id: 6, name: "Merry", spesialist: "Uji Makan" },
-    ];
-
     const selectedAnalysts = (formData?.analysts || [])
-        .map((id) => dummyAnalysts.find((a) => a.id === id))
+        .map((id) => analystsData.find((a) => a.id === id))
         .filter(Boolean);
 
     const handleKirim = () => {
@@ -43,10 +28,13 @@ export default function ParameterReview({
             <div className="w-full max-w-6xl mx-auto">
                 {/* Section Client */}
                 <SectionCard title="Client">
-                    <Detail label="ID" value={dummyClient.id} />
-                    <Detail label="Nama" value={dummyClient.name} />
-                    <Detail label="Alamat" value={dummyClient.address} />
-                    <Detail label="Nomor HP" value={dummyClient.phone} />
+                    <Detail label="ID" value={orderData.clients.id} />
+                    <Detail label="Nama" value={orderData.clients.name} />
+                    <Detail label="Alamat" value={orderData.clients.address} />
+                    <Detail
+                        label="Nomor HP"
+                        value={orderData.clients.phone_number}
+                    />
                 </SectionCard>
 
                 {/* Section Parameter */}
@@ -61,6 +49,7 @@ export default function ParameterReview({
                                     <div className="font-semibold text-gray-800">
                                         {s.name}
                                     </div>
+                                    {/* {nParameterData.some(item => item.sample_id === s.id) && */}
                                     {formData?.samples?.[s.id] && (
                                         <div className="text-sm text-gray-600 mt-1">
                                             Parameter & Method filled ✓
@@ -117,7 +106,7 @@ export default function ParameterReview({
                                                 {a.name}
                                             </td>
                                             <td className="px-6 py-3">
-                                                {a.spesialist}
+                                                {a.specialist}
                                             </td>
                                         </tr>
                                     ))

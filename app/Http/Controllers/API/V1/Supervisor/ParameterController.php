@@ -16,38 +16,12 @@ use Illuminate\Support\Facades\Validator;
 class ParameterController extends Controller
 {
     /**
-     * Menampilkan semua data Test Parameter
-     */
-    public function index()
-    {
-        try {
-            // Mengambil semua parameter beserta relasi Unit dan Standar Acuan
-            $parameters = TestParameter::with([
-                'unit_values',         // Relasi ke tabel unit_values
-                'reference_standards'  // Relasi ke tabel reference_standards
-            ])->latest()->get();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'List Data Test Parameters',
-                'data'    => $parameters
-            ], 200);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengambil data parameter.',
-                'error'   => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
      * Menampilkan detail satu Test Parameter berdasarkan ID
      */
     public function show($id)
     {
         // 1. Ambil Data Order & Sampel (Spesifik ID)
-        $order = Order::with('samples')->findOrFail($id);
+        $order = Order::with(['samples', 'clients.users'])->findOrFail($id);
         $samples = $order->samples;
 
         // 2. Ambil Data NParameterMethod (Safe Mode)
@@ -56,25 +30,25 @@ class ParameterController extends Controller
 
         // Cek apakah ada sample? Kalau kosong, return array kosong biar gak error di query
         if ($sampleIds->isNotEmpty()) {
-            $n_parameter_methods = NParameterMethod::whereIn('sample_id', $sampleIds)->get();
+            $n_parameter_methods = NParameterMethod::whereIn('sample_id', $sampleIds)->with(['test_parameters', 'test_methods', 'equipments', 'reagents'])->get();
         } else {
             $n_parameter_methods = collect([]); // Return collection kosong
         }
 
-        // 3. Ambil SEMUA Data Master (Tanpa Relasi / Filter Order)
+        // 3. Ambil SEMUA Data Master DENGAN RELASI
         // Mengambil seluruh isi tabel untuk kebutuhan dropdown/referensi
-        $test_parameters = TestParameter::all();
-        $test_methods    = TestMethod::all();
-        $reagents        = Reagent::all();
-        $equipments      = Equipment::all();
-        $analysts        = Analyst::all();
+        $test_parameters = TestParameter::with(['unit_values', 'reference_standards'])->get();
+        $test_methods    = TestMethod::with(['reference_standards'])->get();
+        $reagents        = Reagent::with(['suppliers', 'grades'])->get();
+        $equipments      = Equipment::with(['brand_types'])->get();
+        $analysts        = Analyst::with(['users'])->get();
 
         // 4. Return Response
         return response()->json([
             'order'               => $order,           // Data detail order
             'samples'             => $samples,         // Data sampel terkait order
             'n_parameter_methods' => $n_parameter_methods, // Hasil tes terkait (bisa kosong, aman)
-            
+
             // Data Master (Full List)
             'test_parameters'     => $test_parameters,
             'test_methods'        => $test_methods,

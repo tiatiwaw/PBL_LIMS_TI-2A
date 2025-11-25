@@ -19,148 +19,13 @@ import { toast } from "sonner";
 
 export default function ParameterFirst({
     sampleId,
+    parameterList,
+    metodeList,
     formData,
     onParameterSelect,
     onNext,
     onBack,
 }) {
-    // MOCK DATA
-    const parameterList = [
-        {
-            id: 1,
-            name: "pH",
-            kategori: "Kimia",
-            unit_value: "pH",
-            reference: "SNI 06-6989.11:2004",
-        },
-        {
-            id: 2,
-            name: "Viscosity",
-            kategori: "Fisika",
-            unit_value: "cP",
-            reference: "ASTM D445",
-        },
-        {
-            id: 3,
-            name: "Konduktivitas",
-            kategori: "Kimia",
-            unit_value: "µS/cm",
-            reference: "SNI 6989.1:2019",
-        },
-        {
-            id: 4,
-            name: "Suhu",
-            kategori: "Fisika",
-            unit_value: "°C",
-            reference: "SNI 06-6989.23:2005",
-        },
-        {
-            id: 5,
-            name: "Turbiditas",
-            kategori: "Fisika",
-            unit_value: "NTU",
-            reference: "ISO 7027",
-        },
-        {
-            id: 6,
-            name: "Total Viable Count (TVC)",
-            kategori: "Mikrobiologi",
-            unit_value: "CFU/mL",
-            reference: "ISO 4833-1:2013",
-        },
-        {
-            id: 7,
-            name: "Kadar Air",
-            kategori: "Kimia",
-            unit_value: "%",
-            reference: "AOAC 925.10",
-        },
-        {
-            id: 8,
-            name: "Kromium (Cr)",
-            kategori: "Klinik",
-            unit_value: "µg/L",
-            reference: "< 5 µg/L",
-        },
-        {
-            id: 9,
-            name: "Nitrat (NO3-)",
-            kategori: "Kimia",
-            unit_value: "mg/L",
-            reference: "SNI 6989.79:2011",
-        },
-        {
-            id: 10,
-            name: "Densitas",
-            kategori: "Fisika",
-            unit_value: "g/cm³",
-            reference: "ASTM D4052",
-        },
-    ];
-
-    const metodeList = [
-        {
-            id: 1,
-            name: "Pengukuran pH Elektrometri",
-            applicable_parameter: "pH",
-            reference: "SNI 06-6989.11:2004",
-        },
-        {
-            id: 2,
-            name: "ASTM D445 - Kinematic Viscosity",
-            applicable_parameter: "Viscosity",
-            reference: "ASTM D445",
-        },
-        {
-            id: 3,
-            name: "Konduktivitas - Konduktometri",
-            applicable_parameter: "Konduktivitas",
-            reference: "SNI 6989.1:2019",
-        },
-        {
-            id: 4,
-            name: "Pengukuran Suhu Termometri",
-            applicable_parameter: "Suhu",
-            reference: "SNI 06-6989.23:2005",
-        },
-        {
-            id: 5,
-            name: "Turbiditas - Nephelometri",
-            applicable_parameter: "Turbiditas",
-            reference: "ISO 7027",
-        },
-        {
-            id: 6,
-            name: "Total Plate Count (TPC)",
-            applicable_parameter: "Total Viable Count",
-            reference: "ISO 4833-1:2013",
-        },
-        {
-            id: 7,
-            name: "Moisture Content - Oven Drying",
-            applicable_parameter: "Kadar Air",
-            reference: "AOAC 925.10",
-        },
-        {
-            id: 8,
-            name: "Analisis Logam Cr - ICP-MS",
-            applicable_parameter: "Kromium (Cr)",
-            reference: "USEPA 6020B",
-        },
-        {
-            id: 9,
-            name: "Analisis Nitrat - Spektrofotometri",
-            applicable_parameter: "Nitrat (NO3-)",
-            reference: "SNI 6989.79:2011",
-        },
-        {
-            id: 10,
-            name: "Density Meter",
-            applicable_parameter: "Densitas",
-            reference: "ASTM D4052",
-        },
-    ];
-
     const filterDataParameter = [
         { value: "all", label: "All Kategori" },
         { value: "Kimia", label: "Kimia" },
@@ -279,7 +144,7 @@ export default function ParameterFirst({
                         {selectedParameter ? (
                             <Card className="border border-gray-300 rounded-xl shadow p-0">
                                 <CardContent className="p-4 space-y-3">
-                                    <div className="grid grid-cols-[120px_10px_1fr] text-sm text-[#003B4A]">
+                                    <div className="grid grid-cols-[130px_10px_1fr] text-sm text-[#003B4A]">
                                         <span className="font-bold">
                                             Nama parameter
                                         </span>
@@ -287,31 +152,37 @@ export default function ParameterFirst({
                                         <span>{selectedParameter.name}</span>
                                     </div>
 
-                                    <div className="grid grid-cols-[120px_10px_1fr] text-sm text-[#003B4A]">
+                                    <div className="grid grid-cols-[130px_10px_1fr] text-sm text-[#003B4A]">
                                         <span className="font-bold">
                                             Kategori
                                         </span>
                                         <span>:</span>
                                         <span>
-                                            {selectedParameter.kategori}
+                                            {selectedParameter.category}
                                         </span>
                                     </div>
 
-                                    <div className="grid grid-cols-[120px_10px_1fr] text-sm text-[#003B4A]">
+                                    <div className="grid grid-cols-[130px_10px_1fr] text-sm text-[#003B4A]">
                                         <span className="font-bold">Unit</span>
                                         <span>:</span>
                                         <span>
-                                            {selectedParameter.unit_value}
+                                            {
+                                                selectedParameter.unit_values
+                                                    .value
+                                            }
                                         </span>
                                     </div>
 
-                                    <div className="grid grid-cols-[120px_10px_1fr] text-sm text-[#003B4A]">
+                                    <div className="grid grid-cols-[130px_10px_1fr] text-sm text-[#003B4A]">
                                         <span className="font-bold">
                                             Standar mutu
                                         </span>
                                         <span>:</span>
                                         <span>
-                                            {selectedParameter.reference}
+                                            {
+                                                selectedParameter
+                                                    .reference_standards.name
+                                            }
                                         </span>
                                     </div>
                                 </CardContent>
@@ -378,7 +249,7 @@ export default function ParameterFirst({
                         {selectedMetode ? (
                             <Card className="border border-gray-300 rounded-xl shadow p-0">
                                 <CardContent className="p-4 space-y-3 text-sm text-[#003B4A]">
-                                    <div className="grid grid-cols-[120px_10px_1fr]">
+                                    <div className="grid grid-cols-[130px_10px_1fr]">
                                         <span className="font-bold">
                                             Nama Metode
                                         </span>
@@ -386,7 +257,7 @@ export default function ParameterFirst({
                                         <span>{selectedMetode.name}</span>
                                     </div>
 
-                                    <div className="grid grid-cols-[120px_10px_1fr]">
+                                    <div className="grid grid-cols-[130px_10px_1fr]">
                                         <span className="font-bold">
                                             Cakupan Parameter
                                         </span>
@@ -398,12 +269,17 @@ export default function ParameterFirst({
                                         </span>
                                     </div>
 
-                                    <div className="grid grid-cols-[120px_10px_1fr]">
+                                    <div className="grid grid-cols-[130px_10px_1fr]">
                                         <span className="font-bold">
                                             Standar mutu
                                         </span>
                                         <span>:</span>
-                                        <span>{selectedMetode.reference}</span>
+                                        <span>
+                                            {
+                                                selectedMetode
+                                                    .reference_standards.name
+                                            }
+                                        </span>
                                     </div>
                                 </CardContent>
                             </Card>

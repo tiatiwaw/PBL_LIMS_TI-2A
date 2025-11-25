@@ -11,6 +11,7 @@ import { toast } from "sonner";
 
 export default function ParameterAnalysts({
     formData,
+    analystsData,
     onAnalystsSelect,
     onNext,
     onBack,
@@ -27,7 +28,7 @@ export default function ParameterAnalysts({
         if (formData?.analysts && Array.isArray(formData.analysts)) {
             const analystIds = formData.analysts;
 
-            const selected = dummyAnalysts.filter((a) =>
+            const selected = analystsData.filter((a) =>
                 analystIds.includes(a.id)
             );
             setSelectedAnalysts(selected);
@@ -47,19 +48,19 @@ export default function ParameterAnalysts({
         }
     }, [openDialog, selectedAnalysts]);
 
-    const dummyAnalysts = [
-        { id: 1, name: "Bambang", spesialist: "Uji Makanan" },
-        { id: 2, name: "Siti", spesialist: "Uji Kimia" },
-        { id: 3, name: "Andi", spesialist: "Uji Logam" },
-        { id: 4, name: "Joni", spesialist: "Uji Api" },
-        { id: 5, name: "Agus", spesialist: "Uji Makan" },
-        { id: 7, name: "Ope", spesialist: "Uji Makan" },
-        { id: 6, name: "Merry", spesialist: "Uji Makan" },
-    ];
+    // const analystsData = [
+    //     { id: 1, name: "Bambang", spesialist: "Uji Makanan" },
+    //     { id: 2, name: "Siti", spesialist: "Uji Kimia" },
+    //     { id: 3, name: "Andi", spesialist: "Uji Logam" },
+    //     { id: 4, name: "Joni", spesialist: "Uji Api" },
+    //     { id: 5, name: "Agus", spesialist: "Uji Makan" },
+    //     { id: 7, name: "Ope", spesialist: "Uji Makan" },
+    //     { id: 6, name: "Merry", spesialist: "Uji Makan" },
+    // ];
 
     const useAnalysts = () => {
         return {
-            data: dummyAnalysts,
+            data: analystsData,
         };
     };
 

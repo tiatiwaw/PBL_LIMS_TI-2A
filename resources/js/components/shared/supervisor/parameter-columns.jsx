@@ -9,9 +9,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 export const getParameterColumns = ({ onSelectParameter }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "name", header: "Nama Parameter" },
-    { accessorKey: "kategori", header: "Kategori" },
-    { accessorKey: "unit_value", header: "Unit" },
-    { accessorKey: "reference", header: "Standar Mutu" },
+    { accessorKey: "category", header: "Kategori" },
+    {
+        accessorKey: "unit_value",
+        header: "Satuan Unit",
+        cell: ({ row }) => row.unit_values.value,
+    },
+    {
+        accessorKey: "reference",
+        header: "Standar Mutu",
+        cell: ({ row }) => row.reference_standards.name,
+    },
     {
         accessorKey: "select",
         header: "Aksi",
@@ -34,7 +42,11 @@ export const getMetodeColumns = ({ onSelectMetode }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "name", header: "Nama Metode" },
     { accessorKey: "applicable_parameter", header: "Cakupan Parameter" },
-    { accessorKey: "reference", header: "Standar Mutu" },
+    {
+        accessorKey: "reference",
+        header: "Standar Mutu",
+        cell: ({ row }) => row.reference_standards.name,
+    },
     {
         accessorKey: "select",
         header: "Aksi",
@@ -56,7 +68,12 @@ export const getMetodeColumns = ({ onSelectMetode }) => [
 export const getReagenColumns = [
     { accessorKey: "no", header: "No.", size: 80 },
     { accessorKey: "name", header: "Nama Reagen", size: 150 },
-    { accessorKey: "supplier", header: "Supplier", size: 120 },
+    {
+        accessorKey: "supplier",
+        header: "Supplier",
+        size: 120,
+        cell: ({ row }) => row.suppliers.name,
+    },
     { accessorKey: "batch_number", header: "Batch Number", size: 120 },
     {
         accessorKey: "storage_location",
@@ -76,6 +93,7 @@ export const getEquipmentColumns = [
         accessorKey: "brand_type",
         header: "Brand",
         size: 120,
+        cell: ({ row }) => row.brand_types.name,
     },
     {
         accessorKey: "serial_number",
@@ -103,7 +121,7 @@ export const getEquipmentColumns = [
 export const getAnalystColumns = [
     { accessorKey: "no", header: "No." },
     { accessorKey: "name", header: "Nama Analis" },
-    { accessorKey: "spesialist", header: "Spesialis" },
+    { accessorKey: "specialist", header: "Spesialis" },
 ];
 
 // Column definitions untuk ManagedDataTable
@@ -122,6 +140,7 @@ export const getReagentSelectorColumns = ({ selectedItems, onSelect }) => [
         accessorKey: "supplier",
         header: "Supplier",
         size: 120,
+        cell: ({ row }) => row.suppliers.name,
     },
     {
         accessorKey: "batch_number",
@@ -160,6 +179,7 @@ export const getEquipmentSelectorColumns = ({ selectedItems, onSelect }) => [
         accessorKey: "brand_type",
         header: "Brand",
         size: 120,
+        cell: ({ row }) => row.brand_types.name,
     },
     {
         accessorKey: "serial_number",
@@ -202,7 +222,7 @@ export const getEquipmentSelectorColumns = ({ selectedItems, onSelect }) => [
 export const getParameterAnalystColumns = ({ selectedItems, onSelect }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "name", header: "Nama Analis" },
-    { accessorKey: "spesialist", header: "Spesialis" },
+    { accessorKey: "specialist", header: "Spesialis" },
     {
         accessorKey: "select",
         header: "Pilih",

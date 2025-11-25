@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CircleAlert, Edit, ChevronRight, Plus } from "lucide-react";
@@ -11,8 +11,26 @@ import ParameterSecond from "@/components/shared/supervisor/parameter-second";
 import ParameterAnalysts from "@/components/shared/supervisor/parameter-analysts";
 import ParameterReview from "@/components/shared/supervisor/parameter-review";
 import Stepper from "@/components/shared/supervisor/stepper-first";
+import { useOrderParameters } from "@/hooks/useSupervisor";
+import Loading from "@/components/ui/loading";
 
-export default function SupervisorParametersIndex({ id }) {
+export default function SupervisorParametersIndex() {
+    const { props } = usePage();
+    const { id } = props;
+
+    const { data, isLoading, error } = useOrderParameters(id);
+
+    const {
+        order,
+        samples,
+        n_parameter_methods,
+        test_parameters,
+        test_methods,
+        reagents,
+        equipments,
+        analysts,
+    } = data || {};
+
     // State untuk handle step
     const [currentStep, setCurrentStep] = useState("index"); // index, first, second, analysts, review
     const [parameterStep, setParameterStep] = useState(1);
@@ -29,15 +47,6 @@ export default function SupervisorParametersIndex({ id }) {
         catatan: "",
         createdAt: new Date().toISOString(),
     });
-
-    // Mock data
-    const samples = [
-        { id: 1, name: "Sample 1" },
-        { id: 2, name: "Sample 2" },
-        { id: 3, name: "Sample 3" },
-        { id: 4, name: "Sample 4" },
-        { id: 5, name: "Sample 5" },
-    ];
 
     const formTopRef = useRef(null);
     useEffect(() => {
@@ -120,6 +129,8 @@ export default function SupervisorParametersIndex({ id }) {
                 </div>
                 <ParameterFirst
                     sampleId={currentSampleId}
+                    parameterList={test_parameters}
+                    metodeList={test_methods}
                     formData={formData}
                     onParameterSelect={handleUpdateSampleParameter}
                     onNext={() => handleStepChange("second")}
@@ -137,6 +148,8 @@ export default function SupervisorParametersIndex({ id }) {
                 </div>
                 <ParameterSecond
                     sampleId={currentSampleId}
+                    reagentData={reagents}
+                    equipmentData={equipments}
                     formData={formData}
                     onEquipmentReagentSelect={
                         handleUpdateSampleEquipmentReagents
@@ -156,6 +169,7 @@ export default function SupervisorParametersIndex({ id }) {
                 </div>
                 <ParameterAnalysts
                     formData={formData}
+                    analystsData={analysts}
                     onAnalystsSelect={handleUpdateAnalysts}
                     onNext={() => {
                         handleStepChange("review"), setParameterStep(3);
@@ -176,6 +190,9 @@ export default function SupervisorParametersIndex({ id }) {
                 </div>
                 <ParameterReview
                     formData={formData}
+                    orderData={order}
+                    analystsData={analysts}
+                    nParameterData={n_parameter_methods}
                     samples={samples}
                     onSubmit={handleSubmitForm}
                     onNext={() => {
@@ -185,6 +202,24 @@ export default function SupervisorParametersIndex({ id }) {
                         handleStepChange("analysts"), setParameterStep(3);
                     }}
                 />
+            </DashboardLayout>
+        );
+    }
+
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Parameter" header="Parameter">
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Parameter" header="Parameter">
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
             </DashboardLayout>
         );
     }
@@ -209,6 +244,7 @@ export default function SupervisorParametersIndex({ id }) {
 
                             {/* Action Buttons */}
                             <div className="flex items-center gap-3 justify-start">
+                                {/* {n_parameter_methods.some(item => item.sample_id === s.id) ? */}
                                 {formData?.samples?.[s.id] ? (
                                     <>
                                         {/* Detail */}

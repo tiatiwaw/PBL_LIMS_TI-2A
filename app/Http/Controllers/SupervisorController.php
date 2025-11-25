@@ -32,16 +32,4 @@ class SupervisorController extends Controller
     {
         return Inertia::render('supervisor/orders/parameters/detail/index');
     }
-    public function parametersFirst()
-    {
-        return Inertia::render('supervisor/orders/parameters/first/index');
-    }
-    public function parametersSecond()
-    {
-        return Inertia::render('supervisor/orders/parameters/second/index');
-    }
-    public function parametersReview()
-    {
-        return Inertia::render('supervisor/orders/parameters/review/index');
-    }
 }

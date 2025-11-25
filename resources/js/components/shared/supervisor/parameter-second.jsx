@@ -10,95 +10,10 @@ import {
 } from "./parameter-columns";
 import { toast } from "sonner";
 
-// Mock data sesuai dengan database schema
-const MOCK_REAGENTS = [
-    {
-        id: 1,
-        name: "Metanol",
-        formula: "CH3OH",
-        supplier: "PT Kimia Indonesia",
-        batch_number: "B001-2025",
-        storage_location: "Rak A1 - Lab Kimia",
-    },
-    {
-        id: 2,
-        name: "Etanol",
-        formula: "C2H5OH",
-        supplier: "PT Kimia Indonesia",
-        batch_number: "B002-2025",
-        storage_location: "Rak A2 - Lab Kimia",
-    },
-    {
-        id: 3,
-        name: "Aseton",
-        formula: "C3H6O",
-        supplier: "PT Kimia Jaya",
-        batch_number: "B003-2025",
-        storage_location: "Rak B1 - Lab Kimia",
-    },
-    {
-        id: 4,
-        name: "Isopropanol",
-        formula: "C3H8O",
-        supplier: "PT Kimia Jaya",
-        batch_number: "B004-2025",
-        storage_location: "Rak B2 - Lab Kimia",
-    },
-    {
-        id: 5,
-        name: "Aquadest",
-        formula: "H2O",
-        supplier: "PT Kimia Indonesia",
-        batch_number: "B005-2025",
-        storage_location: "Rak C1 - Lab Kimia",
-    },
-];
-
-const MOCK_EQUIPMENTS = [
-    {
-        id: 1,
-        name: "pH Meter Digital",
-        brand_type: "Hanna",
-        serial_number: "SN-HI2211-001",
-        purchase_year: 2023,
-        status: "active",
-    },
-    {
-        id: 2,
-        name: "Thermometer",
-        brand_type: "Amarell",
-        serial_number: "SN-TH100-002",
-        purchase_year: 2022,
-        status: "active",
-    },
-    {
-        id: 3,
-        name: "Spektrofotometer",
-        brand_type: "Hach",
-        serial_number: "SN-DR900-003",
-        purchase_year: 2023,
-        status: "active",
-    },
-    {
-        id: 4,
-        name: "Neraca Analitik",
-        brand_type: "Sartorius",
-        serial_number: "SN-BP221-004",
-        purchase_year: 2021,
-        status: "active",
-    },
-    {
-        id: 5,
-        name: "Pipet Otomatis",
-        brand_type: "Eppendorf",
-        serial_number: "SN-RPLUS-005",
-        purchase_year: 2023,
-        status: "active",
-    },
-];
-
 export default function ParameterSecond({
     sampleId,
+    reagentData,
+    equipmentData,
     formData,
     onEquipmentReagentSelect,
     onNext,
@@ -116,13 +31,13 @@ export default function ParameterSecond({
         if (formData?.samples?.[sampleId]) {
             const sampleData = formData.samples[sampleId];
             if (sampleData.reagents && Array.isArray(sampleData.reagents)) {
-                const reagents = MOCK_REAGENTS.filter((r) =>
+                const reagents = reagentData?.filter((r) =>
                     sampleData.reagents.includes(r.id)
                 );
                 setSelectedReagents(reagents);
             }
             if (sampleData.equipments && Array.isArray(sampleData.equipments)) {
-                const equipments = MOCK_EQUIPMENTS.filter((e) =>
+                const equipments = equipmentData?.filter((e) =>
                     sampleData.equipments.includes(e.id)
                 );
                 setSelectedEquipments(equipments);
@@ -145,12 +60,12 @@ export default function ParameterSecond({
 
     // Hook untuk reagents (dummy implementation)
     const useReagents = () => ({
-        data: MOCK_REAGENTS,
+        data: reagentData,
     });
 
     // Hook untuk equipments (dummy implementation)
     const useEquipments = () => ({
-        data: MOCK_EQUIPMENTS,
+        data: equipmentData,
     });
 
     const handleReagentSelect = (reagent) => {
