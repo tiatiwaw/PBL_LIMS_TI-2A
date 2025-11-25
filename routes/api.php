@@ -46,6 +46,7 @@ use App\Http\Controllers\API\V1\Manager\UnitValueController as ManagerUnitValueC
 use App\Http\Controllers\API\V1\Manager\ReferenceController as ManagerReferenceController;
 use App\Http\Controllers\API\V1\Manager\SampleCategoryController as ManagerSampleCategoryController;
 use App\Http\Controllers\API\V1\Supervisor\OrderController as SupervisorOrderController;
+use App\Http\Controllers\API\V1\Supervisor\ParameterController as SupervisorParameterController;
 
 
 
@@ -187,6 +188,7 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/', [SupervisorOrderController::class, 'index'])->name('index');
                     Route::get('/{id}', [SupervisorOrderController::class, 'show'])->name('show');
+                    Route::get('/{id}/parameters', [SupervisorParameterController::class, 'show'])->name('show');
                 });
             });
 
