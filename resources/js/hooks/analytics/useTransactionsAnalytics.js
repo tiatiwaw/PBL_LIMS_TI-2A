@@ -1,11 +1,15 @@
-import { useMemo } from 'react';
-import { MONTHS } from '@/utils/constant/report';
-import { safeGet } from '@/utils/report-helpers';
-import { formatDate } from '@/utils/formatters';
+import { useMemo } from "react";
+import { MONTHS } from "@/utils/constant/report";
+import { safeGet } from "@/utils/report-helpers";
+import { formatDate } from "@/utils/formatters";
 
-export const useTransactionsAnalytics = (orders = [], dateFilter, isYearlyView) => {
+export const useTransactionsAnalytics = (
+    orders = [],
+    dateFilter,
+    isYearlyView
+) => {
     return useMemo(() => {
-        const filteredOrders = orders.filter(order =>
+        const filteredOrders = orders.filter((order) =>
             dateFilter(order.order_date)
         );
 
@@ -17,19 +21,29 @@ export const useTransactionsAnalytics = (orders = [], dateFilter, isYearlyView) 
         const methodUsageMap = {};
         const methodRevenueMap = {};
         const trendMap = {};
+        const orderTypeMap = {};
+        const orderTypeRevenueMap = {};
 
-        filteredOrders.forEach(order => {
+        filteredOrders.forEach((order) => {
             let currentOrderRevenue = 0;
+            const orderType = order.order_type || "unknown";
 
-            order.analyses_methods?.forEach(method => {
-                const price = parseFloat(safeGet(method, 'pivot.price', 0));
-                const methodName = method.analyses_method || 'Metode Tidak Diketahui';
+            order.analyses_methods?.forEach((method) => {
+                const price = parseFloat(safeGet(method, "pivot.price", 0));
+                const methodName =
+                    method.analyses_method || "Metode Tidak Diketahui";
 
                 currentOrderRevenue += price;
                 totalMethodsUsed++;
 
-                methodUsageMap[methodName] = (methodUsageMap[methodName] || 0) + 1;
-                methodRevenueMap[methodName] = (methodRevenueMap[methodName] || 0) + price;
+                methodUsageMap[methodName] =
+                    (methodUsageMap[methodName] || 0) + 1;
+                methodRevenueMap[methodName] =
+                    (methodRevenueMap[methodName] || 0) + price;
+
+                orderTypeMap[orderType] = (orderTypeMap[orderType] || 0) + 1;
+                orderTypeRevenueMap[orderType] =
+                    (orderTypeRevenueMap[orderType] || 0) + currentOrderRevenue;
             });
 
             totalRevenue += currentOrderRevenue;
@@ -37,8 +51,9 @@ export const useTransactionsAnalytics = (orders = [], dateFilter, isYearlyView) 
                 maxSingleOrderRevenue = currentOrderRevenue;
             }
 
-            const clientName = safeGet(order, 'clients.name', 'Umum/Tunai');
-            clientRevenueMap[clientName] = (clientRevenueMap[clientName] || 0) + currentOrderRevenue;
+            const clientName = safeGet(order, "clients.name", "Umum/Tunai");
+            clientRevenueMap[clientName] =
+                (clientRevenueMap[clientName] || 0) + currentOrderRevenue;
 
             if (order.order_date) {
                 const date = new Date(order.order_date);
@@ -53,49 +68,61 @@ export const useTransactionsAnalytics = (orders = [], dateFilter, isYearlyView) 
             .map(([name, revenue]) => ({ name, revenue }))
             .sort((a, b) => b.revenue - a.revenue);
 
-        const topClient = sortedClients[0] || { name: '-', revenue: 0 };
+        const topClient = sortedClients[0] || { name: "-", revenue: 0 };
 
         const sortedMethodsByUsage = Object.entries(methodUsageMap)
             .map(([name, count]) => ({
                 name,
                 count,
-                totalRev: methodRevenueMap[name] || 0
+                totalRev: methodRevenueMap[name] || 0,
             }))
             .sort((a, b) => b.count - a.count);
 
         const topMethod = sortedMethodsByUsage[0] || {
-            name: '-',
+            name: "-",
             count: 0,
-            totalRev: 0
+            totalRev: 0,
         };
 
-        const topMethodAvgPrice = topMethod.count > 0
-            ? (topMethod.totalRev / topMethod.count)
+        const mostCommonOrderType = Object.entries(orderTypeMap).sort(
+            (a, b) => b[1] - a[1]
+        )[0];
+
+        const mostCommonOrderTypeName = mostCommonOrderType
+            ? mostCommonOrderType[0]
+            : "-";
+
+        const mostCommonOrderTypeRevenue = mostCommonOrderType
+            ? orderTypeRevenueMap[mostCommonOrderTypeName] || 0
             : 0;
 
-        const avgRevenuePerOrder = filteredOrders.length > 0
-            ? totalRevenue / filteredOrders.length
-            : 0;
+        const topMethodAvgPrice =
+            topMethod.count > 0 ? topMethod.totalRev / topMethod.count : 0;
+
+        const avgRevenuePerOrder =
+            filteredOrders.length > 0
+                ? totalRevenue / filteredOrders.length
+                : 0;
 
         let trendChartData;
         if (isYearlyView) {
             trendChartData = Object.entries(trendMap)
                 .map(([year, revenue]) => ({
                     name: year.toString(),
-                    revenue
+                    revenue,
                 }))
                 .sort((a, b) => parseInt(a.name) - parseInt(b.name));
         } else {
-            trendChartData = MONTHS.map(month => ({
+            trendChartData = MONTHS.map((month) => ({
                 name: month.substring(0, 3),
                 fullName: month,
-                revenue: trendMap[month] || 0
+                revenue: trendMap[month] || 0,
             }));
         }
 
         const methodDistributionData = sortedMethodsByUsage
             .slice(0, 5)
-            .map(m => ({ name: m.name, value: m.count }));
+            .map((m) => ({ name: m.name, value: m.count }));
 
         const methodRevenueData = Object.entries(methodRevenueMap)
             .map(([name, value]) => ({ name, value }))
@@ -103,20 +130,22 @@ export const useTransactionsAnalytics = (orders = [], dateFilter, isYearlyView) 
             .slice(0, 8);
 
         const detailedOrders = filteredOrders
-            .map(order => {
-                const revenue = order.analyses_methods?.reduce(
-                    (acc, curr) => acc + parseFloat(safeGet(curr, 'pivot.price', 0)),
-                    0
-                ) || 0;
+            .map((order) => {
+                const revenue =
+                    order.analyses_methods?.reduce(
+                        (acc, curr) =>
+                            acc + parseFloat(safeGet(curr, "pivot.price", 0)),
+                        0
+                    ) || 0;
 
                 return {
                     id: order.id,
                     order_number: order.order_number,
-                    client_name: safeGet(order, 'clients.name', '-'),
+                    client_name: safeGet(order, "clients.name", "-"),
                     order_type: order.order_type,
                     order_date: formatDate(order.order_date),
                     method_count: order.analyses_methods?.length || 0,
-                    revenue
+                    revenue,
                 };
             })
             .sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
@@ -126,6 +155,8 @@ export const useTransactionsAnalytics = (orders = [], dateFilter, isYearlyView) 
             maxSingleOrderRevenue,
             topClient,
             topMethod,
+            mostCommonOrderTypeName,
+            mostCommonOrderTypeRevenue,
             topMethodAvgPrice,
             avgRevenuePerOrder,
             totalOrders: filteredOrders.length,
@@ -135,8 +166,6 @@ export const useTransactionsAnalytics = (orders = [], dateFilter, isYearlyView) 
             methodRevenueData,
 
             detailedOrders,
-
-            isYearlyView
         };
     }, [orders, dateFilter, isYearlyView]);
 };

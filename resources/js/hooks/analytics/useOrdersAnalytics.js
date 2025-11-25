@@ -27,8 +27,6 @@ export const useOrdersAnalytics = (orders = [], dateFilter) => {
             samplesPerOrder: [],
             methodsRank: {},
             categoryDist: {},
-            equipmentRank: {},
-            supplierRank: {},
         };
 
         Object.keys(STATUS_CONFIG).forEach((key) => {
@@ -142,8 +140,6 @@ export const useOrdersAnalytics = (orders = [], dateFilter) => {
         const typeChart = formatForChart(stats.typeDist, 4);
         const methodChart = formatForChart(stats.methodsRank, 7);
         const categoryChart = formatForChart(stats.categoryDist, 6);
-        const equipmentChart = formatForChart(stats.equipmentRank, 5);
-        const supplierChart = formatForChart(stats.supplierRank, 5);
 
         return {
             totalOrders: stats.totalOrders,
@@ -160,8 +156,6 @@ export const useOrdersAnalytics = (orders = [], dateFilter) => {
             typeChart,
             methodChart,
             categoryChart,
-            equipmentChart,
-            supplierChart,
             samplesPerOrder: stats.samplesPerOrder.slice(0, 10),
 
             filteredOrders,

@@ -13,9 +13,7 @@ use App\Http\Controllers\SupervisorController;
 use Inertia\Inertia;
 
 // Home
-Route::controller(HomeController::class)->group(function () {
-    Route::get('/', 'index')->name('index');
-});
+Route::inertia('/', 'index')->name('home');
 
 // Auth
 Route::middleware('guest')->group(function () {

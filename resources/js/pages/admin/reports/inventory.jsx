@@ -19,6 +19,7 @@ import {
     TrendLineChart,
 } from "@/components/shared/admin/report-components";
 import ReportLayout from "@/components/layouts/report-layout";
+import { exportInventoryReport } from "@/utils/excel/export/inventories-report";
 
 export default function AdminReportInventory() {
     const { data: apiData, isLoading, error } = useInventoryReports();
@@ -37,7 +38,9 @@ export default function AdminReportInventory() {
         filters.dateFilter,
         filters.isYearlyView
     );
-    const handleExport = () => console.log("Export data");
+
+    const handleExport = () => exportInventoryReport(analytics);
+
     const hasData = analytics.totalEquipment > 0 || analytics.totalReagents > 0;
 
     return (
@@ -64,7 +67,7 @@ export default function AdminReportInventory() {
                         icon={Package}
                         title="Total Equipment"
                         value={analytics.totalEquipment}
-                        subtitle={`Aktif: ${analytics.statusCounts.active} | Perbaikan: ${analytics.statusCounts.maintenance} | Rusak: ${analytics.statusCounts.broken}`}
+                        subtitle={`Avail: ${analytics.statusCounts.available} | Unavail: ${analytics.statusCounts.unavailable} | Maint: ${analytics.statusCounts.maintenance} | Broken: ${analytics.statusCounts.broken}`}
                         delay={0.1}
                     />
                     <KPICard

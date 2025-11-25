@@ -10,15 +10,24 @@ export const useInventoryAnalytics = (data = {}, dateFilter, isYearlyView) => {
             brands = [],
             suppliers = [],
             grades = [],
-            orders = []
+            orders = [],
         } = data;
 
-        const filteredEquipments = equipments.filter(e => dateFilter(e.purchase_year));
-        const filteredReagents = reagents.filter(r => dateFilter(r.created_at));
-        const filteredOrders = orders.filter(o => dateFilter(o.order_date));
+        const filteredEquipments = equipments.filter((e) =>
+            dateFilter(e.purchase_year)
+        );
+        const filteredReagents = reagents.filter((r) =>
+            dateFilter(r.created_at)
+        );
+        const filteredOrders = orders.filter((o) => dateFilter(o.order_date));
 
-        const statusCounts = { active: 0, maintenance: 0, broken: 0 };
-        filteredEquipments.forEach(e => {
+        const statusCounts = {
+            unavailable: 0,
+            available: 0,
+            maintenance: 0,
+            broken: 0,
+        };
+        filteredEquipments.forEach((e) => {
             const status = e.status || "broken";
             if (statusCounts[status] !== undefined) statusCounts[status]++;
         });
@@ -26,20 +35,20 @@ export const useInventoryAnalytics = (data = {}, dateFilter, isYearlyView) => {
         const equipmentUsage = {};
         const reagentUsage = {};
 
-        filteredOrders.forEach(order => {
-            order.samples?.forEach(sample => {
+        filteredOrders.forEach((order) => {
+            order.samples?.forEach((sample) => {
                 const methods = Array.isArray(sample.n_parameter_methods)
                     ? sample.n_parameter_methods
                     : sample.n_parameter_methods
-                        ? [sample.n_parameter_methods]
-                        : [];
+                    ? [sample.n_parameter_methods]
+                    : [];
 
-                methods.forEach(method => {
-                    method.equipments?.forEach(eq => {
+                methods.forEach((method) => {
+                    method.equipments?.forEach((eq) => {
                         const name = eq.name || "Tanpa Nama";
                         equipmentUsage[name] = (equipmentUsage[name] || 0) + 1;
                     });
-                    method.reagents?.forEach(rg => {
+                    method.reagents?.forEach((rg) => {
                         const name = rg.name || "Tanpa Nama";
                         reagentUsage[name] = (reagentUsage[name] || 0) + 1;
                     });
@@ -55,10 +64,23 @@ export const useInventoryAnalytics = (data = {}, dateFilter, isYearlyView) => {
         };
 
         const statusChartData = [
-            { name: "Active", value: statusCounts.active, color: "#2CACAD" },
-            { name: "Maintenance", value: statusCounts.maintenance, color: "#024D60" },
-            { name: "Broken", value: statusCounts.broken, color: "#02364B" }
-        ].filter(d => d.value > 0);
+            {
+                name: "Tersedia",
+                value: statusCounts.available,
+                color: "#2CACAD",
+            },
+            {
+                name: "Tidak Tersedia",
+                value: statusCounts.unavailable,
+                color: "#ECC94B",
+            },
+            {
+                name: "Perbaikan",
+                value: statusCounts.maintenance,
+                color: "#024D60",
+            },
+            { name: "Rusak", value: statusCounts.broken, color: "#FF0000" },
+        ].filter((d) => d.value > 0);
 
         const brandChartData = objectToChartData(
             filteredEquipments.reduce((acc, e) => {
@@ -86,29 +108,31 @@ export const useInventoryAnalytics = (data = {}, dateFilter, isYearlyView) => {
             }, {})
         ).map((item, i) => ({
             ...item,
-            color: COLORS.chartPalette[i % COLORS.chartPalette.length]
+            color: COLORS.chartPalette[i % COLORS.chartPalette.length],
         }));
 
         const reagentUsageChartData = objectToChartData(reagentUsage, 10);
 
         const trendMap = {};
-        filteredEquipments.forEach(e => {
+        filteredEquipments.forEach((e) => {
             if (e.purchase_year) {
                 const date = new Date(e.purchase_year);
-                const key = isYearlyView ? date.getFullYear() : MONTHS[date.getMonth()];
+                const key = isYearlyView
+                    ? date.getFullYear()
+                    : MONTHS[date.getMonth()];
                 trendMap[key] = (trendMap[key] || 0) + 1;
             }
         });
 
         const trendChartData = isYearlyView
             ? Object.entries(trendMap)
-                .map(([year, count]) => ({ year: +year, name: year, count }))
-                .sort((a, b) => a.year - b.year)
-            : MONTHS.map(month => ({
-                name: month.slice(0, 3),
-                fullName: month,
-                count: trendMap[month] || 0
-            }));
+                  .map(([year, count]) => ({ year: +year, name: year, count }))
+                  .sort((a, b) => a.year - b.year)
+            : MONTHS.map((month) => ({
+                  name: month.slice(0, 3),
+                  fullName: month,
+                  count: trendMap[month] || 0,
+              }));
 
         return {
             totalEquipment: filteredEquipments.length,
@@ -127,8 +151,6 @@ export const useInventoryAnalytics = (data = {}, dateFilter, isYearlyView) => {
             gradeChartData,
             reagentUsageChartData,
             trendChartData,
-
-            isYearlyView
         };
     }, [data, dateFilter, isYearlyView]);
 };
