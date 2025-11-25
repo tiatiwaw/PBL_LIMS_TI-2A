@@ -46,7 +46,6 @@ export default function UserReportDashboard() {
     }));
 
     const handleExport = () => exportUsersReport(analytics);
-    console.log(analytics);
 
     return (
         <ReportLayout
