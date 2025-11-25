@@ -188,6 +188,7 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/', [SupervisorOrderController::class, 'index'])->name('index');
                     Route::get('/{id}', [SupervisorOrderController::class, 'show'])->name('show');
+                    Route::put('/{id}', [SupervisorOrderController::class, 'updateStatus'])->name('update');
                     Route::get('/{id}/parameters', [SupervisorParameterController::class, 'show'])->name('show');
                 });
             });

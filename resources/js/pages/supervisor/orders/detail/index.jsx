@@ -14,16 +14,33 @@ import { usePage, router } from "@inertiajs/react";
 import { useOrder } from "@/hooks/useSupervisor";
 import { VALIDATION_ACTION_TYPES } from "@/utils/constant/validation";
 import { toast } from "sonner";
+import ActionSupervisorDialog from "@/components/shared/dialog/action-supervisor-dialog";
 
 export default function DetailOrder({ canValidate }) {
     const { props } = usePage();
     const { id } = props;
 
-    const { data: order, isLoading, error } = useOrder(id);
-
+    const { data: order, isLoading, update, error } = useOrder(id);
+    const [openDialog, setOpenDialog] = useState(false);
     const [selectedSampleId, setSelectedSampleId] = useState(null);
     const [isValidating, setIsValidating] = useState(false);
+    const [dialogConfig, setDialogConfig] = useState({
+        action: "",
+        title: "",
+        description: "",
+        data: {},
+    });
 
+    const handleUpdate = async (formData) => {
+        try {
+            setIsValidating(true);
+            await update.mutateAsync(formData);
+            setIsValidating(false);
+        } catch (error) {
+            console.error("Update failed:", error);
+            setIsValidating(false);
+        }
+    };
     const handleValidation = async (actionType) => {
         try {
             setIsValidating(true);
@@ -31,50 +48,29 @@ export default function DetailOrder({ canValidate }) {
             // Handle berbagai action type
             switch (actionType) {
                 case VALIDATION_ACTION_TYPES.ACCEPT:
-                    // Accept order - ubah status menjadi pending_payment
-                    // router.post(
-                    //     `/supervisor/orders/${id}/validate`,
-                    //     {
-                    //         action: "accept",
-                    //     },
-                    //     {
-                    //         onSuccess: () => {
-                    //             toast.success("Order berhasil diterima");
-                    //             setIsValidating(false);
-                    //         },
-                    //         onError: (errors) => {
-                    //             toast.error(
-                    //                 errors.message || "Gagal menerima order"
-                    //             );
-                    //             setIsValidating(false);
-                    //         },
-                    //     }
-                    // );
-                    console.log(actionType);
+                    setDialogConfig({
+                        action: "confirm",
+                        title: `Konfirmasi Order ${order.title}`,
+                        description: "Yakin ingin mengkonfirmasi order ini?.",
+                        data: {
+                            action: "approve",
+                            reason: "Menunggu Pembayaran dari Klien.",
+                        },
+                    });
+                    setOpenDialog(true);
                     setIsValidating(false);
                     break;
 
                 case VALIDATION_ACTION_TYPES.REJECT:
-                    // Reject order - ubah status menjadi disapproved
-                    // router.post(
-                    //     `/supervisor/orders/${id}/validate`,
-                    //     {
-                    //         action: "reject",
-                    //     },
-                    //     {
-                    //         onSuccess: () => {
-                    //             toast.success("Order berhasil ditolak");
-                    //             setIsValidating(false);
-                    //         },
-                    //         onError: (errors) => {
-                    //             toast.error(
-                    //                 errors.message || "Gagal menolak order"
-                    //             );
-                    //             setIsValidating(false);
-                    //         },
-                    //     }
-                    // );
-                    console.log(actionType);
+                    setDialogConfig({
+                        action: "reject",
+                        title: `Tolak Order ${order.title}`,
+                        description: "Masukkan alasan penolakan order",
+                        data: {
+                            action: "reject",
+                        },
+                    });
+                    setOpenDialog(true);
                     setIsValidating(false);
                     break;
 
@@ -94,51 +90,30 @@ export default function DetailOrder({ canValidate }) {
 
                 case VALIDATION_ACTION_TYPES.VALIDATE_TEST:
                     // Validate test - ubah status menjadi pending
-                    // router.post(
-                    //     `/supervisor/orders/${id}/validate`,
-                    //     {
-                    //         action: "validate_test",
-                    //     },
-                    //     {
-                    //         onSuccess: () => {
-                    //             toast.success("Hasil test berhasil divalidasi");
-                    //             setIsValidating(false);
-                    //         },
-                    //         onError: (errors) => {
-                    //             toast.error(
-                    //                 errors.message ||
-                    //                     "Gagal memvalidasi hasil test"
-                    //             );
-                    //             setIsValidating(false);
-                    //         },
-                    //     }
-                    // );
-                    console.log(actionType);
+                    setDialogConfig({
+                        action: "confirm",
+                        title: "Validasi Hasil Test",
+                        description:
+                            "Apakah Anda yakin ingin memvalidasi hasil test ini?",
+                        data: {
+                            action: "validate_test",
+                        },
+                    });
+                    setOpenDialog(true);
                     setIsValidating(false);
                     break;
 
                 case VALIDATION_ACTION_TYPES.REPEAT_TEST:
                     // Repeat test - ubah status menjadi in_progress
-                    // router.post(
-                    //     `/supervisor/orders/${id}/validate`,
-                    //     {
-                    //         action: "repeat_test",
-                    //     },
-                    //     {
-                    //         onSuccess: () => {
-                    //             toast.success("Test pengulangan dimulai");
-                    //             setIsValidating(false);
-                    //         },
-                    //         onError: (errors) => {
-                    //             toast.error(
-                    //                 errors.message ||
-                    //                     "Gagal memulai test pengulangan"
-                    //             );
-                    //             setIsValidating(false);
-                    //         },
-                    //     }
-                    // );
-                    console.log(actionType);
+                    setDialogConfig({
+                        action: "Warning",
+                        title: "Ulangi Test",
+                        description: "Test akan dijalankan kembali. Lanjutkan?",
+                        data: {
+                            action: "repeat_test",
+                        },
+                    });
+                    setOpenDialog(true);
                     setIsValidating(false);
                     break;
 
@@ -151,6 +126,11 @@ export default function DetailOrder({ canValidate }) {
             toast.error("Terjadi kesalahan saat memproses validasi");
             setIsValidating(false);
         }
+    };
+
+    const handleDialogConfirm = (data) => {
+        handleUpdate(data);
+        setOpenDialog(false);
     };
 
     useEffect(() => {
@@ -224,6 +204,16 @@ export default function DetailOrder({ canValidate }) {
                         isLoading={isValidating}
                     />
                 )}
+
+                <ActionSupervisorDialog
+                    action={dialogConfig.action}
+                    open={openDialog}
+                    onOpenChange={setOpenDialog}
+                    data={dialogConfig.data}
+                    title={dialogConfig.title}
+                    description={dialogConfig.description}
+                    onConfirm={handleDialogConfirm}
+                />
             </div>
         </DashboardLayout>
     );

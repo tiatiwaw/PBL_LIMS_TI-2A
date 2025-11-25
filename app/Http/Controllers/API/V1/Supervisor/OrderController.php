@@ -68,7 +68,7 @@ class OrderController extends Controller
         if ($validated['action'] === 'approve') {
             $order->status = 'pending_payment';
         } else {
-            $order->status = 'dissaproved';
+            $order->status = 'disapproved';
             // Opsional: Simpan alasan reject ke notes jika ada
             if ($request->filled('reason')) {
                 $order->notes = $request->reason;
@@ -82,5 +82,4 @@ class OrderController extends Controller
             'data'    => $order
         ]);
     }
-
 }
