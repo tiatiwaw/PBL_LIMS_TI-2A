@@ -25,6 +25,8 @@ export default function SupervisorParametersIndex({ id }) {
             // Structure: [sampleId]: { parameter_id, method_id, equipments: [], reagents: [] }
         },
         analysts: [], // Array of analyst IDs
+        estimasiSelesai: "",
+        catatan: "",
         createdAt: new Date().toISOString(),
     });
 
@@ -92,10 +94,12 @@ export default function SupervisorParametersIndex({ id }) {
     };
 
     // Handler untuk update analysts
-    const handleUpdateAnalysts = (analysts) => {
+    const handleUpdateAnalysts = (data) => {
         setFormData((prev) => ({
             ...prev,
-            analysts: analysts || [],
+            analysts: data.analysts || [],
+            estimasiSelesai: data.estimasiSelesai || "",
+            catatan: data.catatan || "",
         }));
     };
 
@@ -252,12 +256,18 @@ export default function SupervisorParametersIndex({ id }) {
                     </Card>
                 ))}
                 {/* BUTTON LANJUT */}
-                <div className="flex justify-end gap-4 mt-8 pt-6 border-t">
+                <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+                    <Button
+                        // onClick={onBack}
+                        className="bg-red-400 hover:bg-red-500 text-white font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 px-8 py-3"
+                    >
+                        Keluar
+                    </Button>
                     <Button
                         onClick={() => {
                             handleStepChange("analysts"), setParameterStep(2);
                         }}
-                        className="bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 px-8 py-3 text-lg"
+                        className="bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 px-8 py-3"
                     >
                         Lanjut
                     </Button>
