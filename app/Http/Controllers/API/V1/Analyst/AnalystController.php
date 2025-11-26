@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Sample;
 use App\Models\NParameterMethod;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -15,24 +16,24 @@ class AnalystController extends Controller
 {
     protected function analyst()
     {
-        return Auth::user()->analysts;
+        return Auth::user();
     }
 
-    public function dashboard()
+    public function dashboard(Request $request): JsonResponse
     {
         $analyst = $this->analyst();
-
         $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id));
-        $pendingOrders = $orders->where('status', 'pending')
-            ->latest()
-            ->take(5)
-            ->get();
-
         $stats = [
             'totalOrder' => $orders->count(),
             'processedOrder' => $orders->where('status', 'in_progress')->count(),
             'completedOrder' => $orders->where('status', 'completed')->count(),
         ];
+
+        $pendingOrders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id))->where('status', 'pending')
+            ->latest()
+            ->take(5)
+            ->get();
+
 
         return response()->json([
             'analyst' => $analyst,
@@ -46,7 +47,7 @@ class AnalystController extends Controller
         $analyst = $this->analyst();
 
         $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id))
-            // ->whereNot('status', 'pending')
+            ->whereNot('status', 'pending')
             ->latest()
             ->get();
 
@@ -58,7 +59,9 @@ class AnalystController extends Controller
         $order->load([
             'samples',
             'samples.sample_categories',
-            'samples.parameter.unit_values',
+            'samples.n_parameter_methods.test_parameters.unit_values',
+            'samples.n_parameter_methods.reagents',
+            'samples.n_parameter_methods.equipments',
             'samples.test_method',
         ]);
 

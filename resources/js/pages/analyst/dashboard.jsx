@@ -6,23 +6,26 @@ import { Card, CardHeader, CardFooter, CardContent } from "@/components/ui/card"
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { getOrdersColumns } from "@/components/shared/analyst/incoming-order-columns";
 import StatCard from "@/components/shared/card/stat-card";
-import { useDashboard } from "@/hooks/analyst/useDashboard";
+import { useDashboard } from "@/hooks/useAnalyst";
 import { useAuth } from "@/hooks/useAuth";
 import Loading from "@/components/ui/loading";
-import { useAcceptOrder } from "@/hooks/analyst/useAcceptOrder";
 
 const Dashboard = () => {
-  const { acceptOrder, loading: acceptLoading } = useAcceptOrder();
-  const { data: dashboardData, refetch: refetchDashboard, isLoading: isDashboardLoading } = useDashboard();
-  const orders = dashboardData?.orders
+
+  const handleAccept = async (id, formData) => {
+      await acceptOrder.mutateAsync({ id, data: formData });
+  };
+
+  const { data: dashboard, isLoading: isDashboardLoading, update: acceptOrder } = useDashboard();
+  const orders = dashboard?.orders
   const [selectedTest, setSelectedTest] = useState(null);
 
   const columns = useMemo(() => getOrdersColumns({ setSelectedTest }), []);
 
   const cards = [
-    { title: "Total Orders", value: String(dashboardData?.stats?.totalOrder ?? 0), subtitle: "Semua pesanan yang tercatat", icon: ShoppingCart },
-    { title: "Total Processed Order", value: String(dashboardData?.stats?.processedOrder ?? 0), subtitle: "Pesanan sedang dikerjakan", icon: Loader },
-    { title: "Total Completed Order", value: String(dashboardData?.stats?.completedOrder ?? 0), subtitle: "Pesanan selesai", icon: CheckCircle },
+    { title: "Total Orders", value: String(dashboard?.stats?.totalOrder ?? 0), subtitle: "Semua pesanan yang tercatat", icon: ShoppingCart },
+    { title: "Total Processed Order", value: String(dashboard?.stats?.processedOrder ?? 0), subtitle: "Pesanan sedang dikerjakan", icon: Loader },
+    { title: "Total Completed Order", value: String(dashboard?.stats?.completedOrder ?? 0), subtitle: "Pesanan selesai", icon: CheckCircle },
   ];
 
   const filterData = [
@@ -36,7 +39,6 @@ const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const currentUser = user 
 
-  if (authLoading || isDashboardLoading) return <Loading/>;
   return (
     <DashboardLayout title="Dashboard Analis" header="Dashboard Analis" user={currentUser}>
       <div className="space-y-8">
@@ -75,10 +77,8 @@ const Dashboard = () => {
               <CardFooter className="flex justify-center gap-4 pb-8">
                 <Button
                   onClick={() => {
-                    acceptOrder(selectedTest.id, () => {
-                    setSelectedTest(null);
-                    refetchDashboard();
-                  });
+                    handleAccept(selectedTest.id, {status: 'in_progress'})
+                    setSelectedTest(null)
                   }}
                   className="rounded-lg px-6 bg-primary-hijauTua text-white hover:bg-primary-hijauTua/90"
                 >

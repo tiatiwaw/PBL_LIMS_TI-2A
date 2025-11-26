@@ -40,4 +40,9 @@ class Reagent extends Model
     {
         return $this->belongsToMany(NParameterMethod::class, 'n_reagents', 'reagent_id', 'n_parameter_method_id');
     }
+
+    public function parameters()
+    {
+        return $this->belongsToMany(TestParameter::class, 'n_reagents');
+    }
 }

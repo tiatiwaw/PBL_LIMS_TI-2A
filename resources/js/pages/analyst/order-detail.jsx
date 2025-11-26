@@ -9,20 +9,30 @@ import SampleConfirmDialog from "@/components/shared/dialog/sample-confirm-dialo
 import SampleUnConfirmDialog from "@/components/shared/dialog/sample-unconfirm-dialog";
 import { Button } from "@/components/ui/button";
 import { FileDown } from "lucide-react";
-import { useOrderDetail } from "@/hooks/analyst/useOrderDetail"; // Asumsi path hook Anda
-import { useResult } from "@/hooks/analyst/useResult"; // Asumsi path hook Anda
+import { useOrderDetail,  useResult} from "@/hooks/useAnalyst"; // Asumsi path hook Anda
+import { toast } from "sonner";
+
 
 export default function OrderDetail({ orderId }) {
-    // Menggunakan hook useOrderDetail untuk mengambil data
     const {
-        order,
-        samples,
+        data,
         isLoading,
-        confirmSample,
-        unconfirmSample,
     } = useOrderDetail(orderId);
 
-	const { saveResult, isSaving, submitResult, isSubmitting, downloadResult, isDownloading } = useResult();
+    const [openSection, setOpenSection] = useState(null);
+
+    const toggleSection = (section) => {
+        setOpenSection(openSection === section ? null : section);
+    };
+
+    const [isSaving, setIsSaving] = useState(false);
+    
+
+
+    const order = data?.order
+    const samples = data?.samples
+
+    const { saveResult, submitResult, isSubmitting, downloadResult, isDownloading } = useResult();
 
     const [viewMode, setViewMode] = useState("input"); // "table" | "input"
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -39,14 +49,20 @@ export default function OrderDetail({ orderId }) {
             setTestResults(
                 samples.map((sample) => ({
                     id: sample.id,
-                    parameter: sample.parameter.map((param) => ({
-                        id: param.id,
-                        result: param.pivot?.result ?? "",
-                    })),
+                    parameter: [
+                        {
+                            id: sample.n_parameter_methods.test_parameters.id,
+                            result: sample.n_parameter_methods.result ?? "",
+                            test_method_id: sample.test_method_id ?? null,
+                            equipment_id: sample.n_parameter_methods.equipment_id ?? null,
+                            reagents: sample.n_parameter_methods.reagents ?? [],
+                        }
+                    ]
                 }))
             );
         }
-    }, [samples]); // Re-initialize when samples data changes
+    }, [samples]);
+
 
     const statusLabelMap = {
         completed: "Completed",
@@ -64,22 +80,24 @@ export default function OrderDetail({ orderId }) {
         regular: "Regular",
     };
 
-    const handleResultChange = (sampleId, paramId, value) => {
-        setTestResults((prev) => {
-            return prev.map((sample) => {
-                if (sample.id === sampleId) {
-                    const updatedParameters = sample.parameter.map((param) => {
-                        if (param.id === paramId) {
-                            return { ...param, result: value };
-                        }
-                        return param;
-                    });
-                    return { ...sample, parameter: updatedParameters };
+    const handleResultChange = (sampleId, value) => {
+    setTestResults(prev =>
+        prev.map(s =>
+            s.id === sampleId
+                ? {
+                    ...s,
+                    parameter: s.parameter.map(p => ({
+                        ...p,
+                        result: value
+                    }))
                 }
-                return sample;
-            });
-        });
-    };
+                : s
+        )
+    );
+};
+
+
+
 
     const handleShowDetail = (sample) => {
         setSelectedSample(sample);
@@ -106,38 +124,34 @@ export default function OrderDetail({ orderId }) {
         setIsUnConfirmDialogOpen(false);
     };
 
-    const handleSaveResults = () => {      
-        const payload = testResults.flatMap((sample) =>
-            sample.parameter.map((param) => ({
+    const handleSaveResults = async () => {
+        const results = testResults.flatMap(sample =>
+            sample.parameter.map(param => ({
                 sample_id: sample.id,
-                parameter: { id: param.id }, 
-                result: param.result,
+                parameter: { id: param.id },
+                result: param.result?.trim() || null,   // optional: kirim null jika kosong
             }))
         );
 
-		console.log(payload)
-        
-        saveResult({ 
-            orderId: order.id, 
-            payload: payload 
-        }, {
-            onSuccess: () => {
-                setIsEditing(false);
+        setIsSaving(true);
+
+        saveResult(
+            order.id,
+            { results },
+            {
+                onSuccess: () => {
+                    setIsEditing(false);               // KEMBALI KE MODE BACA (tombol jadi Edit)
+                    toast.success("Berhasil disimpan!");
+                },
+                onError: (err) => {
+                    toast.error("Gagal menyimpan!");
+                },
+                onSettled: () => {
+                    setIsSaving(false);
+                },
             }
-        });
+        );
     };
-
-    const handleSubmitResults = () => {
-		submitResult(order.id);
-    };
-
-	const handleDownloadPDF = () => {
-		if (!order.result_value) {
-			toast.error("Laporan belum digenerate.");
-			return;
-		}
-		downloadResult(order.id);
-	};
 
     const columns = useMemo(
         () =>
@@ -146,7 +160,6 @@ export default function OrderDetail({ orderId }) {
                 onShowConfirm: handleShowConfirm,
                 onShowUnConfirm: handleShowUnConfirm,
             }),
-        [confirmSample.isLoading, unconfirmSample.isLoading] 
     );
 
     if (isLoading) {
@@ -173,10 +186,9 @@ export default function OrderDetail({ orderId }) {
     }
 
     const orderDetails = [
-        { label: "ID Pemesanan", value: order.order_number ?? "-" },
-        { label: "Judul", value: order.title ?? "-" },
+        { label: "Judul ", value: order.title ?? "-" },
         { label: "Tipe Pemesanan", value: tipeLabelMap[order.order_type] ?? "-" },
-        { label: "Tanggal Order", value: order.order_date ? new Date(order.order_date).toLocaleDateString("id-ID") : "-" },
+        { label: "Tanggal Pesan", value: order.order_date ? new Date(order.order_date).toLocaleDateString("id-ID") : "-" },
         { label: "Estimasi Selesai", value: order.estimate_date ? new Date(order.estimate_date).toLocaleDateString("id-ID") : "-" },
         { label: "Waktu Laporan", value: order.report_issued_at ? new Date(order.report_issued_at).toLocaleDateString("id-ID") : "-" },
         { label: "Catatan", value: order.notes ?? "-" },
@@ -246,82 +258,199 @@ export default function OrderDetail({ orderId }) {
 
                         <div className="flex flex-col gap-4 p-4 bg-white rounded-lg">
                             {samples.map((sample) => {
-                                // Temukan hasil uji yang sesuai dari testResults state
-                                const currentTestResults = testResults.find(tr => tr.id === sample.id);
-                                
+                                const currentTest = testResults.find(tr => tr.id === sample.id);
+                                const param = sample.n_parameter_methods.test_parameters; // langsung sebagai object
+                                const reagents = sample.n_parameter_methods.reagents;
+                                const paramResult = currentTest?.parameter?.[0]?.result ?? "";
+
                                 return (
-                                <div key={sample.id} className="bg-white flex flex-col shadow-md rounded-lg overflow-hidden">
-                                    <h1 className="text-sm p-3 font-medium text-white bg-primary-hijauTua">
-                                        Hasil Sample ({sample.name ?? "Tanpa Nama"})
-                                    </h1>
+                                    <div
+                                        key={sample.id}
+                                        className="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-100"
+                                    >
+                                        {/* Header */}
+                                        <h1 className="text-sm p-3 font-semibold text-white bg-primary-hijauTua">
+                                            Hasil Sample ({sample.name ?? "Tanpa Nama"})
+                                        </h1>
 
-                                    {console.log(sample.id)}
-                                    {console.log(sample.parameter)}
-                                    <div className="flex flex-col gap-2 p-3 py-6">
-                                        {sample.parameter.map((param) => {
-                                            const currentParamResult = currentTestResults?.parameter.find(p => p.id === param.id);
-                                            
-                                            return (
-                                                <div key={param.id} className="flex items-center justify-between w-full">
-                                                    <label className="text-sm text-gray-600">
-                                                        {param.name} ({param.unit_values.value}) :
+                                        {/* Parameter Input */}
+                                        <div className="flex flex-col gap-4 p-5">
+                                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                                                <div className="flex flex-col w-full sm:w-1/3">
+                                                    <label className="text-sm font-medium text-gray-700">
+                                                        {param?.name}
                                                     </label>
+                                                    <p className="text-[11px] text-gray-500 italic">
+                                                        {param?.quality_standard}
+                                                    </p>
+                                                </div>
 
+                                                <div className="flex items-center gap-2 w-full sm:w-2/3">
                                                     <input
                                                         type="text"
-                                                        className={`w-1/2 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-hijauMuda ${
-                                                            !isEditing ? "bg-gray-100 cursor-not-allowed" : ""
-                                                        }`}
+                                                        className={`w-full border rounded-lg px-3 py-2 text-sm shadow-sm
+                                                            focus:outline-none focus:ring-2 focus:ring-primary-hijauMuda
+                                                            ${!isEditing ? "bg-gray-100 cursor-not-allowed" : ""}`}
                                                         disabled={!isEditing}
-                                                        value={currentParamResult?.result ?? ""} // Gunakan value dari state
+                                                        value={paramResult}
                                                         onChange={(e) =>
-                                                            handleResultChange(sample.id, param.id, e.target.value)
+                                                            handleResultChange(sample.id, e.target.value)
                                                         }
                                                         placeholder="Masukkan hasil uji..."
                                                     />
+
+                                                    <span className="border bg-gray-50 text-gray-600 text-sm px-3 py-2 rounded-lg shadow-sm">
+                                                        {param?.unit_values?.value}
+                                                    </span>
                                                 </div>
-                                            )
-                                        })}
+                                            </div>
+                                        </div>
+
+                                        {/* Additional Info Section */}
+                                        <div className="border-t border-gray-200 bg-gray-50 p-5 space-y-3">
+                                            {/* Reagen */}
+                                            <div className="border rounded-lg shadow-sm bg-white">
+                                                <button
+                                                    className="w-full flex justify-between items-center px-4 py-2 text-sm font-semibold text-gray-700"
+                                                    onClick={() => toggleSection(`reagen-${sample.id}`)}
+                                                >
+                                                    Reagen
+                                                    <span className="transition-transform duration-300"
+                                                        style={{
+                                                            transform:
+                                                                openSection === `reagen-${sample.id}` ? "rotate(180deg)" : "rotate(0deg)"
+                                                        }}
+                                                    >
+                                                        ▼
+                                                    </span>
+                                                </button>
+
+                                                <div
+                                                    className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                                                        openSection === `reagen-${sample.id}` ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                                                    }`}
+                                                >
+                                                    <ul className="text-sm text-gray-600 list-disc ml-6 pb-3 pt-1">
+                                                        {reagents.map((r) => (
+                                                            <li key={r.id}>{r.name}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            {/* Metode Pengujian */}
+                                            <div className="border rounded-lg shadow-sm bg-white">
+                                                <button
+                                                    className="w-full flex justify-between items-center px-4 py-2 text-sm font-semibold text-gray-700"
+                                                    onClick={() => toggleSection(`metode-${sample.id}`)}
+                                                >
+                                                    Metode Pengujian
+                                                    <span className="transition-transform duration-300"
+                                                        style={{
+                                                            transform:
+                                                                openSection === `metode-${sample.id}` ? "rotate(180deg)" : "rotate(0deg)"
+                                                        }}
+                                                    >
+                                                        ▼
+                                                    </span>
+                                                </button>
+
+                                                <div
+                                                    className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                                                        openSection === `metode-${sample.id}` ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                                                    }`}
+                                                >
+                                                    <ul className="text-sm text-gray-600 list-disc ml-6 pb-3 pt-1">
+                                                        {sample.test_method.map((m) => (
+                                                            <li key={m.id}>{m.name}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            {/* Alat */}
+                                            <div className="border rounded-lg shadow-sm bg-white">
+                                                <button
+                                                    className="w-full flex justify-between items-center px-4 py-2 text-sm font-semibold text-gray-700"
+                                                    onClick={() => toggleSection(`alat-${sample.id}`)}
+                                                >
+                                                    Alat
+                                                    <span className="transition-transform duration-300"
+                                                        style={{
+                                                            transform:
+                                                                openSection === `alat-${sample.id}` ? "rotate(180deg)" : "rotate(0deg)"
+                                                        }}
+                                                    >
+                                                        ▼
+                                                    </span>
+                                                </button>
+
+                                                <div
+                                                    className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                                                        openSection === `alat-${sample.id}` ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                                                    }`}
+                                                >
+                                                    <ul className="text-sm text-gray-600 list-disc ml-6 pb-3 pt-1">
+                                                        {sample.n_parameter_methods.equipments.map((eq) => (
+                                                            <li key={eq.id}>{eq.name}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>      
+
+                                         </div>
+
                                     </div>
-                                </div>
-                            )})}
+
+                                );
+                            })}
                         </div>
 
-                        {/* Tombol Edit, Save, Submit */}
-                        <div className="flex flex-wrap justify-end gap-3 mt-6">
-                            {!isEditing ? (
+
+                        {/* Tombol Edit, Save */}
+                        {/* Tombol Edit / Save / Loading */}
+                        <div className="flex justify-end mt-6">
+                            {isEditing ? (
                                 <Button
-                                    className="bg-primary-hijauTua text-white"
-                                    onClick={() => setIsEditing(true)}
+                                    onClick={handleSaveResults}
+                                    disabled={isSaving}
+                                    className="min-w-32 flex items-center gap-2 bg-primary-hijauTua hover:bg-primary-hijauMuda"
                                 >
-                                    Edit
+                                    {isSaving ? (
+                                        <>
+                                            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                                                <circle
+                                                    className="opacity-25"
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                    stroke="currentColor"
+                                                    strokeWidth="4"
+                                                    fill="none"
+                                                />
+                                                <path
+                                                    className="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8v8z"
+                                                />
+                                            </svg>
+                                            Menyimpan...
+                                        </>
+                                    ) : (
+                                        "Simpan Hasil"
+                                    )}
                                 </Button>
                             ) : (
                                 <Button
-                                    className="bg-green-600 text-white"
-                                    onClick={handleSaveResults}
+                                    onClick={() => setIsEditing(true)}
+                                    variant="outline"
+                                    className="border-primary-hijauTua text-primary-hijauTua hover:bg-primary-hijauTua hover:text-white"
                                 >
-                                    Save
+                                    Edit Hasil Uji
                                 </Button>
                             )}
-
-							{isSubmitting ? 
-								(<Button
-									disabled
-									className="bg-primary-hijauTua"
-								>
-									Generating...
-								</Button>)
-								:
-								(<Button
-									onClick={handleSubmitResults}
-									className="bg-primary-hijauTua"
-									disabled={confirmSample.isLoading || unconfirmSample.isLoading} // Tambahkan disable saat proses berjalan
-								>
-									Submit & Generate Laporan (PDF)
-								</Button>)
-							}
                         </div>
+
                     </div>
                 )}
 
@@ -336,14 +465,14 @@ export default function OrderDetail({ orderId }) {
                     isOpen={isConfirmDialogOpen}
                     onOpenChange={setIsConfirmDialogOpen}
                     onConfirm={handleConfirmAction}
-                    isPending={confirmSample.isLoading} // Tambahkan isPending
+                    // isPending={confirmSample.isLoading} // Tambahkan isPending
                 />
                 <SampleUnConfirmDialog
                     sample={selectedSample}
                     isOpen={isUnConfirmDialogOpen}
                     onOpenChange={setIsUnConfirmDialogOpen}
                     onUnconfirm={handleUnConfirmAction}
-                    isPending={unconfirmSample.isLoading} // Tambahkan isPending
+                    // isPending={unconfirmSample.isLoading} // Tambahkan isPending
                 />
 
                 {/* Tombol kembali */}

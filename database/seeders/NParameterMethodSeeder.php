@@ -72,13 +72,13 @@ class NParameterMethodSeeder extends Seeder
             foreach ($randomParams as $param) {
                 // Buat hasil tes palsu dengan unit yang benar
                 $resultValue = number_format(rand(1, 1000) / 10, 2);
-                $unit = $param->unitValue ? $param->unitValue->value : 'N/A';
+                $unit = $param->unit_values ? $param->unit_values->value : 'N/A';
 
                 NParameterMethod::create([
                     'sample_id'         => $sample->id,
                     'test_parameter_id' => $param->id,
                     'test_method_id'    => $methods->random()->id,
-                    'result'            => $resultValue . ' ' . $unit,
+                    'result'            => $resultValue,
                     'status'            => $statuses[array_rand($statuses)],
                 ]);
             }

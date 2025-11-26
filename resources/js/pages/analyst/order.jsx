@@ -2,13 +2,13 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { useMemo } from "react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { getOrdersColumns } from "@/components/shared/analyst/order-columns";
-import { useOrders } from "@/hooks/analyst/useOrders";
+import { useOrders } from "@/hooks/useAnalyst";
 import Loading from "@/components/ui/loading";
 import { useAuth } from "@/hooks/useAuth";
 
 const OrderPage = () => {
   const { user, loading: authLoading } = useAuth();
-  const { data: ordersData, isLoading, refetch } = useOrders();
+  const { data: ordersData, isLoading8 } = useOrders();
   const orders = ordersData?.orders
 
   const filterData = [
@@ -21,9 +21,7 @@ const OrderPage = () => {
     { value: "received", label: "Received" },
   ];
 
-  const columns = useMemo(() => getOrdersColumns({ refetch }), [refetch]);
-
-  if (isLoading) return <Loading />;
+  const columns = useMemo(() => getOrdersColumns());
 
   return (
     <DashboardLayout

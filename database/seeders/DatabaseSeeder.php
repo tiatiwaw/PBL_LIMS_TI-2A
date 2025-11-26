@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
     {
         // Seeder User
         $this->call([
+
             UserRoleSeeder::class,
             ClientSeeder::class,
             AnalystSeeder::class,
@@ -31,8 +32,8 @@ class DatabaseSeeder extends Seeder
         // Master Data Independen
         $this->call([
             // BrandTypeSeeder::class,
-            // GradeSeeder::class,
-            // SupplierSeeder::class,
+            GradeSeeder::class,
+            SupplierSeeder::class,
             SampleCategorySeeder::class,
             UnitValueSeeder::class,
             AnalysesMethodSeeder::class,
@@ -56,8 +57,10 @@ class DatabaseSeeder extends Seeder
             NAnalysesMethodsOrdersSeeder::class,
             NAnalystSeeder::class,
             NParameterMethodSeeder::class,
-            NEquipmentSeeder::class,
+            GradeSeeder::class,
             NReagentSeeder::class,
+            NReagentSeeder::class,
+            NEquipmentSeeder::class,
             NTrainingAnalystSeeder::class,
         ]);
     }

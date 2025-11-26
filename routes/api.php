@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\V1\Admin\AnalystController;
+use App\Http\Controllers\API\V1\Analyst\AnalystController as AnalystAnalystController;
 use App\Http\Controllers\API\V1\Admin\BrandTypeController;
 use App\Http\Controllers\API\V1\Admin\CertificateController;
 use App\Http\Controllers\API\V1\Admin\DashboardController;
@@ -124,18 +125,19 @@ Route::prefix('v1')->group(function () {
             });
             
             Route::prefix('analyst')
-                ->middleware(['auth:sanctum', 'analyst'])
+                ->middleware(['role:analyst'])
                 ->name('api.analyst.')
                 ->group(function () {
-                    Route::get('/dashboard', [AnalystController::class, 'dashboard'])->name('dashboard');
-                    Route::get('/orders', [AnalystController::class, 'orders'])->name('orders');
-                    Route::get('/orders/{order}', [AnalystController::class, 'detail'])->name('orders.detail');
-                    Route::put('/orders/accept/{order}', [AnalystController::class, 'accept'])->name('orders.accept');
-                    Route::post('/samples/{sample}/confirm', [AnalystController::class, 'confirm'])->name('samples.confirm');
-                    Route::post('/samples/{sample}/unconfirm', [AnalystController::class, 'unconfirm'])->name('samples.unconfirm');
-                    Route::put('/orders/save/{order}', [AnalystController::class, 'saveReport'])->name('orders.save');
-                    Route::put('/orders/submit/{order}', [AnalystController::class, 'submitReport'])->name('orders.submit');
-                    Route::get('/orders/download/{order}', [AnalystController::class, 'downloadReport'])->name('orders.download');
+                    Route::get('/dashboard', [AnalystAnalystController::class, 'dashboard'])->name('dashboard');
+                    Route::put('/dashboard/{order}', [AnalystAnalystController::class, 'accept'])->name('orders.accept');
+                    Route::get('/orders', [AnalystAnalystController::class, 'orders'])->name('orders');
+                    Route::get('/orders/{order}', [AnalystAnalystController::class, 'detail'])->name('orders.detail');
+                    Route::get('/samples/{order}', [AnalystAnalystController::class, 'detail'])->name('orders.detail');
+                    Route::post('/samples/{sample}/confirm', [AnalystAnalystController::class, 'confirm'])->name('samples.confirm');
+                    Route::post('/samples/{sample}/unconfirm', [AnalystAnalystController::class, 'unconfirm'])->name('samples.unconfirm');
+                    Route::put('/orders/save/{order}', [AnalystAnalystController::class, 'saveReport'])->name('orders.save');
+                    Route::put('/orders/submit/{order}', [AnalystAnalystController::class, 'submitReport'])->name('orders.submit');
+                    Route::get('/orders/download/{order}', [AnalystAnalystController::class, 'downloadReport'])->name('orders.download');
                 });
 
             // Client

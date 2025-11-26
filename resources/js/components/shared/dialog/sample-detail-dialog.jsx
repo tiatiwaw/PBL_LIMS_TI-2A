@@ -7,9 +7,26 @@ const statusVariantMap = {
 
 const conditionVariantMap = {
     good: "success",
-    gamaged: "error",
+    damaged: "error",
     expired: "error",
 };
+
+const conditionLabelMap = {
+    good: "Baik",
+    damaged: "Rusak",
+    expired: "Kadaluarsa",
+}
+
+const statusLabelMap = {
+    done: "Selesai",
+    in_progress: "Dalam Proses",
+}
+
+const formLabelMap = {
+    gas: "Gas",
+    solid: "Padat",
+    liquid: "Cair",
+}
 
 export default function SampleDetailsDialog({ sample, isOpen, onOpenChange }) {
     if (!sample) return null;
@@ -21,7 +38,7 @@ export default function SampleDetailsDialog({ sample, isOpen, onOpenChange }) {
             title={`Detail sampel - ${sample.name}.`}
             fields={[
                 { label: "Kategori", value: sample.sample_categories.name },
-                { label: "Wujud", value: sample.form },
+                { label: "Wujud", value: formLabelMap[sample.form ]},
                 { label: "Metode Penyimpanan", value: sample.preservation_method },
                 {
                     label: "Kondisi",
@@ -31,7 +48,7 @@ export default function SampleDetailsDialog({ sample, isOpen, onOpenChange }) {
                 },
                 {
                     label: "Metode Pengujian",
-                    value: statusLabelMap[sample.test_method.name],
+                    value: sample.test_method?.map(tm => tm.name).join(", "),
                 },
                 {
                     label: "Status",

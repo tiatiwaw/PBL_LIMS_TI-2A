@@ -10,7 +10,6 @@ class AnalystController extends Controller
 {
     public function index()
     {
-        dd(NParameterMethod::pluck('sample_id')->toArray());
         return redirect()->route('analyst.dashboard');
     }
 
