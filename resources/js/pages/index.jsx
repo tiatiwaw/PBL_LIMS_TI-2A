@@ -6,6 +6,11 @@ export default function HomePage() {
     const { props } = usePage();
     const role = props?.auth?.user?.role || null;
     const handleRedirect = () => {
+        if (!role) {
+            router.visit(route("auth.login.form"));
+            return;
+        }
+
         switch (role) {
             case "admin":
                 router.visit(route("admin.index"));
@@ -29,7 +34,7 @@ export default function HomePage() {
                 router.visit("/");
                 break;
         }
-    }
+    };
     return (
         <div className="min-h-screen bg-gradient-to-br from-primary-hijauGelap via-primary-hijauTua to-primary-hijauGelap relative overflow-hidden">
             <Head title="Home" />
@@ -44,7 +49,6 @@ export default function HomePage() {
 
             <div className="relative z-10 min-h-screen flex items-center justify-center px-6 md:px-12 lg:px-24">
                 <div className="max-w-7xl w-full grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-
                     <div className="space-y-8 text-center lg:text-left">
                         <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full border border-white/10">
                             <FlaskConical className="w-6 h-6 text-primary-hijauMuda" />
@@ -68,7 +72,9 @@ export default function HomePage() {
                                 </span>
                             </h1>
                             <p className="text-lg md:text-xl text-primary-hijauTerang/70 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                                Elevate your research with cutting-edge laboratory management solutions designed for precision and efficiency.
+                                Elevate your research with cutting-edge
+                                laboratory management solutions designed for
+                                precision and efficiency.
                             </p>
                         </div>
 
@@ -89,19 +95,25 @@ export default function HomePage() {
                                 <div className="w-10 h-10 bg-primary-hijauMuda/10 rounded-lg flex items-center justify-center mx-auto lg:mx-0">
                                     <Shield className="w-5 h-5 text-primary-hijauMuda" />
                                 </div>
-                                <p className="text-sm text-primary-hijauTerang font-medium">Secure</p>
+                                <p className="text-sm text-primary-hijauTerang font-medium">
+                                    Secure
+                                </p>
                             </div>
                             <div className="space-y-2">
                                 <div className="w-10 h-10 bg-primary-toska/10 rounded-lg flex items-center justify-center mx-auto lg:mx-0">
                                     <Zap className="w-5 h-5 text-primary-toska" />
                                 </div>
-                                <p className="text-sm text-primary-hijauTerang font-medium">Fast</p>
+                                <p className="text-sm text-primary-hijauTerang font-medium">
+                                    Fast
+                                </p>
                             </div>
                             <div className="space-y-2">
                                 <div className="w-10 h-10 bg-primary-hijauMuda/10 rounded-lg flex items-center justify-center mx-auto lg:mx-0">
                                     <Sparkles className="w-5 h-5 text-primary-hijauMuda" />
                                 </div>
-                                <p className="text-sm text-primary-hijauTerang font-medium">Modern</p>
+                                <p className="text-sm text-primary-hijauTerang font-medium">
+                                    Modern
+                                </p>
                             </div>
                         </div>
                     </div>

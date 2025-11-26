@@ -5,12 +5,10 @@ import {
     Search,
     ListTodo,
 } from "lucide-react";
-
 import { useOrderReports } from "@/hooks/useAdmin";
 import { useReportFilters } from "@/hooks/useReportFilters";
 import { useOrdersAnalytics } from "@/hooks/analytics/useOrdersAnalytics";
 import { COLORS, STATUS_CONFIG } from "@/utils/constant/report";
-
 import {
     DistributionPieChart,
     KPICard,
@@ -18,13 +16,14 @@ import {
     SimpleBarChart,
 } from "@/components/shared/admin/report-components";
 import ReportLayout from "@/components/layouts/report-layout";
+import { exportOrdersReport } from "@/utils/excel/export/orders-report";
 
 export default function OrdersReportDashboard() {
     const { data: orders = [], isLoading, error } = useOrderReports();
     const filters = useReportFilters([orders], ["order_date"]);
     const analytics = useOrdersAnalytics(orders, filters.dateFilter);
 
-    const handleExport = () => console.log("Export orders data");
+    const handleExport = () => exportOrdersReport(analytics);
 
     const enhancedStatusChart = analytics.statusChart.map((entry, index) => {
         const statusKey = Object.keys(STATUS_CONFIG).find(

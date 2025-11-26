@@ -32,10 +32,19 @@ export default function ClientPage({ auth }) {
     const handleShowHistory = (orders) => {
         router.visit(route('client.orders.status', { id: orders.id }));
     };
+    const handlePayment = (orders) => {
+        router.visit(route('client.orders.payment', { id: orders.id }));
+    };
+    const handleDownload = (orders) => {
+        router.visit(route('client.orders.download', { id: orders.id }));
+    };
+
     const columns = useMemo(
         () => getOrdersColumns({
             onShowDetail: handleShowDetail, 
-            onShowHistory: handleShowHistory 
+            onShowHistory: handleShowHistory,
+            onPayment: handlePayment,
+            onDownload: handleDownload,
         }),
         []
     );

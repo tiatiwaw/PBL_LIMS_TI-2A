@@ -20,7 +20,7 @@ class ClientController extends Controller
         
         // Get orders with pagination
         $orders = Order::with('clients')
-            ->where('client_id', $user->id)
+            ->where('client_id', $user->clients->id)
             ->latest()
             ->paginate(10);
         

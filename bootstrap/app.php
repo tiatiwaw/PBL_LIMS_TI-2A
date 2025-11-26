@@ -28,11 +28,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
 
-        $middleware->redirectGuestsTo(function ($request) {
-            if ($request->expectsJson()) {
-                return null;
+        $middleware->redirectGuestsTo(fn($request) => route('auth.login.form'));
+
+        $middleware->redirectUsersTo(function ($request) {
+            if ($request->user()) {
+                return $request->user()->getRedirectRoute();
             }
-            return route('auth.login.form');
+            return '/';
         });
     })
     ->withExceptions(function (Exceptions $exceptions) {

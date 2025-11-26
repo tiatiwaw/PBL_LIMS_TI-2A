@@ -23,6 +23,7 @@ import {
     TrendAreaChart,
 } from "@/components/shared/admin/report-components";
 import ReportLayout from "@/components/layouts/report-layout";
+import { exportTransactionsReport } from "@/utils/excel/export/transaction-report";
 
 export default function SalesReportDashboard() {
     const { data: orders = [], isLoading, error } = useTransactionReports();
@@ -35,7 +36,7 @@ export default function SalesReportDashboard() {
         filters.isYearlyView
     );
 
-    const handleExport = () => console.log("Export transaction data");
+    const handleExport = () => exportTransactionsReport(analytics);
 
     const getTruncatedClientName = (name) =>
         name.length > 18 ? name.substring(0, 18) + "..." : name;
@@ -104,13 +105,11 @@ export default function SalesReportDashboard() {
                     />
                     <KPICard
                         icon={CreditCard}
-                        title={
-                            analytics.isYearlyView
-                                ? "Pendapatan Total"
-                                : `Pendapatan ${MONTHS[filters.selectedMonth]}`
-                        }
-                        value={formatCurrency(analytics.totalRevenue)}
-                        subtitle="Periode terpilih"
+                        title="Pendapatan Tipe Order Terbanyak"
+                        value={formatCurrency(
+                            analytics.mostCommonOrderTypeRevenue
+                        )}
+                        subtitle={`Dari tipe order ${analytics.mostCommonOrderTypeName}`}
                         delay={0.6}
                     />
                 </>

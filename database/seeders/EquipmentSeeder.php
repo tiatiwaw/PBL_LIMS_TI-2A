@@ -23,7 +23,7 @@ class EquipmentSeeder extends Seeder
                 'serial_number' => 'EPD-001',
                 'purchase_year' => '2022-01-15',
                 'calibration_schedule' => 'internal',
-                'status' => 'active',
+                'status' => 'available',
                 'location' => 'Laboratorium Kimia',
             ],
             [
@@ -41,7 +41,7 @@ class EquipmentSeeder extends Seeder
                 'serial_number' => 'HAN-123',
                 'purchase_year' => '2023-03-05',
                 'calibration_schedule' => 'internal',
-                'status' => 'active',
+                'status' => 'unavailable',
                 'location' => 'Laboratorium Mikrobiologi',
             ],
             [
