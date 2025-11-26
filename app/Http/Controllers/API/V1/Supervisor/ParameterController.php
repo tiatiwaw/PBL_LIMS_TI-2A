@@ -7,11 +7,13 @@ use App\Models\Analyst;
 use App\Models\Equipment;
 use App\Models\NParameterMethod;
 use App\Models\Order;
+use App\Models\NAnalyst;
 use App\Models\Reagent;
 use App\Models\TestMethod;
 use App\Models\TestParameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class ParameterController extends Controller
 {
@@ -169,5 +171,50 @@ class ParameterController extends Controller
                 'error'   => $e->getMessage(),
             ], 500);
         }
+    }
+
+   /**
+     * TUGAS SUPERVISOR:
+     * 1. Masukin notes, estimasi selesai, dan pilih Analyst (Bisa banyak).
+     * 2. Ganti status order dari 'paid' jadi 'in_progress'.
+     */
+    public function assignAnalyst(Request $request, $orderId)
+    {
+        // 1. Validasi Input
+        // Kita ubah nama parameternya jadi 'analysts' biar cocok sama index.jsx
+        $request->validate([
+            'notes'           => 'nullable|string',
+            'estimate_date' => 'required|date',
+            'analysts'        => 'required|array|min:1', // Wajib array & minimal 1
+            'analysts.*'      => 'exists:analysts,id',   // Cek validitas ID
+        ]);
+
+        // Gunakan Transaksi Database
+        DB::beginTransaction();
+
+        // 2. Ambil Data Order
+        // findOrFail otomatis return 404 kalau ID gak ketemu, jadi gak perlu try-catch manual buat ini
+        $order = Order::findOrFail($orderId);
+
+        // 3. Update Data Order
+        $order->update([
+            'notes'         => $request->notes,
+            'estimate_date' => $request->estimate_date,
+            'status'        => 'in_progress', 
+        ]);
+
+        $order->analysts()->sync($request->analysts);
+
+        
+        // Simpan perubahan
+        DB::commit();
+
+        $order->load('analysts');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order berhasil diproses ke Analyst.',
+            'data'    => $order
+        ], 200);
     }
 }
