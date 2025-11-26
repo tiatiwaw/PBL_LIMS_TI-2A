@@ -20,6 +20,7 @@ class Reagent extends Model
     protected $fillable = [
         'supplier_id',
         'grade_id',
+        'unit_value_id',
         'name',
         'formula',
         'batch_number',
