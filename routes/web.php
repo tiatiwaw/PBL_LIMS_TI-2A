@@ -198,13 +198,15 @@ Route::controller(ClientController::class)
         Route::get('/', 'index')->name('index');
         Route::get('/profile', 'profile')->name('profile');
         Route::get('/history', 'history')->name('history');
-
+        
         // Orders - sesuaikan dengan API structure
         Route::prefix('orders')
             ->name('orders.')
             ->group(function () {
                 Route::get('/{id}', 'orderDetail')->name('show');
                 Route::get('/status/{id}', 'orderStatus')->name('status');
+                Route::get('/payment/{id}', 'orderPayment')->name('payment');
+                Route::post('/download/{id}', 'downloadReport')->name('download');
             });
     });
 
