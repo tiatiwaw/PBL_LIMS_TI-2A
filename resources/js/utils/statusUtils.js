@@ -9,7 +9,8 @@ const LABELS = {
         failed: "Gagal",
     },
     equipmentStatus: {
-        active: "Aktif",
+        available: "Tersedia",
+        unavailable: "Dipakai",
         maintenance: "Perbaikan",
         broken: "Rusak",
     },
@@ -29,7 +30,7 @@ const LABELS = {
         good: "Baik",
         damaged: "Rusak",
         expired: "Kadaluarsa",
-    }
+    },
 };
 
 const VARIANTS = {
@@ -56,7 +57,8 @@ const VARIANTS = {
         failed: "error",
     },
     equipmentStatus: {
-        active: "success",
+        available: "success",
+        unavailable: "info",
         maintenance: "warning",
         broken: "error",
     },
