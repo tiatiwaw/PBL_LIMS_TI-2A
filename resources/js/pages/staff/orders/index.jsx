@@ -145,11 +145,11 @@ export default function OrdersPage() {
 
     return (
         <DashboardLayout title="Orders" header="Registrasi Order Baru">
-            <div ref={formTopRef} className="px-4 py-2 rounded-md shadow-sm">
+            <div ref={formTopRef} className="px-4 py-2 rounded-md">
                 <StepperFirst currentStep={step} />
             </div>
 
-            <div className="px-4 py-2 rounded-md shadow-sm">
+            <div className="px-4 py-2 rounded-md">
                 {isSaved ? (
                     <>
                         {/* ✅ Header sukses seperti di gambar */}

@@ -9,7 +9,7 @@ const steps = [
 
 export default function Stepper({ currentStep = 1 }) {
     return (
-        <div className="px-4 py-8 md:px-8 rounded-2xl shadow-sm">
+        <div className="px-4 py-8 md:px-8 rounded-2xl">
             <h2 className="text-2xl font-semibold text-teal-700 mb-2">
                 Registrasi Order Baru
             </h2>
