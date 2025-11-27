@@ -11,7 +11,12 @@ use App\Http\Controllers\API\V1\Client\ClientController as ClientClientControlle
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 // use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
-use App\Http\Controllers\StaffApiController;
+
+// =======================
+// Tambahan: import ProfileController untuk Analyst
+// =======================
+use App\Http\Controllers\API\V1\Analyst\ProfileController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
@@ -25,10 +30,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
             Route::get('/', [DashboardController::class, 'index']);
 
-            // Route::apiResource('users', AdminApiUser::class);
-            // Route::apiResource('orders', AdminApiOrder::class)->except(['index', 'show']);
-            // Route::apiResource('activities', AdminApiActivity::class);
-
             // Tools
             Route::prefix('tools')
                 ->name('tools.')
@@ -36,22 +37,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
                     Route::apiResource('equipments', EquipmentController::class);
                     Route::apiResource('brands', BrandTypeController::class);
                 });
-
-            // Materials
-            // Route::prefix('materials')->name('materials.')->group(function () {
-            //     Route::apiResource('reagents', AdminApiReagent::class)->except(['index']);
-            //     Route::apiResource('grades', AdminApiGrade::class)->except(['index']);
-            //     Route::apiResource('suppliers', AdminApiSupplier::class)->except(['index']);
-            // });
-
-            // Tests
-            // Route::prefix('tests')->name('tests.')->group(function () {
-            //     Route::apiResource('parameters', AdminApiParameter::class)->except(['index']);
-            //     Route::apiResource('methods', AdminApiMethod::class)->except(['index']);
-            //     Route::apiResource('units', AdminApiUnit::class)->except(['index']);
-            //     Route::apiResource('references', AdminApiReference::class)->except(['index']);
-            //     Route::apiResource('categories', AdminApiCategory::class)->except(['index']);
-            // });
         });
 
     // Staff
@@ -60,7 +45,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         ->name('api.staff.')
         ->group(function () {
 
-            // Resource untuk manage-clients
             Route::apiResource('manage-clients', ClientController::class)
                 ->names([
                     'index'   => 'clients.index',
@@ -69,10 +53,8 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
                     'destroy' => 'clients.destroy',
                 ])
                 ->parameters([
-                    'manage-clients' => 'client', // supaya param jadi {client}, bukan {manage_client}
+                    'manage-clients' => 'client',
                 ]);
-
-            // Orders
 
             Route::prefix('orders')->name('orders.')->group(function () {
                 Route::get('/', [OrderController::class, 'index'])->name('index');
@@ -80,9 +62,10 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
                 Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
             });
         });
-        
+
+    // Analyst
     Route::prefix('analyst')
-        ->middleware(['auth:sanctum', 'analyst'])
+        ->middleware('analyst')
         ->name('api.analyst.')
         ->group(function () {
             Route::get('/dashboard', [AnalystController::class, 'dashboard'])->name('dashboard');
@@ -94,18 +77,42 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::put('/orders/save/{order}', [AnalystController::class, 'saveReport'])->name('orders.save');
             Route::put('/orders/submit/{order}', [AnalystController::class, 'submitReport'])->name('orders.submit');
             Route::get('/orders/download/{order}', [AnalystController::class, 'downloadReport'])->name('orders.download');
+
+            // ==========================================================
+            //                PROFILE ANALYST (TAMBAHAN)
+            // ==========================================================
+            Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+
+            Route::post('/profile/update-photo', [ProfileController::class, 'updatePhoto'])
+                ->name('profile.updatePhoto');
+
+            Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])
+                ->name('profile.changePassword');
+
+            // Certification
+            Route::post('/profile/certifications', [ProfileController::class, 'addCertification'])
+                ->name('profile.addCertification');
+            Route::delete('/profile/certifications/{id}', [ProfileController::class, 'deleteCertification'])
+                ->name('profile.deleteCertification');
+
+            // Training
+            Route::post('/profile/trainings', [ProfileController::class, 'addTraining'])
+                ->name('profile.addTraining');
+            Route::delete('/profile/trainings/{id}', [ProfileController::class, 'deleteTraining'])
+                ->name('profile.deleteTraining');
+            // ==========================================================
+            //              END PROFILE ANALYST
+            // ==========================================================
         });
 
-        // Client
+    // Client
     Route::prefix('client')
-        ->middleware(['auth:sanctum', 'client'])
+        ->middleware('client')
         ->name('api.client.')
         ->group(function () {
-            
-            // Dashboard & Profile
+
             Route::get('/', [ClientClientController::class, 'index'])->name('index');
 
-            // Orders - menggunakan apiResource untuk efisiensi
             Route::prefix('orders')
                 ->name('orders.')
                 ->group(function () {
