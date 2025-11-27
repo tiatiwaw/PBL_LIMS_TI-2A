@@ -25,20 +25,25 @@ const handleServiceError = (
 };
 
 const createFormData = (data) => {
+    if (data instanceof FormData) {
+        return data;
+    }
+
     const formData = new FormData();
 
     const appendToFormData = (obj, parentKey = "") => {
+        if (!obj) return;
         Object.entries(obj).forEach(([key, value]) => {
             if (value === undefined) return;
             const fullKey = parentKey ? `${parentKey}[${key}]` : key;
 
             if (value instanceof File) {
-                formData.append(fullKey, value, value.name);
+                formData.append(fullKey, value);
             } else if (value instanceof Blob) {
                 formData.append(fullKey, value);
             } else if (value instanceof Date) {
-                formData.append(fullKey, value.toISOString());
-            } else if (typeof value === "object" && value !== null) {
+                formData.append(fullKey, value.toISOString().split("T")[0]);
+            } else if (typeof value === "object") {
                 appendToFormData(value, fullKey);
             } else {
                 formData.append(fullKey, value);
@@ -57,6 +62,7 @@ export const serviceMethods = (
     const handleRequest = async (method, url, data, config, defaultMessage) => {
         try {
             let requestData = data;
+            let requestMethod = method;
             const finalConfig = { ...axiosConfig, ...config };
 
             if (
@@ -65,11 +71,21 @@ export const serviceMethods = (
                 ["post", "put", "patch"].includes(method)
             ) {
                 requestData = createFormData(data);
+
+                if (method === "put" || method === "patch") {
+                    requestMethod = "post";
+                    requestData.append("_method", method.toUpperCase());
+                }
+
+                finalConfig.headers = {
+                    ...finalConfig.headers,
+                    "Content-Type": "multipart/form-data",
+                };
             }
 
             const response = await api.request({
                 url,
-                method,
+                method: requestMethod,
                 data: requestData,
                 ...finalConfig,
             });
@@ -150,7 +166,6 @@ export const serviceMethods = (
             Object.entries(additionalData).forEach(
                 ([k, v]) => v != null && formData.append(k, v)
             );
-
             return handleRequest(
                 "post",
                 `${baseUrl}/upload`,
@@ -166,7 +181,6 @@ export const serviceMethods = (
             Object.entries(additionalData).forEach(
                 ([k, v]) => v != null && formData.append(k, v)
             );
-
             return handleRequest(
                 "post",
                 `${baseUrl}/upload-multiple`,

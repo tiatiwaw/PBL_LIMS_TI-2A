@@ -7,6 +7,11 @@ import { toast } from "sonner";
 export const useOrders = () =>
     useCrud(supervisorService.orders, "orders", "orders", { only: ["getAll"] });
 
+export const useAnalysts = () =>
+    useCrud(supervisorService.analysts, "analysts", "analis", {
+        only: ["getAll"],
+    });
+
 export const useOrder = (id) => {
     const queryClient = useQueryClient();
 

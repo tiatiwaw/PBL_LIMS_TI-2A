@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId(column: 'client_id')->constrained('clients')->cascadeOnDelete();
+            $table->foreignId(column: 'supervisor_id')->constrained('users')->cascadeOnDelete();
             $table->string('order_number')->nullable();
             $table->string('title')->nullable();
             $table->string('result_value')->nullable();

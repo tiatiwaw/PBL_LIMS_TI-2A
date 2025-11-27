@@ -1,7 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import ActionColumn from "../tabel/action-column";
-import { Copy } from "lucide-react";
-import { getCategoryTypeVariant, getDetectionTypeVariant } from "@/utils/statusUtils";
+import { Eye } from "lucide-react";
+import {
+    getCategoryTypeVariant,
+    getDetectionTypeVariant,
+} from "@/utils/statusUtils";
 
 export const getParametersColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No.", enableSorting: false },
@@ -38,13 +41,22 @@ export const getParametersColumns = ({ onShowDetail }) => [
             );
         },
     },
-    { accessorKey: "quality_standard", header: "Standar Kualitas", enableSorting: true },
+    {
+        accessorKey: "quality_standard",
+        header: "Standar Kualitas",
+        enableSorting: true,
+    },
     {
         id: "aksi",
         header: "Aksi",
         enableSorting: false,
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn
+                onDetail={onShowDetail}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                row={row}
+            />
         ),
     },
 ];
@@ -52,15 +64,28 @@ export const getParametersColumns = ({ onShowDetail }) => [
 export const getMethodsColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No.", enableSorting: false },
     { accessorKey: "name", header: "Nama Metode", enableSorting: true },
-    { accessorKey: "applicable_parameter", header: "Parameter Berlaku", enableSorting: true },
+    {
+        accessorKey: "applicable_parameter",
+        header: "Parameter Berlaku",
+        enableSorting: true,
+    },
     { accessorKey: "duration", header: "Durasi", enableSorting: true },
-    { accessorKey: "validity_period", header: "Masa Berlaku", enableSorting: true },
+    {
+        accessorKey: "validity_period",
+        header: "Masa Berlaku",
+        enableSorting: true,
+    },
     {
         id: "aksi",
         header: "Aksi",
         enableSorting: false,
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn
+                onDetail={onShowDetail}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                row={row}
+            />
         ),
     },
 ];
@@ -73,7 +98,12 @@ export const getUnitsColumns = ({ onShowDetail }) => [
         header: "Aksi",
         enableSorting: false,
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn
+                onDetail={onShowDetail}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                row={row}
+            />
         ),
     },
 ];
@@ -86,7 +116,12 @@ export const getStandardsColumns = ({ onShowDetail }) => [
         header: "Aksi",
         enableSorting: false,
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn
+                onDetail={onShowDetail}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                row={row}
+            />
         ),
     },
 ];
@@ -99,7 +134,12 @@ export const getSampleCategoriesColumns = ({ onShowDetail }) => [
         header: "Aksi",
         enableSorting: false,
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn
+                onDetail={onShowDetail}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                row={row}
+            />
         ),
     },
 ];
@@ -115,24 +155,53 @@ export const getSertifColumns = ({ onShowDetail }) => [
             return row.analyst?.name || "-";
         },
     },
-    { accessorKey: "issued_date", header: "Tanggal Terbit", enableSorting: true },
-    { accessorKey: "expired_date", header: "Tanggal Kadaluarsa", enableSorting: true },
+    {
+        accessorKey: "issued_date",
+        header: "Tanggal Terbit",
+        enableSorting: true,
+    },
+    {
+        accessorKey: "expired_date",
+        header: "Tanggal Kadaluarsa",
+        enableSorting: true,
+    },
     {
         accessorKey: "file_path",
         header: "File",
         enableSorting: true,
-        cell: ({ row }) => (
-            <button className="flex items-center gap-1.5 text-xs bg-primary-hijauMuda hover:bg-primary-hijauTua text-white px-3 py-1.5 rounded-md font-semibold">
-                File <Copy size={12} />
-            </button>
-        ),
+        cell: ({ row }) => {
+            const filePath = row.file_path;
+
+            const baseUrl =
+                import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+
+            const fileUrl = `${baseUrl}/storage/${filePath}`;
+
+            return (
+                <a
+                    href={fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block"
+                >
+                    <button className="flex items-center gap-1.5 text-xs bg-primary-hijauMuda hover:bg-primary-hijauTua text-white px-3 py-1.5 rounded-md font-semibold transition-colors">
+                        Lihat <Eye size={12} />
+                    </button>
+                </a>
+            );
+        },
     },
     {
         id: "aksi",
         header: "Aksi",
         enableSorting: false,
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn
+                onDetail={onShowDetail}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                row={row}
+            />
         ),
     },
 ];
@@ -148,7 +217,12 @@ export const getTrainingColumns = ({ onShowDetail }) => [
         header: "Aksi",
         enableSorting: false,
         cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn onDetail={onShowDetail} onEdit={onEdit} onDelete={onDelete} row={row} />
+            <ActionColumn
+                onDetail={onShowDetail}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                row={row}
+            />
         ),
     },
 ];

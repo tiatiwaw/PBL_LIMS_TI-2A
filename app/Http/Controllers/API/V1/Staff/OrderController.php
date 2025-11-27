@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\NAnalysesMethodsOrder;
 use App\Models\NOrderSample;
 use App\Models\Order;
-use App\Models\Sample;
 use App\Models\SampleCategory;
 
 class OrderController extends Controller
@@ -33,6 +32,39 @@ class OrderController extends Controller
             'orderNumber' => $orderNumber,
         ]);
     }
+    /**
+     * Mendapatkan supervisor_id berikutnya dengan rotasi otomatis
+     */
+    private function getNextSupervisorId()
+    {
+        // Ambil semua supervisor (user dengan role supervisor)
+        $supervisors = \App\Models\User::role('supervisor')->orderBy('id')->pluck('id')->toArray();
+
+        if (empty($supervisors)) {
+            return null;
+        }
+
+        // Ambil supervisor_id terakhir dari order
+        $lastOrder = Order::latest('id')->first();
+        $lastSupervisorId = $lastOrder?->supervisor_id;
+
+        if (!$lastSupervisorId) {
+            // Jika belum ada order sebelumnya, mulai dari supervisor pertama
+            return $supervisors[0];
+        }
+
+        // Cari index dari supervisor_id terakhir
+        $currentIndex = array_search($lastSupervisorId, $supervisors);
+
+        // Jika supervisor tidak ditemukan atau sudah di akhir, kembali ke awal
+        if ($currentIndex === false || $currentIndex >= count($supervisors) - 1) {
+            return $supervisors[0];
+        }
+
+        // Return supervisor berikutnya
+        return $supervisors[$currentIndex + 1];
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -58,9 +90,13 @@ class OrderController extends Controller
         ]);
 
         DB::transaction(function () use ($data) {
+            // 🔹 Dapatkan supervisor_id berikutnya dengan rotasi
+            $supervisorId = $this->getNextSupervisorId();
+
             // 🔹 Simpan order utama
             $order = Order::create([
                 'client_id' => $data['selectedKlien']['id'],
+                'supervisor_id' => $supervisorId,
                 'order_number' => $data['nomorOrder'],
                 'title' => $data['judulOrder'],
                 'result_value' => '-',
