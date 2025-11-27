@@ -10,11 +10,15 @@ class OrderController extends Controller
 {
     public function index()
     {
+        // 🔹 Dapatkan ID supervisor yang sedang login
+        $supervisorId = auth('sanctum')->user()?->id;
+
         $orders = Order::with([
             'clients.users',
             'analysesMethods',
             'samples.sample_categories',
         ])
+            ->where('supervisor_id', $supervisorId)
             ->whereIn('status', ['received', 'paid', 'received_test'])
             ->orderByRaw("CASE WHEN order_type = 'urgent' THEN 0 ELSE 1 END")
             ->orderBy('order_date', 'asc')
@@ -25,17 +29,22 @@ class OrderController extends Controller
     public function show(string $id)
     {
         try {
+            // 🔹 Dapatkan ID supervisor yang sedang login
+            $supervisorId = auth('sanctum')->user()?->id;
+
             $order = Order::with([
                 'clients.users',
                 'analysesMethods',
                 'samples.sample_categories',
-            ])->findOrFail($id);
+            ])
+                ->where('supervisor_id', $supervisorId)
+                ->findOrFail($id);
 
             return response()->json($order);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data order tidak ditemukan.',
+                'message' => 'Data order tidak ditemukan atau Anda tidak memiliki akses.',
             ], 404);
         } catch (\Throwable $e) {
             return response()->json([
@@ -54,8 +63,11 @@ class OrderController extends Controller
             'reason' => 'nullable|string'
         ]);
 
-        // Cari Order (Otomatis error 404 jika tidak ketemu)
-        $order = Order::findOrFail($id);
+        // 🔹 Dapatkan ID supervisor yang sedang login
+        $supervisorId = auth('sanctum')->user()?->id;
+
+        // Cari Order (Otomatis error 404 jika tidak ketemu atau bukan milik supervisor ini)
+        $order = Order::where('supervisor_id', $supervisorId)->findOrFail($id);
 
         // Cek Status Awal (Hanya boleh jika 'received')
         if ($order->status !== 'received') {

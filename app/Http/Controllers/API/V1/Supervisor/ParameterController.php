@@ -7,7 +7,6 @@ use App\Models\Analyst;
 use App\Models\Equipment;
 use App\Models\NParameterMethod;
 use App\Models\Order;
-use App\Models\NAnalyst;
 use App\Models\Reagent;
 use App\Models\TestMethod;
 use App\Models\TestParameter;
@@ -173,7 +172,7 @@ class ParameterController extends Controller
         }
     }
 
-   /**
+    /**
      * TUGAS SUPERVISOR:
      * 1. Masukin notes, estimasi selesai, dan pilih Analyst (Bisa banyak).
      * 2. Ganti status order dari 'paid' jadi 'in_progress'.
@@ -200,12 +199,12 @@ class ParameterController extends Controller
         $order->update([
             'notes'         => $request->notes,
             'estimate_date' => $request->estimate_date,
-            'status'        => 'in_progress', 
+            'status'        => 'in_progress',
         ]);
 
         $order->analysts()->sync($request->analysts);
 
-        
+
         // Simpan perubahan
         DB::commit();
 
