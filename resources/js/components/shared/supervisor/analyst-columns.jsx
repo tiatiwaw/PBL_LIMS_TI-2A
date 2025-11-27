@@ -4,7 +4,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 export const getAnalystColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "name", header: "Nama Analis" },
-    { accessorKey: "email", header: "Email" },
+    {
+        accessorKey: "email",
+        header: "Email",
+        cell: ({ row }) => row.users.email,
+    },
     { accessorKey: "specialist", header: "Spesialis" },
     {
         accessorKey: "select",

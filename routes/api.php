@@ -45,6 +45,7 @@ use App\Http\Controllers\API\V1\Manager\TestMethodsController as ManagerTestMeth
 use App\Http\Controllers\API\V1\Manager\UnitValueController as ManagerUnitValueController;
 use App\Http\Controllers\API\V1\Manager\ReferenceController as ManagerReferenceController;
 use App\Http\Controllers\API\V1\Manager\SampleCategoryController as ManagerSampleCategoryController;
+use App\Http\Controllers\API\V1\Supervisor\AnalystController as SupervisorAnalystController;
 use App\Http\Controllers\API\V1\Supervisor\OrderController as SupervisorOrderController;
 use App\Http\Controllers\API\V1\Supervisor\ParameterController as SupervisorParameterController;
 
@@ -191,6 +192,9 @@ Route::prefix('v1')->group(function () {
                     Route::put('/{id}', [SupervisorOrderController::class, 'updateStatus'])->name('update');
                     Route::get('/{id}/parameters', [SupervisorParameterController::class, 'show'])->name('show');
                     Route::post('/{id}/parameters/submit', [SupervisorParameterController::class, 'assignAnalyst'])->name('assign');
+                });
+                Route::prefix('analysts')->name('analysts.')->group(function () {
+                    Route::get('/', [SupervisorAnalystController::class, 'index'])->name('index');
                 });
             });
 
