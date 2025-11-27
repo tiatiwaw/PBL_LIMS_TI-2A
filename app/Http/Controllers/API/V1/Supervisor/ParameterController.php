@@ -7,11 +7,15 @@ use App\Models\Analyst;
 use App\Models\Equipment;
 use App\Models\NParameterMethod;
 use App\Models\Order;
+use App\Models\NReagent;
+use App\Models\NAnalyst;
+use App\Models\NEquipment;
 use App\Models\Reagent;
 use App\Models\TestMethod;
 use App\Models\TestParameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class ParameterController extends Controller
 {
@@ -63,86 +67,115 @@ class ParameterController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input
-        $validator = Validator::make($request->all(), [
-            'unit_value_id'   => 'required|exists:unit_values,id',
-            'reference_id'    => 'required|exists:reference_standards,id',
-            'name'            => 'required|string|max:255',
-            'category'        => 'required|string|max:255',
-            'detection_limit' => 'nullable|string|max:255',
-            'quality_standard' => 'nullable|string|max:255',
+        $validated = $request->validate([
+            'orderId'                    => 'required|exists:orders,id',
+            'samples'                    => 'required|array',
+            'samples.*.sample_id' => 'required|exists:samples,id',
+            'samples.*.parameter_id' => 'required|exists:test_parameters,id',
+            'samples.*.method_id'        => 'required|exists:test_methods,id',
+            'samples.*.equipments'       => 'array',
+            'samples.*.equipments.*'     => 'exists:equipments,id',
+            'samples.*.reagents'         => 'array',
+            'samples.*.reagents.*'       => 'exists:reagents,id',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validasi gagal',
-                'errors'  => $validator->errors()
-            ], 422);
-        }
+        DB::transaction(function () use ($validated) {
 
-        try {
-            $parameter = TestParameter::create($request->all());
+            foreach ($validated['samples'] as $sample) {
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Test Parameter berhasil dibuat',
-                'data'    => $parameter
-            ], 201);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menyimpan parameter.',
-                'error'   => $e->getMessage(),
-            ], 500);
-        }
+                // insert N_PARAMETER_METHODS
+                $npm = NParameterMethod::create([
+                    'sample_id'         => $sample['sample_id'],
+                    'test_parameter_id' => $sample['parameter_id'],
+                    'test_method_id'    => $sample['method_id'],
+                    'result'            => null,
+                    'status'            => 'in_progress',
+                ]);
+
+                // insert reagents
+                foreach ($sample['reagents'] ?? [] as $reagentId) {
+                    NReagent::create([
+                        'n_parameter_method_id' => $npm->id,
+                        'reagent_id'            => $reagentId,
+                    ]);
+                }
+
+                // insert equipments (tanpa model pivot)
+                foreach ($sample['equipments'] ?? [] as $eqId) {
+                    DB::table('n_equipments')->insert([
+                        'n_parameter_method_id' => $npm->id,
+                        'equipment_id'          => $eqId,
+                        'created_at'            => now(),
+                        'updated_at'            => now(),
+                    ]);
+                }
+            }
+        });
+
+        return response()->json([
+            'message' => 'Parameter method berhasil dibuat'
+        ], 201);
     }
+
 
     /**
      * Mengupdate data Test Parameter
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        try {
-            $parameter = TestParameter::findOrFail($id);
+        $validated = $request->validate([
+            'samples'                    => 'required|array',
+            'samples.*.sample_id' => 'required|exists:samples,id',
+            'samples.*.parameter_id' => 'required|exists:test_parameters,id',
+            'samples.*.method_id'        => 'required|exists:test_methods,id',
+            'samples.*.equipments'       => 'array',
+            'samples.*.equipments.*'     => 'exists:equipments,id',
+            'samples.*.reagents'         => 'array',
+            'samples.*.reagents.*'       => 'exists:reagents,id',
+        ]);
 
-            $validator = Validator::make($request->all(), [
-                'unit_value_id'   => 'required|exists:unit_values,id',
-                'reference_id'    => 'required|exists:reference_standards,id',
-                'name'            => 'required|string|max:255',
-                'category'        => 'required|string|max:255',
-                'detection_limit' => 'nullable|string',
-                'quality_standard' => 'nullable|string',
-            ]);
+        DB::transaction(function () use ($validated) {
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validasi gagal',
-                    'errors'  => $validator->errors()
-                ], 422);
+            foreach ($validated['samples'] as $sample) {
+
+                $npm = NParameterMethod::where('sample_id', $sample['sample_id'])
+                    ->firstOrFail();
+
+                // update core info
+                $npm->update([
+                    'test_parameter_id' => $sample['parameter_id'],
+                    'test_method_id'    => $sample['method_id'],
+                ]);
+
+                // replace reagents
+                NReagent::where('n_parameter_method_id', $npm->id)->delete();
+                foreach ($sample['reagents'] ?? [] as $reagentId) {
+                    NReagent::create([
+                        'n_parameter_method_id' => $npm->id,
+                        'reagent_id'            => $reagentId,
+                    ]);
+                }
+
+                // replace equipments
+                DB::table('n_equipments')
+                    ->where('n_parameter_method_id', $npm->id)
+                    ->delete();
+                foreach ($sample['equipments'] ?? [] as $eqId) {
+                    DB::table('n_equipments')->insert([
+                        'n_parameter_method_id' => $npm->id,
+                        'equipment_id'          => $eqId,
+                        'created_at'            => now(),
+                        'updated_at'            => now(),
+                    ]);
+                }
             }
+        });
 
-            $parameter->update($request->all());
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Test Parameter berhasil diupdate',
-                'data'    => $parameter
-            ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data parameter tidak ditemukan.',
-            ], 404);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengupdate parameter.',
-                'error'   => $e->getMessage(),
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Parameter method berhasil diperbarui'
+        ], 200);
     }
+
 
     /**
      * Menghapus data Test Parameter
