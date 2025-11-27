@@ -206,7 +206,7 @@ Route::controller(ClientController::class)
                 Route::get('/{id}', 'orderDetail')->name('show');
                 Route::get('/status/{id}', 'orderStatus')->name('status');
                 Route::get('/payment/{id}', 'orderPayment')->name('payment');
-                Route::post('/download/{id}', 'downloadReport')->name('download');
+                Route::get('/download/{id}', 'downloadReport')->name('download');
             });
     });
 
