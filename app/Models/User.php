@@ -76,4 +76,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Analyst::class, 'user_id');
     }
+
+    public function supervisors()
+    {
+        return $this->hasMany(Order::class, 'supervisor_id');
+    }
 }
