@@ -6,6 +6,7 @@ export const supervisorService = {
     orders: serviceMethods("/supervisor/orders", {
         useFormData: false,
     }),
+
     analysts: serviceMethods("/supervisor/analysts", {
         useFormData: false,
     }),

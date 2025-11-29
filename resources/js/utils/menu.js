@@ -25,6 +25,8 @@ import {
     Box,
     DollarSign,
     User,
+    ClipboardPlus,
+    History,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -231,7 +233,7 @@ const MENU_CONFIG = {
                     icon: Building2,
                     href: "/manager/resources/suppliers",
                 },
-            ]
+            ],
         },
         {
             name: "Pengujian",
@@ -273,20 +275,30 @@ const MENU_CONFIG = {
             name: "Laporan",
             icon: ChartArea,
             href: "/manager/reports",
-
         },
         {
             name: "Karyawan",
             icon: Users,
             href: "/manager/users",
-        }
+        },
     ],
 
     staff: [
         {
-            name: "Orders",
+            name: "Order",
             icon: ChartArea,
-            href: "/staff/orders",
+            subItems: [
+                {
+                    name: "Semua Order",
+                    icon: ShoppingCart,
+                    href: "/staff/orders/all-orders",
+                },
+                {
+                    name: "Buat Order Baru",
+                    icon: ClipboardPlus,
+                    href: "/staff/orders/make-order",
+                },
+            ],
         },
         {
             name: "Manajemen Client",
@@ -298,8 +310,23 @@ const MENU_CONFIG = {
     client: [],
 
     supervisor: [
-        { name: "Orders", icon: Home, href: "/supervisor/orders" },
-        { name: "Analysts", icon: User, href: "/supervisor/analysts" },
+        {
+            name: "Order",
+            icon: Home,
+            subItems: [
+                {
+                    name: "Perlu DitindakLanjuti",
+                    icon: ListCheck,
+                    href: "/supervisor/orders",
+                },
+                {
+                    name: "Riwayat",
+                    icon: History,
+                    href: "/supervisor/orders/history",
+                },
+            ],
+        },
+        { name: "Analis", icon: User, href: "/supervisor/analysts" },
     ],
 };
 

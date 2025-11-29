@@ -5,7 +5,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const useOrders = () =>
-    useCrud(supervisorService.orders, "orders", "orders", { only: ["getAll"] });
+    useCrud(supervisorService.orders, "orders", "orders", {
+        only: ["getAll"],
+    });
 
 export const useAnalysts = () =>
     useCrud(supervisorService.analysts, "analysts", "analis", {

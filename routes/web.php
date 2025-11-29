@@ -119,8 +119,7 @@ Route::middleware(['auth', 'role:manager'])
 
 
 // Staff
-Route::controller(StaffController::class)
-    ->middleware(['auth', 'role:staff'])
+Route::middleware(['auth', 'role:staff'])
     ->prefix('staff')
     ->name('staff.')
     ->group(function () {
@@ -130,34 +129,15 @@ Route::controller(StaffController::class)
         Route::prefix('manage-clients')
             ->name('client.')
             ->group(function () {
-                Route::get('/', 'index')->name('index');
-                Route::post('/', 'store')->name('store');
-                Route::put('/{id}', 'update')->name('update');
-                Route::delete('/{id}', 'destroy')->name('delete');
-            });
-
-        // Samples
-        Route::prefix('samples')
-            ->name('sample.')
-            ->group(function () {
-                Route::post('/', 'storeSample')->name('store');
-            });
-
-        // Orders
-        Route::prefix('orders')
-            ->name('order.')
-            ->group(function () {
-                Route::get('/', 'indexOrder')->name('index');
-                Route::post('/', 'storeOrder')->name('store');
+                Route::inertia('/', 'staff/clients/index')->name('index');
             });
 
         // Order Routes
         Route::prefix('orders')
             ->name('order.')
             ->group(function () {
-                Route::get('/', 'indexOrder')->name('index');
-                Route::post('/', 'storeOrder')->name('storeOrder');
-                Route::post('/sample', 'storeSample')->name('storeSample');
+                Route::inertia('/all-orders', 'staff/orders/all-orders/index')->name('all');
+                Route::inertia('/make-order', 'staff/orders/make-order/index')->name('index');
             });
     });
 
@@ -167,13 +147,14 @@ Route::controller(SupervisorController::class)
     ->prefix('supervisor')
     ->name('supervisor.')
     ->group(function () {
-        Route::redirect('/', '/supervisor/orders');
+        Route::redirect('/', '/supervisor/orders/follow-up')->name('index');
 
         // Order
         Route::prefix('orders')
             ->name('order.')
             ->group(function () {
-                Route::get('/', 'orders')->name('index');
+                Route::get('/', 'ordersFollowUp')->name('index');
+                Route::get('/history', 'ordersHistory')->name('history');
                 Route::get('/{id}', 'ordersDetail')->name('detail');
                 Route::get('/{id}/parameters', 'parameters')->name('parameter.index');
                 Route::get('/{id}/parameters/detail', 'parametersDetail')->name('parameter.detail');
@@ -235,7 +216,7 @@ Route::controller(ClientController::class)
         Route::get('/', 'index')->name('index');
         Route::get('/profile', 'profile')->name('profile');
         Route::get('/history', 'history')->name('history');
-        
+
         // Orders - sesuaikan dengan API structure
         Route::prefix('orders')
             ->name('orders.')

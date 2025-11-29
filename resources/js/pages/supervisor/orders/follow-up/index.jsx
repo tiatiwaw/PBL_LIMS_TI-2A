@@ -27,7 +27,7 @@ export default function OrdersPage() {
 
     if (isLoading) {
         return (
-            <DashboardLayout title="Orders" header="Orders">
+            <DashboardLayout title="Manajemen Order" header="Manajemen Order">
                 <Loading />
             </DashboardLayout>
         );
@@ -35,7 +35,7 @@ export default function OrdersPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Orders" header="Orders">
+            <DashboardLayout title="Manajemen Order" header="Manajemen Order">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -44,7 +44,7 @@ export default function OrdersPage() {
     }
 
     return (
-        <DashboardLayout title="Orders" header="Orders">
+        <DashboardLayout title="Manajemen Order" header="Manajemen Order">
             <ManagedDataTable
                 data={orders || []}
                 columns={columns}

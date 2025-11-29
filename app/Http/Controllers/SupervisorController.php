@@ -7,9 +7,13 @@ use Inertia\Inertia;
 
 class SupervisorController extends Controller
 {
-    public function orders()
+    public function ordersFollowUp()
     {
-        return Inertia::render('supervisor/orders/index');
+        return Inertia::render('supervisor/orders/follow-up/index');
+    }
+    public function ordersHistory()
+    {
+        return Inertia::render('supervisor/orders/history/index');
     }
     public function analysts()
     {
