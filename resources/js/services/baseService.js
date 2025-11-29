@@ -124,6 +124,24 @@ export const serviceMethods = (
                 `Failed to fetch ${endpoint}`
             ),
 
+        postRelated: (id, data, endpoint, params = {}, config = {}) =>
+            handleRequest(
+                "post",
+                `${baseUrl}/${id}/${endpoint}`,
+                data,
+                { params, ...config },
+                `Failed to create ${endpoint}`
+            ),
+
+        updateRelated: (id, data, endpoint, params = {}, config = {}) =>
+            handleRequest(
+                "put",
+                `${baseUrl}/${id}/${endpoint}`,
+                data,
+                { params, ...config },
+                `Failed to update ${endpoint}`
+            ),
+
         create: (data, config = {}) =>
             handleRequest(
                 "post",

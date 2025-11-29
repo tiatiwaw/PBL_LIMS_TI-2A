@@ -8,20 +8,15 @@ export default function ParameterReview({
     formData,
     orderData,
     analystsData,
-    nParameterData,
     samples,
+    setSample,
     onSubmit,
-    onNext,
+    onDetail,
     onBack,
 }) {
     const selectedAnalysts = (formData?.analysts || [])
         .map((id) => analystsData.find((a) => a.id === id))
         .filter(Boolean);
-
-    const handleKirim = () => {
-        onSubmit();
-        onNext();
-    };
 
     return (
         <div className="pb-10">
@@ -58,7 +53,11 @@ export default function ParameterReview({
                                 </div>
                                 <Button
                                     size="sm"
-                                    className="bg-yellow-400 hover:bg-yellow-500 text-white"
+                                    onClick={() => {
+                                        setSample(s.id);
+                                        onDetail();
+                                    }}
+                                    className="bg-yellow-500 hover:bg-yellow-600 text-white"
                                 >
                                     Detail
                                 </Button>
@@ -157,7 +156,7 @@ export default function ParameterReview({
                         Kembali
                     </Button>
                     <Button
-                        onClick={handleKirim}
+                        onClick={() => onSubmit()}
                         className="bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 px-8 py-3"
                     >
                         Kirim

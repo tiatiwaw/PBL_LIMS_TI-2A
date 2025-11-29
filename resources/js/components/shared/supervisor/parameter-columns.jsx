@@ -68,13 +68,12 @@ export const getMetodeColumns = ({ onSelectMetode }) => [
 export const getReagenColumns = [
     { accessorKey: "no", header: "No.", size: 80 },
     { accessorKey: "name", header: "Nama Reagen", size: 150 },
-    {
-        accessorKey: "supplier",
-        header: "Supplier",
-        size: 120,
-        cell: ({ row }) => row.suppliers.name,
-    },
     { accessorKey: "batch_number", header: "Batch Number", size: 120 },
+    {
+        accessorKey: "stock",
+        header: "Stok",
+        size: 120,
+    },
     {
         accessorKey: "storage_location",
         header: "Lokasi Penyimpanan",
@@ -86,7 +85,7 @@ export const getEquipmentColumns = [
     { accessorKey: "no", header: "No.", size: 80 },
     {
         accessorKey: "name",
-        header: "Nama Equipment",
+        header: "Nama Peralatan",
         size: 150,
     },
     {
@@ -137,14 +136,13 @@ export const getReagentSelectorColumns = ({ selectedItems, onSelect }) => [
         size: 150,
     },
     {
-        accessorKey: "supplier",
-        header: "Supplier",
-        size: 120,
-        cell: ({ row }) => row.suppliers.name,
-    },
-    {
         accessorKey: "batch_number",
         header: "Batch Number",
+        size: 120,
+    },
+    {
+        accessorKey: "stock",
+        header: "Stok",
         size: 120,
     },
     {
@@ -172,7 +170,7 @@ export const getEquipmentSelectorColumns = ({ selectedItems, onSelect }) => [
     },
     {
         accessorKey: "name",
-        header: "Nama Equipment",
+        header: "Nama Peralatan",
         size: 150,
     },
     {

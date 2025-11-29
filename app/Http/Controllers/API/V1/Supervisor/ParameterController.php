@@ -23,7 +23,7 @@ class ParameterController extends Controller
     public function show($id)
     {
         // 1. Ambil Data Order & Sampel (Spesifik ID)
-        $order = Order::with(['samples', 'clients.users'])->findOrFail($id);
+        $order = Order::with(['samples.sample_categories', 'clients.users'])->findOrFail($id);
         $samples = $order->samples;
 
         // 2. Ambil Data NParameterMethod (Safe Mode)
@@ -32,7 +32,9 @@ class ParameterController extends Controller
 
         // Cek apakah ada sample? Kalau kosong, return array kosong biar gak error di query
         if ($sampleIds->isNotEmpty()) {
-            $n_parameter_methods = NParameterMethod::whereIn('sample_id', $sampleIds)->with(['test_parameters', 'test_methods', 'equipments', 'reagents'])->get();
+            $n_parameter_methods = NParameterMethod::whereIn('sample_id', $sampleIds)
+                ->with(['test_parameters.unit_values', 'test_methods', 'equipments.brand_types', 'reagents'])
+                ->get();
         } else {
             $n_parameter_methods = collect([]); // Return collection kosong
         }
@@ -42,7 +44,7 @@ class ParameterController extends Controller
         $test_parameters = TestParameter::with(['unit_values', 'reference_standards'])->get();
         $test_methods    = TestMethod::with(['reference_standards'])->get();
         $reagents        = Reagent::with(['suppliers', 'grades'])->get();
-        $equipments      = Equipment::with(['brand_types'])->get();
+        $equipments      = Equipment::with(['brand_types'])->where('status', 'available')->get();
         $analysts        = Analyst::with(['users'])->get();
 
         // 4. Return Response
@@ -98,7 +100,7 @@ class ParameterController extends Controller
                     ]);
                 }
 
-                // insert equipments (tanpa model pivot)
+                // insert equipments (tanpa ubah status di sini)
                 foreach ($sample['equipments'] ?? [] as $eqId) {
                     DB::table('n_equipments')->insert([
                         'n_parameter_method_id' => $npm->id,
@@ -154,10 +156,11 @@ class ParameterController extends Controller
                     ]);
                 }
 
-                // replace equipments
+                // replace equipments (tanpa ubah status di sini)
                 DB::table('n_equipments')
                     ->where('n_parameter_method_id', $npm->id)
                     ->delete();
+
                 foreach ($sample['equipments'] ?? [] as $eqId) {
                     DB::table('n_equipments')->insert([
                         'n_parameter_method_id' => $npm->id,
@@ -174,58 +177,61 @@ class ParameterController extends Controller
         ], 200);
     }
 
-
-    /**
-     * Menghapus data Test Parameter
-     */
-    public function destroy($id)
-    {
-        try {
-            $parameter = TestParameter::findOrFail($id);
-            $parameter->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Test Parameter berhasil dihapus'
-            ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data parameter tidak ditemukan.',
-            ], 404);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus parameter.',
-                'error'   => $e->getMessage(),
-            ], 500);
-        }
-    }
-
     /**
      * TUGAS SUPERVISOR:
      * 1. Masukin notes, estimasi selesai, dan pilih Analyst (Bisa banyak).
      * 2. Ganti status order dari 'paid' jadi 'in_progress'.
+     * 3. Ubah status equipment menjadi 'unavailable' untuk semua equipment yang ada di n_parameter_methods
      */
-    public function assignAnalyst(Request $request, $orderId)
+    public function assignAnalyst(Request $request)
     {
         // 1. Validasi Input
         // Kita ubah nama parameternya jadi 'analysts' biar cocok sama index.jsx
         $request->validate([
+            'orderId'         => 'required|exists:orders,id',
             'notes'           => 'nullable|string',
             'estimate_date' => 'required|date',
             'analysts'        => 'required|array|min:1', // Wajib array & minimal 1
             'analysts.*'      => 'exists:analysts,id',   // Cek validitas ID
         ]);
 
-        // Gunakan Transaksi Database
+        // 2. Ambil Data Order
+        $order = Order::findOrFail($request->orderId);
+
+        // 3. Ambil semua samples yang terkait dengan order ini
+        $sampleIds = $order->samples->pluck('id')->toArray();
+
+        // 4. Ambil semua n_parameter_methods untuk samples ini
+        $nParameterMethods = NParameterMethod::whereIn('sample_id', $sampleIds)
+            ->with('equipments')
+            ->get();
+
+        // 5. Validasi semua equipment harus 'available'
+        // Jika ada yang sudah 'unavailable', return error
+        foreach ($nParameterMethods as $npm) {
+            foreach ($npm->equipments as $equipment) {
+                if ($equipment->status !== 'available') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Equipment '{$equipment->name}' tidak tersedia. Silakan pilih equipment yang lain."
+                    ], 422);
+                }
+            }
+        }
+
+        // 6. Gunakan Transaksi Database
         DB::beginTransaction();
 
-        // 2. Ambil Data Order
-        // findOrFail otomatis return 404 kalau ID gak ketemu, jadi gak perlu try-catch manual buat ini
-        $order = Order::findOrFail($orderId);
+        // 7. Update status equipment menjadi 'unavailable'
+        foreach ($nParameterMethods as $npm) {
+            foreach ($npm->equipments as $equipment) {
+                $equipment->update([
+                    'status' => 'unavailable'
+                ]);
+            }
+        }
 
-        // 3. Update Data Order
+        // 8. Update Data Order
         $order->update([
             'notes'         => $request->notes,
             'estimate_date' => $request->estimate_date,
@@ -234,7 +240,6 @@ class ParameterController extends Controller
 
         $order->analysts()->sync($request->analysts);
 
-
         // Simpan perubahan
         DB::commit();
 
@@ -242,7 +247,7 @@ class ParameterController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Order berhasil diproses ke Analyst.',
+            'message' => 'Order berhasil diproses ke Analyst dan status equipment telah diperbarui.',
             'data'    => $order
         ], 200);
     }

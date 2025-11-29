@@ -41,22 +41,26 @@ export default function ParameterFirst({
 
     // Initialize dari formData jika ada
     useEffect(() => {
-        if (formData?.samples?.[sampleId]) {
-            const sampleData = formData.samples[sampleId];
-            if (sampleData.parameter_id) {
-                const param = parameterList.find(
-                    (p) => p.id === sampleData.parameter_id
-                );
-                setSelectedParameter(param);
-            }
-            if (sampleData.method_id) {
-                const method = metodeList.find(
-                    (m) => m.id === sampleData.method_id
-                );
-                setSelectedMetode(method);
+        if (formData?.samples && Array.isArray(formData.samples)) {
+            const sampleData = formData.samples.find(
+                (s) => s.sample_id === sampleId
+            );
+            if (sampleData) {
+                if (sampleData.parameter_id) {
+                    const param = parameterList?.find(
+                        (p) => p.id === sampleData.parameter_id
+                    );
+                    setSelectedParameter(param);
+                }
+                if (sampleData.method_id) {
+                    const method = metodeList?.find(
+                        (m) => m.id === sampleData.method_id
+                    );
+                    setSelectedMetode(method);
+                }
             }
         }
-    }, [sampleId, formData]);
+    }, [sampleId, formData, parameterList, metodeList]);
 
     const handleSelectParameter = (parameter) => {
         setSelectedParameter(parameter);
