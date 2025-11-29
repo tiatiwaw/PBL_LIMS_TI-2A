@@ -18,17 +18,34 @@ export default function AdminEquipmentsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEquipment, setSelectedEquipment] = useState(null);
 
-    const { data: brands, isLoading: brandLoading, error: brandError } = useBrands();
-    const { data: equipments, isLoading: equipmentLoading, error: equipmentError, create: createEquipment, update: updateEquipment, delete: deleteEquipment } = useEquipments();
+    const {
+        data: brands,
+        isLoading: brandLoading,
+        error: brandError,
+    } = useBrands();
+    const {
+        data: equipments,
+        isLoading: equipmentLoading,
+        error: equipmentError,
+        create: createEquipment,
+        update: updateEquipment,
+        delete: deleteEquipment,
+    } = useEquipments();
 
     const handleShowDetail = (equipment) => {
         setSelectedEquipment(equipment);
         setIsOpen(true);
     };
 
-    const columns = useMemo(() => getEquipmentsColumns({ onShowDetail: handleShowDetail }), []);
+    const handleExport = () => console.log("halo");
 
-    const handleCreate = async (formData) => createEquipment.mutateAsync(formData);
+    const columns = useMemo(
+        () => getEquipmentsColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
+
+    const handleCreate = async (formData) =>
+        createEquipment.mutateAsync(formData);
 
     const handleEdit = async (id, formData) => {
         await updateEquipment.mutateAsync({ id, data: formData });
@@ -48,17 +65,15 @@ export default function AdminEquipmentsPage() {
         return (
             <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
-                    {equipmentError.message || "Terjadi kesalahan saat memuat data"}
+                    {equipmentError.message ||
+                        "Terjadi kesalahan saat memuat data"}
                 </div>
             </DashboardLayout>
         );
     }
 
     return (
-        <DashboardLayout
-            title="Manajemen Alat"
-            header="Manajemen Alat"
-        >
+        <DashboardLayout title="Manajemen Alat" header="Manajemen Alat">
             <ManagedDataTable
                 data={equipments}
                 columns={columns}
@@ -66,14 +81,20 @@ export default function AdminEquipmentsPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                onExport={handleExport}
                 createTitle="Tambah Data Peralatan"
                 editTitle="Edit Data Peralatan"
                 deleteTitle="Hapus Data Peralatan"
                 showFilter={true}
+                showExport={true}
                 filterColumn="status"
                 filterOptions={filterData}
             />
-            <EquipmentDetailSheet data={selectedEquipment} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <EquipmentDetailSheet
+                data={selectedEquipment}
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
+            />
         </DashboardLayout>
     );
 }

@@ -43,6 +43,7 @@ export function DataTableCard({ className, ...props }) {
 export function DataTableHeader({
     showSearch,
     showFilter,
+    showExport,
     filterOptions,
     searchTerm,
     onSearchChange,
@@ -50,6 +51,7 @@ export function DataTableHeader({
     onFilterChange,
     showCreate,
     onCreate,
+    onExport,
 }) {
     return (
         <CardHeader className="pb-0">
@@ -62,6 +64,8 @@ export function DataTableHeader({
                 filterValue={filterValue}
                 onFilterChange={onFilterChange}
                 onCreate={onCreate}
+                onExport={onExport}
+                showExport={showExport}
                 showCreate={showCreate}
             />
         </CardHeader>
