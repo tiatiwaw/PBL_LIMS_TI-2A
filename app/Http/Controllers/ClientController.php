@@ -41,6 +41,7 @@ class ClientController extends Controller
         ]);
     }
 
+
     /**
      * Show order status page
      */

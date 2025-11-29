@@ -1,17 +1,22 @@
-// resources/js/pages/client/detail/index.jsx
+// resources/js/pages/client/payment/index.jsx
 import React, { useState, useMemo } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { FileDown, XCircle } from "lucide-react";
 import { getSampleColumns } from "@/components/shared/client/sample-columns";
 import { Button } from "@/components/ui/button";
 import { Link } from "@inertiajs/react";
-import { useOrderDetail } from "@/hooks/useClient";
+import { usePayment } from "@/hooks/useClient";
 import PaymentSummary from '@/components/shared/client/payment-summary.jsx';
 import AnalysisMethodList from "@/components/shared/client/analysis-method-list.jsx";
-import { methods } from "@/data/client/methods";
+import MethodPayment from "@/components/shared/client/method-payment.jsx";
+import { method_payment } from "@/data/client/method_payment";
+import { router } from "@inertiajs/react";
+import CheckoutView from "@/components/shared/client/CheckoutView.jsx";
+import checkoutPayment from "@/data/client/checkoutpayment";
 
 
-export default function ClientOrderDetail({ auth, orderId }) {
+
+export default function ClientPayment({ auth, orderId }) {
   console.log("props dari Inertia:", { auth, orderId });
 
   const {
@@ -19,11 +24,18 @@ export default function ClientOrderDetail({ auth, orderId }) {
     isLoading,
     isError,
     errorMessage,
-  } = useOrderDetail(orderId);
+  } = usePayment(orderId);
 
   // 🔸 State dialog sample
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSample, setSelectedSample] = useState(null);
+
+  // State Metode Pembayaran
+  const [selectedPayment, setSelectedPayment] = useState(method_payment[0].selected);
+
+  // State Tombol Lakukan Pembayaran
+  const [showCheckout, setShowCheckout] = useState(false);
+
 
   const handleShowDetail = (sample) => {
     setSelectedSample(sample);
@@ -72,6 +84,19 @@ export default function ClientOrderDetail({ auth, orderId }) {
     );
   }
 
+  // === STATE Checkout ===
+  if (showCheckout) {
+    return (
+      <CheckoutView
+        onBack={() => setShowCheckout(false)}
+        qrImage={checkoutPayment.qrImage}
+        countdown={checkoutPayment.countdown}
+        detail={checkoutPayment.detail}
+        orderInfo={checkoutPayment.orderInfo} 
+      />
+    );
+  }
+
   // === DATA BERHASIL DIMUAT ===
   return (
     <DashboardLayout
@@ -104,7 +129,7 @@ export default function ClientOrderDetail({ auth, orderId }) {
             
 
             <span className="text-gray-600">Tanggal Order</span>
-            <span>: {order?.data?.order_details?.tanggal_order || "-"}</span>
+            <span >: {order?.data?.order_details?.tanggal_order || "-"}</span>
 
             <span className="text-gray-600">Estimasi Selesai</span>
             <span>: {order?.data?.order_details?.tanggal_estimasi || "-"}</span>
@@ -117,18 +142,34 @@ export default function ClientOrderDetail({ auth, orderId }) {
 
 
         {/*---Analyses Method List*/}
-        <AnalysisMethodList/>
+        <AnalysisMethodList methods={order?.data?.metode_analisis || []} />
+
+        {/* --- Metode Pembayaran --- */}
+          <MethodPayment 
+              selected={selectedPayment} 
+              setSelected={setSelectedPayment} 
+          />
+
+
 
         {/*----Payment Summary */}
-          <PaymentSummary
-            methods={methods}
-            diskon={0}
-            admin={1000}
-        />
+          <PaymentSummary summary={order?.data?.payment_summary} />
+
+
+
+        {/* --- Tombol Lakukan Pembayaran --- */}
+        <div className="text-right mt-1">
+                <button 
+                    onClick={() => setShowCheckout(true)}
+                    className="bg-primary-hijauTua text-white px-6 py-2 rounded-xl hover:bg-primary-hijauGelap transition">
+                    Lakukan Pembayaran
+                </button>
+        </div>
+
 
 
         {/* --- Tombol Kembali --- */}
-        <div className="w-full flex justify-end mt-4">
+        <div className="w-full flex justify-end mt-1">
           <Link href={route("client.index")}>
             <Button className="bg-primary-hijauTua text-white hover:bg-primary-hijauGelap">
               Kembali

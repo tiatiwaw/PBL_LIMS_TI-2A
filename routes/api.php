@@ -33,6 +33,8 @@ use App\Http\Controllers\API\V1\Staff\SampleController as StaffSampleController;
 use App\Http\Controllers\API\V1\Client\ClientController as ClientClientController;
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
+use App\Http\Controllers\API\V1\Client\PaymentController as ClientPaymentController;
+
 
 // MANAGER CONTROLLERS
 use App\Http\Controllers\API\V1\Manager\EquipmentController as ManagerEquipmentController;
@@ -170,6 +172,7 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/{id}', [ClientOrderController::class, 'show']);
                     Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
+                    Route::get('payment/{id}', [ClientPaymentController::class, 'show'])->name('payment');
                 });
             });
 

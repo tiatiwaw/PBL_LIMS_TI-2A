@@ -57,14 +57,14 @@ export default function AnalysisMethodList({ methods = defaultMethods }) {
                                     Nama Metode
                                 </p>
                                 <p className="text-lg font-bold text-primary-hijauTua mb-3">
-                                    {item.name}
+                                    {item.analyses_method}
                                 </p>
 
                                 <p className="text-sm text-gray-500 font-semibold">
                                     Harga
                                 </p>
                                 <p className="text-lg font-bold text-primary-hijauTua">
-                                    {formatRupiah(item.harga)}
+                                    {formatRupiah(item.harga_final)}
                                 </p>
                             </div>
                         ))}
