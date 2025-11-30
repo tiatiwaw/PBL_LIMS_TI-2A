@@ -155,8 +155,6 @@ export default function ClientPayment({ auth, orderId }) {
         {/*----Payment Summary */}
           <PaymentSummary summary={order?.data?.payment_summary} />
 
-
-
         {/* --- Tombol Lakukan Pembayaran --- */}
         <div className="text-right mt-1">
                 <button 
@@ -165,8 +163,6 @@ export default function ClientPayment({ auth, orderId }) {
                     Lakukan Pembayaran
                 </button>
         </div>
-
-
 
         {/* --- Tombol Kembali --- */}
         <div className="w-full flex justify-end mt-1">
