@@ -73,15 +73,23 @@ class AnalystController extends Controller
 
     public function accept(Order $order)
     {
-        if ($order->status === 'pending') {
+        if (in_array($order->status, ['pending', 'paid'])) {
+            // 1. Update status order
             $order->update(['status' => 'in_progress']);
+
+            // 2. Update semua sample milik order
+            $order->samples()
+                ->where('status', 'pending')
+                ->update(['status' => 'in_progress']);
         }
 
         return response()->json([
-            'message' => 'Order diterima.',
+            'message' => 'Order diterima',
             'order' => $order,
+            'samples_updated' => $order->samples()->get()
         ]);
     }
+
 
     public function confirm(Sample $sample)
     {
