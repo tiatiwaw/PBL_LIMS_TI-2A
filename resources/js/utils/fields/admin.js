@@ -43,7 +43,8 @@ export const editEquipmentFields = (data) => {
             type: "select",
             placeholder: "Pilih status alat",
             options: [
-                { value: "active", label: "Aktif" },
+                { value: "available", label: "Tersedia" },
+                { value: "unavailable", label: "Dipakai" },
                 { value: "maintenance", label: "Perbaikan" },
                 { value: "broken", label: "Rusak" },
             ],
@@ -64,7 +65,7 @@ export const editBrandFields = [
     },
 ];
 
-export const editReagentFields = (dataSupplier, dataGrade) => {
+export const editReagentFields = (dataSupplier, dataGrade, dataUnit) => {
     return [
         {
             name: "name",
@@ -100,6 +101,20 @@ export const editReagentFields = (dataSupplier, dataGrade) => {
             savePath: "grade_id",
         },
         {
+            name: "unit_values",
+            label: "Unit",
+            placeholder: "Masukkan unit reagen",
+            type: "select",
+            initialValuePath: "unit_values.id",
+            options: dataUnit
+                ? dataUnit.map((item) => ({
+                      value: item.id,
+                      label: item.value,
+                  }))
+                : [],
+            savePath: "unit_value_id",
+        },
+        {
             name: "formula",
             label: "Formula",
             placeholder: "Masukkan formula reagen",
@@ -108,6 +123,12 @@ export const editReagentFields = (dataSupplier, dataGrade) => {
             name: "batch_number",
             label: "Nomor Batch",
             placeholder: "Masukkan nomor batch reagen",
+        },
+        {
+            name: "stock",
+            label: "Stok",
+            type: "number",
+            placeholder: "Masukkan stok reagen",
         },
         {
             name: "storage_location",
@@ -130,6 +151,11 @@ export const editSupplierFields = [
         name: "name",
         label: "Nama Pemasok",
         placeholder: "Masukkan nama pemasok",
+    },
+    {
+        name: "contact_person",
+        label: "Nama PIC",
+        placeholder: "Masukkan nama PIC pemasok",
     },
     {
         name: "phone_number",
@@ -300,11 +326,13 @@ export const editMethodFields = (referenceData) => {
         {
             name: "duration",
             label: "Durasi",
+            type: "number",
             placeholder: "Masukkan durasi metode",
         },
         {
             name: "validity_period",
             label: "Masa Berlaku",
+            type: "date",
             placeholder: "Masukkan masa berlaku metode",
         },
     ];
@@ -349,17 +377,20 @@ export const editSertificateFields = (analyst) => [
     {
         name: "issued_date",
         label: "Tanggal Terbit",
+        type: "date",
         placeholder: "Masukkan tanggal terbit sertifikat",
     },
     {
         name: "expired_date",
         label: "Tanggal Kadaluarsa",
+        type: "date",
         placeholder: "Masukkan tanggal kadaluarsa sertifikat",
     },
     {
         name: "file_path",
         type: "file",
         label: "Upload Sertifikat",
+        initialValuePath: "file_path.name",
         placeholder: "Upload file sertifikat",
         accept: ".pdf",
         maxSize: 5 * 1024 * 1024, // 5MB

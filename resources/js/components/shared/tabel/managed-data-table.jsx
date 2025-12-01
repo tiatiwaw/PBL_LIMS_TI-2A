@@ -18,6 +18,7 @@ export default function ManagedDataTable({
     onCreate,
     onEdit,
     onDelete,
+    onExport,
     onFormOpen,
 
     filterOptions = [],
@@ -25,6 +26,7 @@ export default function ManagedDataTable({
     showSearch = true,
     showFilter = false,
     showCreate = true,
+    showExport = false,
     pageSize = 10,
     meta = {},
 
@@ -63,7 +65,8 @@ export default function ManagedDataTable({
         setFormDialog({ open: true, data: row, mode: "edit" });
     };
 
-    const handleOpenDelete = (row) => setDeleteDialog({ open: true, data: row });
+    const handleOpenDelete = (row) =>
+        setDeleteDialog({ open: true, data: row });
 
     const handleSave = async (formData) => {
         const isEdit = formDialog.mode === "edit";
@@ -100,7 +103,9 @@ export default function ManagedDataTable({
                     showSearch={showSearch}
                     showFilter={showFilter}
                     showCreate={showCreate}
+                    showExport={showExport}
                     onCreate={handleOpenCreate}
+                    onExport={onExport}
                     filterOptions={filterOptions}
                     searchTerm={table.searchTerm}
                     onSearchChange={table.setSearchTerm}
