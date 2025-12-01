@@ -24,7 +24,7 @@ class OrderController extends Controller
                 'clients',
                 'analysesMethods' // Gunakan relationship many-to-many
             ])
-            ->where('client_id', $user->id)
+            ->where('client_id', $user->clients->id)
             ->where('id', $id)
             ->first();
 
