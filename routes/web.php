@@ -153,6 +153,7 @@ Route::controller(AnalystController::class)
         Route::get('/dashboard', 'dashboard')->name('dashboard');
         Route::post('/{order}/save', 'saveReport')->name('saveReport');
         Route::post('/{order}/submit', 'submitReport')->name('submitReport');
+        Route::post('/reagent-usage/store', 'saveReagentUsage')->name('reagent-usage.store');
 
         // Orders
         Route::prefix('order')

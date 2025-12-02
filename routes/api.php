@@ -123,7 +123,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/samples', [SampleController::class, 'store'])->name('storeSample');
                 });
             });
-            
+
             Route::prefix('analyst')
                 ->middleware(['role:analyst'])
                 ->name('api.analyst.')
@@ -138,6 +138,7 @@ Route::prefix('v1')->group(function () {
                     Route::put('/orders/save/{order}', [AnalystAnalystController::class, 'saveReport'])->name('orders.save');
                     Route::put('/orders/submit/{order}', [AnalystAnalystController::class, 'submitReport'])->name('orders.submit');
                     Route::get('/orders/download/{order}', [AnalystAnalystController::class, 'downloadReport'])->name('orders.download');
+                    Route::post('/reagent-usage/store', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent-usage.store');
                 });
 
             // Client
