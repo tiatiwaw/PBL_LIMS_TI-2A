@@ -6,6 +6,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editMethodFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useMethods, useReferences } from "@/hooks/useAdmin";
+import { exportMethodReportPDF } from "@/utils/pdf/export/test-method";
 
 export default function AdminMethodsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +21,8 @@ export default function AdminMethodsPage() {
     };
 
     const columns = useMemo(() => getMethodsColumns({ onShowDetail: handleShowDetail }), []);
+
+    const handleExport = () => exportMethodReportPDF(methods);
 
     const handleCreate = async (formData) => createMethod.mutateAsync(formData);
 
@@ -62,6 +65,8 @@ export default function AdminMethodsPage() {
                 createTitle="Tambah Metode Uji"
                 editTitle="Edit Metode Uji"
                 deleteTitle="Hapus Metode Uji"
+                onExport={handleExport}
+                showExport={true}
             />
             <MethodDetailSheet data={selectedMethod} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>

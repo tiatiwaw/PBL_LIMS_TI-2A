@@ -6,6 +6,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 
 import { useMemo, useState } from "react";
 import { useUnits } from "@/hooks/useManager";
+import { exportUnitReportPDF } from "@/utils/pdf/export/test-unit-value";
 
 export default function ManagerUnitsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +14,7 @@ export default function ManagerUnitsPage() {
 
     const { data: units, isLoading, error } = useUnits();
 
+    const handleExport = () => exportUnitReportPDF(units);
     const handleShowDetail = (tests) => {
         setSelectedUnit(tests);
         setIsOpen(true);
@@ -53,6 +55,8 @@ export default function ManagerUnitsPage() {
                 editTitle="Edit Nilai Satuan"
                 deleteTitle="Hapus Nilai Satuan"
                 showCreate={false}
+                showExport={true}
+                onExport={handleExport}
             />
             <UnitDetailSheet
                 data={selectedUnit}

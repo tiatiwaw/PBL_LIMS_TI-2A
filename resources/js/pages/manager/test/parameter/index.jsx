@@ -7,6 +7,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editParameterFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useParameters, useReferences, useUnits } from "@/hooks/useManager";
+import { exportParameterReportPDF } from "@/utils/pdf/export/test-parameter";
 
 export default function ManagerParametersPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -24,6 +25,7 @@ export default function ManagerParametersPage() {
         error: referenceError,
     } = useReferences();
 
+    const handleExport = () => exportParameterReportPDF(parameters);
     const handleShowDetail = (brand) => {
         setSelectedParameter(brand);
         setIsOpen(true);
@@ -65,6 +67,8 @@ export default function ManagerParametersPage() {
                 editTitle="Edit Tes Parameter"
                 deleteTitle="Hapus Tes Parameter"
                 showCreate={false}
+                showExport={true}
+                onExport={handleExport}
             />
             <ParameterDetailSheet
                 data={selectedParameter}

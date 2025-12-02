@@ -4,7 +4,7 @@ import ReagentsDetailSheet from "@/components/shared/sheet/reagen_detail_sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { useMemo, useState } from "react";
 import Loading from "@/components/ui/loading";
-import { useGrades, useReagents, useSuppliers } from "@/hooks/useManapger";
+import { useGrades, useReagents, useSuppliers } from "@/hooks/useManager";
 
 export default function ManagerReagentsPage() {
     const [isOpen, setIsOpen] = useState(false);

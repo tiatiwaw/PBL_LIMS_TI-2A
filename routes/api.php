@@ -205,6 +205,9 @@ Route::prefix('v1')->group(function () {
                     Route::apiResource('categories', ManagerSampleCategoryController::class);
                 });
 
+                Route::get('orders', [OrdersController::class, 'index']);
+                Route::get('orders/{id}', [OrdersController::class, 'show']);
+
                 // Analyst
                 // Route::prefix('analyst')->name('analyst.')->group(function () {
                 //     Route::apiResource('trainings', ManagerTrainingController::class);

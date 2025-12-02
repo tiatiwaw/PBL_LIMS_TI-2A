@@ -103,15 +103,14 @@ Route::middleware(['auth', 'role:manager'])
 
         Route::inertia('/reports', 'manager/reports/index')->name('reports');
 
-        Route::prefix('orders')->as('orders.')->group(function () {
-            Route::inertia('/', 'manager/orders/index')->name('index');
-            Route::get('/{id}', function ($id) {
-                return Inertia::render('manager/detail/index', [
-                    'id' => $id,
-                    'canValidate' => false,
-                ]);
-            })->name('show');
-        });
+        Route::inertia('/orders', 'manager/orders/index')->name('orders');
+
+        Route::get('/orders/{id}', function ($id) {
+            return Inertia::render('manager/detail/index', [
+                'id' => $id,
+                'canValidate' => false,
+            ]);
+        })->name('order.show');
 
         Route::inertia('/users', 'manager/users/index')->name('users');
     });

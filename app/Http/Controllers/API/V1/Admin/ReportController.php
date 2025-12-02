@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\Reagent;
 use App\Models\Supplier;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -35,18 +36,51 @@ class ReportController extends Controller
         return response()->json($orders);
     }
 
-    public function inventory()
+    public function inventory(Request $request)
     {
-        $equipments = Equipment::with('brand_types')->get();
-        $reagents = Reagent::with(['suppliers', 'grades'])->get();
+        // Accept year and month query params. Frontend may send 'all' to indicate no filter.
+        $year = $request->query('year');
+        $month = $request->query('month');
+
+        $equipmentsQuery = Equipment::with('brand_types');
+        $reagentsQuery = Reagent::with(['suppliers', 'grades']);
+        $ordersQuery = Order::with([
+            'samples.n_parameter_methods.equipments',
+            'samples.n_parameter_methods.reagents'
+        ]);
+
+        if ($year !== null && $year !== 'all') {
+            $equipmentsQuery->whereYear('purchase_year', (int) $year);
+            $reagentsQuery->whereYear('created_at', (int) $year);
+            $ordersQuery->whereYear('order_date', (int) $year);
+        }
+
+        if ($month !== null && $month !== 'all') {
+            // Note: frontend month may be zero-based (0 = January). Convert to 1-based for SQL.
+            $monthInt = (int) $month;
+            if ($monthInt >= 0 && $monthInt <= 11) {
+                $monthInt = $monthInt + 1;
+            }
+            $equipmentsQuery->whereMonth('purchase_year', $monthInt);
+            $reagentsQuery->whereMonth('created_at', $monthInt);
+            $ordersQuery->whereMonth('order_date', $monthInt);
+        }
+
+        $equipments = $equipmentsQuery->get();
+        $reagents = $reagentsQuery->get();
+        $orders = $ordersQuery->get();
+
         $suppliers = Supplier::all();
         $brands = BrandType::all();
         $grades = Grade::all();
 
-        $orders = Order::with([
-            'samples.n_parameter_methods.equipments',
-            'samples.n_parameter_methods.reagents'
-        ])->get();
+        // Compute available years for filters (distinct years across models)
+        $equipmentYears = Equipment::selectRaw('YEAR(purchase_year) as year')->distinct()->pluck('year')->filter()->unique()->values()->all();
+        $reagentYears = Reagent::selectRaw('YEAR(created_at) as year')->distinct()->pluck('year')->filter()->unique()->values()->all();
+        $orderYears = Order::selectRaw('YEAR(order_date) as year')->distinct()->pluck('year')->filter()->unique()->values()->all();
+
+        $allYears = array_values(array_unique(array_merge($equipmentYears, $reagentYears, $orderYears)));
+        rsort($allYears);
 
         return response()->json([
             'equipments' => $equipments,
@@ -54,7 +88,13 @@ class ReportController extends Controller
             'suppliers' => $suppliers,
             'brands' => $brands,
             'grades' => $grades,
-            'orders' => $orders
+            'orders' => $orders,
+            'available_years' => [
+                'all' => $allYears,
+                'equipments' => $equipmentYears,
+                'reagents' => $reagentYears,
+                'orders' => $orderYears,
+            ],
         ]);
     }
 

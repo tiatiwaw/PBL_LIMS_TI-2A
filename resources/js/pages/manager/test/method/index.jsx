@@ -6,6 +6,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editMethodFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useMethods, useReferences } from "@/hooks/useManager";
+import { exportMethodReportPDF } from "@/utils/pdf/export/test-method";
 
 export default function ManagerMethodsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +18,8 @@ export default function ManagerMethodsPage() {
         isLoading: referenceLoading,
         error: referenceError,
     } = useReferences();
+
+    const handleExport = () => exportMethodReportPDF(methods, references);
 
     const handleShowDetail = (tests) => {
         setSelectedMethod(tests);
@@ -59,6 +62,8 @@ export default function ManagerMethodsPage() {
                 editTitle="Edit Metode Uji"
                 deleteTitle="Hapus Metode Uji"
                 showCreate={false}
+                showExport={true}
+                onExport={handleExport}
             />
             <MethodDetailSheet
                 data={selectedMethod}

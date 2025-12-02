@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import {
     Package,
     Beaker,
@@ -20,24 +21,36 @@ import {
 } from "@/components/shared/admin/report-components";
 import ReportLayout from "@/components/layouts/report-layout";
 import { exportInventoryReport } from "@/utils/excel/export/inventories-report";
+// import { exportInventoryReportPDF } from "@/utils/pdf/export/inventory-report";
 
 export default function AdminReportInventory() {
-    const { data: apiData, isLoading, error } = useInventoryReports();
-
     const filters = useReportFilters(
-        [
-            apiData?.equipments || [],
-            apiData?.reagents || [],
-            apiData?.orders || [],
-        ],
+        [],
         ["purchase_year", "created_at", "order_date"]
     );
 
+    const query = useMemo(
+        () => ({
+            ...(filters.selectedYear !== "all"
+                ? { year: filters.selectedYear }
+                : {}),
+            ...(filters.selectedMonth !== "all"
+                ? { month: String(parseInt(filters.selectedMonth) + 1) }
+                : {}),
+        }),
+        [filters.selectedYear, filters.selectedMonth]
+    );
+
+    const { data: apiData, isLoading, error } = useInventoryReports(query);
+
+    // Analytics expects already-filtered data from API; pass a no-op dateFilter
     const analytics = useInventoryAnalytics(
         apiData,
-        filters.dateFilter,
+        () => true,
         filters.isYearlyView
     );
+
+    console.log(analytics);
 
     const handleExport = () => exportInventoryReport(analytics);
 
@@ -54,7 +67,9 @@ export default function AdminReportInventory() {
             filterProps={{
                 selectedYear: filters.selectedYear,
                 selectedMonth: filters.selectedMonth,
-                availableYears: filters.availableYears,
+                // Prefer available years returned from API, fallback to computed list
+                availableYears:
+                    apiData?.available_years?.all || filters.availableYears,
                 onYearChange: filters.setSelectedYear,
                 onMonthChange: filters.setSelectedMonth,
                 onClearFilters: filters.clearFilters,
