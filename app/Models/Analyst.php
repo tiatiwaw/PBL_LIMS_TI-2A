@@ -20,7 +20,7 @@ class Analyst extends Model
         'specialist',
     ];
 
-    public function users()
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
