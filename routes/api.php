@@ -30,6 +30,7 @@ use App\Http\Controllers\API\V1\Staff\SampleController;
 use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
 use League\CommonMark\Reference\Reference;
+use App\Http\Controllers\API\V1\Analyst\ProfileController;
 
 Route::prefix('v1')->group(function () {
 
@@ -138,6 +139,22 @@ Route::prefix('v1')->group(function () {
                     Route::put('/orders/save/{order}', [AnalystAnalystController::class, 'saveReport'])->name('orders.save');
                     Route::put('/orders/submit/{order}', [AnalystAnalystController::class, 'submitReport'])->name('orders.submit');
                     Route::get('/orders/download/{order}', [AnalystAnalystController::class, 'downloadReport'])->name('orders.download');
+
+                    Route::prefix('profile')->name('profile.')->group(function () {
+                        Route::get('/', [ProfileController::class, 'show'])->name('show');
+
+                        Route::post('/update-photo', [ProfileController::class, 'updatePhoto'])->name('updatePhoto');
+
+                        Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('changePassword');
+
+                        // Certificate CRUD
+                        Route::post('/certifications', [ProfileController::class, 'addCertification'])->name('certifications.add');
+                        Route::delete('/certifications/{id}', [ProfileController::class, 'deleteCertification'])->name('certifications.delete');
+
+                        // Training CRUD
+                        Route::post('/trainings', [ProfileController::class, 'addTraining'])->name('trainings.add');
+                        Route::delete('/trainings/{id}', [ProfileController::class, 'deleteTraining'])->name('trainings.delete');
+                    });
                 });
 
             // Client
