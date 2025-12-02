@@ -1,161 +1,167 @@
 <?php
 
-use App\Http\Controllers\API\V1\Admin\AnalystController;
-use App\Http\Controllers\API\V1\Analyst\AnalystController as AnalystAnalystController;
+use Illuminate\Support\Facades\Route;
+
+// ======================================================
+// AUTH CONTROLLER
+// ======================================================
+use App\Http\Controllers\Api\V1\AuthController;
+
+// ======================================================
+// ADMIN CONTROLLERS
+// ======================================================
 use App\Http\Controllers\API\V1\Admin\BrandTypeController;
-use App\Http\Controllers\API\V1\Admin\CertificateController;
 use App\Http\Controllers\API\V1\Admin\DashboardController;
 use App\Http\Controllers\API\V1\Admin\EquipmentController;
-use App\Http\Controllers\API\V1\Admin\GradeController;
-use App\Http\Controllers\API\V1\Admin\ParameterController;
-use App\Http\Controllers\API\V1\Admin\ReagentController;
-use App\Http\Controllers\API\V1\Admin\ReferenceController;
-use App\Http\Controllers\API\V1\Admin\SampleCategoryController;
-use App\Http\Controllers\API\V1\Admin\TestMethodsController;
-use App\Http\Controllers\API\V1\Admin\TrainingController;
-use App\Http\Controllers\API\V1\Admin\UnitValueController;
-use App\Http\Controllers\API\V1\Admin\UserController;
-use App\Http\Controllers\API\V1\Admin\SupplierController;
-use App\Http\Controllers\API\V1\Admin\OrdersController;
-use App\Http\Controllers\Api\V1\AuthController;
+
+// ======================================================
+// ANALYST CONTROLLERS
+// ======================================================
+use App\Http\Controllers\API\V1\Analyst\AnalystController;
+use App\Http\Controllers\API\V1\Analyst\ProfileController;
+
+// ======================================================
+// STAFF CONTROLLERS
+// ======================================================
 use App\Http\Controllers\API\V1\Staff\ClientController;
 use App\Http\Controllers\API\V1\Staff\OrderController;
+
+// ======================================================
+// CLIENT CONTROLLERS
+// ======================================================
 use App\Http\Controllers\API\V1\Client\ClientController as ClientClientController;
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
-// use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
-use App\Http\Controllers\API\V1\Profile\ProfileDetailController;
-use App\Http\Controllers\API\V1\OrderController as V1OrderController;
-use App\Http\Controllers\API\V1\Staff\SampleController;
-use App\Http\Controllers\StaffApiController;
-use Illuminate\Support\Facades\Route;
-use League\CommonMark\Reference\Reference;
 
-Route::prefix('v1')->group(function () {
 
-    Route::prefix('auth')->name('api.auth.')->group(function () {
-        Route::post('/login', [AuthController::class, 'login'])->name('login');
-        Route::get('/user', [AuthController::class, 'user'])->name('user');
-    });
 
+// ======================================================
+// AUTH ROUTES (TIDAK PERLU LOGIN)
+// ======================================================
+Route::prefix('v1/auth')->group(function () {
+
+    // Login
+    Route::post('/login', [AuthController::class, 'login']);
+
+    // Register (opsional jika dipakai)
+    Route::post('/register', [AuthController::class, 'register']);
+
+    // Logout + Me → BUTUH TOKEN
     Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/me', [AuthController::class, 'user']);
+    });
+});
 
-        Route::get('profile/{user}', [ProfileDetailController::class, 'index'])->name('profile');
 
-        Route::prefix('auth')->name('api.auth.')->group(function () {
-            // Route::get('/user', [AuthController::class, 'user'])->name('user');
-            Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+// ======================================================
+// ROUTES YANG BUTUH LOGIN
+// ======================================================
+Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+
+    // ======================================================
+    // ADMIN
+    // ======================================================
+    Route::prefix('admin')
+        ->middleware('admin')
+        ->name('api.admin.')
+        ->group(function () {
+
+            Route::get('/', [DashboardController::class, 'index']);
+
+            Route::prefix('tools')->name('tools.')->group(function () {
+                Route::apiResource('equipments', EquipmentController::class);
+                Route::apiResource('brands', BrandTypeController::class);
+            });
         });
 
-        // Admin
-        Route::prefix('admin')
-            ->middleware('role:admin')
-            ->name('api.admin.')
-            ->group(function () {
 
-                Route::get('/', [DashboardController::class, 'index']);
+    // ======================================================
+    // STAFF
+    // ======================================================
+    Route::prefix('staff')
+        ->middleware('staff')
+        ->name('api.staff.')
+        ->group(function () {
 
-                Route::apiResource('users', UserController::class);
-                Route::get('analysts', [AnalystController::class, 'index']);
-                Route::get('orders', [OrdersController::class, 'index']);
-                Route::get('orders/{id}', [OrdersController::class, 'show']);
+            Route::apiResource('manage-clients', ClientController::class)
+                ->names([
+                    'index'   => 'clients.index',
+                    'store'   => 'clients.store',
+                    'update'  => 'clients.update',
+                    'destroy' => 'clients.destroy',
+                ])
+                ->parameters([
+                    'manage-clients' => 'client',
+                ]);
 
-                // Tools
-                Route::prefix('tools')
-                    ->name('tools.')
-                    ->group(function () {
-                        Route::apiResource('equipments', EquipmentController::class);
-                        Route::apiResource('brands', BrandTypeController::class);
-                    });
-
-                // Materials
-                Route::prefix('materials')
-                    ->name('materials.')
-                    ->group(function () {
-                        Route::apiResource('reagents', ReagentController::class);
-                        Route::apiResource('grades', GradeController::class);
-                        Route::apiResource('suppliers', SupplierController::class);
-                    });
-
-                // Tests
-                Route::prefix('tests')
-                    ->name('tests.')
-                    ->group(function () {
-                        Route::apiResource('parameters', ParameterController::class);
-                        Route::apiResource('methods', TestMethodsController::class);
-                        Route::apiResource('units', UnitValueController::class);
-                        Route::apiResource('references', ReferenceController::class);
-                        Route::apiResource('categories', SampleCategoryController::class);
-                    });
-
-                Route::prefix('analyst')
-                    ->name('analyst.')
-                    ->group(function () {
-                        Route::apiResource('trainings', TrainingController::class);
-                        Route::apiResource('certificates', CertificateController::class);
-                    });
+            Route::prefix('orders')->name('orders.')->group(function () {
+                Route::get('/', [OrderController::class, 'index'])->name('index');
+                Route::post('/', [OrderController::class, 'store'])->name('store');
+                Route::post('/samples', [OrderController::class, 'storeSample'])->name('storeSample');
             });
+        });
 
-        // Staff
-        Route::prefix('staff')
-            ->middleware('role:staff')
-            ->name('api.staff.')
-            ->group(function () {
 
-                // Resource untuk manage-clients
-                Route::apiResource('manage-clients', ClientController::class)
-                    ->names([
-                        'index'   => 'clients.index',
-                        'store'   => 'clients.store',
-                        'update'  => 'clients.update',
-                        'destroy' => 'clients.destroy',
-                    ])
-                    ->parameters([
-                        'manage-clients' => 'client', // supaya param jadi {client}, bukan {manage_client}
-                    ]);
+    // ======================================================
+    // ANALYST
+    // ======================================================
+    Route::prefix('analyst')
+        ->middleware('role:analyst')
+        ->name('api.analyst.')
+        ->group(function () {
 
-                // Orders
+            // Dashboard & Orders
+            Route::get('/dashboard', [AnalystController::class, 'dashboard'])->name('dashboard');
+            Route::get('/orders', [AnalystController::class, 'orders'])->name('orders');
+            Route::get('/orders/{order}', [AnalystController::class, 'detail'])->name('orders.detail');
 
-                Route::prefix('orders')->name('orders.')->group(function () {
-                    Route::get('/', [OrderController::class, 'index'])->name('index');
-                    Route::post('/', [OrderController::class, 'store'])->name('store');
-                    Route::get('/samples', [SampleController::class, 'index'])->name('indexSample');
-                    Route::post('/samples', [SampleController::class, 'store'])->name('storeSample');
-                });
+            Route::put('/orders/accept/{order}', [AnalystController::class, 'accept'])->name('orders.accept');
+            Route::post('/samples/{sample}/confirm', [AnalystController::class, 'confirm'])->name('samples.confirm');
+            Route::post('/samples/{sample}/unconfirm', [AnalystController::class, 'unconfirm'])->name('samples.unconfirm');
+            Route::put('/orders/save/{order}', [AnalystController::class, 'saveReport'])->name('orders.save');
+            Route::put('/orders/submit/{order}', [AnalystController::class, 'submitReport'])->name('orders.submit');
+            Route::get('/orders/download/{order}', [AnalystController::class, 'downloadReport'])->name('orders.download');
+
+
+            // ======================================================
+            // PROFILE ANALYST
+            // ======================================================
+            Route::prefix('profile')->name('profile.')->group(function () {
+
+                Route::get('/', [ProfileController::class, 'show'])->name('show');
+
+                Route::post('/update-photo', [ProfileController::class, 'updatePhoto'])->name('updatePhoto');
+
+                Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('changePassword');
+
+                // Certificate CRUD
+                Route::post('/certifications', [ProfileController::class, 'addCertification'])->name('certifications.add');
+                Route::delete('/certifications/{id}', [ProfileController::class, 'deleteCertification'])->name('certifications.delete');
+
+                // Training CRUD
+                Route::post('/trainings', [ProfileController::class, 'addTraining'])->name('trainings.add');
+                Route::delete('/trainings/{id}', [ProfileController::class, 'deleteTraining'])->name('trainings.delete');
             });
-            
-            Route::prefix('analyst')
-                ->middleware(['role:analyst'])
-                ->name('api.analyst.')
-                ->group(function () {
-                    Route::get('/dashboard', [AnalystAnalystController::class, 'dashboard'])->name('dashboard');
-                    Route::put('/dashboard/{order}', [AnalystAnalystController::class, 'accept'])->name('orders.accept');
-                    Route::get('/orders', [AnalystAnalystController::class, 'orders'])->name('orders');
-                    Route::get('/orders/{order}', [AnalystAnalystController::class, 'detail'])->name('orders.detail');
-                    Route::get('/samples/{order}', [AnalystAnalystController::class, 'detail'])->name('orders.detail');
-                    Route::post('/samples/{sample}/confirm', [AnalystAnalystController::class, 'confirm'])->name('samples.confirm');
-                    Route::post('/samples/{sample}/unconfirm', [AnalystAnalystController::class, 'unconfirm'])->name('samples.unconfirm');
-                    Route::put('/orders/save/{order}', [AnalystAnalystController::class, 'saveReport'])->name('orders.save');
-                    Route::put('/orders/submit/{order}', [AnalystAnalystController::class, 'submitReport'])->name('orders.submit');
-                    Route::get('/orders/download/{order}', [AnalystAnalystController::class, 'downloadReport'])->name('orders.download');
-                });
+        });
 
-            // Client
-            Route::prefix('client')
-                ->middleware(['role:client'])
-                ->name('api.client.')
-                ->group(function () {
 
-                    // Dashboard & Profile
-                    Route::get('/', [ClientClientController::class, 'index'])->name('index');
+    // ======================================================
+    // CLIENT
+    // ======================================================
+    Route::prefix('client')
+        ->middleware('role:client')
+        ->name('api.client.')
+        ->group(function () {
 
-                    // Orders - menggunakan apiResource untuk efisiensi
-                    Route::prefix('orders')
-                        ->name('orders.')
-                        ->group(function () {
-                            Route::get('/{id}', [ClientOrderController::class, 'show']);
-                            Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
-                        });
-                });
-    });
+            Route::get('/', [ClientClientController::class, 'index'])->name('index');
+
+            Route::prefix('orders')->name('orders.')->group(function () {
+                Route::get('/{order}', [ClientOrderController::class, 'show']);
+                Route::get('/{order}/status', [ClientHistoryController::class, 'show'])->name('status');
+            });
+        });
+
 });
