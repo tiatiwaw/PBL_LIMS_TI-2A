@@ -20,7 +20,7 @@ class HistoryController extends Controller
             
             // Cari order milik user yang login
             $order = Order::where('id', $id)
-                        ->where('client_id', $user->id)
+                        ->where('client_id', $user->clients->id)
                         ->firstOrFail();
 
             // Urutan status
