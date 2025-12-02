@@ -26,6 +26,22 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
+    public function history()
+    {
+        $supervisorId = auth('sanctum')->user()?->id;
+
+        $orders = Order::with([
+            'clients.users',
+            'analysesMethods',
+            'samples.sample_categories',
+        ])
+            ->where('supervisor_id', $supervisorId)
+            ->orderByRaw("CASE WHEN order_type = 'urgent' THEN 0 ELSE 1 END")
+            ->orderBy('order_date', 'asc')
+            ->get();
+        return response()->json($orders);
+    }
+
     public function show(string $id)
     {
         try {
