@@ -30,6 +30,7 @@ use App\Http\Controllers\API\V1\Staff\SampleController;
 use App\Http\Controllers\StaffApiController;
 use Illuminate\Support\Facades\Route;
 use League\CommonMark\Reference\Reference;
+use App\Http\Controllers\API\V1\Analyst\ProfileController;
 
 Route::prefix('v1')->group(function () {
 
@@ -138,7 +139,6 @@ Route::prefix('v1')->group(function () {
                     Route::put('/orders/save/{order}', [AnalystAnalystController::class, 'saveReport'])->name('orders.save');
                     Route::put('/orders/submit/{order}', [AnalystAnalystController::class, 'submitReport'])->name('orders.submit');
                     Route::get('/orders/download/{order}', [AnalystAnalystController::class, 'downloadReport'])->name('orders.download');
-                    Route::post('/reagent-usage/store', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent-usage.store');
                 });
 
             // Client
