@@ -9,7 +9,8 @@ import { useMemo, useState } from "react";
 
 const filterData = [
     { value: "all", label: "All Status" },
-    { value: "active", label: "Active" },
+    { value: "available", label: "Available" },
+    { value: "unavailable", label: "Unavailable" },
     { value: "maintenance", label: "Maintenance" },
     { value: "broken", label: "Broken" },
 ];

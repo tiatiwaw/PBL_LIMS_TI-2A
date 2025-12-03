@@ -96,6 +96,7 @@ export const addDataTable = (doc, startY, tableConfig) => {
         head: [tableConfig.columns],
         body: tableConfig.rows,
         theme: 'striped',
+        // tableWidth: 'wrap',
         headStyles: { fillColor: [2, 77, 96] },
         styles: { fontSize: 10, cellPadding: 3 },
         margin: { top: 20 },

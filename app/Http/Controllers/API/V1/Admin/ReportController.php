@@ -59,7 +59,7 @@ class ReportController extends Controller
             // Note: frontend month may be zero-based (0 = January). Convert to 1-based for SQL.
             $monthInt = (int) $month;
             if ($monthInt >= 0 && $monthInt <= 11) {
-                $monthInt = $monthInt + 1;
+                $monthInt = $monthInt;
             }
             $equipmentsQuery->whereMonth('purchase_year', $monthInt);
             $reagentsQuery->whereMonth('created_at', $monthInt);
@@ -89,6 +89,10 @@ class ReportController extends Controller
             'brands' => $brands,
             'grades' => $grades,
             'orders' => $orders,
+            'selected_filters' => [
+                'year' => $year,
+                'month' => $month,
+            ],
             'available_years' => [
                 'all' => $allYears,
                 'equipments' => $equipmentYears,
