@@ -150,6 +150,7 @@ Route::prefix('v1')->group(function () {
 
                 // Orders
                 Route::prefix('orders')->name('orders.')->group(function () {
+                    Route::get('/all-orders', [OrdersController::class, 'index']);
                     Route::get('/make-order', [StaffOrderController::class, 'index'])->name('index');
                     Route::post('/make-order', [StaffOrderController::class, 'store'])->name('store');
 
