@@ -139,6 +139,7 @@ Route::prefix('v1')->group(function () {
                     Route::put('/orders/save/{order}', [AnalystAnalystController::class, 'saveReport'])->name('orders.save');
                     Route::put('/orders/submit/{order}', [AnalystAnalystController::class, 'submitReport'])->name('orders.submit');
                     Route::get('/orders/download/{order}', [AnalystAnalystController::class, 'downloadReport'])->name('orders.download');
+                    Route::post('/reagent-used/store', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent');
                 });
 
             // Client

@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\API\V1\Analyst;
 
-use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Sample;
-use App\Models\NParameterMethod;
 use App\Models\Reagent;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\JsonResponse;
+use App\Models\NReagent;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\NParameterMethod;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 
 class AnalystController extends Controller
 {
@@ -72,15 +73,22 @@ class AnalystController extends Controller
         ]);
     }
 
-    public function accept(Order $order)
+     public function accept(Order $order)
     {
-        if ($order->status === 'pending') {
+        if (in_array($order->status, ['pending', 'paid'])) {
+            // 1. Update status order
             $order->update(['status' => 'in_progress']);
+
+            // 2. Update semua sample milik order
+            $order->samples()
+                ->where('status', 'pending')
+                ->update(['status' => 'in_progress']);
         }
 
         return response()->json([
-            'message' => 'Order diterima.',
+            'message' => 'Order diterima',
             'order' => $order,
+            'samples_updated' => $order->samples()->get()
         ]);
     }
 
@@ -196,101 +204,37 @@ class AnalystController extends Controller
     /**
      * Menyimpan data penggunaan reagent dan update stok.
      */
-    public function saveReagentUsage(Request $request): JsonResponse
+    public function saveReagentUsage(Request $request)
     {
-        // 1. Validasi Input Array
         $request->validate([
-            'usages' => 'required|array',
-            'usages.*.sample_id' => 'required|exists:samples,id',
-            'usages.*.reagent_id' => 'required|exists:reagents,id',
-            // Gunakan min:0 agar user bisa membatalkan input (set ke 0) jika salah ketik
-            'usages.*.volume_used' => 'required|numeric|min:0',
+            'n_parameter_method_id' => 'required|exists:n_parameter_methods,id',
+            'reagent_id' => 'required|exists:reagents,id',
+            'reagent_used' => 'required|numeric|min:1',
         ]);
 
-        $responseData = [];
-        $errors = [];
+        // Ambil reagent
+        $reagent = Reagent::findOrFail($request->reagent_id);
 
-        try {
-            // Gunakan Transaction agar aman (jika 1 gagal, semua batal)
-            DB::transaction(function () use ($request, &$responseData, &$errors) {
-
-                foreach ($request->usages as $index => $usage) {
-                    $sampleId = $usage['sample_id'];
-                    $reagentId = $usage['reagent_id'];
-                    $newUsage = (float) $usage['volume_used'];
-
-                    // A. Cari NParameterMethod berdasarkan sample_id
-                    $nParameterMethod = NParameterMethod::where('sample_id', $sampleId)->first();
-
-                    if (!$nParameterMethod) {
-                        continue;
-                    }
-
-                    // B. Cari Data Reagent (Master) & Data Pivot (History Pemakaian)
-                    // LockForUpdate untuk mencegah race condition saat stok menipis
-                    $reagentMaster = Reagent::where('id', $reagentId)->lockForUpdate()->first();
-
-                    $reagentPivot = $nParameterMethod->reagents()
-                        ->where('reagents.id', $reagentId)
-                        ->first();
-
-                    if ($reagentMaster && $reagentPivot) {
-                        // C. Hitung Selisih (Delta)
-                        // Nilai lama di database (jika null anggap 0)
-                        $oldUsage = (float) ($reagentPivot->pivot->used_reagent ?? 0);
-
-                        // Delta: Berapa banyak perubahan yang terjadi
-                        // Contoh: Lama 2, Baru 5. Delta = 3 (Stok harus dikurangi 3)
-                        // Contoh: Lama 5, Baru 2. Delta = -3 (Stok harus ditambah 3/dikembalikan)
-                        $difference = $newUsage - $oldUsage;
-
-                        // Jika ada perubahan nilai
-                        if ($difference != 0) {
-
-                            // D. Validasi Stok (Hanya jika stok berkurang / Delta Positif)
-                            if ($difference > 0) {
-                                if ($reagentMaster->stock < $difference) {
-                                    // Lempar exception agar transaction di-rollback
-                                    throw new \Exception("Stock reagent '{$reagentMaster->name}' tidak mencukupi! Sisa: {$reagentMaster->stock}, Dibutuhkan tambahan: {$difference}");
-                                }
-
-                                // Kurangi Stock
-                                $reagentMaster->decrement('stock', $difference);
-                            } else {
-                                // Jika difference negatif (misal input dikurangi), kembalikan ke stock
-                                // abs() mengubah -3 menjadi 3
-                                $reagentMaster->increment('stock', abs($difference));
-                            }
-
-                            // E. Update Tabel Pivot (n_reagent -> column used_reagent)
-                            // Kita pakai updateExistingPivot (bukan create) supaya tidak duplikat row
-                            $nParameterMethod->reagents()->updateExistingPivot($reagentId, [
-                                'used_reagent' => $newUsage
-                            ]);
-                        }
-
-                        // Simpan data untuk respon
-                        $responseData[] = [
-                            'sample_id' => $sampleId,
-                            'reagent_name' => $reagentMaster->name,
-                            'used_reagent' => $newUsage,
-                            'remaining_stock' => $reagentMaster->stock
-                        ];
-                    }
-                }
-            });
-
+        // Cek stock cukup
+        if ($reagent->stock < $request->reagent_used) {
             return response()->json([
-                'message' => 'Reagent usage recorded & stock updated successfully.',
-                'results' => $responseData
-            ], 201); // 201 Created/Success
-
-        } catch (\Exception $e) {
-            // Tangkap error stok tidak cukup atau error database lainnya
-            return response()->json([
-                'message' => 'Gagal menyimpan data reagent.',
-                'error' => $e->getMessage()
-            ], 400); // 400 Bad Request
+                'message' => 'Stock reagent tidak mencukupi!'
+            ], 400);
         }
+
+        // Kurangi stock reagent
+        $reagent->decrement('stock', $request->reagent_used);
+
+        // Catat ke N_Reagent
+        $nReagent = NReagent::create([
+            'n_parameter_method_id' => $request->n_parameter_method_id,
+            'reagent_id' => $request->reagent_id,
+            'reagent_used' => $request->reagent_used,
+        ]);
+
+        return response()->json([
+            'message' => 'Reagent usage recorded & stock updated',
+            'data' => $nReagent
+        ], 201);
     }
 }
