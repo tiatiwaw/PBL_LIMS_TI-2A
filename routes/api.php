@@ -199,6 +199,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/{id}/parameters', [SupervisorParameterController::class, 'store'])->name('store');
                     Route::put('/{id}/parameters', [SupervisorParameterController::class, 'update'])->name('update');
                     Route::post('/{id}/parameters/submit', [SupervisorParameterController::class, 'assignAnalyst'])->name('assign');
+                    Route::get('/{id}/repeat-test', [SupervisorOrderController::class, 'indexRepeatTest'])->name('repeat.index');
                     Route::post('/{id}/repeat-test/submit', [SupervisorParameterController::class, 'submitRepeatTest'])->name('repeat');
                 });
             

@@ -134,6 +134,38 @@ class OrderController extends Controller
         ]);
     }
 
+    public function indexRepeatTest($id)
+    {
+        $supervisorId = auth('sanctum')->user()?->id;
+
+        $order = Order::with([
+            'supervisors',
+            'clients.users',
+            'analysesMethods',
+            'samples.sample_categories',
+            'samples.n_parameter_methods' => function ($query) {
+                $query->where('status', '!=', 'failed');
+            },
+            'samples.n_parameter_methods.test_parameters.unit_values',
+            'samples.n_parameter_methods.test_parameters.reference_standards',
+            'samples.n_parameter_methods.test_methods.reference_standards',
+            'samples.n_parameter_methods.equipments.brand_types',
+            'samples.n_parameter_methods.reagents.suppliers',
+            'samples.n_parameter_methods.reagents.grades',
+        ])
+            ->where('supervisor_id', $supervisorId)
+            ->findOrFail($id);
+
+        $reagents        = Reagent::with(['suppliers', 'grades'])->get();
+        $equipments      = Equipment::with(['brand_types'])->where('status', 'available')->get();
+
+        return response()->json([
+            'order'               => $order,
+            'reagents'            => $reagents,
+            'equipments'          => $equipments,
+        ]);
+    }
+
     public function submitRepeatTest(Request $request, string $id)
     {
         // Validasi input
