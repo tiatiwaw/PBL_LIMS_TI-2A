@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('supplier_id')->constrained('suppliers')->cascadeOnDelete();
             $table->foreignId('grade_id')->constrained('grades')->cascadeOnDelete();
+            $table->foreignId('unit_value_id')->constrained('unit_values')->cascadeOnDelete();
             $table->string('name');
             $table->string('formula');
             $table->string('batch_number');
+            $table->integer('stock')->default(0);
             $table->string('storage_location');
             $table->timestamps();
         });

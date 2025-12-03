@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Analyst;
 use App\Models\Order;
-use Illuminate\Support\Facades\DB;
+use App\Models\Analyst;
 
 class NAnalystSeeder extends Seeder
 {
@@ -14,28 +13,22 @@ class NAnalystSeeder extends Seeder
      */
     public function run(): void
     {
-        $analysts = Analyst::all();
+        // Ambil semua order dan analis yang ada
         $orders = Order::all();
+        $analysts = Analyst::all();
 
-        if ($analysts->isEmpty() || $orders->isEmpty()) {
-            $this->command->warn('⚠️ Data analyst atau order belum ada. Jalankan seeder AnalystSeeder dan OrderSeeder dulu.');
+        if ($orders->isEmpty() || $analysts->isEmpty()) {
+            $this->command->warn('⚠️  Data Order or Analyst tidak ditemukan. Lewati NAnalystSeeder.');
             return;
         }
 
+        // Tugaskan 1 atau 2 analis acak ke setiap order
         foreach ($orders as $order) {
-            // Setiap order akan memiliki 1–2 analyst acak
-            $selectedAnalysts = $analysts->random(rand(1, min(2, $analysts->count())));
+            // Ambil 1 atau 2 ID analis secara acak
+            $randomAnalysts = $analysts->random(rand(1, 2))->pluck('id');
 
-            foreach ($selectedAnalysts as $analyst) {
-                DB::table('n_analysts')->insert([
-                    'analyst_id' => $analyst->id,
-                    'order_id'   => $order->id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
+            // Gunakan Eloquent relationship untuk mengisi tabel pivot
+            $order->analysts()->attach($randomAnalysts);
         }
-
-        $this->command->info('✅ NAnalystSeeder berhasil dijalankan!');
     }
 }

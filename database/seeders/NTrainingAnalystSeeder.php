@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\NTrainingAnalyst;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Analyst;
-use App\Models\Training;
-use Illuminate\Support\Facades\DB;
 
 class NTrainingAnalystSeeder extends Seeder
 {
@@ -14,28 +13,31 @@ class NTrainingAnalystSeeder extends Seeder
      */
     public function run(): void
     {
-        $analysts = Analyst::all();
-        $trainings = Training::all();
+        $data = [
+            [
+                'analyst_id'  => 1,
+                'training_id' => 1,
+            ],
+            [
+                'analyst_id'  => 1,
+                'training_id' => 2,
+            ],
+            [
+                'analyst_id'  => 2,
+                'training_id' => 2,
+            ],
+            [
+                'analyst_id'  => 2,
+                'training_id' => 3,
+            ],
+            [
+                'analyst_id'  => 3,
+                'training_id' => 4,
+            ],
+        ];
 
-        if ($analysts->isEmpty() || $trainings->isEmpty()) {
-            $this->command->warn('⚠️ Data analyst atau training belum ada. Jalankan seeder AnalystSeeder dan TrainingSeeder dulu.');
-            return;
+        foreach ($data as $item) {
+            NTrainingAnalyst::create($item);
         }
-
-        foreach ($analysts as $analyst) {
-            // Ambil 1–3 training secara acak untuk setiap analyst
-            $selectedTrainings = $trainings->random(rand(1, min(3, $trainings->count())));
-
-            foreach ($selectedTrainings as $training) {
-                DB::table('n_training_analysts')->insert([
-                    'analyst_id'  => $analyst->id,
-                    'training_id' => $training->id,
-                    'created_at'  => now(),
-                    'updated_at'  => now(),
-                ]);
-            }
-        }
-
-        $this->command->info('✅ NTrainingAnalystSeeder berhasil dijalankan!');
     }
 }

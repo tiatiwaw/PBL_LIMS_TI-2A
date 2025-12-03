@@ -9,31 +9,31 @@ class SampleSeeder extends Seeder
 {
     public function run(): void
     {
-        $forms = ['solid', 'liquid', 'gas'];
-        $conditions = ['good', 'damaged', 'expired'];
-        $statuses = ['in_progress', 'done'];
-
-        $samples = [];
-
-        for ($i = 1; $i <= 30; $i++) {
-            $categoryId = rand(1, 3);
-            $form = $forms[array_rand($forms)];
-            $condition = $conditions[array_rand($conditions)];
-            $status = $statuses[array_rand($statuses)];
-
-            $samples[] = [
-                'sample_category_id' => $categoryId,
-                'name' => "Sample {$categoryId}-{$i}",
-                'form' => $form,
-                'preservation_method' => "Preserve method {$i}",
-                'condition' => $condition,
-                'status' => $status,
-                'storage_condition' => "Storage {$form} {$i}",
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-
-        DB::table('samples')->insert($samples);
+        DB::table('samples')->insert([
+            [
+                'sample_category_id' => 1,
+                'name' => 'Air Sungai Ciliwung',
+                'form' => 'liquid',
+                'preservation_method' => 'Pendinginan 4°C',
+                'condition' => 'good',
+                'storage_condition' => 'Chiller 4°C', // INI PERBAIKANNYA
+            ],
+            [
+                'sample_category_id' => 2,
+                'name' => 'Tanah Pertanian A',
+                'form' => 'solid',
+                'preservation_method' => 'Disimpan dalam wadah tertutup',
+                'condition' => 'good',
+                'storage_condition' => 'Suhu Ruang', // INI PERBAIKANNYA
+            ],
+            [
+                'sample_category_id' => 3, // Asumsi 3 = Kategori Gas/Udara
+                'name' => 'Udara Pabrik X',
+                'form' => 'gas',
+                'preservation_method' => 'Sampel dalam tabung khusus',
+                'condition' => 'good',
+                'storage_condition' => 'Rak Tabung Gas', // INI PERBAIKANNYA
+            ],
+        ]);
     }
 }
