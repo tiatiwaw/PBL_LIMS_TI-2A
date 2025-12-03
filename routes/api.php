@@ -33,6 +33,7 @@ use App\Http\Controllers\API\V1\Staff\SampleController as StaffSampleController;
 use App\Http\Controllers\API\V1\Client\ClientController as ClientClientController;
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
+use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 
 // MANAGER CONTROLLERS
 use App\Http\Controllers\API\V1\Manager\EquipmentController as ManagerEquipmentController;
@@ -166,6 +167,10 @@ Route::prefix('v1')->group(function () {
             ->group(function () {
 
                 Route::get('/', [ClientClientController::class, 'index'])->name('index');
+                Route::get('/profile', [ClientProfileController::class, 'show'])->name('profile');
+                Route::post('/profile/update-photo', [ClientProfileController::class, 'updatePhoto'])->name('updatePhoto');
+                Route::post('profile/change-password', [ClientProfileController::class, 'changePassword'])->name('client.changePassword');
+                
 
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/{id}', [ClientOrderController::class, 'show']);
