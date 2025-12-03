@@ -24,9 +24,14 @@ class AuthController extends Controller
             ]);
         }
 
-        $request->session()->regenerate();
+        try {
+            $request->session()->regenerate();
+        } catch (\Throwable $e) {
+        }
 
         $user = Auth::user();
+        $user->tokens()->delete();
+        $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
             'success' => true,
@@ -38,32 +43,28 @@ class AuthController extends Controller
                     'email' => $user->email,
                     'role' => $user->role,
                 ],
+                'token' => $token,
+                'redirect_url' => $user->getRedirectRoute(),
             ],
+
         ]);
     }
 
     public function logout(Request $request)
     {
-        Auth::guard('web')->logout();
+        try {
+            $request->user()->currentAccessToken()->delete();
+        } catch (\Throwable $e) {
+        }
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+
+        try {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            // $request->session()->regenerateToken();
+        } catch (\Throwable $e) {
+        }
 
         return response()->json(['message' => 'Logged out']);
-    }
-
-    public function user(Request $request)
-    {
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'user' => [
-                    'id' => $request->user()->id,
-                    'name' => $request->user()->name,
-                    'email' => $request->user()->email,
-                    'role' => $request->user()->role,
-                ],
-            ],
-        ]);
     }
 }

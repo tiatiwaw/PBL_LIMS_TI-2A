@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 
 export default function MethodInfoCard({ method }) {
+    if (!method) return null;
+    
     return (
         <Card className="border border-slate-200 shadow-xl bg-white">
             <CardHeader className="bg-primary-hijauTua text-white rounded-t-2xl">
@@ -27,7 +29,7 @@ export default function MethodInfoCard({ method }) {
                         <span>Nama Metode</span>
                     </div>
                     <p className="font-bold text-primary-hijauTua text-lg">
-                        {method.name}
+                        {method?.name || "N/A"}
                     </p>
                 </div>
 
@@ -37,7 +39,7 @@ export default function MethodInfoCard({ method }) {
                         <span>Referensi</span>
                     </div>
                     <p className="font-bold text-primary-hijauTua">
-                        {method.reference.name}
+                        {method?.reference?.name || "N/A"}
                     </p>
                 </div>
 
@@ -47,7 +49,7 @@ export default function MethodInfoCard({ method }) {
                         <span>Durasi</span>
                     </div>
                     <Badge variant="info">
-                        {method.duration}
+                        {method?.duration || "N/A"}
                     </Badge>
                 </div>
 
@@ -57,7 +59,7 @@ export default function MethodInfoCard({ method }) {
                         <span>Masa Berlaku</span>
                     </div>
                     <Badge variant="success">
-                        {method.validity_period}
+                        {method?.validity_period || "N/A"}
                     </Badge>
                 </div>
 
@@ -67,7 +69,7 @@ export default function MethodInfoCard({ method }) {
                         <span>Parameter Terkait</span>
                     </div>
                     <p className="font-bold text-primary-hijauTua">
-                        {method.applicable_parameter}
+                        {method?.applicable_parameter || "N/A"}
                     </p>
                 </div>
             </CardContent>

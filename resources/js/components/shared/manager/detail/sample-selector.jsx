@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { TestTube2 } from "lucide-react";
 
-export default function SampleSelector({ samples, selectedSampleId, onSampleChange }) {
+export default function SampleSelector({ samples = [], selectedSampleId, onSampleChange }) {
     return (
         <Card className="border border-slate-200 shadow-xl bg-white">
             <CardHeader className="border-b border-slate-100 pb-4">
@@ -42,7 +42,7 @@ export default function SampleSelector({ samples, selectedSampleId, onSampleChan
                                         {sample.name}
                                     </span>
                                     <Badge variant="success">
-                                        {sample.sample_category.name}
+                                        {sample.sample_category?.name ?? "Tidak ada kategori"}
                                     </Badge>
                                 </div>
                             </SelectItem>

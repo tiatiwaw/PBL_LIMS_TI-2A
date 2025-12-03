@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 
 export default function ParameterInfoCard({ parameter }) {
+    if (!parameter) return null;
+    
     return (
         <Card className="border border-slate-200 shadow-xl bg-white">
             <CardHeader className="bg-primary-hijauTua text-white rounded-t-2xl">
@@ -28,7 +30,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <span>Nama Parameter</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua text-lg">
-                            {parameter.name}
+                            {parameter?.name || "N/A"}
                         </p>
                     </div>
 
@@ -38,7 +40,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <span>Kategori</span>
                         </div>
                         <Badge variant="success">
-                            {parameter.category}
+                            {parameter?.category || "N/A"}
                         </Badge>
                     </div>
 
@@ -48,7 +50,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <span>Detection Limit</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua">
-                            {parameter.detectionLimit}
+                            {parameter?.detectionLimit || "N/A"}
                         </p>
                     </div>
 
@@ -58,7 +60,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <span>Standar Kualitas</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua">
-                            {parameter.quality_standard}
+                            {parameter?.quality_standard || "N/A"}
                         </p>
                     </div>
 
@@ -68,7 +70,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <span>Referensi</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua">
-                            {parameter.reference.name}
+                            {parameter?.reference?.name || "N/A"}
                         </p>
                     </div>
 
@@ -78,7 +80,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <span>Satuan</span>
                         </div>
                         <Badge variant="info">
-                            {parameter.unit.value}
+                            {parameter?.unit?.value || "N/A"}
                         </Badge>
                     </div>
                 </div>

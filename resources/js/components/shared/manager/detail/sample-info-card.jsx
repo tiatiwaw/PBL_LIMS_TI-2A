@@ -15,6 +15,8 @@ import {
 } from "@/utils/statusUtils";
 
 export default function SampleInfoCard({ sample }) {
+    if (!sample || typeof sample !== 'object') return null;
+
     return (
         <Card className="border border-slate-200 shadow-xl bg-white col-span-2 lg:col-span-1">
             <CardHeader className="bg-primary-hijauTua text-white rounded-t-2xl">
@@ -33,7 +35,7 @@ export default function SampleInfoCard({ sample }) {
                             <span>Nama Sample</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua text-lg">
-                            {sample.name}
+                            {sample?.name || "N/A"}
                         </p>
                     </div>
 
@@ -44,7 +46,7 @@ export default function SampleInfoCard({ sample }) {
                                 <span>Kategori</span>
                             </div>
                             <Badge variant="success">
-                                {sample.sample_category.name}
+                                {sample?.sample_category?.name || "N/A"}
                             </Badge>
                         </div>
 
@@ -54,7 +56,7 @@ export default function SampleInfoCard({ sample }) {
                                 <span>Bentuk</span>
                             </div>
                             <p className="font-bold text-primary-hijauTua">
-                                {sample.form}
+                                {sample?.form || "N/A"}
                             </p>
                         </div>
 
@@ -66,7 +68,7 @@ export default function SampleInfoCard({ sample }) {
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
                                 <span className="font-bold text-primary-hijauTua">
-                                    {sample.condition}
+                                    {sample?.condition || "N/A"}
                                 </span>
                             </div>
                         </div>
@@ -76,8 +78,8 @@ export default function SampleInfoCard({ sample }) {
                                 <TestTube className="w-4 h-4" />
                                 <span>Status</span>
                             </div>
-                            <Badge variant={getSampleStatusVariant(sample.status)}>
-                                {getStatusParameterLabel(sample.status)}
+                            <Badge variant={getSampleStatusVariant(sample?.status)}>
+                                {getStatusParameterLabel(sample?.status) || "N/A"}
                             </Badge>
                         </div>
                     </div>
@@ -90,7 +92,7 @@ export default function SampleInfoCard({ sample }) {
                     </div>
                     <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
                         <p className="text-primary-hijauTua font-medium">
-                            {sample.preservation_method}
+                            {sample?.preservation_method || "N/A"}
                         </p>
                     </div>
                 </div>
@@ -102,7 +104,7 @@ export default function SampleInfoCard({ sample }) {
                     </div>
                     <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
                         <p className="text-primary-hijauTua font-medium">
-                            {sample.storage_condition}
+                            {sample?.storage_condition || "N/A"}
                         </p>
                     </div>
                 </div>

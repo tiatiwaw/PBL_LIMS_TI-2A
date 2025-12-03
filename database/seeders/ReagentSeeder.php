@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Reagent;
 use App\Models\Supplier;
 use App\Models\Grade;
+use App\Models\UnitValue;
 
 class ReagentSeeder extends Seeder
 {
@@ -17,9 +18,10 @@ class ReagentSeeder extends Seeder
         // Pastikan supplier & grade sudah ada
         $suppliers = Supplier::all();
         $grades = Grade::all();
+        $unit = UnitValue::all();
 
-        if ($suppliers->isEmpty() || $grades->isEmpty()) {
-            $this->command->warn('⚠️ Jalankan SupplierSeeder dan GradeSeeder terlebih dahulu!');
+        if ($suppliers->isEmpty() || $grades->isEmpty() || $unit->isEmpty()) {
+            $this->command->warn('⚠️ Jalankan SupplierSeeder, GradeSeeder, dan UnitValueSeeder terlebih dahulu!');
             return;
         }
 
@@ -61,6 +63,7 @@ class ReagentSeeder extends Seeder
                 ...$data,
                 'supplier_id' => $suppliers->random()->id,
                 'grade_id' => $grades->random()->id,
+                'unit_value_id' => $unit->random()->id
             ]);
         }
     }

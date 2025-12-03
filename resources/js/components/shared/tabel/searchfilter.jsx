@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, ListFilter, PlusCircle } from "lucide-react";
+import { Search, ListFilter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -14,8 +14,6 @@ import {
 export default function SearchFilter({
     showSearch,
     showFilter,
-    showCreate,
-    onCreate,
     filterOptions = [],
     searchTerm,
     onSearchChange,
@@ -79,17 +77,7 @@ export default function SearchFilter({
                                 </SelectItem>
                             ))}
                         </SelectContent>
-
                     </Select>
-                )}
-                {showCreate && (
-                    <Button
-                        onClick={onCreate}
-                        className="bg-primary-hijauTua hover:bg-primary-hijauTua/90"
-                    >
-                        <PlusCircle size={18} className="mr-2" />
-                        Tambah Data
-                    </Button>
                 )}
             </div>
         </div>
