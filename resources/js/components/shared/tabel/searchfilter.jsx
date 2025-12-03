@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, ListFilter, PlusCircle } from "lucide-react";
+import { Search, ListFilter, PlusCircle, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,9 @@ export default function SearchFilter({
     showSearch,
     showFilter,
     showCreate,
+    showExport,
     onCreate,
+    onExport,
     filterOptions = [],
     searchTerm,
     onSearchChange,
@@ -46,7 +48,7 @@ export default function SearchFilter({
                             className={cn(
                                 "absolute left-2 top-1/2 -translate-y-1/2 rounded-full",
                                 "bg-transparent hover:bg-transparent text-primary-hijauTua hover:text-primary-hijauTua border-none",
-                                "transition-all duration-75 ease-in",
+                                "transition-all duration-75 ease-in"
                             )}
                             aria-label="Search"
                         >
@@ -79,7 +81,6 @@ export default function SearchFilter({
                                 </SelectItem>
                             ))}
                         </SelectContent>
-
                     </Select>
                 )}
                 {showCreate && (
@@ -89,6 +90,14 @@ export default function SearchFilter({
                     >
                         <PlusCircle size={18} className="mr-2" />
                         Tambah Data
+                    </Button>
+                )}
+                {showExport && (
+                    <Button
+                        onClick={onExport}
+                        className="gap-2 bg-[#024D60] hover:bg-[#02364B] text-white shadow-md shadow-[#024D60]/20"
+                    >
+                        <Download size={16} /> Ekspor
                     </Button>
                 )}
             </div>

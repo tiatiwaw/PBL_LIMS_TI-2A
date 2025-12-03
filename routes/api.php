@@ -175,6 +175,8 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/{id}', [ClientOrderController::class, 'show']);
                     Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
+                    Route::get('/download/{id}', [ClientOrderController::class, 'downloadReport'])->name('download');
+
                 });
             });
 

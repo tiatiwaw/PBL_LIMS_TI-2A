@@ -38,7 +38,7 @@ class CertificateController extends Controller
                 'name'        => 'required|string|max:255',
                 'issued_date' => 'required|date',
                 'expired_date' => 'nullable|date|after_or_equal:issued_date',
-                'file_path'   => 'nullable|file|mimes:pdf,jpg,png',
+                'file_path'   => 'nullable|file|mimes:pdf',
             ]);
 
             // Upload file jika ada

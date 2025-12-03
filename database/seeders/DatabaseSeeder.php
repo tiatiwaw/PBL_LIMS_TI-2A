@@ -20,22 +20,22 @@ class DatabaseSeeder extends Seeder
 
                 // // Master Data Independen
                 $this->call([
-                        // BrandTypeSeeder::class,
-                        // GradeSeeder::class,
-                        // SupplierSeeder::class,
-                        // TrainingSeeder::class,
-                        // CertificateSeeder::class,
+                        BrandTypeSeeder::class,
+                        GradeSeeder::class,
+                        SupplierSeeder::class,
+                        TrainingSeeder::class,
+                        CertificateSeeder::class,
                         SampleCategorySeeder::class,
-                        // UnitValueSeeder::class,
-                        // ReferenceStandardSeeder::class,
+                        UnitValueSeeder::class,
+                        ReferenceStandardSeeder::class,
                         AnalysesMethodSeeder::class,
                         SampleSeeder::class,
                 ]);
 
                 // Master Data Dependen
                 $this->call([
-                        // EquipmentSeeder::class,
-                        // ReagentSeeder::class,
+                        EquipmentSeeder::class,
+                        ReagentSeeder::class,
                         TestMethodSeeder::class,
                         TestParameterSeeder::class,
                 ]);
@@ -44,12 +44,12 @@ class DatabaseSeeder extends Seeder
                 $this->call([
                         OrderSeeder::class,
                         NOrderSampleSeeder::class,
-                        // NAnalysesMethodsOrdersSeeder::class,
+                        NAnalysesMethodsOrdersSeeder::class,
                         NAnalystSeeder::class,
                         NParameterMethodSeeder::class,
-                        // NEquipmentSeeder::class,
-                        // NReagentSeeder::class,
-                        // NTrainingAnalystSeeder::class,
+                        NEquipmentSeeder::class,
+                        NReagentSeeder::class,
+                        NTrainingAnalystSeeder::class,
                 ]);
         }
 }

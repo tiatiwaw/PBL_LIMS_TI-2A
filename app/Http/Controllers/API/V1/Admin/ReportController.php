@@ -10,9 +10,12 @@ use App\Models\Order;
 use App\Models\Reagent;
 use App\Models\Supplier;
 use App\Models\User;
+use Illuminate\Support\Facades\DB; 
 
 class ReportController extends Controller
 {
+    // ... (Fungsi orders dan inventory tidak diubah)
+
     public function orders()
     {
         $orders = Order::with([
@@ -60,17 +63,63 @@ class ReportController extends Controller
 
     public function users()
     {
-        $users = User::all();
+        // PERHITUNGAN ANALITIK RINGKAS (Metrik Users)
+        
+        $totalAnalyst = User::whereHas('roles', function ($query) {
+             $query->where('name', 'analyst');
+        })->count();
 
+        $totalCustomer = User::whereHas('roles', function ($query) {
+            $query->where('name', 'client');
+        })->count();
+        
+        $totalOrderAllTime = Order::count();
+
+        // ----------------------------------------------------
+        // LOGIKA PERBAIKAN TOP CUSTOMER (Handle NULL lebih baik)
+        // ----------------------------------------------------
+        $topCustomerName = '-';
+        $topCustomerOrders = 0;
+
+        // Hanya jalankan query agregat jika ada order
+        if ($totalOrderAllTime > 0) {
+            $topCustomerVolume = Order::select('client_id', DB::raw('count(*) as total_orders'))
+                ->groupBy('client_id')
+                ->orderByDesc('total_orders')
+                ->first(); 
+            
+            if ($topCustomerVolume) {
+                $topCustomerOrders = $topCustomerVolume->total_orders;
+                $topCustomer = User::find($topCustomerVolume->client_id);
+                
+                // Set nama jika user ditemukan, jika tidak, biarkan default '-'
+                if ($topCustomer) {
+                    $topCustomerName = $topCustomer->name;
+                }
+            }
+        }
+        
+        // Mengambil orders LENGKAP untuk filter tanggal di frontend (WAJIB)
         $orders = Order::with([
-            'clients',
-            'analysts',
-            'samples'
+            'clients', // Relasi untuk mendapatkan nama client
+            'analysts', // Relasi untuk mendapatkan nama analyst
+            'samples' // Relasi untuk menghitung jumlah tes
         ])->get();
-
+        
+        // Mengirim DATA ANALITIK RINGKAS
         return response()->json([
-            'users' => $users,
-            'orders' => $orders
+            // Data analitik utama
+            'totalAnalyst' => $totalAnalyst,
+            'totalCustomer' => $totalCustomer,
+            'totalOrderNonAdmin' => $totalOrderAllTime, 
+
+            // Data Top Customer yang sudah ter-handle nilainya
+            'topCustomer' => [
+                'name' => $topCustomerName,
+                'totalOrders' => $topCustomerOrders
+            ],
+            // Data orders mentah dikirim untuk diolah di frontend
+            'orders' => $orders,
         ]);
     }
 

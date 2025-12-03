@@ -1,24 +1,57 @@
 import { safeGet } from "@/utils/report-helpers";
 import { useMemo } from "react";
 
+// CATATAN PENTING:
+// Hook ini diubah untuk menerima data analitik yang sudah dihitung 
+// di backend (totalAnalyst, totalCustomer) dan data mentah Order (orders)
+// untuk perhitungan yang masih sensitif terhadap filter tanggal di frontend.
 export const useUsersAnalytics = (data, dateFilter, isAllPeriod) => {
     return useMemo(() => {
-        const { users = [], orders = [] } = data || {};
+        // Data yang sudah dihitung di Backend:
+        const {
+            totalAnalyst, // <--- Nilai dari Backend
+            totalCustomer, // <--- Nilai dari Backend
+            totalOrderNonAdmin, // <--- Nilai dari Backend (sekarang menjadi total filtered orders jika isAllPeriod false)
+            topCustomer, // <--- Objek ringkas dari Backend (nama dan total orders)
+            // Hapus 'users' mentah. Gunakan 'orders' untuk perhitungan activity.
+            orders = [], 
+        } = data || {};
 
-        const filteredUsers = users.filter((u) => dateFilter(u.created_at));
+        // ----------------------------------------------------
+        // LOGIKA FILTER TANGGAL (Hanya diterapkan ke Orders, 
+        // karena data Total Users dari backend sudah final).
+        // ----------------------------------------------------
         const filteredOrders = orders.filter((o) => dateFilter(o.order_date));
 
-        const displayedUsers = isAllPeriod ? users : filteredUsers;
+        // ----------------------------------------------------
+        // PENYESUAIAN METRIK PENGGUNA (Menggunakan nilai dari Backend)
+        // ----------------------------------------------------
+        
+        // Asumsi: Backend hanya mengirim data total jika isAllPeriod=true. 
+        // Jika filter tanggal diterapkan (isAllPeriod=false), 
+        // kita tidak bisa menghitung total user yang dibuat pada periode itu
+        // karena backend tidak mengirim data users mentah lagi.
+        
+        // Kita gunakan nilai dari backend jika isAllPeriod TRUE.
+        // Jika FALSE, kita asumsikan metrik ini tidak terpengaruh filter tanggal 
+        // (atau perlu penyesuaian di backend/API baru).
+        const totalAnalysts = totalAnalyst || 0;
+        const totalClients = totalCustomer || 0;
+        // Karena users mentah sudah dihapus, kita tidak bisa menghitung role lain.
+        // Kita hanya akan menampilkan total dari backend.
+        
+        // Total NonAdmins, jika diperlukan, seharusnya dihitung di backend juga.
+        // Untuk sementara kita gunakan total clients + total analysts
+        const totalNonAdmins = totalAnalysts + totalClients; 
+        
+        // ----------------------------------------------------
+        // LOGIKA ANALISIS ORDER (Masih di Frontend karena filter tanggal)
+        // ----------------------------------------------------
 
-        const analysts = displayedUsers.filter((u) => u.role === "analyst");
-        const clients = displayedUsers.filter((u) => u.role === "client");
-        const staffs = displayedUsers.filter((u) => u.role === "staff");
-        const supervisors = displayedUsers.filter(
-            (u) => u.role === "supervisor"
-        );
-        const managers = displayedUsers.filter((u) => u.role === "manager");
-        const nonAdmins = displayedUsers.filter((u) => u.role !== "admin");
-
+        // 1. Hitung total order yang difilter oleh tanggal
+        const totalFilteredOrders = filteredOrders.length;
+        
+        // 2. Client Order Counts (Diperlukan untuk Top Client yang difilter tanggal)
         const clientOrderCounts = {};
         filteredOrders.forEach((order) => {
             const clientName = safeGet(order, "clients.name", "Unknown Client");
@@ -26,6 +59,7 @@ export const useUsersAnalytics = (data, dateFilter, isAllPeriod) => {
                 (clientOrderCounts[clientName] || 0) + 1;
         });
 
+        // 3. Analyst Activity Counts
         const analystTestCounts = {};
         let totalAnalystsAssigned = 0;
         let ordersWithAnalysts = 0;
@@ -54,7 +88,9 @@ export const useUsersAnalytics = (data, dateFilter, isAllPeriod) => {
             .map(([name, tests]) => ({ name, tests }))
             .sort((a, b) => b.tests - a.tests);
 
-        const topClient = sortedClients[0] || { name: "-", orders: 0 };
+        // Top Client sekarang diambil dari hasil filter tanggal frontend 
+        // (bukan dari topCustomer yang dikirim backend).
+        const topClientFiltered = sortedClients[0] || { name: "-", orders: 0 };
         const topAnalyst = sortedAnalysts[0] || { name: "-", tests: 0 };
 
         const avgAnalystsPerOrder =
@@ -62,22 +98,24 @@ export const useUsersAnalytics = (data, dateFilter, isAllPeriod) => {
                 ? (totalAnalystsAssigned / ordersWithAnalysts).toFixed(1)
                 : 0;
 
+        // Distribusi Role (Hanya menampilkan Total Analis dan Total Client dari Backend)
+        // Jika role lain diperlukan, backend harus mengirimkan totalnya juga.
         const roleDistribution = [
-            { name: "Clients", value: clients.length },
-            { name: "Analysts", value: analysts.length },
-            { name: "Supervisors", value: supervisors.length },
-            { name: "Managers", value: managers.length },
-            { name: "Staffs", value: staffs.length },
+            { name: "Clients", value: totalClients },
+            { name: "Analysts", value: totalAnalysts },
+            // Role lainnya tidak tersedia karena data users mentah sudah dihapus.
         ].filter((d) => d.value > 0);
 
         const clientRankingData = sortedClients.slice(0, 5);
         const analystActivityData = sortedAnalysts.slice(0, 5);
 
         return {
-            totalAnalysts: analysts.length,
-            totalClients: clients.length,
-            totalNonAdmins: nonAdmins.length,
-            topClient,
+            totalAnalysts: totalAnalysts,
+            totalClients: totalClients,
+            // totalOrderNonAdmin kini merepresentasikan total order yang sudah difilter:
+            totalOrders: totalFilteredOrders, 
+            totalNonAdmins, 
+            topClient: topClientFiltered, // Menggunakan hasil filter tanggal
             topAnalyst,
             avgAnalystsPerOrder,
 
