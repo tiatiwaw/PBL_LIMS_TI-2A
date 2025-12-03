@@ -5,7 +5,10 @@ import {
     OrderDetailHeader,
     SampleSelector,
     AnalysisMethodCard,
+    AnalystTeamCard,
+    EquipmentCard,
     NotesCard,
+    ReagentCard,
     SampleInfoCard,
     OrderValidation,
 } from "@/components/shared/order/detail";
@@ -15,6 +18,7 @@ import { useOrder } from "@/hooks/useSupervisor";
 import { VALIDATION_ACTION_TYPES } from "@/utils/constant/validation";
 import { toast } from "sonner";
 import ActionSupervisorDialog from "@/components/shared/dialog/action-supervisor-dialog";
+import ParameterMethodCard from "@/components/shared/order/detail/parameter-method-card";
 
 export default function DetailOrder({ canValidate }) {
     const { props } = usePage();
@@ -31,6 +35,42 @@ export default function DetailOrder({ canValidate }) {
         data: {},
     });
 
+    // 🔹 Fungsi untuk mengambil semua result dari n_parameter_methods
+    const getAllResults = () => {
+        if (!order?.samples || order.samples.length === 0) {
+            return "";
+        }
+
+        const allResults = [];
+
+        // Loop setiap sample
+        order.samples.forEach((sample) => {
+            // Check apakah sample memiliki n_parameter_methods
+            if (sample?.n_parameter_methods) {
+                // Jika n_parameter_methods adalah array
+                if (Array.isArray(sample.n_parameter_methods)) {
+                    sample.n_parameter_methods.forEach((nParam) => {
+                        if (nParam.result && nParam.result !== "-") {
+                            allResults.push(nParam.result);
+                        }
+                    });
+                }
+                // Jika n_parameter_methods adalah single object
+                else if (typeof sample.n_parameter_methods === "object") {
+                    if (
+                        sample.n_parameter_methods.result &&
+                        sample.n_parameter_methods.result !== "-"
+                    ) {
+                        allResults.push(sample.n_parameter_methods.result);
+                    }
+                }
+            }
+        });
+
+        // Gabungkan hasil dengan koma dan spasi
+        return allResults.join(", ");
+    };
+
     const handleUpdate = async (formData) => {
         try {
             setIsValidating(true);
@@ -41,6 +81,7 @@ export default function DetailOrder({ canValidate }) {
             setIsValidating(false);
         }
     };
+
     const handleValidation = async (actionType) => {
         try {
             setIsValidating(true);
@@ -89,14 +130,19 @@ export default function DetailOrder({ canValidate }) {
                     break;
 
                 case VALIDATION_ACTION_TYPES.VALIDATE_TEST:
-                    // Validate test - ubah status menjadi pending
+                    // 🔹 Ambil semua results
+                    const resultValue = getAllResults();
+                    console.log(resultValue);
+
                     setDialogConfig({
                         action: "confirm",
-                        title: "Validasi Hasil Test",
+                        title: `Konfirmasi Uji Test Sampel ${order.title}`,
                         description:
-                            "Apakah Anda yakin ingin memvalidasi hasil test ini?",
+                            "Yakin ingin mengkonfirmasi pengujian ini?.",
                         data: {
                             action: "validate_test",
+                            reason: "Menunggu Pembayaran dari Klien.",
+                            result_value: resultValue, // 🔹 Gunakan hasil dari getAllResults()
                         },
                     });
                     setOpenDialog(true);
@@ -104,17 +150,19 @@ export default function DetailOrder({ canValidate }) {
                     break;
 
                 case VALIDATION_ACTION_TYPES.REPEAT_TEST:
-                    // Repeat test - ubah status menjadi in_progress
-                    setDialogConfig({
-                        action: "Warning",
-                        title: "Ulangi Test",
-                        description: "Test akan dijalankan kembali. Lanjutkan?",
-                        data: {
-                            action: "repeat_test",
-                        },
-                    });
-                    setOpenDialog(true);
-                    setIsValidating(false);
+                    // Redirect ke repeat-test page
+                    router.visit(
+                        route("supervisor.order.repeat-test", id),
+                        {},
+                        {
+                            onError: () => {
+                                toast.error(
+                                    "Gagal membuka halaman repeat test"
+                                );
+                                setIsValidating(false);
+                            },
+                        }
+                    );
                     break;
 
                 default:
@@ -180,23 +228,89 @@ export default function DetailOrder({ canValidate }) {
                 />
 
                 {selectedSample && (
-                    <div className="grid grid-cols-1 gap-6">
-                        <SampleInfoCard sample={selectedSample} />
-                    </div>
+                    <>
+                        {/* Check if we have complete data for new layout */}
+                        {selectedSample?.n_parameter_methods &&
+                        selectedSample?.n_parameter_methods?.test_methods &&
+                        selectedSample?.n_parameter_methods?.test_parameters &&
+                        order?.analysts &&
+                        order?.analysts.length > 0 ? (
+                            // New layout - when data is complete
+                            <>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <SampleInfoCard sample={selectedSample} />
+                                    <div className="space-y-6">
+                                        <ParameterMethodCard
+                                            data={
+                                                selectedSample?.n_parameter_methods
+                                            }
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <EquipmentCard
+                                        equipments={
+                                            selectedSample.n_parameter_methods
+                                                ?.equipments
+                                        }
+                                    />
+                                    <ReagentCard
+                                        reagents={
+                                            selectedSample.n_parameter_methods
+                                                ?.reagents
+                                        }
+                                    />
+                                </div>
+
+                                <AnalysisMethodCard
+                                    methods={order.analyses_methods}
+                                    reportIssuedAt={order.report_issued_at}
+                                    reportFilePath={order.report_file_path}
+                                    resultValue={order.result_value}
+                                />
+
+                                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                                    <div className="xl:col-span-2">
+                                        <AnalystTeamCard
+                                            analysts={order.analysts}
+                                        />
+                                    </div>
+                                    <NotesCard
+                                        notes={order.notes}
+                                        resultValue={order.result_value}
+                                    />
+                                </div>
+                            </>
+                        ) : (
+                            // Old layout - when data is incomplete
+                            <div className="grid grid-cols-1 gap-6">
+                                <SampleInfoCard sample={selectedSample} />
+                            </div>
+                        )}
+                    </>
                 )}
 
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                    <AnalysisMethodCard
-                        methods={order.analyses_methods}
-                        reportIssuedAt={order.report_issued_at}
-                        reportFilePath={order.report_file_path}
-                        resultValue={order.result_value}
-                    />
-                    <NotesCard
-                        notes={order.notes}
-                        resultValue={order.result_value}
-                    />
-                </div>
+                {/* Always show AnalysisMethodCard if no complete data */}
+                {!selectedSample?.n_parameter_methods ||
+                !selectedSample?.n_parameter_methods?.test_methods ||
+                !selectedSample?.n_parameter_methods?.test_parameters ||
+                !order?.analysts ||
+                order?.analysts.length === 0 ? (
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <AnalysisMethodCard
+                            methods={order.analyses_methods}
+                            reportIssuedAt={order.report_issued_at}
+                            reportFilePath={order.report_file_path}
+                            resultValue={order.result_value}
+                        />
+                        <NotesCard
+                            notes={order.notes}
+                            resultValue={order.result_value}
+                        />
+                    </div>
+                ) : null}
+
                 {canValidate && (
                     <OrderValidation
                         status={order.status}

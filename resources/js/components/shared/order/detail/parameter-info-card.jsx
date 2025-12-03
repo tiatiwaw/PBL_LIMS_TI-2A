@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 
 export default function ParameterInfoCard({ parameter }) {
+    if (!parameter) {
+        return null;
+    }
     return (
         <Card className="border border-slate-200 shadow-xl bg-white">
             <CardHeader className="bg-primary-hijauTua text-white rounded-t-2xl">

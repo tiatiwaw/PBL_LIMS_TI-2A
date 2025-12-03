@@ -15,6 +15,13 @@ class SupervisorController extends Controller
     {
         return Inertia::render('supervisor/orders/history/index');
     }
+    public function ordersHistoryDetail($id)
+    {
+        return Inertia::render('supervisor/orders/history/detail/index', [
+            'id' => $id,
+            'canValidate' => false,
+        ]);
+    }
     public function analysts()
     {
         return Inertia::render('supervisor/analysts/index');
@@ -30,6 +37,20 @@ class SupervisorController extends Controller
     {
         return Inertia::render('supervisor/orders/parameters/index', [
             'id' => $id
+        ]);
+    }
+
+    public function confirmValidation($id)
+    {
+        return Inertia::render('supervisor/orders/confirm-validation/index', [
+            'id' => $id,
+        ]);
+    }
+
+    public function repeatTest($id)
+    {
+        return Inertia::render('supervisor/orders/repeat-test/index', [
+            'id' => $id,
         ]);
     }
 }

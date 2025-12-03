@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { getOrdersColumns } from "@/components/shared/manager/order-columns";
 import { router } from "@inertiajs/react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
-// import { useOrders } from "@/hooks/useAdmin";
+import { useHistoryOrders } from "@/hooks/useSupervisor";
+import { getOrdersColumns } from "@/components/shared/supervisor/orders-columns";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -17,39 +17,40 @@ const filterData = [
 ];
 
 export default function AdminOrdersPage() {
-    // const { data: orders, isLoading, error } = useOrders();
+    const { data: orders, isLoading, error } = useHistoryOrders();
 
     const handleShowDetail = (data) => {
-        // router.visit(route("admin.order.show", data.id));
+        router.visit(route("supervisor.order.history.detail", data.id));
     };
 
     const columns = useMemo(
-        () => getOrdersColumns({ onShowDetail: handleShowDetail }),
+        () =>
+            getOrdersColumns({ onShowDetail: handleShowDetail, history: true }),
         []
     );
 
-    // if (isLoading) {
-    //     return (
-    //         <DashboardLayout title="Riwayat Order" header="Riwayat Order">
-    //             <Loading />
-    //         </DashboardLayout>
-    //     );
-    // }
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Riwayat Order" header="Riwayat Order">
+                <Loading />
+            </DashboardLayout>
+        );
+    }
 
-    // if (error) {
-    //     return (
-    //         <DashboardLayout title="Riwayat Order" header="Riwayat Order">
-    //             <div className="text-center text-red-500 py-8">
-    //                 {error.message || "Terjadi kesalahan saat memuat data"}
-    //             </div>
-    //         </DashboardLayout>
-    //     );
-    // }
+    if (error) {
+        return (
+            <DashboardLayout title="Riwayat Order" header="Riwayat Order">
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
         <DashboardLayout title="Riwayat Order" header="Riwayat Order">
             <ManagedDataTable
-                data={[]}
+                data={orders || []}
                 columns={columns}
                 showFilter={true}
                 showCreate={false}

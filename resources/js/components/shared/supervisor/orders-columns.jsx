@@ -7,7 +7,7 @@ import {
     getOrderTypeVariant,
 } from "@/utils/statusUtils";
 
-export const getOrdersColumns = ({ onShowDetail }) => [
+export const getOrdersColumns = ({ onShowDetail, history = false }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "order_number", header: "No. Order" },
     { accessorKey: "title", header: "Judul Order" },
@@ -56,19 +56,21 @@ export const getOrdersColumns = ({ onShowDetail }) => [
         cell: ({ row }) => {
             let label = "";
 
-            switch (row.status) {
-                case "received":
-                    label = "Detail";
-                    break;
-                case "paid":
-                    label = "Isi Data";
-                    break;
-                case "received_test":
-                    label = "QC";
-                    break;
-                default:
-                    label = "Detail";
-            }
+            if (!history) {
+                switch (row.status) {
+                    case "received":
+                        label = "Detail";
+                        break;
+                    case "paid":
+                        label = "Isi Data";
+                        break;
+                    case "received_test":
+                        label = "QC";
+                        break;
+                    default:
+                        label = "Detail";
+                }
+            } else label = "Detail";
 
             return (
                 <Button

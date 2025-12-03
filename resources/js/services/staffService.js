@@ -5,5 +5,8 @@ export const staffService = {
     makeOrders: serviceMethods("/staff/orders/make-order", {
         useFormData: false,
     }),
+    allOrders: serviceMethods("/staff/orders/all-orders", {
+        useFormData: false,
+    }),
     samples: serviceMethods("staff/orders/samples", { useFormData: false }),
 };

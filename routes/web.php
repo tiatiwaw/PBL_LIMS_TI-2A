@@ -123,7 +123,7 @@ Route::middleware(['auth', 'role:staff'])
     ->prefix('staff')
     ->name('staff.')
     ->group(function () {
-        Route::redirect('/', '/staff/manage-clients');
+        Route::redirect('/', '/staff/orders/all-orders');
 
         // Manage Clients
         Route::prefix('manage-clients')
@@ -137,6 +137,12 @@ Route::middleware(['auth', 'role:staff'])
             ->name('order.')
             ->group(function () {
                 Route::inertia('/all-orders', 'staff/orders/all-orders/index')->name('all');
+                Route::get('/all-orders/{id}', function ($id) {
+                    return Inertia::render('staff/orders/detail/index', [
+                        'id' => $id,
+                        'canValidate' => true,
+                    ]);
+                })->name('show');
                 Route::inertia('/make-order', 'staff/orders/make-order/index')->name('index');
             });
     });
@@ -153,11 +159,16 @@ Route::controller(SupervisorController::class)
         Route::prefix('orders')
             ->name('order.')
             ->group(function () {
-                Route::get('/', 'ordersFollowUp')->name('index');
                 Route::get('/history', 'ordersHistory')->name('history');
-                Route::get('/{id}', 'ordersDetail')->name('detail');
-                Route::get('/{id}/parameters', 'parameters')->name('parameter.index');
-                Route::get('/{id}/parameters/detail', 'parametersDetail')->name('parameter.detail');
+                Route::get('/history/{id}', 'ordersHistoryDetail')->name('history.detail');
+                Route::prefix('follow-up')->group(function () {
+                    Route::get('/', 'ordersFollowUp')->name('index');
+                    Route::get('/{id}', 'ordersDetail')->name('detail');
+                    Route::get('/{id}/parameters', 'parameters')->name('parameter.index');
+                    Route::get('/{id}/parameters/detail', 'parametersDetail')->name('parameter.detail');
+                    Route::get('/{id}/confirm-validation', 'confirmValidation')->name('validation');
+                    Route::get('/{id}/repeat-test', 'repeatTest')->name('repeat-test');
+                });
             });
 
         // Analysts

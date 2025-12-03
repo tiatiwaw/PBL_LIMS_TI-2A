@@ -4,7 +4,7 @@ import { getOrdersColumns } from "@/components/shared/manager/order-columns";
 import { router } from "@inertiajs/react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
-// import { useOrders } from "@/hooks/useAdmin";
+import { useAllOrders } from "@/hooks/useStaff";
 
 const filterData = [
     { value: "all", label: "All Status" },
@@ -17,10 +17,10 @@ const filterData = [
 ];
 
 export default function AdminOrdersPage() {
-    // const { data: orders, isLoading, error } = useOrders();
+    const { data: orders, isLoading, error } = useAllOrders();
 
     const handleShowDetail = (data) => {
-        // router.visit(route("admin.order.show", data.id));
+        router.visit(route("staff.order.show", data.id));
     };
 
     const columns = useMemo(
@@ -28,28 +28,28 @@ export default function AdminOrdersPage() {
         []
     );
 
-    // if (isLoading) {
-    //     return (
-    //         <DashboardLayout title="Semua Order" header="Semua Order">
-    //             <Loading />
-    //         </DashboardLayout>
-    //     );
-    // }
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Semua Order" header="Semua Order">
+                <Loading />
+            </DashboardLayout>
+        );
+    }
 
-    // if (error) {
-    //     return (
-    //         <DashboardLayout title="Semua Order" header="Semua Order">
-    //             <div className="text-center text-red-500 py-8">
-    //                 {error.message || "Terjadi kesalahan saat memuat data"}
-    //             </div>
-    //         </DashboardLayout>
-    //     );
-    // }
+    if (error) {
+        return (
+            <DashboardLayout title="Semua Order" header="Semua Order">
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
         <DashboardLayout title="Semua Order" header="Semua Order">
             <ManagedDataTable
-                data={[]}
+                data={orders || []}
                 columns={columns}
                 showFilter={true}
                 showCreate={false}

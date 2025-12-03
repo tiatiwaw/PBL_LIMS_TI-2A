@@ -94,7 +94,20 @@ export default function ParameterAnalysts({
     };
 
     const handleEstimasiChange = (date) => {
-        const dateString = date ? date.toISOString().split("T")[0] : "";
+        if (!date) {
+            setLocalFormData((prev) => ({
+                ...prev,
+                estimasiSelesai: "",
+            }));
+            return;
+        }
+
+        // Convert date to YYYY-MM-DD format WITHOUT timezone conversion
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const dateString = `${year}-${month}-${day}`;
+
         setLocalFormData((prev) => ({
             ...prev,
             estimasiSelesai: dateString,

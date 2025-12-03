@@ -4,7 +4,13 @@ namespace App\Http\Controllers\API\V1\Supervisor;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Equipment;
+use App\Models\NReagent;
+use App\Models\Reagent;
+use App\Services\ReportGeneratorService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -49,9 +55,22 @@ class OrderController extends Controller
             $supervisorId = auth('sanctum')->user()?->id;
 
             $order = Order::with([
+                'supervisors',
                 'clients.users',
+                'analysts.users',
+                'analysts.trainings',
+                'analysts.certificates',
                 'analysesMethods',
                 'samples.sample_categories',
+                'samples.n_parameter_methods' => function ($query) {
+                    $query->where('status', '!=', 'failed');
+                },
+                'samples.n_parameter_methods.test_parameters.unit_values',
+                'samples.n_parameter_methods.test_parameters.reference_standards',
+                'samples.n_parameter_methods.test_methods.reference_standards',
+                'samples.n_parameter_methods.equipments.brand_types',
+                'samples.n_parameter_methods.reagents.suppliers',
+                'samples.n_parameter_methods.reagents.grades',
             ])
                 ->where('supervisor_id', $supervisorId)
                 ->findOrFail($id);
@@ -75,8 +94,9 @@ class OrderController extends Controller
     {
         // Validasi simpel (Otomatis error 422 jika gagal)
         $validated = $request->validate([
-            'action' => 'required|in:approve,reject',
-            'reason' => 'nullable|string'
+            'action' => 'required|in:approve,validate_test,reject',
+            'reason' => 'nullable|string',
+            'result_value' => 'nullable|string'
         ]);
 
         // 🔹 Dapatkan ID supervisor yang sedang login
@@ -95,6 +115,9 @@ class OrderController extends Controller
         // Logika Update Status
         if ($validated['action'] === 'approve') {
             $order->status = 'pending_payment';
+        } else if ($validated['action'] === 'validate_test') {
+            $order->status = 'pending';
+            $order->result_value = $validated['result_value'];
         } else {
             $order->status = 'disapproved';
             // Opsional: Simpan alasan reject ke notes jika ada

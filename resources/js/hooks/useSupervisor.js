@@ -5,7 +5,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const useOrders = () =>
-    useCrud(supervisorService.orders, "orders", "orders", {
+    useCrud(supervisorService.orders, "orders", "order", {
+        only: ["getAll"],
+    });
+
+export const useHistoryOrders = () =>
+    useCrud(supervisorService.history, "historyOrders", "HistoriOrders", {
         only: ["getAll"],
     });
 
@@ -25,11 +30,7 @@ export const useOrder = (id) => {
             toast.success("Order berhasil diperbarui");
 
             // Redirect ke order index jika bukan FILL_PARAMETERS, VALIDATE_TEST, atau REPEAT_TEST
-            const excludedActions = [
-                "fill_parameters",
-                "validate_test",
-                "repeat_test",
-            ];
+            const excludedActions = ["fill_parameters", "repeat_test"];
 
             if (!excludedActions.includes(variables.action)) {
                 // Full page reload untuk fresh data dari server
@@ -69,6 +70,12 @@ export const useOrderParameters = (id) => {
         queryFn: () => supervisorService.orders.getRelated(id, "parameters"),
     });
 
+    const queryRepeat = useQuery({
+        queryKey: ["orders", id, "repeatTest"],
+        enabled: !!id,
+        queryFn: () => supervisorService.orders.getRelated(id, "repeat-test"),
+    });
+
     // Mutation untuk POST (create) parameters
     const createMutation = useMutation({
         mutationFn: (data) =>
@@ -76,11 +83,25 @@ export const useOrderParameters = (id) => {
         onSuccess: (response) => {
             toast.success("Parameter berhasil disimpan");
             setTimeout(() => {
-                window.location.href = `/supervisor/orders/${id}/parameters`;
+                window.location.href = `/supervisor/orders/follow-up/${id}/parameters`;
             }, 500);
         },
         onError: (error) => {
             toast.error(error.message || "Gagal menyimpan parameter");
+        },
+    });
+    // Mutation untuk POST (create) parameters
+    const repeatTestMutation = useMutation({
+        mutationFn: (data) =>
+            supervisorService.orders.postRelated(id, data, "repeat-test"),
+        onSuccess: (response) => {
+            toast.success("Permintaan repeat test berhasil dikirim");
+            setTimeout(() => {
+                window.location.href = `/supervisor/orders/follow-up`;
+            }, 500);
+        },
+        onError: (error) => {
+            toast.error(error.message || "Gagal mengirim repeat test");
         },
     });
 
@@ -90,7 +111,7 @@ export const useOrderParameters = (id) => {
         onSuccess: (response) => {
             toast.success("Order Parameter berhasil disimpan");
             setTimeout(() => {
-                window.location.href = `/supervisor/orders`;
+                window.location.href = `/supervisor/orders/follow-up`;
             }, 500);
         },
         onError: (error) => {
@@ -109,7 +130,7 @@ export const useOrderParameters = (id) => {
                 queryKey: ["orders", id, "parameters"],
             });
             setTimeout(() => {
-                window.location.href = `/supervisor/orders/${id}/parameters`;
+                window.location.href = `/supervisor/orders/follow-up/${id}/parameters`;
             }, 500);
         },
         onError: (error) => {
@@ -123,12 +144,25 @@ export const useOrderParameters = (id) => {
         isLoading: query.isLoading,
         error: query.error,
 
+        // Query data repeat
+        dataRepeat: queryRepeat.data,
+        isLoadingRepeat: queryRepeat.isLoading,
+        errorRepeat: queryRepeat.error,
+
         // Create mutation
         create: {
             mutate: createMutation.mutate,
             mutateAsync: createMutation.mutateAsync,
             isPending: createMutation.isPending,
             error: createMutation.error,
+        },
+
+        // repeat test mutation
+        repeatTest: {
+            mutate: repeatTestMutation.mutate,
+            mutateAsync: repeatTestMutation.mutateAsync,
+            isPending: repeatTestMutation.isPending,
+            error: repeatTestMutation.error,
         },
 
         // Create order mutation

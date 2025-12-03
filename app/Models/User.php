@@ -54,7 +54,7 @@ class User extends Authenticatable
             'manager' => 'manager.index',
             'analyst' => 'analyst.index',
             'supervisor' => 'supervisor.order.index',
-            'staff' => 'staff.client.index',
+            'staff' => 'staff.order.all',
             'client' => 'client.index'
         ];
 

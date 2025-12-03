@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CircleAlert, Edit, Plus } from "lucide-react";
@@ -452,10 +452,12 @@ export default function SupervisorParametersIndex() {
                 {/* BUTTON LANJUT */}
                 <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
                     <Button
-                        // onClick={onBack}
-                        className="bg-red-400 hover:bg-red-500 text-white font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 px-8 py-3"
+                        onClick={() => {
+                            router.visit(route("supervisor.order.detail", id));
+                        }}
+                        className="bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 px-8 py-3"
                     >
-                        Keluar
+                        Batal
                     </Button>
                     <Button
                         onClick={() => {

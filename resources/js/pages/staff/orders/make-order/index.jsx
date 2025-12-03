@@ -173,7 +173,8 @@ export default function OrdersPage() {
                             <button
                                 onClick={() => {
                                     setIsSaved(false);
-                                    window.location.href = "/staff/orders";
+                                    window.location.href =
+                                        "/staff/orders/make-order";
                                 }}
                                 className="px-8 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors duration-200"
                             >

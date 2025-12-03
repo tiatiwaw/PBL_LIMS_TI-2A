@@ -187,7 +187,9 @@ Route::prefix('v1')->group(function () {
             ->group(function () {
 
                 // Orders
-                Route::prefix('orders')->name('orders.')->group(function () {
+                Route::get('orders/history', [SupervisorOrderController::class, 'history'])->name('orders.history');
+                Route::get('orders/history/{id}', [SupervisorOrderController::class, 'show'])->name('orders.history.detail');
+                Route::prefix('orders/follow-up')->name('orders.')->group(function () {
                     Route::get('/', [SupervisorOrderController::class, 'index'])->name('index');
                     Route::get('/history', [SupervisorOrderController::class, 'history'])->name('history');
                     Route::get('/{id}', [SupervisorOrderController::class, 'show'])->name('show');

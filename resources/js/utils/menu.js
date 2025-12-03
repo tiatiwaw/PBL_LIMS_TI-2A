@@ -317,7 +317,7 @@ const MENU_CONFIG = {
                 {
                     name: "Perlu DitindakLanjuti",
                     icon: ListCheck,
-                    href: "/supervisor/orders",
+                    href: "/supervisor/orders/follow-up",
                 },
                 {
                     name: "Riwayat",
