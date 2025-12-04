@@ -23,7 +23,7 @@ class EquipmentSeeder extends Seeder
                 'serial_number' => 'EPD-001',
                 'purchase_year' => '2022-01-15',
                 'calibration_schedule' => 'internal',
-                'status' => 'B', // <-- FIX: Baik (B)
+                'status' => 'available',
                 'location' => 'Laboratorium Kimia',
             ],
             [
@@ -32,7 +32,7 @@ class EquipmentSeeder extends Seeder
                 'serial_number' => 'THM-045',
                 'purchase_year' => '2021-07-10',
                 'calibration_schedule' => 'eksternal',
-                'status' => 'P', // <-- FIX: Perbaikan (P)
+                'status' => 'maintenance',
                 'location' => 'Laboratorium Bioteknologi',
             ],
             [
@@ -41,7 +41,7 @@ class EquipmentSeeder extends Seeder
                 'serial_number' => 'HAN-123',
                 'purchase_year' => '2023-03-05',
                 'calibration_schedule' => 'internal',
-                'status' => 'R', // <-- FIX: Rusak (R)
+                'status' => 'unavailable',
                 'location' => 'Laboratorium Mikrobiologi',
             ],
             [
@@ -50,13 +50,13 @@ class EquipmentSeeder extends Seeder
                 'serial_number' => 'SHM-789',
                 'purchase_year' => '2020-11-20',
                 'calibration_schedule' => 'eksternal',
-                'status' => 'R', // <-- FIX: Rusak (R)
+                'status' => 'broken',
                 'location' => 'Laboratorium Analisis',
             ],
         ];
 
         foreach ($equipments as $eq) {
-             Equipment::firstOrCreate(['serial_number' => $eq['serial_number']], $eq);
+            Equipment::firstOrCreate(['serial_number' => $eq['serial_number']], $eq);
         }
     }
 }
