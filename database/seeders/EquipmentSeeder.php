@@ -56,7 +56,7 @@ class EquipmentSeeder extends Seeder
         ];
 
         foreach ($equipments as $eq) {
-            Equipment::create($eq);
+            Equipment::firstOrCreate(['serial_number' => $eq['serial_number']], $eq);
         }
     }
 }
