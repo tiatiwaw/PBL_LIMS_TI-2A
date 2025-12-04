@@ -171,15 +171,17 @@ Route::prefix('v1')->group(function () {
             ->group(function () {
 
                 Route::get('/', [ClientClientController::class, 'index'])->name('index');
+                Route::get('/profile', [ClientProfileController::class, 'show'])->name('profile');
+                Route::post('/profile/update-photo', [ClientProfileController::class, 'updatePhoto'])->name('updatePhoto');
+                Route::post('profile/update-phone', [ClientProfileController::class, 'updatePhone'])->name('updatePhone');
+                Route::post('profile/change-password', [ClientProfileController::class, 'changePassword'])->name('client.changePassword');
 
-                // Orders - menggunakan apiResource untuk efisiensi
-                Route::prefix('orders')
-                    ->name('orders.')
-                    ->group(function () {
-                        Route::get('/{id}', [ClientOrderController::class, 'show']);
-                        Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
-                        Route::get('/download/{id}', [ClientOrderController::class, 'downloadReport'])->name('download');
-                    });
+
+                Route::prefix('orders')->name('orders.')->group(function () {
+                    Route::get('/{id}', [ClientOrderController::class, 'show']);
+                    Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
+                    Route::get('/download/{id}', [ClientOrderController::class, 'downloadReport'])->name('download');
+                });
             });
 
         // supervisor
