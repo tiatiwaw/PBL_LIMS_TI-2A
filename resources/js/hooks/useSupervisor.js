@@ -47,7 +47,7 @@ export const useOrder = (id) => {
     return {
         // Data dan loading state dari query
         data: query.data,
-        isLoading: query.isLoading,
+        isLoading: query.isLoading || query.isRefetching,
         error: query.error,
 
         // Update mutation
@@ -68,12 +68,18 @@ export const useOrderParameters = (id) => {
         queryKey: ["orders", id, "parameters"],
         enabled: !!id,
         queryFn: () => supervisorService.orders.getRelated(id, "parameters"),
+        staleTime: 5 * 60 * 1000, // 5 menit
+        refetchOnMount: "stale",
+        refetchOnWindowFocus: "stale",
     });
 
     const queryRepeat = useQuery({
         queryKey: ["orders", id, "repeatTest"],
         enabled: !!id,
         queryFn: () => supervisorService.orders.getRelated(id, "repeat-test"),
+        staleTime: 5 * 60 * 1000, // 5 menit
+        refetchOnMount: "stale",
+        refetchOnWindowFocus: "stale",
     });
 
     // Mutation untuk POST (create) parameters
@@ -93,7 +99,11 @@ export const useOrderParameters = (id) => {
     // Mutation untuk POST (create) parameters
     const repeatTestMutation = useMutation({
         mutationFn: (data) =>
-            supervisorService.orders.postRelated(id, data, "repeat-test"),
+            supervisorService.orders.postRelated(
+                id,
+                data,
+                "repeat-test/submit"
+            ),
         onSuccess: (response) => {
             toast.success("Permintaan repeat test berhasil dikirim");
             setTimeout(() => {
@@ -141,12 +151,12 @@ export const useOrderParameters = (id) => {
     return {
         // Query data
         data: query.data,
-        isLoading: query.isLoading,
+        isLoading: query.isLoading || query.isRefetching,
         error: query.error,
 
         // Query data repeat
         dataRepeat: queryRepeat.data,
-        isLoadingRepeat: queryRepeat.isLoading,
+        isLoadingRepeat: queryRepeat.isLoading || queryRepeat.isRefetching,
         errorRepeat: queryRepeat.error,
 
         // Create mutation

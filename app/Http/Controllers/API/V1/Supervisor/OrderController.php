@@ -105,10 +105,10 @@ class OrderController extends Controller
         // Cari Order (Otomatis error 404 jika tidak ketemu atau bukan milik supervisor ini)
         $order = Order::where('supervisor_id', $supervisorId)->findOrFail($id);
 
-        // Cek Status Awal (Hanya boleh jika 'received')
-        if ($order->status !== 'received') {
+        // Cek Status Awal (Hanya boleh jika 'received' atau 'received_test')
+        if ($order->status !== 'received' && $order->status !== 'received_test') {
             return response()->json([
-                'message' => 'Gagal. Status order saat ini bukan received.'
+                'message' => 'Gagal. Status order saat ini bukan received atau received_test.'
             ], 400);
         }
 
@@ -116,6 +116,22 @@ class OrderController extends Controller
         if ($validated['action'] === 'approve') {
             $order->status = 'pending_payment';
         } else if ($validated['action'] === 'validate_test') {
+            // 🔹 Reset semua equipment yang dipakai di semua n_parameter_methods menjadi available
+            $allUsedEquipmentIds = DB::table('n_equipments')
+                ->whereIn(
+                    'n_parameter_method_id',
+                    $order->samples()
+                        ->with('n_parameter_methods')
+                        ->get()
+                        ->pluck('n_parameter_methods')
+                        ->flatten()
+                        ->pluck('id')
+                )
+                ->pluck('equipment_id')
+                ->unique();
+
+            Equipment::whereIn('id', $allUsedEquipmentIds)->update(['status' => 'available']);
+
             $order->status = 'pending';
             $order->result_value = $validated['result_value'];
         } else {
@@ -156,8 +172,32 @@ class OrderController extends Controller
             ->where('supervisor_id', $supervisorId)
             ->findOrFail($id);
 
-        $reagents        = Reagent::with(['suppliers', 'grades'])->get();
-        $equipments      = Equipment::with(['brand_types'])->where('status', 'available')->get();
+        $reagents = Reagent::with(['suppliers', 'grades'])->get();
+
+        // Ambil semua equipment yang available
+        $availableEquipments = Equipment::with(['brand_types'])->where('status', 'available')->get();
+
+        // Ambil semua equipment unavailable yang dimiliki n_parameter_methods dari sampel order (termasuk failed)
+        $usedEquipmentIds = DB::table('n_equipments')
+            ->whereIn(
+                'n_parameter_method_id',
+                $order->samples()
+                    ->with('n_parameter_methods')
+                    ->get()
+                    ->pluck('n_parameter_methods')
+                    ->flatten()
+                    ->pluck('id')
+            )
+            ->pluck('equipment_id')
+            ->unique();
+
+        $unavailableEquipments = Equipment::with(['brand_types'])
+            ->where('status', 'unavailable')
+            ->whereIn('id', $usedEquipmentIds)
+            ->get();
+
+        // Merge kedua collection
+        $equipments = $availableEquipments->concat($unavailableEquipments)->unique('id');
 
         return response()->json([
             'order'               => $order,
@@ -194,6 +234,10 @@ class OrderController extends Controller
             foreach ($validated['samples'] as $sampleId) {
                 $sample = $order->samples()->find($sampleId);
                 if (!$sample) continue;
+
+                // Reset status sample dari 'done' ke 'in_progress'
+                $sample->status = 'in_progress';
+                $sample->save();
 
                 $sampleEdits = $validated['edited_data'][$sampleId] ?? [];
 

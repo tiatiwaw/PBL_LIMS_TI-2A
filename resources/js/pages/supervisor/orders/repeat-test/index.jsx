@@ -272,9 +272,9 @@ export default function RepeatTest() {
             title="Ulangi Test (Repeat Test)"
             header="Ulangi Test (Repeat Test)"
         >
-            <div className="max-w-6xl mx-auto space-y-6">
+            <div className="max-w-6xl mx-auto space-y-6" ref={formTopRef}>
                 {/* Stepper */}
-                <RepeatTestStepper ref={formTopRef} currentStep={currentStep} />
+                <RepeatTestStepper currentStep={currentStep} />
 
                 {/* Order Info */}
                 <OrderInfoCard order={order} />
@@ -282,7 +282,6 @@ export default function RepeatTest() {
                 {/* Step 1: Select Samples */}
                 {currentStep === 1 && (
                     <RepeatTestStepOne
-                        ref={formTopRef}
                         order={order}
                         selectedSamples={selectedSamples}
                         onSampleToggle={handleSampleToggle}
@@ -293,7 +292,6 @@ export default function RepeatTest() {
                 {/* Step 2: Edit Reagent & Equipment */}
                 {currentStep === 2 && (
                     <RepeatTestStepTwo
-                        ref={formTopRef}
                         order={order}
                         selectedSamples={selectedSamples}
                         reagentData={reagentData}
@@ -307,7 +305,6 @@ export default function RepeatTest() {
                 {/* Step 3: Notes */}
                 {currentStep === 3 && (
                     <RepeatTestStepThree
-                        ref={formTopRef}
                         order={order}
                         selectedSamples={selectedSamples}
                         notes={notes}
@@ -329,7 +326,6 @@ export default function RepeatTest() {
                                 );
                             }
                         }}
-                        disabled={isSubmitting}
                     >
                         {currentStep > 1 ? "Kembali" : "Batal"}
                     </Button>

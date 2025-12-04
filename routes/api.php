@@ -151,6 +151,7 @@ Route::prefix('v1')->group(function () {
                 // Orders
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/all-orders', [OrdersController::class, 'index']);
+                    Route::get('/all-orders/{id}', [OrdersController::class, 'show']);
                     Route::get('/make-order', [StaffOrderController::class, 'index'])->name('index');
                     Route::post('/make-order', [StaffOrderController::class, 'store'])->name('store');
 
@@ -200,9 +201,9 @@ Route::prefix('v1')->group(function () {
                     Route::put('/{id}/parameters', [SupervisorParameterController::class, 'update'])->name('update');
                     Route::post('/{id}/parameters/submit', [SupervisorParameterController::class, 'assignAnalyst'])->name('assign');
                     Route::get('/{id}/repeat-test', [SupervisorOrderController::class, 'indexRepeatTest'])->name('repeat.index');
-                    Route::post('/{id}/repeat-test/submit', [SupervisorParameterController::class, 'submitRepeatTest'])->name('repeat');
+                    Route::post('/{id}/repeat-test/submit', [SupervisorOrderController::class, 'submitRepeatTest'])->name('repeat');
                 });
-            
+
                 Route::prefix('analysts')->name('analysts.')->group(function () {
                     Route::get('/', [SupervisorAnalystController::class, 'index'])->name('index');
                 });

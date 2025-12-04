@@ -83,13 +83,13 @@ export const VALIDATION_CONFIG = {
         actions: [],
     },
     received_test: {
-        title: "Validasi Hasil Test",
+        title: "Validasi Hasil Pengujian",
         description:
             "Hasil pengujian sudah diterima, lakukan quality control atau uji ulang",
         actions: [
             {
                 id: "validate_test",
-                label: "Validasi Order & Buat Laporan",
+                label: "Validasi Hasil Uji & Quality Control",
                 icon: Check,
                 colorVariant: "accept",
                 variant: "default",
@@ -97,7 +97,7 @@ export const VALIDATION_CONFIG = {
             },
             {
                 id: "repeat_test",
-                label: "Lakukan Repeat Test",
+                label: "Lakukan Uji Ulang",
                 icon: RotateCcw,
                 colorVariant: "warning",
                 variant: "default",
