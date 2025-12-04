@@ -38,6 +38,7 @@ use App\Http\Controllers\API\V1\Supervisor\ParameterController as SupervisorPara
 use App\Http\Controllers\API\V1\Client\ClientController as ClientClientController;
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
+use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 
 // MANAGER CONTROLLERS
 use App\Http\Controllers\API\V1\Manager\EquipmentController as ManagerEquipmentController;

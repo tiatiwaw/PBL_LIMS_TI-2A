@@ -54,6 +54,41 @@ export default function OrdersPage() {
                 filterColumn="status"
                 filterOptions={filterData}
             />
+
+            {/* Status Legend */}
+            <div className="mt-6 pt-6 border-t border-gray-200">
+                <p className="text-sm font-semibold text-gray-700 mb-3">
+                    Keterangan Status:
+                </p>
+                <div className="space-y-2">
+                    <div className="flex items-start gap-3 text-sm">
+                        <span className="text-teal-600 font-bold">●</span>
+                        <p>
+                            <span className="font-semibold">Diterima:</span>{" "}
+                            Order telah diterima, Anda dapat melakukan validasi
+                            atau repeat test
+                        </p>
+                    </div>
+                    <div className="flex items-start gap-3 text-sm">
+                        <span className="text-blue-600 font-bold">●</span>
+                        <p>
+                            <span className="font-semibold">Dibayar:</span>{" "}
+                            Pembayaran sudah diterima, menunggu hasil akhir
+                            pengujian
+                        </p>
+                    </div>
+                    <div className="flex items-start gap-3 text-sm">
+                        <span className="text-purple-600 font-bold">●</span>
+                        <p>
+                            <span className="font-semibold">
+                                Selesai Pengujian:
+                            </span>{" "}
+                            Pengujian selesai, Anda dapat validasi hasil atau
+                            request repeat test jika diperlukan
+                        </p>
+                    </div>
+                </div>
+            </div>
         </DashboardLayout>
     );
 }
