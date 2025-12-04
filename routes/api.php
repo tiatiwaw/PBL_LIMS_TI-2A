@@ -29,6 +29,11 @@ use App\Http\Controllers\API\V1\Staff\ClientController as StaffClientController;
 use App\Http\Controllers\API\V1\Staff\OrderController as StaffOrderController;
 use App\Http\Controllers\API\V1\Staff\SampleController as StaffSampleController;
 
+// SUPERVISOR CONTROLLERS
+use App\Http\Controllers\API\V1\Supervisor\AnalystController as SupervisorAnalystController;
+use App\Http\Controllers\API\V1\Supervisor\OrderController as SupervisorOrderController;
+use App\Http\Controllers\API\V1\Supervisor\ParameterController as SupervisorParameterController;
+
 // CLIENT CONTROLLERS
 use App\Http\Controllers\API\V1\Client\ClientController as ClientClientController;
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
@@ -45,9 +50,7 @@ use App\Http\Controllers\API\V1\Manager\TestMethodsController as ManagerTestMeth
 use App\Http\Controllers\API\V1\Manager\UnitValueController as ManagerUnitValueController;
 use App\Http\Controllers\API\V1\Manager\ReferenceController as ManagerReferenceController;
 use App\Http\Controllers\API\V1\Manager\SampleCategoryController as ManagerSampleCategoryController;
-use App\Http\Controllers\API\V1\Supervisor\AnalystController as SupervisorAnalystController;
-use App\Http\Controllers\API\V1\Supervisor\OrderController as SupervisorOrderController;
-use App\Http\Controllers\API\V1\Supervisor\ParameterController as SupervisorParameterController;
+
 
 
 
