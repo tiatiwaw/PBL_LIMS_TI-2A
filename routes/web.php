@@ -123,34 +123,26 @@ Route::middleware(['auth', 'role:staff'])
         Route::prefix('manage-clients')
             ->name('client.')
             ->group(function () {
-                Route::get('/', 'index')->name('index');
-                Route::post('/', 'store')->name('store');
-                Route::put('/{id}', 'update')->name('update');
-                Route::delete('/{id}', 'destroy')->name('delete');
+                Route::get('/', [StaffController::class, 'index'])->name('index');
+                Route::post('/', [StaffController::class, 'store'])->name('store');
+                Route::put('/{id}', [StaffController::class, 'update'])->name('update');
+                Route::delete('/{id}', [StaffController::class, 'destroy'])->name('delete');
             });
 
         // Samples
         Route::prefix('samples')
             ->name('sample.')
             ->group(function () {
-                Route::post('/', 'storeSample')->name('store');
+                Route::post('/', [StaffController::class, 'storeSample'])->name('store');
             });
 
         // Orders
         Route::prefix('orders')
             ->name('order.')
             ->group(function () {
-                Route::get('/', 'indexOrder')->name('index');
-                Route::post('/', 'storeOrder')->name('store');
-            });
-
-        // Order Routes
-        Route::prefix('orders')
-            ->name('order.')
-            ->group(function () {
-                Route::get('/', 'indexOrder')->name('index');
-                Route::post('/', 'storeOrder')->name('storeOrder');
-                Route::post('/sample', 'storeSample')->name('storeSample');
+                Route::get('/', [StaffController::class, 'indexOrder'])->name('index');
+                Route::post('/', [StaffController::class, 'storeOrder'])->name('store');
+                Route::post('/sample', [StaffController::class, 'storeSample'])->name('storeSample');
             });
     });
 
