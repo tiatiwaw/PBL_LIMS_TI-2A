@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 
 export default function ClientInfoCard({ client }) {
+    if (!client) {
+        return null;
+    }
     return (
         <Card className="border border-slate-200 shadow-xl bg-white">
             <CardHeader className="border-b border-slate-100">
@@ -28,7 +31,7 @@ export default function ClientInfoCard({ client }) {
                             <span>Nama Perusahaan</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua text-lg">
-                            {client.name}
+                            {client?.name || "-"}
                         </p>
                     </div>
 
@@ -38,7 +41,7 @@ export default function ClientInfoCard({ client }) {
                             <span>Narahubung</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua text-lg">
-                            {client.users.name}
+                            {client?.users?.name || "-"}
                         </p>
                     </div>
 

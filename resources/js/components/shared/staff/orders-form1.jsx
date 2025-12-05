@@ -172,7 +172,7 @@ export default function OrdersForm({
                             <input
                                 type="text"
                                 name="selectedKlien"
-                                value={data.selectedKlien?.name}
+                                value={data.selectedKlien?.name || ""}
                                 onChange={handleChange}
                                 placeholder="Pilih klien dari daftar..."
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg

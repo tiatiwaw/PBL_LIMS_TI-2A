@@ -9,7 +9,14 @@ import {
 } from "@/components/ui/select";
 import { TestTube2 } from "lucide-react";
 
-export default function SampleSelector({ samples, selectedSampleId, onSampleChange }) {
+export default function SampleSelector({
+    samples,
+    selectedSampleId,
+    onSampleChange,
+}) {
+    if (!samples || samples.length === 0) {
+        return null;
+    }
     return (
         <Card className="border border-slate-200 shadow-xl bg-white">
             <CardHeader className="border-b border-slate-100 pb-4">
@@ -21,15 +28,12 @@ export default function SampleSelector({ samples, selectedSampleId, onSampleChan
                 </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-                <Select
-                    value={selectedSampleId}
-                    onValueChange={onSampleChange}
-                >
+                <Select value={selectedSampleId} onValueChange={onSampleChange}>
                     <SelectTrigger className="w-full h-12 text-base border-2 border-slate-200 hover:border-teal-500 transition-colors">
                         <SelectValue placeholder="Pilih sample..." />
                     </SelectTrigger>
                     <SelectContent>
-                        {samples.map((sample, index) => (
+                        {(samples || []).map((sample, index) => (
                             <SelectItem
                                 key={sample.id}
                                 value={sample.id.toString()}

@@ -16,6 +16,7 @@ use Inertia\Inertia;
 // Home
 Route::inertia('/', 'index')->name('home');
 
+
 // Auth
 Route::middleware('guest')->group(function () {
     Route::inertia('/auth/login', 'auth/login/index')->name('auth.login.form');
@@ -119,26 +120,31 @@ Route::middleware(['auth', 'role:manager'])
 
 
 // Staff
-Route::controller(StaffController::class)
-    ->middleware(['auth', 'role:staff'])
+Route::middleware(['auth', 'role:staff'])
     ->prefix('staff')
     ->name('staff.')
     ->group(function () {
-        Route::redirect('/', '/staff/manage-clients');
+        Route::redirect('/', '/staff/orders/all-orders');
 
         // Manage Clients
         Route::prefix('manage-clients')
             ->name('client.')
             ->group(function () {
-                Route::get('/', 'index')->name('index');
+                Route::inertia('/', 'staff/clients/index')->name('index');
             });
 
-
-        // Orders
+        // Order Routes
         Route::prefix('orders')
             ->name('order.')
             ->group(function () {
-                Route::get('/', 'indexOrder')->name('index');
+                Route::inertia('/all-orders', 'staff/orders/all-orders/index')->name('all');
+                Route::get('/all-orders/{id}', function ($id) {
+                    return Inertia::render('staff/orders/detail/index', [
+                        'id' => $id,
+                        'canValidate' => true,
+                    ]);
+                })->name('show');
+                Route::inertia('/make-order', 'staff/orders/make-order/index')->name('index');
             });
     });
 
@@ -148,7 +154,30 @@ Route::controller(SupervisorController::class)
     ->prefix('supervisor')
     ->name('supervisor.')
     ->group(function () {
-        Route::get('/', 'index')->name('index');
+        Route::redirect('/', '/supervisor/orders/follow-up')->name('index');
+
+        // Order
+        Route::prefix('orders')
+            ->name('order.')
+            ->group(function () {
+                Route::get('/history', 'ordersHistory')->name('history');
+                Route::get('/history/{id}', 'ordersHistoryDetail')->name('history.detail');
+                Route::prefix('follow-up')->group(function () {
+                    Route::get('/', 'ordersFollowUp')->name('index');
+                    Route::get('/{id}', 'ordersDetail')->name('detail');
+                    Route::get('/{id}/parameters', 'parameters')->name('parameter.index');
+                    Route::get('/{id}/parameters/detail', 'parametersDetail')->name('parameter.detail');
+                    Route::get('/{id}/confirm-validation', 'confirmValidation')->name('validation');
+                    Route::get('/{id}/repeat-test', 'repeatTest')->name('repeat-test');
+                });
+            });
+
+        // Analysts
+        Route::prefix('analysts')
+            ->name('analyst.')
+            ->group(function () {
+                Route::get('/', 'analysts')->name('index');
+            });
     });
 
 
@@ -199,7 +228,7 @@ Route::controller(ClientController::class)
         Route::get('/', 'index')->name('index');
         Route::get('/profile', 'profile')->name('profile');
         Route::get('/history', 'history')->name('history');
-        
+
         // Orders - sesuaikan dengan API structure
         Route::prefix('orders')
             ->name('orders.')
@@ -207,12 +236,17 @@ Route::controller(ClientController::class)
                 Route::get('/{id}', 'orderDetail')->name('show');
                 Route::get('/status/{id}', 'orderStatus')->name('status');
 
+                Route::get('/payment/{id}', 'orderPayment')->name('payment');
+                
                 Route::get('/checkout/{id}', 'checkout')->name('checkout');
 
                 Route::get('/transaction/{reference}', 'orderTransaction')->name('transaction');
                 
-                Route::post('/download/{id}', 'downloadReport')->name('download');
+                Route::get('/download/{id}', 'downloadReport')->name('download');
             });
+
+        // History
+        Route::get('/history', 'history')->name('history');
     });
 
 Route::post('/callback', [TripayCallbackController::class, 'handle']);

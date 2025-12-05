@@ -29,10 +29,16 @@ use App\Http\Controllers\API\V1\Staff\ClientController as StaffClientController;
 use App\Http\Controllers\API\V1\Staff\OrderController as StaffOrderController;
 use App\Http\Controllers\API\V1\Staff\SampleController as StaffSampleController;
 
+// SUPERVISOR CONTROLLERS
+use App\Http\Controllers\API\V1\Supervisor\AnalystController as SupervisorAnalystController;
+use App\Http\Controllers\API\V1\Supervisor\OrderController as SupervisorOrderController;
+use App\Http\Controllers\API\V1\Supervisor\ParameterController as SupervisorParameterController;
+
 // CLIENT CONTROLLERS
 use App\Http\Controllers\API\V1\Client\ClientController as ClientClientController;
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
+use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\TransactionController as ClientTransactionController;
 // MANAGER CONTROLLERS
 use App\Http\Controllers\API\V1\Manager\EquipmentController as ManagerEquipmentController;
@@ -147,8 +153,10 @@ Route::prefix('v1')->group(function () {
 
                 // Orders
                 Route::prefix('orders')->name('orders.')->group(function () {
-                    Route::get('/', [StaffOrderController::class, 'index'])->name('index');
-                    Route::post('/', [StaffOrderController::class, 'store'])->name('store');
+                    Route::get('/all-orders', [OrdersController::class, 'index']);
+                    Route::get('/all-orders/{id}', [OrdersController::class, 'show']);
+                    Route::get('/make-order', [StaffOrderController::class, 'index'])->name('index');
+                    Route::post('/make-order', [StaffOrderController::class, 'store'])->name('store');
 
                     Route::get('/samples', [StaffSampleController::class, 'index'])->name('samples.index');
                     Route::post('/samples', [StaffSampleController::class, 'store'])->name('samples.store');
@@ -166,6 +174,11 @@ Route::prefix('v1')->group(function () {
             ->group(function () {
 
                 Route::get('/', [ClientClientController::class, 'index'])->name('index');
+                Route::get('/profile', [ClientProfileController::class, 'show'])->name('profile');
+                Route::post('/profile/update-photo', [ClientProfileController::class, 'updatePhoto'])->name('updatePhoto');
+                Route::post('profile/update-phone', [ClientProfileController::class, 'updatePhone'])->name('updatePhone');
+                Route::post('profile/change-password', [ClientProfileController::class, 'changePassword'])->name('client.changePassword');
+
 
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/{id}', [ClientOrderController::class, 'show']);
@@ -177,6 +190,34 @@ Route::prefix('v1')->group(function () {
                         ->name('transaction.store');
 
                     Route::get('/payment/{id}', [TripayController::class, 'paymentChannels']);
+                    Route::get('/download/{id}', [ClientOrderController::class, 'downloadReport'])->name('download');
+                });
+            });
+
+        // supervisor
+        Route::prefix('supervisor')
+            ->middleware('role:supervisor')
+            ->name('api.supervisor.')
+            ->group(function () {
+
+                // Orders
+                Route::get('orders/history', [SupervisorOrderController::class, 'history'])->name('orders.history');
+                Route::get('orders/history/{id}', [SupervisorOrderController::class, 'show'])->name('orders.history.detail');
+                Route::prefix('orders/follow-up')->name('orders.')->group(function () {
+                    Route::get('/', [SupervisorOrderController::class, 'index'])->name('index');
+                    Route::get('/history', [SupervisorOrderController::class, 'history'])->name('history');
+                    Route::get('/{id}', [SupervisorOrderController::class, 'show'])->name('show');
+                    Route::put('/{id}', [SupervisorOrderController::class, 'updateStatus'])->name('update');
+                    Route::get('/{id}/parameters', [SupervisorParameterController::class, 'show'])->name('show');
+                    Route::post('/{id}/parameters', [SupervisorParameterController::class, 'store'])->name('store');
+                    Route::put('/{id}/parameters', [SupervisorParameterController::class, 'update'])->name('update');
+                    Route::post('/{id}/parameters/submit', [SupervisorParameterController::class, 'assignAnalyst'])->name('assign');
+                    Route::get('/{id}/repeat-test', [SupervisorOrderController::class, 'indexRepeatTest'])->name('repeat.index');
+                    Route::post('/{id}/repeat-test/submit', [SupervisorOrderController::class, 'submitRepeatTest'])->name('repeat');
+                });
+
+                Route::prefix('analysts')->name('analysts.')->group(function () {
+                    Route::get('/', [SupervisorAnalystController::class, 'index'])->name('index');
                 });
             });
 

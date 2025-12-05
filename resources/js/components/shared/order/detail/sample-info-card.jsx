@@ -8,9 +8,19 @@ import {
     Beaker,
     AlertCircle,
 } from "lucide-react";
-import { getConditionTypeLabel, getConditionTypeVariant, getOrderStatusLabel, getOrderStatusVariant, getSampleStatusVariant, getStatusParameterLabel } from "@/utils/statusUtils";
+import {
+    getConditionTypeLabel,
+    getConditionTypeVariant,
+    getOrderStatusLabel,
+    getOrderStatusVariant,
+    getSampleStatusVariant,
+    getStatusParameterLabel,
+} from "@/utils/statusUtils";
 
 export default function SampleInfoCard({ sample }) {
+    if (!sample) {
+        return null;
+    }
     return (
         <Card className="border border-slate-200 shadow-xl bg-white">
             <CardHeader className="border-b border-slate-100">
@@ -28,7 +38,9 @@ export default function SampleInfoCard({ sample }) {
                             <Package className="w-4 h-4" />
                             Nama Sample
                         </div>
-                        <p className="font-bold text-slate-900 text-lg">{sample.name}</p>
+                        <p className="font-bold text-slate-900 text-lg">
+                            {sample.name}
+                        </p>
                     </div>
 
                     <div>
@@ -36,7 +48,9 @@ export default function SampleInfoCard({ sample }) {
                             <FileText className="w-4 h-4" />
                             Kategori
                         </div>
-                        <Badge variant="info">{sample.sample_categories.name}</Badge>
+                        <Badge variant="info">
+                            {sample.sample_categories.name}
+                        </Badge>
                     </div>
 
                     <div>
@@ -44,7 +58,9 @@ export default function SampleInfoCard({ sample }) {
                             <Beaker className="w-4 h-4" />
                             Bentuk
                         </div>
-                        <p className="font-semibold text-slate-900 capitalize">{sample.form}</p>
+                        <p className="font-semibold text-slate-900 capitalize">
+                            {sample.form}
+                        </p>
                     </div>
 
                     <div>
@@ -52,7 +68,11 @@ export default function SampleInfoCard({ sample }) {
                             <Check className="w-4 h-4" />
                             Kondisi
                         </div>
-                        <Badge variant={getConditionTypeVariant(sample.condition)}>{getConditionTypeLabel(sample.condition)}</Badge>
+                        <Badge
+                            variant={getConditionTypeVariant(sample.condition)}
+                        >
+                            {getConditionTypeLabel(sample.condition)}
+                        </Badge>
                     </div>
 
                     <div>
@@ -60,7 +80,9 @@ export default function SampleInfoCard({ sample }) {
                             <TestTube className="w-4 h-4" />
                             Volume
                         </div>
-                        <p className="font-semibold text-slate-900">{sample.pivot.sample_volume}</p>
+                        <p className="font-semibold text-slate-900">
+                            {sample.pivot.sample_volume}
+                        </p>
                     </div>
 
                     <div>
@@ -68,22 +90,32 @@ export default function SampleInfoCard({ sample }) {
                             <AlertCircle className="w-4 h-4" />
                             Status
                         </div>
-                        <Badge variant={getOrderStatusVariant(sample.status)}>{getOrderStatusLabel(sample.status)}</Badge>
+                        <Badge variant={getOrderStatusVariant(sample.status)}>
+                            {getOrderStatusLabel(sample.status)}
+                        </Badge>
                     </div>
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-slate-200 space-y-4">
                     <div>
-                        <p className="text-sm text-slate-500 mb-2">Metode Pengawetan</p>
+                        <p className="text-sm text-slate-500 mb-2">
+                            Metode Pengawetan
+                        </p>
                         <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
-                            <p className="text-slate-900 font-medium">{sample.preservation_method}</p>
+                            <p className="text-slate-900 font-medium">
+                                {sample.preservation_method}
+                            </p>
                         </div>
                     </div>
 
                     <div>
-                        <p className="text-sm text-slate-500 mb-2">Kondisi Penyimpanan</p>
+                        <p className="text-sm text-slate-500 mb-2">
+                            Kondisi Penyimpanan
+                        </p>
                         <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
-                            <p className="text-slate-900 font-medium">{sample.storage_condition}</p>
+                            <p className="text-slate-900 font-medium">
+                                {sample.storage_condition}
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -190,28 +190,54 @@ export default function OrdersForm2({
                     <DatePicker
                         label="Tanggal Order"
                         value={data.tanggalOrder}
-                        onChange={(date) =>
+                        onChange={(date) => {
+                            if (!date) {
+                                setData((prev) => ({
+                                    ...prev,
+                                    tanggalOrder: "",
+                                }));
+                                return;
+                            }
+                            // Convert to YYYY-MM-DD without timezone conversion
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(
+                                2,
+                                "0"
+                            );
+                            const day = String(date.getDate()).padStart(2, "0");
+                            const dateString = `${year}-${month}-${day}`;
                             setData((prev) => ({
                                 ...prev,
-                                tanggalOrder: date
-                                    ? date.toISOString().split("T")[0]
-                                    : "",
-                            }))
-                        }
+                                tanggalOrder: dateString,
+                            }));
+                        }}
                     />
 
                     {/* Estimasi Order Selesai - Menggunakan DatePicker */}
                     <DatePicker
                         label="Estimasi Order Selesai"
                         value={data.estimasiSelesai}
-                        onChange={(date) =>
+                        onChange={(date) => {
+                            if (!date) {
+                                setData((prev) => ({
+                                    ...prev,
+                                    estimasiSelesai: "",
+                                }));
+                                return;
+                            }
+                            // Convert to YYYY-MM-DD without timezone conversion
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(
+                                2,
+                                "0"
+                            );
+                            const day = String(date.getDate()).padStart(2, "0");
+                            const dateString = `${year}-${month}-${day}`;
                             setData((prev) => ({
                                 ...prev,
-                                estimasiSelesai: date
-                                    ? date.toISOString().split("T")[0]
-                                    : "",
-                            }))
-                        }
+                                estimasiSelesai: dateString,
+                            }));
+                        }}
                     />
 
                     {/* Catatan */}

@@ -1,8 +1,27 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User, Check, Award, GraduationCap } from "lucide-react";
+import { User, Check, Award, GraduationCap, FlaskConical } from "lucide-react";
 
 export default function AnalystTeamCard({ analysts }) {
+    // Handle empty data
+    if (!analysts || analysts.length === 0) {
+        return (
+            <Card className="border border-slate-200 shadow-xl bg-white">
+                <CardHeader className="border-b border-slate-100">
+                    <CardTitle className="text-xl font-bold text-primary-hijauTua flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-primary-hijauTua flex items-center justify-center">
+                            <FlaskConical className="w-5 h-5 text-white" />
+                        </div>
+                        Tim Analis
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 min-h-80 flex items-center justify-center">
+                    <p className="text-slate-500 text-center">Tidak ada data</p>
+                </CardContent>
+            </Card>
+        );
+    }
+
     return (
         <Card className="border border-slate-200 shadow-xl bg-white">
             <CardHeader className="border-b border-slate-100">
@@ -15,7 +34,7 @@ export default function AnalystTeamCard({ analysts }) {
             </CardHeader>
             <CardContent className="p-6">
                 <div className="space-y-4">
-                    {analysts.map((analyst, index) => (
+                    {analysts?.map((analyst, index) => (
                         <div
                             key={index}
                             className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-50 to-cyan-50 p-5 border border-slate-200 hover:shadow-xl hover:scale-105 transition-all duration-500"
@@ -45,7 +64,9 @@ export default function AnalystTeamCard({ analysts }) {
 
                                 <div className="space-y-2 pt-3 border-t border-slate-200">
                                     <div>
-                                        <p className="text-xs text-slate-500 mb-1">Spesialisasi</p>
+                                        <p className="text-xs text-slate-500 mb-1">
+                                            Spesialisasi
+                                        </p>
                                         <Badge variant="received">
                                             {analyst.specialist}
                                         </Badge>
@@ -56,14 +77,21 @@ export default function AnalystTeamCard({ analysts }) {
                                     <div className="pt-2">
                                         <div className="flex items-center gap-2 mb-2">
                                             <Award className="w-4 h-4 text-teal-600" />
-                                            <p className="text-xs text-slate-500 font-semibold">Sertifikasi</p>
+                                            <p className="text-xs text-slate-500 font-semibold">
+                                                Sertifikasi
+                                            </p>
                                         </div>
                                         <div className="flex flex-wrap gap-2">
-                                            {analyst.certificates.map((cert, idx) => (
-                                                <Badge key={idx} variant="success">
-                                                    {cert.name}
-                                                </Badge>
-                                            ))}
+                                            {analyst.certificates.map(
+                                                (cert, idx) => (
+                                                    <Badge
+                                                        key={idx}
+                                                        variant="success"
+                                                    >
+                                                        {cert.name}
+                                                    </Badge>
+                                                )
+                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -72,14 +100,21 @@ export default function AnalystTeamCard({ analysts }) {
                                     <div className="pt-2">
                                         <div className="flex items-center gap-2 mb-2">
                                             <GraduationCap className="w-4 h-4 text-teal-600" />
-                                            <p className="text-xs text-slate-500 font-semibold">Pelatihan</p>
+                                            <p className="text-xs text-slate-500 font-semibold">
+                                                Pelatihan
+                                            </p>
                                         </div>
                                         <div className="flex flex-wrap gap-2">
-                                            {analyst.trainings.map((training, idx) => (
-                                                <Badge key={idx} variant="info">
-                                                    {training.name}
-                                                </Badge>
-                                            ))}
+                                            {analyst.trainings.map(
+                                                (training, idx) => (
+                                                    <Badge
+                                                        key={idx}
+                                                        variant="info"
+                                                    >
+                                                        {training.name}
+                                                    </Badge>
+                                                )
+                                            )}
                                         </div>
                                     </div>
                                 )}

@@ -1,0 +1,598 @@
+{
+    "auth": {
+        "login_supervisor": {
+            "email": "supervisor@example.com",
+            "password": "password"
+        },
+        "login_staff": {
+            "email": "staff@example.com",
+            "password": "password"
+        }
+    },
+    "supervisor": {
+        "orders": {
+            "get_all": "GET /api/v1/supervisor/orders",
+            "get_by_id": "GET /api/v1/supervisor/orders/1",
+            "update_approve": {
+                "method": "PUT",
+                "endpoint": "/api/v1/supervisor/orders/1",
+                "body": {
+                    "action": "approve",
+                    "status": "pending_payment",
+                    "notes": "Order diterima dan disetujui oleh supervisor"
+                }
+            },
+            "update_reject": {
+                "method": "PUT",
+                "endpoint": "/api/v1/supervisor/orders/1",
+                "body": {
+                    "action": "reject",
+                    "status": "disapproved",
+                    "reason": "Sampel tidak sesuai dengan spesifikasi yang diminta"
+                }
+            },
+            "updateStatus": {
+                "method": "PUT",
+                "endpoint": "/api/v1/supervisor/orders/1/status",
+                "body": {
+                    "action": "approve",
+                    "reason": "Order disetujui"
+                }
+            }
+        },
+        "parameters": {
+            "get_by_order_id": "GET /api/v1/supervisor/orders/1/parameters",
+            "submit": {
+                "method": "POST",
+                "endpoint": "/api/v1/supervisor/orders/13/parameters/submit",
+                "description": "Submit parameter configuration dengan assigned analysts dan estimasi completion",
+                "body": {
+                    "order_id": 13,
+                    "analysts": [
+                        {
+                            "analyst_id": 1,
+                            "name": "Analyst Utama",
+                            "specialist": "Kimia Analitik"
+                        },
+                        {
+                            "analyst_id": 2,
+                            "name": "Dr. Felicity Johnston MD",
+                            "specialist": "Mikrobiologi"
+                        }
+                    ],
+                    "parameters": [
+                        {
+                            "parameter_id": 1,
+                            "name": "Kadar Air",
+                            "category": "kimia",
+                            "test_method_id": 1,
+                            "method_name": "Spektrofotometri UV-Vis",
+                            "reagent_ids": [1, 2, 3],
+                            "equipment_ids": [1, 3, 4]
+                        },
+                        {
+                            "parameter_id": 2,
+                            "name": "Total Plate Count",
+                            "category": "mikrobiologi",
+                            "test_method_id": 3,
+                            "method_name": "Gravimetri",
+                            "reagent_ids": [4, 5],
+                            "equipment_ids": [2]
+                        },
+                        {
+                            "parameter_id": 3,
+                            "name": "Kekeruhan",
+                            "category": "fisika",
+                            "test_method_id": 2,
+                            "method_name": "Titrasi Asam Basa",
+                            "reagent_ids": [1, 3],
+                            "equipment_ids": [1]
+                        }
+                    ],
+                    "estimasi_selesai": "2025-12-25",
+                    "catatan": "Lakukan pengujian dengan teliti, pastikan hasil akurat dan terukur dengan baik. Prioritas untuk sampel Air Sungai Ciliwung."
+                },
+                "response": {
+                    "success": true,
+                    "message": "Parameter berhasil disubmit dan analyst terAssign",
+                    "data": {
+                        "order_id": 13,
+                        "status": "validate_test",
+                        "parameters_count": 3,
+                        "analysts_assigned": 2,
+                        "estimasi_selesai": "2025-12-25",
+                        "submitted_at": "2025-11-26T14:30:00.000000Z"
+                    }
+                }
+            }
+        },
+        "analysts": {
+            "get_all": "GET /api/v1/supervisor/analysts",
+            "list": [
+                {
+                    "id": 1,
+                    "user_id": 4,
+                    "name": "Analyst Utama",
+                    "specialist": "Kimia Analitik",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 4,
+                        "name": "Analyst Utama",
+                        "email": "analyst@example.com",
+                        "role": "analyst",
+                        "email_verified_at": "2025-11-19T08:48:44.000000Z",
+                        "signature": "signatures/default.png",
+                        "created_at": "2025-11-19T08:48:44.000000Z",
+                        "updated_at": "2025-11-19T08:48:44.000000Z"
+                    },
+                    "certificates": [
+                        {
+                            "id": 1,
+                            "analyst_id": 1,
+                            "name": "ISO/IEC 17025:2017 Laboratory Competence",
+                            "issued_date": "2023-01-15",
+                            "expired_date": "2026-01-15",
+                            "file_path": "certificates/iso-17025-analyst1.pdf",
+                            "created_at": "2025-11-25T09:18:27.000000Z",
+                            "updated_at": "2025-11-25T09:18:27.000000Z"
+                        },
+                        {
+                            "id": 2,
+                            "analyst_id": 1,
+                            "name": "Chemical Analysis Training Level 2",
+                            "issued_date": "2022-06-01",
+                            "expired_date": "2025-06-01",
+                            "file_path": "certificates/chemical-analysis-lvl2-analyst1.pdf",
+                            "created_at": "2025-11-25T09:18:27.000000Z",
+                            "updated_at": "2025-11-25T09:18:27.000000Z"
+                        }
+                    ],
+                    "trainings": []
+                },
+                {
+                    "id": 2,
+                    "user_id": 22,
+                    "name": "Dr. Felicity Johnston MD",
+                    "specialist": "Mikrobiologi",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 22,
+                        "name": "Dr. Felicity Johnston MD",
+                        "email": "vhintz@example.net",
+                        "role": "analyst",
+                        "email_verified_at": "2025-11-19T08:48:45.000000Z",
+                        "signature": "signatures/analyst2.png",
+                        "created_at": "2025-11-19T08:48:45.000000Z",
+                        "updated_at": "2025-11-19T08:48:45.000000Z"
+                    },
+                    "certificates": [
+                        {
+                            "id": 3,
+                            "analyst_id": 2,
+                            "name": "Gas Chromatography (GC) Certification",
+                            "issued_date": "2023-04-10",
+                            "expired_date": "2024-04-10",
+                            "file_path": "certificates/gc-cert-analyst2.pdf",
+                            "created_at": "2025-11-25T09:18:27.000000Z",
+                            "updated_at": "2025-11-25T09:18:27.000000Z"
+                        },
+                        {
+                            "id": 4,
+                            "analyst_id": 2,
+                            "name": "HPLC Operation & Maintenance",
+                            "issued_date": "2023-08-18",
+                            "expired_date": "2025-08-18",
+                            "file_path": "certificates/hplc-analyst2.pdf",
+                            "created_at": "2025-11-25T09:18:27.000000Z",
+                            "updated_at": "2025-11-25T09:18:27.000000Z"
+                        }
+                    ],
+                    "trainings": []
+                },
+                {
+                    "id": 3,
+                    "user_id": 23,
+                    "name": "Mr. Kristoffer Jast",
+                    "specialist": "Toksikologi",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 23,
+                        "name": "Mr. Kristoffer Jast",
+                        "email": "klocko.hannah@example.net",
+                        "role": "analyst",
+                        "email_verified_at": "2025-11-19T08:48:45.000000Z",
+                        "signature": "signatures/analyst3.png",
+                        "created_at": "2025-11-19T08:48:45.000000Z",
+                        "updated_at": "2025-11-19T08:48:45.000000Z"
+                    },
+                    "certificates": [
+                        {
+                            "id": 5,
+                            "analyst_id": 3,
+                            "name": "Microbiology Testing Competence",
+                            "issued_date": "2021-11-05",
+                            "expired_date": "2024-11-05",
+                            "file_path": "certificates/microbiology-analyst3.pdf",
+                            "created_at": "2025-11-25T09:18:27.000000Z",
+                            "updated_at": "2025-11-25T09:18:27.000000Z"
+                        }
+                    ],
+                    "trainings": []
+                },
+                {
+                    "id": 4,
+                    "user_id": 24,
+                    "name": "Amalia Renner",
+                    "specialist": "Farmakologi",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 24,
+                        "name": "Amalia Renner",
+                        "email": "andreane92@example.org",
+                        "role": "analyst",
+                        "email_verified_at": "2025-11-19T08:48:45.000000Z",
+                        "signature": "signatures/analyst4.png",
+                        "created_at": "2025-11-19T08:48:45.000000Z",
+                        "updated_at": "2025-11-19T08:48:45.000000Z"
+                    },
+                    "certificates": [],
+                    "trainings": []
+                },
+                {
+                    "id": 5,
+                    "user_id": 25,
+                    "name": "Queenie Okuneva",
+                    "specialist": "Bioteknologi",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 25,
+                        "name": "Queenie Okuneva",
+                        "email": "shanel99@example.org",
+                        "role": "analyst",
+                        "email_verified_at": "2025-11-19T08:48:45.000000Z",
+                        "signature": "signatures/analyst5.png",
+                        "created_at": "2025-11-19T08:48:45.000000Z",
+                        "updated_at": "2025-11-19T08:48:45.000000Z"
+                    },
+                    "certificates": [],
+                    "trainings": []
+                },
+                {
+                    "id": 6,
+                    "user_id": 26,
+                    "name": "Prof. Cathy Metz IV",
+                    "specialist": "Kimia Analitik",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 26,
+                        "name": "Prof. Cathy Metz IV",
+                        "email": "kovacek.darrin@example.com",
+                        "role": "analyst",
+                        "email_verified_at": "2025-11-19T08:48:45.000000Z",
+                        "signature": "signatures/analyst6.png",
+                        "created_at": "2025-11-19T08:48:45.000000Z",
+                        "updated_at": "2025-11-19T08:48:45.000000Z"
+                    },
+                    "certificates": [],
+                    "trainings": []
+                }
+            ]
+        }
+    },
+    "staff": {
+        "orders": {
+            "get_all": "GET /api/v1/staff/orders",
+            "create": {
+                "method": "POST",
+                "endpoint": "/api/v1/staff/orders",
+                "body": {
+                    "client_id": 1,
+                    "order_type": "regular",
+                    "description": "Analisis sampel air dari sumur bor kedalaman 50 meter",
+                    "notes": "Sampel harus ditangani dengan hati-hati, jangan terkena cahaya matahari langsung"
+                }
+            },
+            "update": {
+                "method": "PUT",
+                "endpoint": "/api/v1/staff/orders/1",
+                "body": {
+                    "client_id": 1,
+                    "order_type": "urgent",
+                    "description": "Analisis sampel air dari sumur bor kedalaman 50 meter - URGENT",
+                    "notes": "Sampel harus ditangani dengan hati-hati"
+                }
+            },
+            "delete": "DELETE /api/v1/staff/orders/1"
+        },
+        "samples": {
+            "get_all": "GET /api/v1/staff/orders/samples",
+            "create": {
+                "method": "POST",
+                "endpoint": "/api/v1/staff/orders/samples",
+                "body": {
+                    "order_id": 1,
+                    "sample_category_id": 1,
+                    "name": "Sampel Air Sumur 001",
+                    "description": "Sampel air dari sumur bor kedalaman 50m lokasi Cirebon",
+                    "quantity": "500",
+                    "unit": "mL",
+                    "collection_date": "2025-11-25"
+                }
+            },
+            "create_multiple": {
+                "method": "POST",
+                "endpoint": "/api/v1/staff/orders/samples/bulk",
+                "body": [
+                    {
+                        "order_id": 1,
+                        "sample_category_id": 1,
+                        "name": "Sampel Air Sumur 001",
+                        "description": "Sampel air dari sumur bor kedalaman 50m",
+                        "quantity": "500",
+                        "unit": "mL",
+                        "collection_date": "2025-11-25"
+                    },
+                    {
+                        "order_id": 1,
+                        "sample_category_id": 1,
+                        "name": "Sampel Air Sumur 002",
+                        "description": "Sampel air dari sumur bor kedalaman 75m",
+                        "quantity": "500",
+                        "unit": "mL",
+                        "collection_date": "2025-11-25"
+                    },
+                    {
+                        "order_id": 1,
+                        "sample_category_id": 2,
+                        "name": "Sampel Tanah 001",
+                        "description": "Sampel tanah dari lokasi yang sama",
+                        "quantity": "200",
+                        "unit": "g",
+                        "collection_date": "2025-11-25"
+                    }
+                ]
+            },
+            "update": {
+                "method": "PUT",
+                "endpoint": "/api/v1/staff/orders/samples/1",
+                "body": {
+                    "order_id": 1,
+                    "sample_category_id": 1,
+                    "name": "Sampel Air Sumur 001 - Updated",
+                    "description": "Sampel air dari sumur bor kedalaman 50m lokasi Cirebon - Updated",
+                    "quantity": "600",
+                    "unit": "mL",
+                    "collection_date": "2025-11-25"
+                }
+            },
+            "delete": "DELETE /api/v1/staff/orders/samples/1"
+        },
+        "manage_clients": {
+            "get_all": {
+                "method": "GET",
+                "endpoint": "/api/v1/staff/manage-clients",
+                "description": "List semua clients"
+            },
+            "get_by_id": {
+                "method": "GET",
+                "endpoint": "/api/v1/staff/manage-clients/1",
+                "description": "Detail client berdasarkan ID"
+            },
+            "create": {
+                "method": "POST",
+                "endpoint": "/api/v1/staff/manage-clients",
+                "body": {
+                    "user_id": 2,
+                    "name": "Client Utama",
+                    "address": "Jl. Gatot Subroto No. 15, Jakarta",
+                    "email": "client@example.com",
+                    "phone_number": "08191205138",
+                    "npwp_number": "01.234.567.8-999.000"
+                },
+                "response": {
+                    "id": 1,
+                    "user_id": 2,
+                    "name": "Client Utama",
+                    "address": "Jl. Gatot Subroto No. 15, Jakarta",
+                    "email": "client@example.com",
+                    "phone_number": "08191205138",
+                    "npwp_number": "01.234.567.8-999.000",
+                    "created_at": "2025-11-26T10:30:00.000000Z",
+                    "updated_at": "2025-11-26T10:30:00.000000Z"
+                }
+            },
+            "update": {
+                "method": "PUT",
+                "endpoint": "/api/v1/staff/manage-clients/1",
+                "body": {
+                    "user_id": 2,
+                    "name": "Client Utama - Updated",
+                    "address": "Jl. Gatot Subroto No. 20, Jakarta",
+                    "email": "client.updated@example.com",
+                    "phone_number": "08191205139",
+                    "npwp_number": "01.234.567.8-999.001"
+                },
+                "response": {
+                    "id": 1,
+                    "user_id": 2,
+                    "name": "Client Utama - Updated",
+                    "address": "Jl. Gatot Subroto No. 20, Jakarta",
+                    "email": "client.updated@example.com",
+                    "phone_number": "08191205139",
+                    "npwp_number": "01.234.567.8-999.001",
+                    "created_at": "2025-11-26T10:30:00.000000Z",
+                    "updated_at": "2025-11-26T10:45:00.000000Z"
+                }
+            },
+            "delete": {
+                "method": "DELETE",
+                "endpoint": "/api/v1/staff/manage-clients/1",
+                "response": {
+                    "message": "Client berhasil dihapus"
+                }
+            },
+            "sample_list": [
+                {
+                    "id": 1,
+                    "user_id": 2,
+                    "name": "Client Utama",
+                    "address": "Jl. Gatot Subroto No. 15, Jakarta",
+                    "email": "client@example.com",
+                    "phone_number": "08191205138",
+                    "npwp_number": "01.234.567.8-999.000",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 2,
+                        "name": "Client Utama",
+                        "email": "client@example.com",
+                        "role": "client",
+                        "email_verified_at": "2025-11-19T08:48:44.000000Z",
+                        "signature": "signatures/default.png",
+                        "created_at": "2025-11-19T08:48:44.000000Z",
+                        "updated_at": "2025-11-19T08:48:44.000000Z"
+                    }
+                },
+                {
+                    "id": 2,
+                    "user_id": 12,
+                    "name": "Haven Runolfsson Sr.",
+                    "address": "Jl. Pasteur No. 77, Bandung",
+                    "email": "west.thalia@example.com",
+                    "phone_number": "08111349081",
+                    "npwp_number": "02.345.678.9-888.000",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 12,
+                        "name": "Haven Runolfsson Sr.",
+                        "email": "west.thalia@example.com",
+                        "role": "client",
+                        "email_verified_at": "2025-11-19T08:48:45.000000Z",
+                        "signature": "signatures/client2.png",
+                        "created_at": "2025-11-19T08:48:45.000000Z",
+                        "updated_at": "2025-11-19T08:48:45.000000Z"
+                    }
+                },
+                {
+                    "id": 3,
+                    "user_id": 13,
+                    "name": "Jamison Tillman Jr.",
+                    "address": "Jl. Diponegoro No. 8, Surabaya",
+                    "email": "noble.beatty@example.net",
+                    "phone_number": "08165298880",
+                    "npwp_number": "03.456.789.0-777.000",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 13,
+                        "name": "Jamison Tillman Jr.",
+                        "email": "noble.beatty@example.net",
+                        "role": "client",
+                        "email_verified_at": "2025-11-19T08:48:45.000000Z",
+                        "signature": "signatures/client3.png",
+                        "created_at": "2025-11-19T08:48:45.000000Z",
+                        "updated_at": "2025-11-19T08:48:45.000000Z"
+                    }
+                },
+                {
+                    "id": 4,
+                    "user_id": 14,
+                    "name": "Lavinia Greenfelder",
+                    "address": "Jl. Sudirman No. 5, Palembang",
+                    "email": "graynor@example.com",
+                    "phone_number": "08199905377",
+                    "npwp_number": "04.567.890.1-666.000",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 14,
+                        "name": "Lavinia Greenfelder",
+                        "email": "graynor@example.com",
+                        "role": "client",
+                        "email_verified_at": "2025-11-19T08:48:45.000000Z",
+                        "signature": "signatures/client4.png",
+                        "created_at": "2025-11-19T08:48:45.000000Z",
+                        "updated_at": "2025-11-19T08:48:45.000000Z"
+                    }
+                },
+                {
+                    "id": 5,
+                    "user_id": 15,
+                    "name": "Patsy Durgan",
+                    "address": "Jl. Raya Denpasar No. 10, Bali",
+                    "email": "ujohnston@example.net",
+                    "phone_number": "08154053604",
+                    "npwp_number": "05.678.901.2-555.000",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 15,
+                        "name": "Patsy Durgan",
+                        "email": "ujohnston@example.net",
+                        "role": "client",
+                        "email_verified_at": "2025-11-19T08:48:45.000000Z",
+                        "signature": "signatures/client5.png",
+                        "created_at": "2025-11-19T08:48:45.000000Z",
+                        "updated_at": "2025-11-19T08:48:45.000000Z"
+                    }
+                },
+                {
+                    "id": 6,
+                    "user_id": 16,
+                    "name": "Prof. Alexandro Daugherty PhD",
+                    "address": "Jl. Gatot Subroto No. 15, Jakarta",
+                    "email": "turcotte.lucas@example.com",
+                    "phone_number": "08156973021",
+                    "npwp_number": "01.234.567.8-999.000",
+                    "created_at": "2025-11-19T08:48:46.000000Z",
+                    "updated_at": "2025-11-19T08:48:46.000000Z",
+                    "users": {
+                        "id": 16,
+                        "name": "Prof. Alexandro Daugherty PhD",
+                        "email": "turcotte.lucas@example.com",
+                        "role": "client",
+                        "email_verified_at": "2025-11-19T08:48:45.000000Z",
+                        "signature": "signatures/client6.png",
+                        "created_at": "2025-11-19T08:48:45.000000Z",
+                        "updated_at": "2025-11-19T08:48:45.000000Z"
+                    }
+                }
+            ]
+        }
+    },
+    "notes": {
+        "supervisor_flow": [
+            "1. GET /api/v1/supervisor/orders - List semua order",
+            "2. GET /api/v1/supervisor/orders/1 - Detail order",
+            "3. PUT /api/v1/supervisor/orders/1 - Approve/Reject order",
+            "4. GET /api/v1/supervisor/orders/1/parameters - List parameters",
+            "5. POST /api/v1/supervisor/orders/1/parameters/submit - Submit parameters & assign analyst"
+        ],
+        "staff_flow": [
+            "1. POST /api/v1/staff/orders - Create new order",
+            "2. POST /api/v1/staff/orders/samples - Add sample ke order",
+            "3. PUT /api/v1/staff/orders/1 - Update order info",
+            "4. DELETE /api/v1/staff/orders/1 - Delete order (sebelum supervisor approve)"
+        ],
+        "staff_client_management_flow": [
+            "1. GET /api/v1/staff/manage-clients - List semua clients",
+            "2. GET /api/v1/staff/manage-clients/1 - Detail client",
+            "3. POST /api/v1/staff/manage-clients - Create new client",
+            "4. PUT /api/v1/staff/manage-clients/1 - Update client data",
+            "5. DELETE /api/v1/staff/manage-clients/1 - Delete client"
+        ],
+        "order_types": [
+            "regular - Order normal",
+            "urgent - Order urgent/prioritas",
+            "internal - Order internal perusahaan",
+            "external - Order dari klien eksternal"
+        ]
+    }
+}

@@ -13,7 +13,7 @@ export function useTable({
     const [sorting, setSorting] = useState([]);
 
     const filteredData = useMemo(() => {
-        let result = data;
+        let result = data || [];
         if (showFilter && filterValue !== "all") {
             result = result.filter(
                 (item) => item[filterColumn] === filterValue
@@ -31,6 +31,9 @@ export function useTable({
     }, [data, filterValue, searchTerm, showFilter, showSearch, filterColumn]);
 
     const sortedData = useMemo(() => {
+        if (!filteredData || !Array.isArray(filteredData)) {
+            return [];
+        }
         if (sorting.length === 0) return filteredData;
         const { id, desc } = sorting[0];
         return [...filteredData].sort((a, b) => {
