@@ -30,7 +30,10 @@ export default function AdminOrdersPage() {
 
     if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
+            <DashboardLayout
+                title="Manajemen Orderan"
+                header="Manajemen Orderan"
+            >
                 <Loading />
             </DashboardLayout>
         );
@@ -38,7 +41,10 @@ export default function AdminOrdersPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
+            <DashboardLayout
+                title="Manajemen Orderan"
+                header="Manajemen Orderan"
+            >
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -47,10 +53,7 @@ export default function AdminOrdersPage() {
     }
 
     return (
-        <DashboardLayout
-            title="Manajemen Orderan"
-            header="Manajemen Orderan"
-        >
+        <DashboardLayout title="Manajemen Orderan" header="Manajemen Orderan">
             <ManagedDataTable
                 data={orders}
                 columns={columns}

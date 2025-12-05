@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Sample;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,7 @@ class OrderController extends Controller
     /**
      * Get client orders
      */
-    public function index($id): JsonResponse
+    public function show($id): JsonResponse
     {
         $user = Auth::user();
         
@@ -23,7 +24,7 @@ class OrderController extends Controller
                 'clients',
                 'analysesMethods' // Gunakan relationship many-to-many
             ])
-            ->where('client_id', $user->id)
+            ->where('client_id', $user->clients->id)
             ->where('id', $id)
             ->first();
 
@@ -40,8 +41,10 @@ class OrderController extends Controller
             : 'Tidak ada metode';
 
         $orderData = [
+            'id' => $order->id, 
             'id_pemesanan' => $order->order_number ?? 'M-' . $order->id,
             'id_client' => $order->client_id,
+            'judul' => $order->title ?? '-',
             'metode_analisis' => $metodeAnalisis, 
             'nilai_hasil' => $order->result_value ?? '98',
             'tanggal_order' => $order->order_date ? Carbon::parse($order->order_date)->format('d/m/Y') : null,
@@ -54,19 +57,27 @@ class OrderController extends Controller
 
         $tableDataSamples = $order->samples->map(function ($sample) {
             return [
-                'nama_sampel' => $sample->name,
+                'id' => $sample->id,
+                'name' => $sample->name,
+                'cathegory' => $sample->sample_categories->name ?? '-',
                 'status' => $sample->status,
                 'tanggal_masuk' => $sample->created_at ? Carbon::parse($sample->created_at)->format('d/m/Y') : null,
+                'kategori_sampel' => $sample->sample_categories->name ?? '-',
+                'form' => $sample->form,
+                'preservation_method' => $sample->preservation_method,
+                'volume' => $sample->pivot->sample_volume ?? '-',
+                'condition' => $sample->condition,
+                'status' => $sample->status,
             ];
         });
 
         $detailSample = $order->samples->map(function ($sample)  {
             return [
                 'kategori_sampel' => $sample->sample_categories->name ?? '-',
-                'wujud' => $sample->form,
-                'metode_penyimpanan' => $sample->preservation_method,
+                'form' => $sample->form,
+                'preservation_method' => $sample->preservation_method,
                 'volume' => $sample->pivot->sample_volume ?? '-',
-                'kondisi' => $sample->condition,
+                'condition' => $sample->condition,
                 'status' => $sample->status,
             ];
         }); 
@@ -76,8 +87,31 @@ class OrderController extends Controller
             'data' => [
                 'order_details' => $orderData,
                 'table_data_sample' => $tableDataSamples,
-                'detail_sample' => $detailSample,
             ]
-        ]);
+        ]); 
     }
+
+        /**
+     * Download laporan hasil analisis (PDF/DOC/ZIP)
+     */
+    public function downloadReport($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        if (!$order->result_value) {
+            abort(404, 'Laporan belum digenerate.');
+        }
+
+        $realPath = storage_path('app/public/reports/client/' . $order->report_file_path);
+
+        if (!file_exists($realPath)) {
+            abort(404, 'File laporan tidak ditemukan.');
+        }
+
+        return response()->download(
+            $realPath,
+            'Laporan_Order_' . $order->id . '.pdf',
+            ['Content-Type' => 'application/pdf']
+        );
+    }    
 }

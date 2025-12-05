@@ -2,12 +2,7 @@ import { Spinner } from "./spinner";
 
 export default function Loading() {
     return (
-        <div className="flex items-center justify-center h-screen relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-hijauTua/5 via-primary-hijauMuda/10 to-transparent animate-pulse" />
-
-            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary-hijauMuda/10 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-primary-hijauTua/10 rounded-full blur-3xl animate-pulse delay-700" />
-
+        <div className="flex items-center justify-center h-[640px] relative overflow-hidden">
             <div className="relative z-10 flex flex-col items-center gap-6">
                 <div className="relative">
                     <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-hijauTua to-primary-hijauMuda opacity-20 blur-xl animate-pulse" />
@@ -26,18 +21,9 @@ export default function Loading() {
                     </div>
 
                     <div className="flex gap-1.5">
-                        <span
-                            className="w-2 h-2 bg-primary-hijauTua rounded-full animate-bounce"
-                            style={{ animationDelay: "0ms" }}
-                        />
-                        <span
-                            className="w-2 h-2 bg-primary-hijauTua rounded-full animate-bounce"
-                            style={{ animationDelay: "150ms" }}
-                        />
-                        <span
-                            className="w-2 h-2 bg-primary-hijauTua rounded-full animate-bounce"
-                            style={{ animationDelay: "300ms" }}
-                        />
+                        <span className="size-2 bg-primary-hijauTua rounded-full animate-bounce delay-0" />
+                        <span className="size-2 bg-primary-hijauTua rounded-full animate-bounce delay-150" />
+                        <span className="size-2 bg-primary-hijauTua rounded-full animate-bounce delay-300" />
                     </div>
                 </div>
             </div>

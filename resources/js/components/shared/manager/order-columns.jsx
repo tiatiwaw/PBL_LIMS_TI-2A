@@ -1,23 +1,29 @@
-export const getOrdersColumns = ({ onShowDetail }) => [
-    {
-        accessorKey: "no",
-        header: "No",
-        cell: ({ row }) => row.index + 1,
-    },
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+    getOrderStatusLabel,
+    getOrderStatusVariant,
+    getOrderTypeVariant,
+} from "@/utils/statusUtils";
 
+export const getOrdersColumns = ({ onShowDetail }) => [
+    { accessorKey: "no", header: "No." },
+    { accessorKey: "order_number", header: "No. Order" },
+    { accessorKey: "title", header: "Judul Analisis" },
     {
         accessorKey: "samples",
         header: "Sample",
         cell: ({ row }) => {
-            const samples = row.original.samples;
-            return samples?.length > 0 ? samples[0].name : "-";
+            const value = row.order_type;
+            return (
+                <Badge
+                    variant={getOrderTypeVariant(value)}
+                    className="capitalize"
+                >
+                    {value}
+                </Badge>
+            );
         },
-    },
-
-    {
-        accessorKey: "clients",
-        header: "Client",
-        cell: ({ row }) => row.original.clients?.name || "-",
     },
 
     {
@@ -31,7 +37,8 @@ export const getOrdersColumns = ({ onShowDetail }) => [
         header: "Aksi",
         cell: ({ row }) => (
             <button
-                onClick={() => onShowDetail(row.original.id)}w
+                onClick={() => onShowDetail(row.original.id)}
+                w
                 className="px-3 py-1 rounded-lg border"
             >
                 Detail

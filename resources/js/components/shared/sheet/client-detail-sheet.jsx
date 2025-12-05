@@ -10,7 +10,8 @@ export default function ClientDetailSheet({ data, isOpen, onOpenChange }) {
             title={`Detail Client #${data.id}`}
             description={`Detail Client dari ${data.name}.`}
             fields={[
-                { label: "Nama Client", value: data.name },
+                { label: "Nama Perusahaan", value: data.name },
+                { label: "Narahubung", value: data.users.name },
                 { label: "Email", value: data.email },
                 { label: "Alamat", value: data.address },
                 { label: "Nomor Telepon", value: data.phone_number },

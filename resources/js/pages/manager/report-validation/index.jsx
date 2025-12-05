@@ -1,4 +1,4 @@
-import DashboardLayout from "../../../components/layouts/dashboard-layout";
+import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { useMemo, useEffect, useState } from "react";
 import { getReportsColumns } from "@/components/shared/manager/report-columns";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
@@ -19,8 +19,8 @@ export default function ReportValidationPage({ auth }) {
 
     useEffect(() => {
         fetch("/api/v1/manager/report-validations")
-            .then(res => res.json())
-            .then(json => setReportData(json.data ?? []));
+            .then((res) => res.json())
+            .then((json) => setReportData(json.data ?? []));
     }, []);
 
     const handleShowDetail = () => {

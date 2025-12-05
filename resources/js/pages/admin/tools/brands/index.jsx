@@ -4,16 +4,14 @@ import BrandDetailSheet from "@/components/shared/sheet/brand-detail-sheet";
 import { getBrandsColumns } from "@/components/shared/admin/tool-columns";
 import { editBrandFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { useBrands } from "@/hooks/useBrands";
 import Loading from "@/components/ui/loading";
+import { useBrands } from "@/hooks/useAdmin";
 
-export default function BrandsPage() {
+export default function AdminBrandsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedBrand, setSelectedBrand] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
-    const { brands, isLoading, error, createBrand, updateBrand, deleteBrand } = useBrands();
+    const { data: brands, isLoading, error, create: createBrand, update: updateBrand, delete: deleteBrand } = useBrands();
 
     const handleShowDetail = (brand) => {
         setSelectedBrand(brand);
@@ -25,19 +23,17 @@ export default function BrandsPage() {
         []
     );
 
-    const currentUser = user || { name: "Admin", role: "Admin" };
-
     const handleCreate = async (formData) => createBrand.mutateAsync(formData);
 
     const handleEdit = async (id, formData) => {
         await updateBrand.mutateAsync({ id, data: formData });
     };
-    
+
     const handleDelete = async (id) => deleteBrand.mutateAsync(id);
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -45,7 +41,7 @@ export default function BrandsPage() {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -56,7 +52,6 @@ export default function BrandsPage() {
     return (
         <DashboardLayout
             title="Manajemen Jenis Brand"
-            user={currentUser}
             header="Manajemen Jenis Brand"
         >
             <ManagedDataTable
@@ -66,6 +61,7 @@ export default function BrandsPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                createTitle="Tambah Brand"
                 editTitle="Edit Brand"
                 deleteTitle="Hapus Brand"
             />

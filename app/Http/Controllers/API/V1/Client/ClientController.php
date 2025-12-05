@@ -20,16 +20,17 @@ class ClientController extends Controller
         
         // Get orders with pagination
         $orders = Order::with('clients')
-            ->where('client_id', $user->id)
+            ->where('client_id', $user->clients->id)
             ->latest()
             ->paginate(10);
         
         // Process table data
         $tableData = $orders->map(function ($order, $index) use ($orders) {
             return [
-                'no_order' => $order->order_number,
-                'judul_analisis' => $order->title,
-                'tanggal_order' => $order->order_date ? Carbon::parse($order->order_date)->format('d/m/Y') : null,
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'title' => $order->title,
+                'estimate_date' => $order->estimate_date ? Carbon::parse($order->estimate_date)->format('d/m/Y') : null,
                 'status' => $order->status,
             ];
         });
@@ -67,4 +68,26 @@ class ClientController extends Controller
             ]
         ]);
     }
+    public function downloadReport($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        if (!$order->result_value) {
+            abort(404, 'Laporan belum digenerate.');
+        }
+
+        // Path asli PDF di storage/app/public/...
+        $realPath = storage_path('app/public/reports/client/' . $order->result_value);
+
+        if (!file_exists($realPath)) {
+            abort(404, 'File laporan tidak ditemukan.');
+        }
+
+        return response()->download(
+            $realPath,
+            'Laporan_Order_' . $order->id . '.pdf',
+            ['Content-Type' => 'application/pdf']
+        );
+    }
+
 }

@@ -1,10 +1,5 @@
 import DetailSheet from "@/components/layouts/detail-sheet";
-
-const statusVariantMap = {
-    active: "success",
-    maintenance: "warning",
-    broken: "error",
-};
+import { getEquipmentStatusVariant, getOrderTypeVariant } from "@/utils/statusUtils";
 
 export default function EquipmentDetailSheet({ data, isOpen, onOpenChange }) {
     if (!data) return null;
@@ -20,8 +15,8 @@ export default function EquipmentDetailSheet({ data, isOpen, onOpenChange }) {
                 { label: "Brand / Tipe", value: data.brand_types.name },
                 { label: "Nomor Seri", value: data.serial_number },
                 { label: "Tahun Pembelian", value: data.purchase_year },
-                { label: "Jadwal Kalibrasi", value: data.calibration_schedule },
-                { label: "Status", value: data.status, badge: true, variant: statusVariantMap[data.status] || "outline" },
+                { label: "Jadwal Kalibrasi", value: data.calibration_schedule, badge: true, variant: getOrderTypeVariant(data.calibration_schedule) || "outline" },
+                { label: "Status", value: data.status, badge: true, variant: getEquipmentStatusVariant(data.status) || "outline" },
                 { label: "Lokasi", value: data.location },
             ]}
         />

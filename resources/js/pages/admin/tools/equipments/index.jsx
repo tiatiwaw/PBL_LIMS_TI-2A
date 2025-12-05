@@ -3,38 +3,59 @@ import { getEquipmentsColumns } from "@/components/shared/admin/tool-columns";
 import EquipmentDetailSheet from "@/components/shared/sheet/equipment-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
-import { useAuth } from "@/hooks/useAuth";
-import { useBrands } from "@/hooks/useBrands";
-import { useEquipments } from "@/hooks/useEquipments";
+import { useBrands, useEquipments } from "@/hooks/useAdmin";
 import { editEquipmentFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 
 const filterData = [
     { value: "all", label: "All Status" },
-    { value: "Active", label: "Active" },
-    { value: "Maintenance", label: "Maintenance" },
-    { value: "Broken", label: "Broken" },
+    { value: "active", label: "Active" },
+    { value: "maintenance", label: "Maintenance" },
+    { value: "broken", label: "Broken" },
 ];
 
-export default function EquipmentsPage({ auth, toolsData }) {
+export default function AdminEquipmentsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEquipment, setSelectedEquipment] = useState(null);
 
-    const { brands, isLoading: brandLoading, error: brandError } = useBrands();
-    const { equipments, isLoading: equipmentLoading, error: equipmentError } = useEquipments();
-    const { user, loading: authLoading } = useAuth();
+    const {
+        data: brands,
+        isLoading: brandLoading,
+        error: brandError,
+    } = useBrands();
+    const {
+        data: equipments,
+        isLoading: equipmentLoading,
+        error: equipmentError,
+        create: createEquipment,
+        update: updateEquipment,
+        delete: deleteEquipment,
+    } = useEquipments();
 
     const handleShowDetail = (equipment) => {
         setSelectedEquipment(equipment);
         setIsOpen(true);
     };
-    const currentUser = user || { name: "King Akbar", role: "Manager" };
 
-    const columns = useMemo(() => getEquipmentsColumns({ onShowDetail: handleShowDetail }), []);
+    const handleExport = () => console.log("halo");
 
-    if (brandLoading || equipmentLoading || authLoading) {
+    const columns = useMemo(
+        () => getEquipmentsColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
+
+    const handleCreate = async (formData) =>
+        createEquipment.mutateAsync(formData);
+
+    const handleEdit = async (id, formData) => {
+        await updateEquipment.mutateAsync({ id, data: formData });
+    };
+
+    const handleDelete = async (id) => deleteEquipment.mutateAsync(id);
+
+    if (brandLoading || equipmentLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -42,34 +63,38 @@ export default function EquipmentsPage({ auth, toolsData }) {
 
     if (brandError || equipmentError) {
         return (
-            <DashboardLayout title="Dashboard Admin" user={currentUser}>
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
-                    {equipmentError.message || "Terjadi kesalahan saat memuat data"}
+                    {equipmentError.message ||
+                        "Terjadi kesalahan saat memuat data"}
                 </div>
             </DashboardLayout>
         );
     }
 
     return (
-        <DashboardLayout
-            title="Manajemen Alat"
-            user={currentUser}
-            header="Manajemen Alat"
-        >
+        <DashboardLayout title="Manajemen Alat" header="Manajemen Alat">
             <ManagedDataTable
                 data={equipments}
                 columns={columns}
                 editFields={editEquipmentFields(brands)}
-                createUrl="admin.tools.equipment.create"
-                editUrl="admin.tools.equipment.update"
-                deleteUrl="admin.tools.equipment.destroy"
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onExport={handleExport}
+                createTitle="Tambah Data Peralatan"
+                editTitle="Edit Data Peralatan"
+                deleteTitle="Hapus Data Peralatan"
                 showFilter={true}
+                showExport={true}
                 filterColumn="status"
                 filterOptions={filterData}
-                editTitle="Edit Peralatan"
-                deleteTitle="Hapus Peralatan"
             />
-            <EquipmentDetailSheet data={selectedEquipment} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <EquipmentDetailSheet
+                data={selectedEquipment}
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
+            />
         </DashboardLayout>
     );
 }

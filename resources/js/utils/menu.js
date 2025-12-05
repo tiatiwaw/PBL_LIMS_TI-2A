@@ -18,8 +18,15 @@ import {
     TestTube2,
     ChartArea,
     ListCheck,
-    Inbox,
     ScrollText,
+    GraduationCap,
+    Award,
+    BarChart3,
+    Box,
+    DollarSign,
+    User,
+    ClipboardPlus,
+    History,
 } from "lucide-react";
 
 const isActive = (currentUrl, href, subItems = []) => {
@@ -71,39 +78,33 @@ const MENU_CONFIG = {
             href: "/admin",
         },
         {
-            name: "Alat",
+            name: "Alat & Bahan",
             icon: Wrench,
             subItems: [
                 {
                     name: "Peralatan",
                     icon: Microscope,
-                    href: "/admin/tools/equipments",
+                    href: "/admin/resources/equipments",
                 },
                 {
                     name: "Jenis Brand",
                     icon: Factory,
-                    href: "/admin/tools/brands",
+                    href: "/admin/resources/brands",
                 },
-            ],
-        },
-        {
-            name: "Bahan Baku",
-            icon: FlaskConical,
-            subItems: [
                 {
                     name: "Reagen",
                     icon: Beaker,
-                    href: "/admin/materials/reagents",
+                    href: "/admin/resources/reagents",
                 },
                 {
-                    name: "Grade",
+                    name: "Tingkat Reagen",
                     icon: Scale,
-                    href: "/admin/materials/grades",
+                    href: "/admin/resources/grades",
                 },
                 {
                     name: "Pemasok",
                     icon: Building2,
-                    href: "/admin/materials/suppliers",
+                    href: "/admin/resources/suppliers",
                 },
             ],
         },
@@ -139,19 +140,56 @@ const MENU_CONFIG = {
             ],
         },
         {
+            name: "Analis",
+            icon: BarChart3,
+            subItems: [
+                {
+                    name: "Pelatihan",
+                    icon: GraduationCap,
+                    href: "/admin/analyst/trainings",
+                },
+                {
+                    name: "Sertifikat",
+                    icon: Award,
+                    href: "/admin/analyst/certificates",
+                },
+            ],
+        },
+        {
             name: "Order",
             icon: ShoppingCart,
             href: "/admin/orders",
         },
         {
-            name: "Aktivitas Log",
-            icon: TrendingUp,
-            href: "/admin/activities",
-        },
-        {
             name: "Pengguna",
             icon: Users,
             href: "/admin/users",
+        },
+        {
+            name: "Laporan",
+            icon: TrendingUp,
+            subItems: [
+                {
+                    name: "Pesanan",
+                    icon: GraduationCap,
+                    href: "/admin/reports/orders",
+                },
+                {
+                    name: "Inventory",
+                    icon: Box,
+                    href: "/admin/reports/inventory",
+                },
+                {
+                    name: "Pengguna",
+                    icon: Users,
+                    href: "/admin/reports/users",
+                },
+                {
+                    name: "Transaksi",
+                    icon: DollarSign,
+                    href: "/admin/reports/transactions",
+                },
+            ],
         },
     ],
 
@@ -167,9 +205,76 @@ const MENU_CONFIG = {
             href: "/manager/report-validation",
         },
         {
+            name: "Alat & Bahan",
+            icon: Wrench,
+            subItems: [
+                {
+                    name: "Peralatan",
+                    icon: Microscope,
+                    href: "/manager/resources/equipments",
+                },
+                {
+                    name: "Jenis Brand",
+                    icon: Factory,
+                    href: "/manager/resources/brands",
+                },
+                {
+                    name: "Reagen",
+                    icon: Beaker,
+                    href: "/manager/resources/reagents",
+                },
+                {
+                    name: "Tingkat Reagen",
+                    icon: Scale,
+                    href: "/manager/resources/grades",
+                },
+                {
+                    name: "Pemasok",
+                    icon: Building2,
+                    href: "/manager/resources/suppliers",
+                },
+            ],
+        },
+        {
+            name: "Pengujian",
+            icon: ClipboardList,
+            subItems: [
+                {
+                    name: "Parameter",
+                    icon: Gauge,
+                    href: "/manager/tests/parameters",
+                },
+                {
+                    name: "Metode Uji",
+                    icon: Microscope,
+                    href: "/manager/orders",
+                },
+                {
+                    name: "Nilai Satuan",
+                    icon: Ruler,
+                    href: "/manager/tests/units",
+                },
+                {
+                    name: "Standard Referensi",
+                    icon: FileText,
+                    href: "/manager/tests/references",
+                },
+                {
+                    name: "Kategori Sampel",
+                    icon: TestTube2,
+                    href: "/manager/tests/categories",
+                },
+            ],
+        },
+        {
             name: "Order",
             icon: ShoppingCart,
             href: "/manager/orders",
+        },
+        {
+            name: "Laporan",
+            icon: ChartArea,
+            href: "/manager/reports",
         },
         {
             name: "Karyawan",
@@ -180,31 +285,49 @@ const MENU_CONFIG = {
 
     staff: [
         {
-            name: "Orders",
+            name: "Order",
             icon: ChartArea,
-            href: "/staff/orders",
+            subItems: [
+                {
+                    name: "Semua Order",
+                    icon: ShoppingCart,
+                    href: "/staff/orders/all-orders",
+                },
+                {
+                    name: "Buat Order Baru",
+                    icon: ClipboardPlus,
+                    href: "/staff/orders/make-order",
+                },
+            ],
         },
         {
-            name: "Manajemen Klien",
+            name: "Manajemen Client",
             icon: ListCheck,
             href: "/staff/manage-clients",
         },
     ],
 
-    client: [
-        {
-            name: "Beranda",
-            icon: Home,
-            href: "/client",
-        },
-        {
-            name: "Riwayat",
-            icon: ChartArea,
-            href: "/client/history",
-        },
-    ],
+    client: [],
 
-    supervisor: [{ name: "Beranda", icon: Home, href: "/supervisor" }],
+    supervisor: [
+        {
+            name: "Order",
+            icon: Home,
+            subItems: [
+                {
+                    name: "Perlu DitindakLanjuti",
+                    icon: ListCheck,
+                    href: "/supervisor/orders/follow-up",
+                },
+                {
+                    name: "Riwayat",
+                    icon: History,
+                    href: "/supervisor/orders/history",
+                },
+            ],
+        },
+        { name: "Analis", icon: User, href: "/supervisor/analysts" },
+    ],
 };
 
 export function menuItems(url) {
