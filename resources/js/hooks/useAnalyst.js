@@ -53,18 +53,27 @@ export const useProfile = () =>
     useCrud(analystService.profile, "profile", "profile");
 
 export const useChangePassword = () => {
-    const mutation = useMutation({
-        mutationFn: (data) =>
-            analystService.changePassword.update(null, data),
+  const mutation = useMutation({
+    mutationFn: (data) => analystService.changePassword.update(null, data),
+  });
 
-        onError: (error) => {
-            console.error("Change password failed:", error);
-        },
-    });
+  return {
+    changePassword: mutation.mutateAsync,
+    isChanging: mutation.isLoading,
+    error: mutation.error,
+  };
+};
 
-    return {
-        changePassword: mutation.mutateAsync,
-        isChanging: mutation.isPending,
-        error: mutation.error,
-    };
+// Hook untuk save reagent usage
+export const useSaveReagentUsage = () => {
+  const mutation = useMutation({
+    mutationFn: (data) => analystService.saveReagentUsage.create(data),
+  });
+
+  return {
+    saveReagentUsage: mutation.mutateAsync,
+    isSaving: mutation.isLoading,
+    isSavingError: mutation.isError,
+    savingError: mutation.error,
+  };
 };
