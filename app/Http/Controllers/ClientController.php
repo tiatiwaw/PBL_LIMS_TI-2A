@@ -41,13 +41,20 @@ class ClientController extends Controller
         ]);
     }
 
+    public function orderTransaction($reference)
+    {
+        return Inertia::render('client/transaction/index', [
+            'reference' => $reference,
+        ]);
+    }
+
     /**
      * Show order status page
      */
-    public function orderStatus($id)
+    public function orderStatus($order_number)
     {
         return Inertia::render('client/history/index', [
-            'orderId' => $id,
+            'orderId' => $order_number,
         ]);
     }
 }

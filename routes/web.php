@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\AnalystController;
+use App\Http\Controllers\API\V1\Payment\TripayCallbackController;
 // use App\Http\Controllers\API\V1\AuthController as V1AuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
@@ -205,9 +206,15 @@ Route::controller(ClientController::class)
             ->group(function () {
                 Route::get('/{id}', 'orderDetail')->name('show');
                 Route::get('/status/{id}', 'orderStatus')->name('status');
-                Route::get('/payment/{id}', 'orderPayment')->name('payment');
+
+                Route::get('/checkout/{id}', 'checkout')->name('checkout');
+
+                Route::get('/transaction/{reference}', 'orderTransaction')->name('transaction');
+                
                 Route::post('/download/{id}', 'downloadReport')->name('download');
             });
     });
+
+Route::post('/callback', [TripayCallbackController::class, 'handle']);
 
 require __DIR__ . '/auth.php';

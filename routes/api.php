@@ -33,7 +33,7 @@ use App\Http\Controllers\API\V1\Staff\SampleController as StaffSampleController;
 use App\Http\Controllers\API\V1\Client\ClientController as ClientClientController;
 use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
-
+use App\Http\Controllers\API\V1\Client\TransactionController as ClientTransactionController;
 // MANAGER CONTROLLERS
 use App\Http\Controllers\API\V1\Manager\EquipmentController as ManagerEquipmentController;
 use App\Http\Controllers\API\V1\Manager\BrandTypeController as ManagerBrandTypeController;
@@ -45,8 +45,8 @@ use App\Http\Controllers\API\V1\Manager\TestMethodsController as ManagerTestMeth
 use App\Http\Controllers\API\V1\Manager\UnitValueController as ManagerUnitValueController;
 use App\Http\Controllers\API\V1\Manager\ReferenceController as ManagerReferenceController;
 use App\Http\Controllers\API\V1\Manager\SampleCategoryController as ManagerSampleCategoryController;
-
-
+use App\Http\Controllers\API\V1\Payment\TripayController;
+use App\Models\Client;
 
 Route::prefix('v1')->group(function () {
 
@@ -170,6 +170,13 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/{id}', [ClientOrderController::class, 'show']);
                     Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
+                    
+                    // Route::get('/transaction/{reference}', [ClientTransactionController::class, 'show'])
+                    //     ->name('transaction.show');
+                    Route::post('/transaction/{order}', [ClientTransactionController::class, 'store'])
+                        ->name('transaction.store');
+
+                    Route::get('/payment/{id}', [TripayController::class, 'paymentChannels']);
                 });
             });
 
