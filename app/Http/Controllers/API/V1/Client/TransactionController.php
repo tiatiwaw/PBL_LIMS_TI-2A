@@ -135,7 +135,8 @@ class TransactionController extends Controller
                     'subtotal' => $subtotal, // Tambahkan detail
                     'admin_fee' => $admin,
                     'total' => $total
-                ]
+                ],
+                'instructions' => $transactionData->instructions
             ]
         ]);
     }

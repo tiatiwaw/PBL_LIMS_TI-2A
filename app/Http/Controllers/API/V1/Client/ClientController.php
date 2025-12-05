@@ -37,12 +37,12 @@ class ClientController extends Controller
         });
 
         // Stats
-        $totalOrders = Order::where('client_id', $user->id)
+        $totalOrders = Order::where('client_id', $user->clients->id)
                             ->count();
-        $processingOrders = Order::where('client_id', $user->id)
+        $processingOrders = Order::where('client_id', $user->clients->id)
                                 ->where('status', 'in_progress')
                                 ->count();
-        $completedOrders = Order::where('client_id', $user->id)
+        $completedOrders = Order::where('client_id', $user->clients->id)
                             ->where('status', 'completed')
                             ->count();
 
