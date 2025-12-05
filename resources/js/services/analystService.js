@@ -11,4 +11,5 @@ export const analystService = {
     downloadResult: serviceMethods("/analyst/orders/download", {useFormData: false,}),
     profile: serviceMethods("/analyst/profile/show", {useFormData: false,}),
     changePassword: serviceMethods("/analyst/profile/password", {useFormData: false,}),
+    saveReagentUsage: serviceMethods("/analyst/reagent-used/save", {useFormData: false,}),
 };

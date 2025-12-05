@@ -138,8 +138,8 @@ Route::prefix('v1')->group(function () {
                     Route::post('/samples/{sample}/unconfirm', [AnalystAnalystController::class, 'unconfirm'])->name('samples.unconfirm');
                     Route::put('/orders/save/{order}', [AnalystAnalystController::class, 'saveReport'])->name('orders.save');
                     Route::put('/orders/submit/{order}', [AnalystAnalystController::class, 'submitReport'])->name('orders.submit');
-                    Route::get('/orders/download/{order}', [AnalystAnalystController::class, 'downloadReport'])->name('orders.download');
-                    Route::post('/reagent-used/store', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent');
+                    Route::put('/orders/download/{order}', [AnalystAnalystController::class, 'downloadReport'])->name('orders.download');
+                    Route::post('/reagent-used/save', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent.save');
                     Route::get('/profile/show', [AnalystProfileController::class, 'show'])->name('profile');
                     Route::post('/profile/password', [AnalystProfileController::class, 'changePassword'])->name('password');
                 });

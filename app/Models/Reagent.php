@@ -20,9 +20,11 @@ class Reagent extends Model
     protected $fillable = [
         'supplier_id',
         'grade_id',
+        'unit_value_id',
         'name',
         'formula',
         'batch_number',
+        'stock',
         'storage_location',
     ];
 
@@ -40,9 +42,8 @@ class Reagent extends Model
     {
         return $this->belongsToMany(NParameterMethod::class, 'n_reagents', 'reagent_id', 'n_parameter_method_id');
     }
-
-    public function parameters()
+    public function unit_values()
     {
-        return $this->belongsToMany(TestParameter::class, 'n_reagents');
+        return $this->belongsTo(UnitValue::class, 'unit_value_id');
     }
 }

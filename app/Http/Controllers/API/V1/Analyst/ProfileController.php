@@ -101,7 +101,7 @@ class ProfileController extends Controller
     {
         $request->validate([
             'old_password' => 'required',
-            'new_password' => 'required|min:6|confirmed',
+            'new_password' => 'required|min:6',
         ]);
 
         $analyst = Analyst::where('user_id', auth()->id())->with('user')->first();
