@@ -7,7 +7,7 @@ import SampleDetailsDialog from "@/components/shared/dialog/sample-detail-dialog
 import SampleConfirmDialog from "@/components/shared/dialog/sample-confirm-dialog";
 import SampleUnConfirmDialog from "@/components/shared/dialog/sample-unconfirm-dialog";
 import { Button } from "@/components/ui/button";
-import { useOrderDetail, useResult } from "@/hooks/useAnalyst";
+import { useOrderDetail, useResult, useSaveReagentUsage } from "@/hooks/useAnalyst";
 import { toast } from "sonner";
 
 export default function OrderDetail({ orderId }) {
@@ -28,6 +28,7 @@ export default function OrderDetail({ orderId }) {
     const samples = data?.samples;
 
     const { saveResult } = useResult(); // Ambil saveResult dari hook
+    const { saveReagentUsage } = useSaveReagentUsage(); // Ambil saveReagentUsage dari hook
 
     const [viewMode, setViewMode] = useState("input"); // "table" | "input"
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -61,14 +62,15 @@ export default function OrderDetail({ orderId }) {
             );
 
             // --- 2. INISIALISASI STATE REAGEN ---
+            // Jangan tampilkan reagent_used dari DB, selalu inisialisasi dengan blank
             setReagentResults(
                 samples.map((sample) => ({
                     sample_id: sample.id,
                     reagents: sample.n_parameter_methods.reagents.map((r) => ({
-                        reagent_id: r.id,
-                        name: r.name,
-                        // Asumsi backend mengirim data pivot (volume_used), jika tidak default 0
-                        volume_used: r.pivot?.volume_used ?? 0
+                    reagent_id: r.id, // ID reagent dari model
+                    n_parameter_method_id: sample.n_parameter_methods.id, // ID dari n_parameter_methods
+                    name: r.name,
+                    reagent_used: "" // ✅ BLANK, bukan 0
                     }))
                 }))
             );
@@ -110,47 +112,53 @@ export default function OrderDetail({ orderId }) {
 
     // --- 3. HANDLER BARU: Input Reagen ---
     const handleReagentChange = (sampleId, reagentId, value) => {
+        // Biarkan blank atau numeric value
+        const numericValue = value === "" ? "" : Number(value);
+
         setReagentResults(prev =>
             prev.map(s =>
-                s.sample_id === sampleId
+            s.sample_id === sampleId
                 ? {
                     ...s,
                     reagents: s.reagents.map(r =>
-                        r.reagent_id === reagentId
-                        ? { ...r, volume_used: value }
+                    r.reagent_id === reagentId
+                        ? { ...r, reagent_used: numericValue }
                         : r
                     )
                 }
                 : s
             )
         );
-    };
+        };
 
     // --- 4. FUNCTION BARU: Save Reagen ---
     // Fungsi ini mengirim data ke endpoint khusus untuk menyimpan pemakaian reagen
-    const handleSaveReagents = () => {
-        // Flatten data agar mudah diproses backend
-        const payload = reagentResults.flatMap(sample =>
-            sample.reagents.map(r => ({
-                sample_id: sample.sample_id,
-                reagent_id: r.reagent_id,
-                volume_used: r.volume_used
-            }))
-        );
+   const handleSaveReagents = async () => {
+    try {
+        for (const sample of reagentResults) {
+            for (const r of sample.reagents) {
+                // Hanya save jika ada nilai reagent_used yang diinput (bukan blank)
+                if (r.reagent_used !== "" && Number(r.reagent_used) > 0) {
+                    console.log("KIRIM KE API:", {
+                        reagent_id: r.reagent_id,
+                        n_parameter_method_id: r.n_parameter_method_id,
+                        reagent_used: r.reagent_used,
+                    });
 
-        // Contoh endpoint: '/analyst/reagent-usage/store'
-        // Pastikan route ini ada di routes/web.php Anda
-        router.post('/analyst/reagent-usage/store', { usages: payload }, {
-            preserveScroll: true,
-            onSuccess: () => {
-                // Opsional: Toast khusus reagen jika mau
-                // toast.success("Data reagen tersimpan.");
-            },
-            onError: (errors) => {
-                console.error("Gagal simpan reagen:", errors);
-                toast.error("Gagal menyimpan data reagen.");
+                    await saveReagentUsage({
+                        reagent_id: r.reagent_id,
+                        n_parameter_method_id: r.n_parameter_method_id,
+                        reagent_used: r.reagent_used,
+                    });
+                }
             }
-        });
+        }
+
+        toast.success("Pemakaian reagen berhasil disimpan!");
+    } catch (error) {
+        console.error(error);
+        toast.error("Gagal menyimpan reagen!");
+    }
     };
 
     const handleShowDetail = (sample) => {
@@ -237,7 +245,7 @@ export default function OrderDetail({ orderId }) {
             <DashboardLayout title="Detail Pesanan" user={usePage().props.auth.user} header="Kelola Data Pesanan">
                 <div className="flex flex-col justify-center items-center h-64">
                     <p className="text-xl text-red-500">Detail Pesanan tidak ditemukan.</p>
-                    <Button className="bg-primary-hijauTua mt-4">
+                    <Button className="bg-primary-hijauTua hover:bg-primary-hijauMuda text-white mt-4">
                         <Link href="/analyst/order">Kembali</Link>
                     </Button>
                 </div>
@@ -283,16 +291,16 @@ export default function OrderDetail({ orderId }) {
                 {/* --- Toggle Table / Input --- */}
                 <div className="flex gap-3 mb-4">
                     <Button
-                        className={`${viewMode === "input" ? "bg-primary-hijauTua text-white" : "bg-gray-200 text-gray-700"}`}
-                        onClick={() => setViewMode("input")}
-                    >
-                        Input Hasil Uji
-                    </Button>
-                    <Button
-                        className={`${viewMode === "table" ? "bg-primary-hijauTua text-white" : "bg-gray-200 text-gray-700"}`}
+                        className={`${viewMode === "table" ? "bg-primary-hijauTua text-white" : "bg-gray-200 text-gray-700 hover:bg-primary-hijauTua hover:text-white"}`}
                         onClick={() => setViewMode("table")}
                     >
                         Tabel Sampel
+                    </Button>
+                    <Button
+                        className={`${viewMode === "input" ? "bg-primary-hijauTua text-white" : "bg-gray-200 text-gray-700 hover:bg-primary-hijauTua hover:text-white"}`}
+                        onClick={() => setViewMode("input")}
+                    >
+                        Input Hasil Uji
                     </Button>
                 </div>
 
@@ -324,7 +332,7 @@ export default function OrderDetail({ orderId }) {
 
                                 // Ambil data reagen dari state baru untuk sample ini
                                 const currentReagents = reagentResults.find(r => r.sample_id === sample.id)?.reagents || [];
-
+                                console.log(currentReagents)
                                 return (
                                     <div
                                         key={sample.id}
@@ -395,28 +403,31 @@ export default function OrderDetail({ orderId }) {
                                                 >
                                                     <div className="p-4">
                                                         {currentReagents.length > 0 ? (
+
                                                             <div className="space-y-3">
                                                                 <div className="grid grid-cols-[2fr_1fr] gap-2 text-xs font-bold text-gray-500 uppercase border-b pb-2">
                                                                     <span>Nama Reagen</span>
                                                                     <span>Volume</span>
                                                                 </div>
                                                                 {currentReagents.map((r) => (
-                                                                    <div key={r.reagent_id} className="grid grid-cols-[2fr_1fr] gap-2 items-center">
-                                                                        <label className="text-sm text-gray-700 truncate" title={r.name}>
-                                                                            {r.name}
+                                                                    <div key={`${r.reagent_id}-${r.n_parameter_method_id}`} className="grid grid-cols-[2fr_1fr] gap-2 items-center">
+                                                                        <label className="text-sm text-gray-700 truncate">
+                                                                        {r.name}
                                                                         </label>
+
                                                                         <input
-                                                                            type="number"
-                                                                            step="any"
-                                                                            placeholder="0"
-                                                                            disabled={!isEditing}
-                                                                            value={r.volume_used}
-                                                                            onChange={(e) => handleReagentChange(sample.id, r.reagent_id, e.target.value)}
-                                                                            className={`w-full border rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary-hijauMuda
-                                                                                ${!isEditing ? "bg-gray-100" : "bg-white"}`}
+                                                                        type="number"
+                                                                        step="any"
+                                                                        disabled={!isEditing}
+                                                                        value={r.reagent_used}
+                                                                        onChange={(e) =>
+                                                                            handleReagentChange(sample.id, r.reagent_id, e.target.value)
+                                                                        }
+                                                                        className={`w-full border rounded px-2 py-1 text-sm
+                                                                            ${!isEditing ? "bg-gray-100" : "bg-white"}`}
                                                                         />
                                                                     </div>
-                                                                ))}
+                                                                    ))}
                                                             </div>
                                                         ) : (
                                                             <p className="text-sm text-gray-400 italic text-center py-2">Tidak ada reagen.</p>
@@ -561,7 +572,7 @@ export default function OrderDetail({ orderId }) {
 
                 {/* Tombol kembali */}
                 <div className="w-full flex justify-end mt-4">
-                    <Button className="bg-primary-hijauTua">
+                    <Button className="bg-primary-hijauTua hover:bg-primary-hijauMuda text-white">
                         <Link href="/analyst/order">Kembali</Link>
                     </Button>
                 </div>

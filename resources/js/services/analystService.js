@@ -9,4 +9,5 @@ export const analystService = {
     saveResult: serviceMethods("/analyst/orders/save", {useFormData: false,}),
     submitResult: serviceMethods("/analyst/orders/submit", {useFormData: false,}),
     downloadResult: serviceMethods("/analyst/orders/download", {useFormData: false,}),
+    saveReagentUsage: serviceMethods("/analyst/reagent-used/save", {useFormData: false,}),
 };

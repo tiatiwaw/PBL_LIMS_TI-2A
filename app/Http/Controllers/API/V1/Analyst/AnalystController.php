@@ -205,36 +205,62 @@ class AnalystController extends Controller
      * Menyimpan data penggunaan reagent dan update stok.
      */
     public function saveReagentUsage(Request $request)
-    {
-        $request->validate([
-            'n_parameter_method_id' => 'required|exists:n_parameter_methods,id',
-            'reagent_id' => 'required|exists:reagents,id',
-            'reagent_used' => 'required|numeric|min:1',
-        ]);
+        {
+            $request->validate([
+                'reagent_id' => 'required|exists:reagents,id',
+                'n_parameter_method_id' => 'required|exists:n_parameter_methods,id',
+                'reagent_used' => 'required|numeric|min:0'
+            ]);
 
-        // Ambil reagent
-        $reagent = Reagent::findOrFail($request->reagent_id);
+            DB::beginTransaction();
 
-        // Cek stock cukup
-        if ($reagent->stock < $request->reagent_used) {
-            return response()->json([
-                'message' => 'Stock reagent tidak mencukupi!'
-            ], 400);
+            try {
+                // 1️⃣ Ambil data dari pivot berdasarkan COMPOSITE KEY
+                $nReagent = NReagent::where('reagent_id', $request->reagent_id)
+                    ->where('n_parameter_method_id', $request->n_parameter_method_id)
+                    ->lockForUpdate() // ✅ anti race condition stok
+                    ->firstOrFail();
+
+                // 2️⃣ Ambil reagent utama
+                $reagent = Reagent::where('id', $request->reagent_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                // 3️⃣ Hitung stok baru
+                $newStock = $reagent->stock - $request->reagent_used;
+
+                if ($newStock < 0) {
+                    DB::rollBack();
+                    return response()->json([
+                        'message' => 'Stock tidak mencukupi'
+                    ], 400);
+                }
+
+                // 4️⃣ Update pemakaian reagent di pivot
+                $nReagent->update([
+                    'reagent_used' => $request->reagent_used
+                ]);
+
+                // 5️⃣ Update stock utama reagent
+                $reagent->update([
+                    'stock' => $newStock
+                ]);
+
+                DB::commit();
+
+                return response()->json([
+                    'message' => 'Reagent usage & stock berhasil diupdate',
+                    'n_reagents' => $nReagent,
+                    'reagent' => $reagent
+                ]);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+
+                return response()->json([
+                    'message' => 'Error updating data',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
         }
-
-        // Kurangi stock reagent
-        $reagent->decrement('stock', $request->reagent_used);
-
-        // Catat ke N_Reagent
-        $nReagent = NReagent::create([
-            'n_parameter_method_id' => $request->n_parameter_method_id,
-            'reagent_id' => $request->reagent_id,
-            'reagent_used' => $request->reagent_used,
-        ]);
-
-        return response()->json([
-            'message' => 'Reagent usage recorded & stock updated',
-            'data' => $nReagent
-        ], 201);
-    }
 }

@@ -48,3 +48,23 @@ export const useResult = () => {
         savingError: saveResultMutation.error,
     };
 };
+
+export const useSaveReagentUsage = () => {
+    const saveReagentMutation = useMutation({
+        mutationFn: (data) =>
+            analystService.saveReagentUsage.create(data),
+
+        onError: (error) => {
+            console.error("Save reagent usage failed:", error);
+        },
+    });
+
+    return {
+        saveReagentUsage: (data) =>
+            saveReagentMutation.mutateAsync(data),
+
+        isSaving: saveReagentMutation.isPending,
+        isSavingError: saveReagentMutation.isError,
+        savingError: saveReagentMutation.error,
+    };
+};
