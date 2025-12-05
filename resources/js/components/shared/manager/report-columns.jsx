@@ -1,6 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getOrderStatusLabel, getOrderStatusVariant, getOrderTypeLabel, getOrderTypeVariant } from "@/utils/statusUtils";
+import {
+    getOrderStatusLabel,
+    getOrderStatusVariant,
+    getOrderTypeVariant,
+} from "@/utils/statusUtils";
 import { Copy, ListFilter } from "lucide-react";
 
 export const getReportsColumns = ({ onShowDetail }) => [
@@ -23,27 +27,25 @@ export const getReportsColumns = ({ onShowDetail }) => [
             </div>
         ),
     },
-    {   
+    {
         accessorKey: "order_type",
         header: "Tipe Order",
-        cell: ({ row }) => 
-        {
+        cell: ({ row }) => {
             const value = row.order_type;
             return (
                 <Badge
                     variant={getOrderTypeVariant(value)}
                     className="capitalize"
                 >
-                    {getOrderTypeLabel(value)}
+                    {value}
                 </Badge>
             );
         },
     },
-    {   
+    {
         accessorKey: "status",
         header: "Status",
-        cell: ({ row }) => 
-        {
+        cell: ({ row }) => {
             const value = row.status;
             console.log(value);
             return (

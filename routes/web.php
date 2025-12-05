@@ -79,7 +79,27 @@ Route::middleware(['auth', 'role:manager'])
             ->name('index');
 
         // REPORT VALIDATION
-        Route::prefix('report-validations')->as('report-validations.')->group(function () {});
+        Route::prefix('report-validations')->as('report-validations.')->group(function () {
+            Route::get('/', fn() => Inertia::render('manager/report-validation/index'))
+                ->name('index');
+
+            Route::get('/{id}', function ($id) {
+                return Inertia::render('manager/detail/index', [
+                    'id' => $id,
+                ]);
+            })->name('show');
+        });
+        // ORDERS
+        Route::prefix('orders')->as('orders.')->group(function () {
+            Route::get('/', fn() => Inertia::render('manager/orders/index'))
+                ->name('index');
+
+            Route::get('/{id}', function ($id) {
+                return Inertia::render('manager/orders/index', [
+                    'id' => $id,
+                ]);
+            })->name('show');
+        });
         Route::prefix('resources')->as('resources.')->group(function () {
             Route::inertia('/equipments', 'manager/tools/equipments/index')->name('equipments');
             Route::inertia('/brands', 'manager/tools/brands/index')->name('brands');

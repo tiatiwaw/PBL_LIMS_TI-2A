@@ -12,7 +12,7 @@ import {
     AnalystTeamCard,
     AnalysisMethodCard,
     NotesCard,
-} from "@/components/shared/manager/detail";
+} from "@/components/shared/order/detail";
 
 import Loading from "@/components/ui/loading";
 import { usePage } from "@inertiajs/react";

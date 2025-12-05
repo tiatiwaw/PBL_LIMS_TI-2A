@@ -225,6 +225,12 @@ Route::prefix('v1')->group(function () {
             ->name('api.manager.')
             ->group(function () {
 
+                // REPORT VALIDATIONS
+                Route::prefix('report-validations')->name('report-validations.')->group(function () {
+                    Route::get('/', [MOrdersController::class, 'reportValidations']);
+                    Route::get('/{id}', [MOrdersController::class, 'show'])->name('show');
+                });
+
                 // Tools
                 Route::prefix('tools')->name('tools.')->group(function () {
                     Route::apiResource('equipments', ManagerEquipmentController::class);
