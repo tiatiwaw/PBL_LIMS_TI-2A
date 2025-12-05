@@ -21,9 +21,9 @@ class PaymentController extends Controller
         $clientId = $user->clients->id;
 
         $order = Order::with([
-                'clients',
-                'analysesMethods'
-            ])
+            'clients',
+            'analysesMethods'
+        ])
             ->where('client_id', $clientId)
             ->where('id', $id)
             ->first();

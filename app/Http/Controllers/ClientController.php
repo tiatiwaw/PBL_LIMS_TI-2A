@@ -23,6 +23,11 @@ class ClientController extends Controller
         return Inertia::render('client/history/index');
     }
 
+    public function invoice()
+    {
+        return Inertia::render('client/invoice/index');
+    }
+
 
     /**
      * Show order detail page

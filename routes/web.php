@@ -199,6 +199,8 @@ Route::controller(ClientController::class)
         Route::get('/profile', 'profile')->name('profile');
         Route::get('/history', 'history')->name('history');
         Route::get('/payment', 'payment')->name('payment');
+        Route::get('/invoice', 'invoice')->name('invoice');
+
         
         // Orders - sesuaikan dengan API structure
         Route::prefix('orders')
