@@ -76,7 +76,7 @@ class EquipmentController extends Controller
                 'serial_number'        => 'nullable|string|max:255',
                 'purchase_year'        => 'nullable|date',
                 'calibration_schedule' => 'sometimes|in:internal,eksternal',
-                'status'               => 'sometimes|in:available,unavailable,maintenance,broken',
+                'status'               => 'sometimes|in:active,maintenance,broken',
                 'location'             => 'nullable|string|max:255',
             ]);
 

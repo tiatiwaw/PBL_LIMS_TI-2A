@@ -1,35 +1,27 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { useMemo, useEffect, useState } from "react";
+import { useMemo } from "react";
 import { getReportsColumns } from "@/components/shared/manager/report-columns";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { router } from "@inertiajs/react";
-
-const filterData = [
-    { value: "all", label: "All Report" },
-    { value: "Completed", label: "Completed" },
-    { value: "In Progress", label: "In Progress" },
-    { value: "Pending", label: "Pending" },
-    { value: "Disapproved", label: "Disapproved" },
-    { value: "Approved", label: "Approved" },
-    { value: "Received", label: "Received" },
-];
+import { useReportValidations } from "@/hooks/useManager";
 
 export default function ReportValidationPage({ auth }) {
-    const [reportData, setReportData] = useState([]);
+    const { data: order, isLoading: loading, error } = useReportValidations();
 
-    useEffect(() => {
-        fetch("/api/v1/manager/report-validations")
-            .then((res) => res.json())
-            .then((json) => setReportData(json.data ?? []));
-    }, []);
+    const reportData = order?.data || [];
 
-    const handleShowDetail = () => {
-        router.visit(route("manager.report.detail"));
+    const handleShowDetail = (id) => {
+        console.log("Navigating to detail with ID:", id);
+        router.visit(route("manager.report-validations.show", id));
     };
 
     const columns = useMemo(
-        () => getReportsColumns({ onShowDetail: handleShowDetail }),
-        []
+        () =>
+            getReportsColumns({
+                onShowDetail: handleShowDetail,
+                data: reportData,
+            }),
+        [reportData]
     );
 
     return (
@@ -39,11 +31,18 @@ export default function ReportValidationPage({ auth }) {
             user={auth.user}
         >
             <ManagedDataTable
-                data={reportData}
+                data={reportData || []}
                 columns={columns}
+                loading={loading}
                 showFilter={true}
-                filterColumn="status"
-                filterOptions={filterData}
+                filterColumn="order_type"
+                filterOptions={[
+                    { value: "all", label: "Semua" },
+                    { value: "internal", label: "Internal" },
+                    { value: "regular", label: "Regular" },
+                    { value: "external", label: "External" },
+                    { value: "urgent", label: "Urgent" },
+                ]}
             />
         </DashboardLayout>
     );

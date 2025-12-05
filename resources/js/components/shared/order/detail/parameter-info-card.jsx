@@ -31,7 +31,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <span>Nama Parameter</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua text-lg">
-                            {parameter.name}
+                            {parameter?.name || "N/A"}
                         </p>
                     </div>
 
@@ -40,9 +40,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <FileText className="w-4 h-4" />
                             <span>Kategori</span>
                         </div>
-                        <Badge variant="success" className="capitalize">
-                            {parameter.category}
-                        </Badge>
+                        <Badge variant="success">{parameter.category}</Badge>
                     </div>
 
                     <div className="space-y-2">
@@ -61,7 +59,7 @@ export default function ParameterInfoCard({ parameter }) {
                             <span>Standar Kualitas</span>
                         </div>
                         <p className="font-bold text-primary-hijauTua">
-                            {parameter.quality_standard}
+                            {parameter?.quality_standard || "N/A"}
                         </p>
                     </div>
 

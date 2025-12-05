@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
                         UserRoleSeeder::class,
                         ClientSeeder::class,
                         AnalystSeeder::class,
+                        AnalystSeeder::class,
                 ]);
 
                 // // Master Data Independen

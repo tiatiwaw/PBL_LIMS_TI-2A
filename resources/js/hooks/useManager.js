@@ -1,11 +1,12 @@
-import { managerService } from "@/services/managerService";
 import { useCrud } from "./useCrud";
 import { useGetById } from "./useGetById";
+import { managerService } from "@/services/managerService";
 
+// ===========================
+// GET ALL
+// ===========================
 export const useBrands = () =>
-    useCrud(managerService.brands, "brands", "Merek", {
-        only: ["getAll"],
-    });
+    useCrud(managerService.brands, "brands", "Merek", { only: ["getAll"] });
 
 export const useCategories = () =>
     useCrud(managerService.categories, "categories", "Kategori", {
@@ -23,17 +24,13 @@ export const useEquipments = () =>
     });
 
 export const useGrades = () =>
-    useCrud(managerService.grades, "grades", "Tingkat", {
-        only: ["getAll"],
-    });
+    useCrud(managerService.grades, "grades", "Tingkat", { only: ["getAll"] });
 
 export const useMethods = () =>
-    useCrud(managerService.methods, "methods", "Metode", {
-        only: ["getAll"],
-    });
+    useCrud(managerService.methods, "methods", "Metode", { only: ["getAll"] });
 
 export const useOrders = () =>
-    useCrud(managerService.orders, "orders", "Pesanan", {
+    useCrud(managerService.orders.all, "orders", "Pesanan", {
         only: ["getAll"],
     });
 
@@ -57,20 +54,80 @@ export const useSuppliers = () =>
         only: ["getAll"],
     });
 
-
 export const useUnits = () =>
-    useCrud(managerService.units, "units", "Satuan", {
-        only: ["getAll"],
-    });
+    useCrud(managerService.units, "units", "Satuan", { only: ["getAll"] });
 
 export const useUsers = () =>
-    useCrud(managerService.users, "users", "Pengguna", {
-        only: ["getAll"],
-    });
+    useCrud(managerService.users, "users", "Pengguna", { only: ["getAll"] });
 
 export const useAnalysts = () =>
     useCrud(managerService.analysts, "analysts", "Analyst", {
         only: ["getAll"],
     });
 
-export const useOrder = (id) => useGetById(managerService.orders, "orders", id);
+// ===========================
+// REPORT VALIDATIONS
+// ===========================
+export const useReportValidations = () =>
+    useCrud(
+        managerService.reportValidations.all,
+        "report-validations",
+        "Report Validations",
+        {
+            only: ["getAll"],
+        }
+    );
+
+export const useReportValidationDetail = (id) =>
+    useGetById(managerService.reportValidations.all, "report-validations", id);
+
+export const useUpdateReportValidation = () =>
+    useCrud(
+        managerService.reportValidations.update,
+        "report-validations",
+        "Update Validation",
+        {
+            only: ["update"],
+        }
+    );
+
+// ===========================
+// ORDER BY ID (ADMIN)
+// ===========================
+export const useOrder = (id) =>
+    useGetById(managerService.orders.all, "orders", id);
+
+// ===========================
+// ORDER BY ID (MANAGER)
+// ===========================
+export const useManagerOrder = (id) =>
+    useGetById(
+        managerService.reportValidations.all,
+        "manager-report-validations",
+        id
+    );
+
+// ===========================
+export const useManager = () => ({
+    useBrands,
+    useCategories,
+    useDashboard,
+    useEquipments,
+    useGrades,
+    useMethods,
+    useOrders,
+    useParameters,
+    useReagents,
+    useReferences,
+    useSuppliers,
+    useUnits,
+    useUsers,
+    useAnalysts,
+
+    useReportValidations,
+    useReportValidationDetail,
+    useUpdateReportValidation,
+
+    useOrder,
+    useManagerOrder,
+});

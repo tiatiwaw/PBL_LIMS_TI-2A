@@ -202,7 +202,7 @@ const MENU_CONFIG = {
         {
             name: "Validasi Laporan",
             icon: FileCheck2,
-            href: "/manager/report-validation",
+            href: "/manager/report-validations",
         },
         {
             name: "Alat & Bahan",

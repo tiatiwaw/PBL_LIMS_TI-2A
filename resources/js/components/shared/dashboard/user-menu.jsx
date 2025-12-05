@@ -10,21 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export const UserMenu = ({ auth, user, onLogout }) => {
-    const User = user || auth?.user;
-
-    if (!User) {
-        console.warn("UserMenu: user tidak ditemukan");
-        return null;
-    }
-
-    const userInitial = User.name?.charAt(0)?.toUpperCase() || "U";
-    const role = User.role || "user";
 export const UserMenu = ({ user, onLogout }) => {
     const userInitial = user?.name?.charAt(0)?.toUpperCase() || "U";
 
     const getProfileUrl = (role) => {
-        const normalized = role.toLowerCase();
+        const normalized = role?.toLowerCase();
         switch (normalized) {
             case "manager":
                 return "/manager/profile";
@@ -41,7 +31,7 @@ export const UserMenu = ({ user, onLogout }) => {
         }
     };
 
-    const profileUrl = getProfileUrl(role);
+    const profileUrl = getProfileUrl(user?.role);
 
     return (
         <DropdownMenu>

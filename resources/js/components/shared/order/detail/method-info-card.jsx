@@ -30,7 +30,7 @@ export default function MethodInfoCard({ method }) {
                         <span>Nama Metode</span>
                     </div>
                     <p className="font-bold text-primary-hijauTua text-lg">
-                        {method.name}
+                        {method?.name || "N/A"}
                     </p>
                 </div>
 
@@ -66,7 +66,7 @@ export default function MethodInfoCard({ method }) {
                         <span>Parameter Terkait</span>
                     </div>
                     <p className="font-bold text-primary-hijauTua">
-                        {method.applicable_parameter}
+                        {method?.applicable_parameter || "N/A"}
                     </p>
                 </div>
             </CardContent>
