@@ -150,6 +150,7 @@ Route::controller(AnalystController::class)
         Route::get('/', 'index')->name('index');
         Route::get('/order', 'order')->name('order');
         Route::get('/profile', 'profile')->name('profile');
+
         Route::get('/dashboard', 'dashboard')->name('dashboard');
         Route::post('/{order}/save', 'saveReport')->name('saveReport');
         Route::post('/{order}/submit', 'submitReport')->name('submitReport');

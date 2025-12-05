@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
@@ -18,21 +19,48 @@ class ProfileController extends Controller
      */
     public function show(): JsonResponse
     {
-        $analyst = Analyst::where('user_id', auth()->id())
-            ->with([
-                'user:id,email',
-                'certificates:id,analyst_id,name,file_path',
-                'trainings:id,name,provider,date,result'
-            ])
+        $user = Auth::user();
+
+        $analyst = Analyst::with(['certificates', 'trainings'])
+            ->where('user_id', $user->id)
             ->first();
 
         if (!$analyst) {
             return response()->json(['message' => 'Analyst not found'], 404);
         }
 
+        // Map certificates
+        $certificates = $analyst->certificates->map(function($cert) {
+            return [
+                'name' => $cert->name,
+                'issued_date' => $cert->issued_date,
+                'expired_date' => $cert->expired_date,
+                'file_path' => $cert->file_path,
+            ];
+        });
+
+        $trainings = $analyst->trainings->map(function($training) {
+            return [
+                'name' => $training->name,
+                'provider' => $training->provider,
+                'date' => $training->date,
+                'result' => $training->result,
+            ];
+        });
+
         return response()->json([
             'status' => 'success',
-            'data' => $analyst
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ],
+            'analyst' => [
+                'id' => $analyst->id,
+                'specialist' => $analyst->specialist,
+                'certificates' => $certificates,
+                'trainings' => $trainings,
+            ]
         ]);
     }
 

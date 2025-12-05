@@ -9,4 +9,6 @@ export const analystService = {
     saveResult: serviceMethods("/analyst/orders/save", {useFormData: false,}),
     submitResult: serviceMethods("/analyst/orders/submit", {useFormData: false,}),
     downloadResult: serviceMethods("/analyst/orders/download", {useFormData: false,}),
+    profile: serviceMethods("/analyst/profile/show", {useFormData: false,}),
+    changePassword: serviceMethods("/analyst/profile/password", {useFormData: false,}),
 };

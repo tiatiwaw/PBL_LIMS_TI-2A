@@ -141,6 +141,7 @@ Route::prefix('v1')->group(function () {
                     Route::get('/orders/download/{order}', [AnalystAnalystController::class, 'downloadReport'])->name('orders.download');
                     Route::post('/reagent-used/store', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent');
                     Route::get('/profile/show', [AnalystProfileController::class, 'show'])->name('profile');
+                    Route::post('/profile/password', [AnalystProfileController::class, 'changePassword'])->name('password');
                 });
 
             // Client

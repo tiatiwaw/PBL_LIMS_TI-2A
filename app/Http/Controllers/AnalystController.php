@@ -21,7 +21,7 @@ class AnalystController extends Controller
 
     public function profile()
     {
-        return Inertia::render('analyst/profile');
+        return Inertia::render('analyst/profil');
     }
 
     public function order()
