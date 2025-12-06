@@ -25,9 +25,14 @@ export default function SearchFilter({
     onFilterChange,
 }) {
     return (
-        <div className="flex items-center justify-between mb-4">
+        <div
+            className={cn(
+                "flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4"
+            )}
+        >
+            {/* Search */}
             {showSearch && (
-                <div className="relative w-full max-w-sm">
+                <div className="relative w-full md:max-w-sm">
                     <div className="relative flex items-center">
                         <Input
                             type="text"
@@ -57,14 +62,22 @@ export default function SearchFilter({
                     </div>
                 </div>
             )}
-            <div className="flex justify-between gap-4 items-center">
+
+            {/* Right side: Filter / Create / Export */}
+            <div
+                className={cn(
+                    "flex flex-wrap items-center gap-3 md:gap-4",
+                    "md:justify-end justify-start"
+                )}
+            >
                 {showFilter && (
                     <Select value={filterValue} onValueChange={onFilterChange}>
                         <SelectTrigger
                             className={cn(
                                 "flex items-center gap-2 border-primary-hijauTua text-primary-hijauTua",
                                 "hover:text-primary-hijauTua/60 hover:bg-primary-hijauTua/10",
-                                "focus:ring-2 focus:ring-primary-hijauTua/50 w-[180px]"
+                                "focus:ring-2 focus:ring-primary-hijauTua/50",
+                                "w-full sm:w-[180px]" // RESPONSIF
                             )}
                         >
                             <ListFilter size={16} />
@@ -83,19 +96,21 @@ export default function SearchFilter({
                         </SelectContent>
                     </Select>
                 )}
+
                 {showCreate && (
                     <Button
                         onClick={onCreate}
-                        className="bg-primary-hijauTua hover:bg-primary-hijauTua/90"
+                        className="bg-primary-hijauTua hover:bg-primary-hijauTua/90 w-full sm:w-auto"
                     >
                         <PlusCircle size={18} className="mr-2" />
                         Tambah Data
                     </Button>
                 )}
+
                 {showExport && (
                     <Button
                         onClick={onExport}
-                        className="gap-2 bg-[#024D60] hover:bg-[#02364B] text-white shadow-md shadow-[#024D60]/20"
+                        className="gap-2 bg-[#024D60] hover:bg-[#02364B] text-white shadow-md shadow-[#024D60]/20 w-full sm:w-auto"
                     >
                         <Download size={16} /> Ekspor
                     </Button>
