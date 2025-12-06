@@ -36,7 +36,7 @@ class TransactionController extends Controller
         $orderId = $order ?? $request->order_id;
 
         $user = Auth::user();
-        if (!$user->clients) {
+        if (!$user || !$user->clients) {
             return response()->json([
                 'success' => false,
                 'message' => 'Client profile not found'
@@ -44,7 +44,7 @@ class TransactionController extends Controller
         }
         $client = $user->clients->id;
 
-        if (!$request->has('method') || empty($request->method)) {
+        if (!$request->filled('method')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Payment method is required'
@@ -56,7 +56,7 @@ class TransactionController extends Controller
                 'analysesMethods'
             ])
             ->where('client_id', $client)
-            ->where('id', $orderId) // Pakai $orderId yang sudah di-resolve
+            ->where('id', $orderId)
             ->first();
 
         if (!$orders) {
@@ -78,7 +78,7 @@ class TransactionController extends Controller
 
         $total = $subtotal + $admin;
 
-        $method = $request->method;
+        $method = $request->input('method');
 
         $orderData = (object) [
             'id' => $orders->id,
@@ -102,40 +102,51 @@ class TransactionController extends Controller
             ], 500);
         }
 
+        // Cari id NAnalysesMethodsOrder yang relevan (jika ada). Gunakan first() sebagai fallback.
+        $nAnalysesId = $orders->n_analyses_methods_orders()->exists()
+            ? $orders->n_analyses_methods_orders()->first()->id
+            : null;
+
+        // Tentukan status awal berdasarkan response gateway (fallback UNPAID)
+        $gatewayStatus = strtolower(data_get($transactionData, 'status', ''));
+        $status = $gatewayStatus === 'paid' ? 'PAID' : 'UNPAID';
+
         Transaction::create([
-            'user_id' => Auth::user()->id,
-            'n_analyses_methods_order_id' => $orders->id,
-            'reference' => $transactionData->reference,
-            'merchant_ref' => $transactionData->merchant_ref ?? null,
-            'total_price' => $transactionData->amount ?? $total, // FIX: Pakai $total
-            'payment_status' => $transactionData->status ?? 'PENDING'
+            'user_id' => $user->id,
+            'n_analyses_methods_order_id' => $nAnalysesId ?? $orders->id,
+            'reference' => data_get($transactionData, 'reference'),
+            'merchant_ref' => data_get($transactionData, 'merchant_ref') ?? data_get($transactionData, 'merchantRef'),
+            'total_price' => data_get($transactionData, 'amount', $total),
+            'status' => $status
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Transaction successfully created.',
             'data' => [
-                'reference' => $transactionData->reference,
-                'merchant_ref' => $transactionData->merchant_ref,
-                'amount' => $transactionData->amount,
+                'reference' => data_get($transactionData, 'reference'),
+                'merchant_ref' => data_get($transactionData, 'merchant_ref') ?? data_get($transactionData, 'merchantRef'),
+                'amount' => data_get($transactionData, 'amount'),
                 'payment_method' => $method,
-                'checkout_url' => $transactionData->checkout_url,
-                'status' => $transactionData->status,
+                'checkout_url' => data_get($transactionData, 'checkout_url'),
+                'status' => strtoupper($status),
                 'expired_time' => isset($transactionData->expired_time) 
                     ? date('Y-m-d H:i:s', $transactionData->expired_time) 
                     : null,
                 'customer' => [
-                    'name' => Auth::user()->name,
-                    'email' => Auth::user()->email
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'customer_phone' => $user->clients->phone_number ?? '-',
                 ],
                 'order' => [
                     'name' => $orderData->title,
                     'price' => $orderData->price,
                     'quantity' => 1,
-                    'subtotal' => $subtotal, // Tambahkan detail
+                    'subtotal' => $subtotal,
                     'admin_fee' => $admin,
                     'total' => $total
-                ]
+                ],
+                'instructions' => data_get($transactionData, 'instructions')
             ]
         ]);
     }
