@@ -145,11 +145,11 @@ export default function OrdersPage() {
 
     return (
         <DashboardLayout title="Orders" header="Registrasi Order Baru">
-            <div ref={formTopRef} className="px-4 py-2 rounded-md shadow-sm">
+            <div ref={formTopRef} className="px-4 py-2 rounded-md">
                 <StepperFirst currentStep={step} />
             </div>
 
-            <div className="px-4 py-2 rounded-md shadow-sm">
+            <div className="px-4 py-2 rounded-md">
                 {isSaved ? (
                     <>
                         {/* ✅ Header sukses seperti di gambar */}
@@ -173,7 +173,8 @@ export default function OrdersPage() {
                             <button
                                 onClick={() => {
                                     setIsSaved(false);
-                                    window.location.href = "/staff/orders";
+                                    window.location.href =
+                                        "/staff/orders/make-order";
                                 }}
                                 className="px-8 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors duration-200"
                             >

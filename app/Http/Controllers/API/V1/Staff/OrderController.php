@@ -7,10 +7,10 @@ use App\Models\AnalysesMethod;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\NAnalysesMethodsOrder;
 use App\Models\NOrderSample;
 use App\Models\Order;
-use App\Models\Sample;
 use App\Models\SampleCategory;
 
 class OrderController extends Controller
@@ -18,21 +18,66 @@ class OrderController extends Controller
 
     public function index()
     {
-        $methods = AnalysesMethod::all();
-        $clients = Client::all();
-        $categories = SampleCategory::all();
-        // 🔹 Buat nomor order otomatis
-        $lastOrder = Order::latest('id')->first();
-        $nextNumber = str_pad(($lastOrder ? $lastOrder->id + 1 : 1), 4, '0', STR_PAD_LEFT);
-        $orderNumber = 'ORD-' . now('Asia/Jakarta')->format('Ymd') . '-' . $nextNumber;
+        try {
+            $methods = AnalysesMethod::all();
+            $clients = Client::all();
+            $categories = SampleCategory::all();
+            // 🔹 Buat nomor order otomatis
+            $lastOrder = Order::latest('id')->first();
+            $nextNumber = str_pad(($lastOrder ? $lastOrder->id + 1 : 1), 4, '0', STR_PAD_LEFT);
+            $orderNumber = 'ORD-' . now('Asia/Jakarta')->format('Ymd') . '-' . $nextNumber;
 
-        return response()->json([
-            'methods' => $methods,
-            'clients' => $clients,
-            'categories' => $categories,
-            'orderNumber' => $orderNumber,
-        ]);
+            return response()->json([
+                'methods' => $methods,
+                'clients' => $clients,
+                'categories' => $categories,
+                'orderNumber' => $orderNumber,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Staff OrderController@index error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memuat data order: ' . $e->getMessage()
+            ], 500);
+        }
     }
+    /**
+     * Mendapatkan supervisor_id berikutnya dengan rotasi otomatis
+     */
+    private function getNextSupervisorId()
+    {
+        // Ambil semua supervisor berdasarkan kolom role enum
+        $supervisors = \App\Models\User::where('role', 'supervisor')
+            ->orderBy('id')
+            ->pluck('id')
+            ->toArray();
+
+        // Jika tidak ada supervisor, return null
+        if (empty($supervisors)) {
+            return null;
+        }
+
+        // Ambil supervisor_id terakhir dari order
+        $lastOrder = Order::latest('id')->first();
+        $lastSupervisorId = $lastOrder?->supervisor_id;
+
+        // Jika belum ada order sebelumnya, mulai dari supervisor pertama
+        if (!$lastSupervisorId) {
+            return $supervisors[0];
+        }
+
+        // Cari index dari supervisor_id terakhir
+        $currentIndex = array_search($lastSupervisorId, $supervisors);
+
+        // Jika supervisor tidak ditemukan atau sudah di akhir, kembali ke awal
+        if ($currentIndex === false || $currentIndex >= count($supervisors) - 1) {
+            return $supervisors[0];
+        }
+
+        // Return supervisor berikutnya
+        return $supervisors[$currentIndex + 1];
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -58,9 +103,13 @@ class OrderController extends Controller
         ]);
 
         DB::transaction(function () use ($data) {
+            // 🔹 Dapatkan supervisor_id berikutnya dengan rotasi
+            $supervisorId = $this->getNextSupervisorId();
+
             // 🔹 Simpan order utama
             $order = Order::create([
                 'client_id' => $data['selectedKlien']['id'],
+                'supervisor_id' => $supervisorId,
                 'order_number' => $data['nomorOrder'],
                 'title' => $data['judulOrder'],
                 'result_value' => '-',

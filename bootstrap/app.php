@@ -12,6 +12,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->validateCsrfTokens(
+            except: [
+                'callback',
+                'https://f48a87bc30d7.ngrok-free.app/callback'
+            ]
+        );
+
         // register middleware using alias
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,

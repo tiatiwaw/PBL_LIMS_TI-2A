@@ -19,7 +19,7 @@ export default function HomePage() {
                 router.visit(route("manager.index"));
                 break;
             case "staff":
-                router.visit(route("staff.client.index"));
+                router.visit(route("staff.order.all"));
                 break;
             case "client":
                 router.visit(route("client.index"));

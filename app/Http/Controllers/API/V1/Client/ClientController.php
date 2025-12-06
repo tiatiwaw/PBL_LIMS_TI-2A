@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1\Client;
 
+use App\Http\Controllers\API\V1\Payment\TripayController;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -76,17 +77,29 @@ class ClientController extends Controller
             abort(404, 'Laporan belum digenerate.');
         }
 
-        // Path langsung ke folder public/storage/...
-        $filePath = public_path('storage/reports/client/' . $order->result_value);
+        // Path asli PDF di storage/app/public/...
+        $realPath = storage_path('app/public/reports/client/' . $order->result_value);
 
-        if (!file_exists($filePath)) {
+        if (!file_exists($realPath)) {
             abort(404, 'File laporan tidak ditemukan.');
         }
 
         return response()->download(
-            $filePath,
+            $realPath,
             'Laporan_Order_' . $order->id . '.pdf',
             ['Content-Type' => 'application/pdf']
         );
+    }
+
+    public function payment(Order $order){
+        $tripay = new TripayController();
+        $channels = $tripay->paymentChannels($order->id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment successfully.',
+            'order' => $order,
+            'channels' => $channels
+        ]);
     }
 }

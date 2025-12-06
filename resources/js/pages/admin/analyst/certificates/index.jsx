@@ -11,15 +11,29 @@ export default function AdminCertificatePage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
-    const { data: sertif, isLoading, error, create: createSertif, update: updateSertif, delete: deleteSertif } = useSertif();
-    const { data: analysts, isLoading: isLoadingAnalysts, error: errorAnalysts } = useAnalysts();
+    const {
+        data: sertif,
+        isLoading,
+        error,
+        create: createSertif,
+        update: updateSertif,
+        delete: deleteSertif,
+    } = useSertif();
+    const {
+        data: analysts,
+        isLoading: isLoadingAnalysts,
+        error: errorAnalysts,
+    } = useAnalysts();
 
     const handleShowDetail = (tests) => {
         setSelectedCategory(tests);
         setIsOpen(true);
     };
 
-    const columns = useMemo(() => getSertifColumns({ onShowDetail: handleShowDetail }), []);
+    const columns = useMemo(
+        () => getSertifColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
     const handleCreate = async (formData) => createSertif.mutateAsync(formData);
 
@@ -41,7 +55,9 @@ export default function AdminCertificatePage() {
         return (
             <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
-                    {error.message || errorAnalysts.message || "Terjadi kesalahan saat memuat data"}
+                    {error.message ||
+                        errorAnalysts.message ||
+                        "Terjadi kesalahan saat memuat data"}
                 </div>
             </DashboardLayout>
         );
@@ -63,7 +79,11 @@ export default function AdminCertificatePage() {
                 editTitle="Edit Sertifikat"
                 deleteTitle="Hapus Sertifikat"
             />
-            <SertifDetailSheet data={selectedCategory} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <SertifDetailSheet
+                data={selectedCategory}
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
+            />
         </DashboardLayout>
     );
 }

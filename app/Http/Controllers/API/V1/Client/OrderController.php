@@ -91,6 +91,30 @@ class OrderController extends Controller
                 'order_details' => $orderData,
                 'table_data_sample' => $tableDataSamples,
             ]
-        ]);
+        ]); 
     }
+
+        /**
+     * Download laporan hasil analisis (PDF/DOC/ZIP)
+     */
+    public function downloadReport($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        if (!$order->result_value) {
+            abort(404, 'Laporan belum digenerate.');
+        }
+
+        $realPath = storage_path('app/public/reports/client/' . $order->report_file_path);
+
+        if (!file_exists($realPath)) {
+            abort(404, 'File laporan tidak ditemukan.');
+        }
+
+        return response()->download(
+            $realPath,
+            'Laporan_Order_' . $order->id . '.pdf',
+            ['Content-Type' => 'application/pdf']
+        );
+    }    
 }

@@ -5,7 +5,12 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editReagentFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import Loading from "@/components/ui/loading";
-import { useGrades, useReagents, useSuppliers } from "@/hooks/useAdmin";
+import {
+    useGrades,
+    useReagents,
+    useSuppliers,
+    useUnits,
+} from "@/hooks/useAdmin";
 
 export default function AdminReagentsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -16,13 +21,37 @@ export default function AdminReagentsPage() {
         setIsOpen(true);
     };
 
-    const { data: grades, isLoading: gradesLoading, error: gradesError } = useGrades();
-    const { data: suppliers, isLoading: suppliersLoading, error: suppliersError } = useSuppliers();
-    const { data: reagents, isLoading: regeantsLoading, error: regeantsError, create: createReagent, update: updateReagent, delete: deleteReagent } = useReagents();
+    const {
+        data: grades,
+        isLoading: gradesLoading,
+        error: gradesError,
+    } = useGrades();
+    const {
+        data: unit_values,
+        isLoading: unitsLoading,
+        error: unitsError,
+    } = useUnits();
+    const {
+        data: suppliers,
+        isLoading: suppliersLoading,
+        error: suppliersError,
+    } = useSuppliers();
+    const {
+        data: reagents,
+        isLoading: regeantsLoading,
+        error: regeantsError,
+        create: createReagent,
+        update: updateReagent,
+        delete: deleteReagent,
+    } = useReagents();
 
-    const columns = useMemo(() => getReagentsColumns({ onShowDetail: handleShowDetail }), []);
+    const columns = useMemo(
+        () => getReagentsColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
-    const handleCreate = async (formData) => createReagent.mutateAsync(formData);
+    const handleCreate = async (formData) =>
+        createReagent.mutateAsync(formData);
 
     const handleEdit = async (id, formData) => {
         await updateReagent.mutateAsync({ id, data: formData });
@@ -30,17 +59,17 @@ export default function AdminReagentsPage() {
 
     const handleDelete = async (id) => deleteReagent.mutateAsync(id);
 
-    if (gradesLoading || suppliersLoading || regeantsLoading) {
+    if (gradesLoading || unitsLoading || suppliersLoading || regeantsLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
     }
 
-    if (regeantsError || suppliersError || gradesError) {
+    if (regeantsError || unitsError || suppliersError || gradesError) {
         return (
-            <DashboardLayout title="Dashboard Admin"  header="Selamat Datang">
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {"Terjadi kesalahan saat memuat data"}
                 </div>
@@ -49,14 +78,11 @@ export default function AdminReagentsPage() {
     }
 
     return (
-        <DashboardLayout
-            title="Manajemen Reagen"
-            header="Manajemen Reagen"
-        >
+        <DashboardLayout title="Manajemen Reagen" header="Manajemen Reagen">
             <ManagedDataTable
                 data={reagents}
                 columns={columns}
-                editFields={editReagentFields(suppliers, grades)}
+                editFields={editReagentFields(suppliers, grades, unit_values)}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 onCreate={handleCreate}
@@ -64,7 +90,11 @@ export default function AdminReagentsPage() {
                 editTitle="Edit Reagent"
                 deleteTitle="Hapus Reagent"
             />
-            <ReagentsDetailSheet data={selectedReagents} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <ReagentsDetailSheet
+                data={selectedReagents}
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
+            />
         </DashboardLayout>
     );
 }

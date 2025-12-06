@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Order;
 use App\Models\Client;
+use App\Models\User;
 use Illuminate\Support\Str;
 
 class OrderSeeder extends Seeder
@@ -16,6 +17,8 @@ class OrderSeeder extends Seeder
     {
         // Pastikan sudah ada data client
         $clients = Client::all();
+        $supervisors = User::where('role', 'supervisor')->get();
+
 
         if ($clients->isEmpty()) {
             $this->command->warn('⚠️ Tidak ada data client di tabel clients. Seeder Order dilewati.');
@@ -27,6 +30,7 @@ class OrderSeeder extends Seeder
             for ($i = 1; $i <= 2; $i++) {
                 Order::create([
                     'client_id' => $client->id,
+                    'supervisor_id' => $supervisors->random()->id,
                     'order_number' => strtoupper(Str::random(8)),
                     'title' => "Order ke-$i untuk {$client->name}",
                     'result_value' => fake()->randomFloat(2, 10, 99) . ' mg/L',
