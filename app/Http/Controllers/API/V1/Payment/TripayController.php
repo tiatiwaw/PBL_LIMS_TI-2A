@@ -115,6 +115,7 @@ class TripayController extends Controller
             'amount'         => $amount,
             'customer_name'  => $user->name,
             'customer_email' => $user->email,
+            'customer_phone' => $user->clients->phone_number ?? '-',
             'order_items'    => [
                 [
                     'name'     => $orders->title,

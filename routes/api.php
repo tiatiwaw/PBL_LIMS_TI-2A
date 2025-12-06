@@ -40,6 +40,8 @@ use App\Http\Controllers\API\V1\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryController;
 use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\TransactionController as ClientTransactionController;
+use App\Http\Controllers\API\V1\Client\ReceiptController as ClientReceiptController;
+
 // MANAGER CONTROLLERS
 use App\Http\Controllers\API\V1\Manager\EquipmentController as ManagerEquipmentController;
 use App\Http\Controllers\API\V1\Manager\BrandTypeController as ManagerBrandTypeController;
@@ -186,10 +188,11 @@ Route::prefix('v1')->group(function () {
                     
                     // Route::get('/transaction/{reference}', [ClientTransactionController::class, 'show'])
                     //     ->name('transaction.show');
+                    Route::get('/payment/{id}', [TripayController::class, 'paymentChannels']);
                     Route::post('/transaction/{order}', [ClientTransactionController::class, 'store'])
                         ->name('transaction.store');
+                    Route::get('/receipt/{order_number}', [ClientReceiptController::class, 'index'])->name('receipt');
 
-                    Route::get('/payment/{id}', [TripayController::class, 'paymentChannels']);
                     Route::get('/download/{id}', [ClientOrderController::class, 'downloadReport'])->name('download');
                 });
             });
