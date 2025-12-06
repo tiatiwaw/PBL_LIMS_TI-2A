@@ -1,4 +1,4 @@
-import DashboardLayout from "@/components/layouts/dashboard-layout";
+import ReagentDashboardLayout from "@/components/layouts/reagent-dashboard-layout";
 import { getReagentsColumns } from "@/components/shared/admin/material-columns";
 import ReagentsDetailSheet from "@/components/shared/sheet/reagen_detail_sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
@@ -61,24 +61,24 @@ export default function AdminReagentsPage() {
 
     if (gradesLoading || unitsLoading || suppliersLoading || regeantsLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+            <ReagentDashboardLayout title="Manajemen Reagen" header="Manajemen Reagen">
                 <Loading />
-            </DashboardLayout>
+            </ReagentDashboardLayout>
         );
     }
 
     if (regeantsError || unitsError || suppliersError || gradesError) {
         return (
-            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+            <ReagentDashboardLayout title="Manajemen Reagen" header="Manajemen Reagen">
                 <div className="text-center text-red-500 py-8">
                     {"Terjadi kesalahan saat memuat data"}
                 </div>
-            </DashboardLayout>
+            </ReagentDashboardLayout>
         );
     }
 
     return (
-        <DashboardLayout title="Manajemen Reagen" header="Manajemen Reagen">
+        <ReagentDashboardLayout title="Manajemen Reagen" header="Manajemen Reagen">
             <ManagedDataTable
                 data={reagents}
                 columns={columns}
@@ -95,6 +95,6 @@ export default function AdminReagentsPage() {
                 isOpen={isOpen}
                 onOpenChange={setIsOpen}
             />
-        </DashboardLayout>
+        </ReagentDashboardLayout>
     );
 }

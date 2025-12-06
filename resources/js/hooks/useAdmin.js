@@ -69,3 +69,7 @@ export const useTransactionReports = () => useCrud(adminService.reports_transact
 export const useUserReports = () => useCrud(adminService.reports_users, "user-reports", "Laporan Pengguna", {
     only: ["getAll"],
 });
+
+export const useLowStockReagents = () => useCrud(adminService.lowStockReagents, "low-stock-reagents", "Notifikasi Stok Reagen", {
+    only: ["getAll"],
+});

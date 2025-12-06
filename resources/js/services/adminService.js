@@ -82,4 +82,8 @@ export const adminService = {
     reports_users: serviceMethods("/admin/reports/users", {
         useFormData: false,
     }),
+
+    lowStockReagents: serviceMethods("/admin/materials/reagents/low-stock/notifications", {
+        useFormData: false,
+    }),
 };
