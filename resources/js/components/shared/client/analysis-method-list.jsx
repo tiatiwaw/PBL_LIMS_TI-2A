@@ -64,7 +64,7 @@ export default function AnalysisMethodList({ methods = defaultMethods }) {
                                     Harga
                                 </p>
                                 <p className="text-lg font-bold text-primary-hijauTua">
-                                    {formatRupiah(item.harga_final)}
+                                    {formatRupiah(item.final_price)}
                                 </p>
                             </div>
                         ))}

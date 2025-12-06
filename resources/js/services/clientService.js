@@ -13,4 +13,7 @@ export const clientService = {
     payment: serviceMethods("/client/orders/payment", { 
             useFormData: false,
     }),
+    transaction: serviceMethods("/client/orders/transaction", { 
+            useFormData: false,
+    }),
 };

@@ -26,20 +26,6 @@ export default function PaymentSummary({ summary }) {
                 </div>
 
                 <div className="flex justify-between">
-                    <span>PPN (11%)</span>
-                    <span className="text-primary-hijauTua">
-                        {formatRupiah(summary.ppn)}
-                    </span>
-                </div>
-
-                <div className="flex justify-between">
-                    <span>Diskon</span>
-                    <span className="text-primary-hijauTua">
-                        {summary.diskon ? formatRupiah(summary.diskon) : "Rp.-"}
-                    </span>
-                </div>
-
-                <div className="flex justify-between">
                     <span>Biaya Admin</span>
                     <span className="text-primary-hijauTua">
                         {formatRupiah(summary.admin)}

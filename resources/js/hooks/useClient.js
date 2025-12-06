@@ -7,4 +7,5 @@ export const useDashboard = () => useCrud(clientService.dashboard, "client", "da
 export const useOrderDetail = (orderId) => useGetById(clientService.order, "order", orderId);
 export const useHistory = (orderId) => useGetById(clientService.history, "status", orderId);
 export const usePayment = (orderId) => useGetById(clientService.payment, "payment", orderId);
+export const useTransaction = (reference) => useGetById(clientService.transaction, "transaction", reference);
 
