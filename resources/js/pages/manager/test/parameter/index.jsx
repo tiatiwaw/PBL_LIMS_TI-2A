@@ -7,7 +7,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editParameterFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useParameters, useReferences, useUnits } from "@/hooks/useManager";
-import { exportParameterReportPDF } from "@/utils/pdf/export/test-parameter";
+import { exportParameterReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function ManagerParametersPage() {
     const [isOpen, setIsOpen] = useState(false);

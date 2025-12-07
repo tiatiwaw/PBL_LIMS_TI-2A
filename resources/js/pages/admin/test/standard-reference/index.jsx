@@ -6,7 +6,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editStandardFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useReferences } from "@/hooks/useAdmin";
-import { exportReferenceReportPDF } from "@/utils/pdf/export/test-standart-reference";
+import { exportReferenceReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function AdminStandardsPage() {
     const [isOpen, setIsOpen] = useState(false);

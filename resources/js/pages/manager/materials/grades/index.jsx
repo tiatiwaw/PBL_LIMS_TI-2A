@@ -4,6 +4,7 @@ import GradeDetailSheet from "@/components/shared/sheet/grade-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
 import { useGrades } from "@/hooks/useManager";
+import { exportGradesReportPDF } from "@/utils/pdf/export/tools-export";
 import { useMemo, useState } from "react";
 
 export default function ManagerGradesPage() {
@@ -18,6 +19,8 @@ export default function ManagerGradesPage() {
     };
 
     const columns = useMemo(() => getGradesColumns({ onShowDetail: handleShowDetail }), []);
+
+    const handleExport = () => exportGradesReportPDF(grades);
 
     const handleDelete = async (id) => deleteGrade.mutateAsync(id);
 
@@ -49,6 +52,9 @@ export default function ManagerGradesPage() {
                 data={grades}
                 columns={columns}
                 onDelete={handleDelete}
+                onExport={handleExport}
+                showExport={true}
+                showCreate={false}
                 createTitle="Tambah Tingkatan"
                 editTitle="Edit Tingkatan"
                 deleteTitle="Hapus Tingkatan"

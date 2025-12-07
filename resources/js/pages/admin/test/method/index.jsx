@@ -6,7 +6,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editMethodFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useMethods, useReferences } from "@/hooks/useAdmin";
-import { exportMethodReportPDF } from "@/utils/pdf/export/test-method";
+import { exportMethodReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function AdminMethodsPage() {
     const [isOpen, setIsOpen] = useState(false);

@@ -6,7 +6,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editUnitFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useUnits } from "@/hooks/useAdmin";
-import { exportUnitReportPDF } from "@/utils/pdf/export/test-unit-value";
+import { exportUnitReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function AdminUnitsPage() {
     const [isOpen, setIsOpen] = useState(false);

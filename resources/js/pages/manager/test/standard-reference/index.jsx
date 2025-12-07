@@ -5,7 +5,7 @@ import ReferenceDetailSheet from "@/components/shared/sheet/reference-detail-she
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { useMemo, useState } from "react";
 import { useReferences } from "@/hooks/useManager";
-import { exportReferenceReportPDF } from "@/utils/pdf/export/test-standart-reference";
+import { exportReferenceReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function ManagerStandardsPage() {
     const [isOpen, setIsOpen] = useState(false);

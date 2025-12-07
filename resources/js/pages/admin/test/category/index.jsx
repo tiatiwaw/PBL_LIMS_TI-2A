@@ -6,7 +6,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editCategorySampleFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useCategories } from "@/hooks/useAdmin";
-import { exportCategoryReportPDF } from "@/utils/pdf/export/test-category";
+import { exportCategoryReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function AdminSampleCategoriesPage() {
     const [isOpen, setIsOpen] = useState(false);

@@ -5,6 +5,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
 import { useBrands, useEquipments } from "@/hooks/useAdmin";
 import { editEquipmentFields } from "@/utils/fields/admin";
+import { exportEquipmentReportPDF } from "@/utils/pdf/export/tools-export";
 import { useMemo, useState } from "react";
 
 const filterData = [
@@ -38,7 +39,7 @@ export default function AdminEquipmentsPage() {
         setIsOpen(true);
     };
 
-    const handleExport = () => console.log("halo");
+    const handleExport = () => exportEquipmentReportPDF(equipments);
 
     const columns = useMemo(
         () => getEquipmentsColumns({ onShowDetail: handleShowDetail }),
@@ -90,6 +91,7 @@ export default function AdminEquipmentsPage() {
                 showExport={true}
                 filterColumn="status"
                 filterOptions={filterData}
+                
             />
             <EquipmentDetailSheet
                 data={selectedEquipment}

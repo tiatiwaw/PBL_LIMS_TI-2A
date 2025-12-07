@@ -6,6 +6,8 @@ import { editBrandFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import Loading from "@/components/ui/loading";
 import { useBrands } from "@/hooks/useAdmin";
+import { exportBrandReportPDF } from "@/utils/pdf/export/tools-export";
+
 
 export default function AdminBrandsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +24,8 @@ export default function AdminBrandsPage() {
         () => getBrandsColumns({ onShowDetail: handleShowDetail }),
         []
     );
+
+    const handleExport = () => exportBrandReportPDF(brands);
 
     const handleCreate = async (formData) => createBrand.mutateAsync(formData);
 
@@ -64,6 +68,8 @@ export default function AdminBrandsPage() {
                 createTitle="Tambah Brand"
                 editTitle="Edit Brand"
                 deleteTitle="Hapus Brand"
+                onExport={handleExport}
+                showExport={true}
             />
             <BrandDetailSheet
                 data={selectedBrand}
