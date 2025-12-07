@@ -134,25 +134,24 @@ export default function ClientPayment({ auth, orderId }) {
         {/* --- Payment Summary --- */}
         <PaymentSummary summary={order?.data?.payment_summary} />
 
-        {/* --- Tombol Lakukan Pembayaran --- */}
-        <div className="text-right mt-1">
-          <button
-            onClick={handlePayment}
-            disabled={loadingPayment}
-            className={`bg-primary-hijauTua text-white px-6 py-2 rounded-xl hover:bg-primary-hijauGelap transition ${loadingPayment ? "opacity-50 cursor-not-allowed" : ""}`}
-          >
-            {loadingPayment ? "Membuat Transaksi..." : "Lakukan Pembayaran"}
-          </button>
-        </div>
+        <div className="flex justify-between mt-1">
+        {/* Tombol Kembali */}
+        <Link href={route("client.index")}>
+          <Button className="bg-primary-hijauTua text-white hover:bg-primary-hijauGelap">
+            Kembali
+          </Button>
+        </Link>
 
-        {/* --- Tombol Kembali --- */}
-        <div className="w-full flex justify-end mt-1">
-          <Link href={route("client.index")}>
-            <Button className="bg-primary-hijauTua text-white hover:bg-primary-hijauGelap">
-              Kembali
-            </Button>
-          </Link>
-        </div>
+        {/* Tombol Lakukan Pembayaran */}
+        <button
+          onClick={handlePayment}
+          disabled={loadingPayment}
+          className={`bg-primary-hijauTua text-white px-6 py-2 rounded-xl hover:bg-primary-hijauGelap transition ${loadingPayment ? "opacity-50 cursor-not-allowed" : ""}`}
+        >
+          {loadingPayment ? "Membuat Transaksi..." : "Lakukan Pembayaran"}
+        </button>
+      </div>
+
       </div>
     </DashboardLayout>
   );

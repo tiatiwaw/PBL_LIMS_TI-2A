@@ -23,9 +23,16 @@ class ClientController extends Controller
         return Inertia::render('client/history/index');
     }
 
-    public function invoice()
+    public function receipt($order_number)
     {
-        return Inertia::render('client/invoice/index');
+    return Inertia::render('client/receipt/index', [
+        'order_number' => $order_number
+    ]);
+    }
+
+    public function report()
+    {
+        return Inertia::render('client/report/index');
     }
 
 

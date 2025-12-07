@@ -55,9 +55,10 @@ export default function ClientTransaction({ auth, reference }) {
         <Transaction transactionData={transaction?.data} />
 
         {/* Tombol Kembali */}
-        <div className="w-full flex justify-end mt-4">
+        <div className="w-full mt-1 ">
           <Link href={route("client.index")}>
-            <Button className="bg-primary-hijauTua text-white hover:bg-primary-hijauGelap">
+            <Button className="bg-primary-hijauTua text-white hover:bg-primary-hijauGelap"
+             style={{ marginLeft: "892px" }}>
               Kembali
             </Button>
           </Link>

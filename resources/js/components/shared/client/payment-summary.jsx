@@ -12,7 +12,7 @@ export default function PaymentSummary({ summary }) {
     if (!summary) return null;
 
     return (
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 mt-4">
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 mt-1">
             <h2 className="text-xl font-bold mb-5 text-gray-800">
                 Ringkasan Pembayaran
             </h2>

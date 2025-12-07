@@ -229,7 +229,7 @@ Route::controller(ClientController::class)
         Route::get('/profile', 'profile')->name('profile');
         Route::get('/history', 'history')->name('history');
         Route::get('/payment', 'payment')->name('payment');
-        Route::get('/invoice', 'invoice')->name('invoice');
+        Route::get('/report', 'report')->name('report');
 
         
         // Orders - sesuaikan dengan API structure
@@ -243,7 +243,10 @@ Route::controller(ClientController::class)
                 
                 Route::get('/checkout/{id}', 'checkout')->name('checkout');
 
+                Route::get('/receipt/{order_number}', 'receipt')->name('receipt');
+
                 Route::get('/transaction/{reference}', 'orderTransaction')->name('transaction');
+
                 
                 Route::get('/download/{id}', 'downloadReport')->name('download');
             });

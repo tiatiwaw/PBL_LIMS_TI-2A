@@ -8,4 +8,6 @@ export const useOrderDetail = (orderId) => useGetById(clientService.order, "orde
 export const useHistory = (orderId) => useGetById(clientService.history, "status", orderId);
 export const usePayment = (orderId) => useGetById(clientService.payment, "payment", orderId);
 export const useTransaction = (reference) => useGetById(clientService.transaction, "transaction", reference);
+export const useReceipt = (order_number) => useGetById(clientService.receipt, "receipt", order_number);
+
 

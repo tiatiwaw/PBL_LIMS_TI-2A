@@ -13,22 +13,20 @@ export default function Transaction({ transactionData }) {
     <div className="w-full max-w-5xl mx-auto p-4">
       <div className="flex flex-col md:flex-row gap-6 ">
 
-        {/* ================= KIRI ================= */}
         <div className="flex flex-col items-center w-full md:w-auto">
+        <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6 border text-center flex flex-col h-full justify-between">
 
-          <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6 border text-center flex flex-col min-h-[360px]">
-
+          {/* Bagian atas card: status & kode bayar */}
+          <div>
             <h2 className="text-2xl font-bold">
               {transactionData.status === "UNPAID" ? "Belum Bayar" : transactionData.status}
             </h2>
-
             <p className="text-sm text-gray-500 mt-2">
               Selesaikan pembayaran sebelum waktu habis
             </p>
 
             {transactionData.payment_method?.toUpperCase().includes("QRIS") ? (
-              // Jika QRIS → tampilkan QR code
-              <div className="flex flex-1 items-center justify-center mt-4">
+              <div className="flex items-center justify-center mt-4">
                 <img
                   src={transactionData.data?.qr_url || transactionData.qr_url}
                   alt="QR Code Pembayaran"
@@ -36,30 +34,27 @@ export default function Transaction({ transactionData }) {
                 />
               </div>
             ) : (
-              <>
-                <div className="mt-4 font-bold text-primary-hijauTua">
-                  VA / Kode Bayar:
-                  <div className="text-xl mt-2">
-                    {transactionData.pay_code}
-                  </div>
-                </div>
-
-                <div className="flex flex-1 items-center justify-center mt-4">
-                  <img
-                    src={`/logo_payment/${transactionData.payment_method}.jpeg`}
-                    alt={transactionData.payment_name}
-                    className="h-12 object-contain"
-                    onError={(e) => (e.currentTarget.src = "/logopayment/default.jpeg")}
-                  />
-                </div>
-              </>
+              <div className="mt-4 font-bold text-primary-hijauTua">
+                VA / Kode Bayar:
+                <div className="text-xl mt-2">{transactionData.pay_code}</div>
+              </div>
             )}
-
           </div>
 
+          {/* Bagian tengah card: logo */}
+          {!transactionData.payment_method?.toUpperCase().includes("QRIS") && (
+            <div className="flex items-center justify-center my-4">
+              <img
+                src={`/logo_payment/${transactionData.payment_method}.jpeg`}
+                alt={transactionData.payment_name}
+                className="h-12 object-contain"
+                onError={(e) => (e.currentTarget.src = "/logopayment/default.jpeg")}
+              />
+            </div>
+          )}
 
-          {/* === TOMBOL INSTRUKSI === */}
-          <div className="mt-6 w-full max-w-md">
+          {/* Bagian bawah card: tombol */}
+          <div className="mt-4">
             <Button
               onClick={() => setOpen(true)}
               className="w-full bg-primary-hijauTua hover:bg-primary-hijauGelap text-white"
@@ -67,7 +62,9 @@ export default function Transaction({ transactionData }) {
               Lihat Instruksi Pembayaran
             </Button>
           </div>
+
         </div>
+      </div>
 
         {/* ================= KANAN ================= */}
         <div className="flex-[1] bg-white rounded-xl shadow-lg p-6 border">
@@ -133,7 +130,7 @@ export default function Transaction({ transactionData }) {
               {transactionData.reference}
             </span>
 
-            <span>Subtotal</span>
+            <span>Harga</span>
             <span className="text-right text-primary-hijauTua">
               Rp {item?.subtotal.toLocaleString("id-ID")}
             </span>
