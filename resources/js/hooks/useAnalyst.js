@@ -3,6 +3,8 @@ import { useCrud } from "./useCrud";
 import { useGetById } from "./useGetById";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { router } from "@inertiajs/react";
+import { authService } from "@/services/authService";
 
 
 export const useDashboard = () =>
@@ -54,7 +56,11 @@ export const useProfile = () =>
 
 export const useChangePassword = () => {
   const mutation = useMutation({
-    mutationFn: (data) => analystService.changePassword.update(null, data),
+    mutationFn: (data) => analystService.changePassword.create(data),
+    onSuccess: async () => {
+      await authService.logout();
+      router.visit("/auth/login");
+    },
   });
 
   return {
