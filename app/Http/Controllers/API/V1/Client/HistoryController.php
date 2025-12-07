@@ -52,10 +52,8 @@ class HistoryController extends Controller
                         'status' => $currentStatus,
                         'status_label' => $this->getStatusLabel($currentStatus),
                         'estimasi' => $order->estimate_date
-                            ? (Carbon::parse($order->estimate_date)->isPast() 
-                                ? 'selesai' 
-                                : ceil(Carbon::now()->floatDiffInDays(Carbon::parse($order->estimate_date))) . ' Hari')
-                            : '-',
+                        ? ceil(Carbon::now()->floatDiffInDays(Carbon::parse($order->estimate_date))) . ' Hari'
+                        : '-',
                         'created_at' => $order->created_at,
                         'updated_at' => $order->updated_at,
                     ],
