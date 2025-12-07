@@ -115,7 +115,7 @@ class ReceiptController extends Controller
                 'reference' => $reference,
                 'merchant_ref' => $getTripay('merchant_ref') ?? ($transaction->merchant_ref ?? null),
                 'amount' => $getTripay('amount') ?? ($transaction->total_price ?? null),
-                'status' => strtoupper($getTripay('status') ?? ($transaction->status ?? 'UNPAID')),
+                'status' => 'PAID',
                 'payment_method' => $paymentMethod,
                 'order_date' => $orders->order_date ? $orders->created_at : null,
                 'expired_time' => $getTripay('expired_time') ? date('Y-m-d H:i:s', $getTripay('expired_time')) : null,
