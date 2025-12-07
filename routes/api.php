@@ -229,6 +229,7 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('report-validations')->name('report-validations.')->group(function () {
                     Route::get('/', [MOrdersController::class, 'reportValidations']);
                     Route::get('/{id}', [MOrdersController::class, 'show'])->name('show');
+                    Route::put('/{id}', [MOrdersController::class, 'update'])->name('update');
                 });
 
                 // Tools

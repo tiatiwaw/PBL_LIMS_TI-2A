@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1\Manager;
 
 use App\Http\Controllers\Controller;
+use App\Services\ReportGeneratorService;
 use Illuminate\Http\Request;
 use App\Models\Order;
 
@@ -11,16 +12,18 @@ class OrdersController extends Controller
     public function index()
     {
         try {
-            $orders = Order::with('clients')->get()->map(function($order){
+            $orders = Order::with('clients')->get()->map(function ($order) {
                 $order->client = $order->clients ?? (object)[
-                    'id' => null, 'name' => '-', 'email' => '-', 'phone' => '-'
+                    'id' => null,
+                    'name' => '-',
+                    'email' => '-',
+                    'phone' => '-'
                 ];
                 unset($order->clients);
                 return $order;
             });
 
             return response()->json($orders, 200);
-
         } catch (\Throwable $e) {
             return response()->json([
                 'error' => 'Gagal mengambil order',
@@ -32,7 +35,7 @@ class OrdersController extends Controller
     public function reportValidations()
     {
         $reports = Order::with('clients:id,name')
-            ->where('status', 'pending') 
+            ->where('status', 'pending')
             ->select('id', 'order_number', 'client_id', 'status', 'order_type')
             ->latest()
             ->get()
@@ -73,7 +76,10 @@ class OrdersController extends Controller
 
             // Normalisasi data
             $order->client = $order->clients ?? (object)[
-                'id' => null, 'name' => '-', 'email' => '-', 'phone' => '-'
+                'id' => null,
+                'name' => '-',
+                'email' => '-',
+                'phone' => '-'
             ];
             unset($order->clients);
 
@@ -87,7 +93,6 @@ class OrdersController extends Controller
                 "status" => "success",
                 "data"   => $order
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 "id"      => $id,
@@ -118,7 +123,11 @@ class OrdersController extends Controller
             ])->findOrFail($id);
 
             $order->client = $order->clients ?? (object)[
-                'id' => null, 'name' => '-', 'email' => '-', 'phone' => '-', 'address' => '-'
+                'id' => null,
+                'name' => '-',
+                'email' => '-',
+                'phone' => '-',
+                'address' => '-'
             ];
             unset($order->clients);
 
@@ -131,7 +140,6 @@ class OrdersController extends Controller
                 'message' => 'Detail order berhasil diambil.',
                 'data'    => $order,
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 "id"      => $id,
@@ -144,24 +152,65 @@ class OrdersController extends Controller
 
     public function update(Request $request, $id)
     {
-        $order = Order::find($id);
-
-        if (!$order) {
-            return response()->json(['message' => 'Order tidak ditemukan'], 404);
-        }
-
         $validated = $request->validate([
-            'status' => 'required|string|in:pending',
+            'action' => 'required|in:validate',
+            'reason' => 'nullable|string',
         ]);
 
         try {
-            $order->update($validated);
-            return response()->json($order, 200);
+            $managerId = auth('sanctum')->user()?->id;
 
-        } catch (\Throwable $e) {
+            $order = Order::with([
+                'supervisors',
+                'samples.sample_categories',
+                'samples.n_parameter_methods.test_parameters.unit_values',
+                'samples.n_parameter_methods.test_parameters.reference_standards',
+                'samples.n_parameter_methods.test_methods',
+            ])->findOrFail($id);
+
+            // Cek status - hanya bisa validate jika status 'pending'
+            if ($order->status !== 'pending') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Order hanya bisa divalidasi jika status pending.'
+                ], 400);
+            }
+
+            // Generate report data
+            $reportResult = ReportGeneratorService::generateFullReport(
+                $order,
+                null, // selectedSampleIds (null = semua sampel)
+                $validated['reason'] ?? null,
+                $managerId // Pass manager ID
+            );
+
+            if (!$reportResult['success']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $reportResult['message']
+                ], 500);
+            }
+
+            // Update order
+            $order->status = 'completed';
+            $order->report_issued_at = now();
+            $order->notes = $validated['reason'] ?? '';
+            $order->report_file_path = $reportResult['file_path'];
+            $order->save();
+
             return response()->json([
-                'error'   => 'Gagal mengupdate order',
-                'message' => $e->getMessage(),
+                'success' => true,
+                'message' => 'Order berhasil divalidasi dan laporan telah dibuat.',
+                'data' => [
+                    'order' => $order,
+                    'report_file_path' => $reportResult['file_path']
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memvalidasi order.',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

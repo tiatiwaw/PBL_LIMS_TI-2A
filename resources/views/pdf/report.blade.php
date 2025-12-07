@@ -136,31 +136,12 @@
         </table>
     @endforeach
 
-    @if ($notes)
-        <div class="notes">
-            <strong>Catatan Supervisor:</strong><br>
-            {{ $notes }}
-        </div>
-    @endif
-
     <div style="margin-top: 60px;">
         <p style="margin: 0; margin-bottom: 30px;"><strong>Pengesahan Laporan:</strong></p>
 
         <table style="border: none; width: 100%; margin-top: 30px;">
             <tr style="border: none;">
-                <td style="border: none; width: 33%; text-align: center; vertical-align: top;">
-                    <div style="min-height: 80px; border-bottom: 1px solid #000; margin-bottom: 5px;">
-                        @if($analyst && $analyst->signature)
-                            <img src="{{ $analyst->signature }}" style="max-width: 100px; max-height: 60px;" />
-                        @endif
-                    </div>
-                    <p style="margin: 0; font-weight: bold; font-size: 11px;">Analis Laboratorium</p>
-                    @if($analyst)
-                        <p style="margin: 0; font-size: 10px; color: #666;">{{ $analyst->name }}</p>
-                        <p style="margin: 0; font-size: 10px; color: #999;">{{ \Carbon\Carbon::now()->format('d/m/Y') }}</p>
-                    @endif
-                </td>
-                <td style="border: none; width: 33%; text-align: center; vertical-align: top;">
+                <td style="border: none; width: 50%; text-align: center; vertical-align: top;">
                     <div style="min-height: 80px; border-bottom: 1px solid #000; margin-bottom: 5px;">
                         @if($supervisor && $supervisor->signature)
                             <img src="{{ $supervisor->signature }}" style="max-width: 100px; max-height: 60px;" />
@@ -169,10 +150,10 @@
                     <p style="margin: 0; font-weight: bold; font-size: 11px;">Supervisor Laboratorium</p>
                     @if($supervisor)
                         <p style="margin: 0; font-size: 10px; color: #666;">{{ $supervisor->name }}</p>
-                        <p style="margin: 0; font-size: 10px; color: #999;">{{ \Carbon\Carbon::now()->format('d/m/Y') }}</p>
+                        <p style="margin: 0; font-size: 10px; color: #999;">{{ $supervisorDate->format('d/m/Y') }}</p>
                     @endif
                 </td>
-                <td style="border: none; width: 33%; text-align: center; vertical-align: top;">
+                <td style="border: none; width: 50%; text-align: center; vertical-align: top;">
                     <div style="min-height: 80px; border-bottom: 1px solid #000; margin-bottom: 5px;">
                         @if($manager && $manager->signature)
                             <img src="{{ $manager->signature }}" style="max-width: 100px; max-height: 60px;" />
@@ -181,7 +162,7 @@
                     <p style="margin: 0; font-weight: bold; font-size: 11px;">Manager Laboratorium</p>
                     @if($manager)
                         <p style="margin: 0; font-size: 10px; color: #666;">{{ $manager->name }}</p>
-                        <p style="margin: 0; font-size: 10px; color: #999;">{{ \Carbon\Carbon::now()->format('d/m/Y') }}</p>
+                        <p style="margin: 0; font-size: 10px; color: #999;">{{ $managerDate->format('d/m/Y') }}</p>
                     @endif
                 </td>
             </tr>

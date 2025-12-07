@@ -85,10 +85,7 @@ export const useUpdateReportValidation = () =>
     useCrud(
         managerService.reportValidations.update,
         "report-validations",
-        "Update Validation",
-        {
-            only: ["update"],
-        }
+        "Update Validation"
     );
 
 // ===========================

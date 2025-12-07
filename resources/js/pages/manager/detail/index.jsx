@@ -12,21 +12,35 @@ import {
     AnalystTeamCard,
     AnalysisMethodCard,
     NotesCard,
+    OrderValidation,
 } from "@/components/shared/order/detail";
 
 import Loading from "@/components/ui/loading";
 import { usePage } from "@inertiajs/react";
-import { useManagerOrder } from "@/hooks/useManager";
+import { useManagerOrder, useUpdateReportValidation } from "@/hooks/useManager";
+import ActionSupervisorDialog from "@/components/shared/dialog/action-supervisor-dialog";
+import { toast } from "sonner";
 
 export default function ManagerDetailOrder() {
     const { id } = usePage().props;
     const { data: orderRes, isLoading, error } = useManagerOrder(id);
-
-    console.log("HASIL HOOK:", orderRes);
+    const {
+        update,
+        isLoading: isLoadingUpdate,
+        error: errorUpdate,
+    } = useUpdateReportValidation();
 
     const order = orderRes?.data ?? null;
 
     const [selectedSampleId, setSelectedSampleId] = useState(null);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [isValidating, setIsValidating] = useState(false);
+    const [dialogConfig, setDialogConfig] = useState({
+        action: "",
+        title: "",
+        description: "",
+        data: {},
+    });
 
     useEffect(() => {
         if (
@@ -39,35 +53,46 @@ export default function ManagerDetailOrder() {
         }
     }, [order, selectedSampleId]);
 
-    // const handleValidate = () => {
-    //     alert("Order berhasil divalidasi!");
-    //     // setLoading(true);
-    //     // router.post(`/manager/report-validation/${order.id}/validate`, {}, {
-    //     //     onFinish: () => setLoading(false),
-    //     //     onSuccess: () => alert("Order berhasil divalidasi!"),
-    //     // });
-    // };
+    const handleValidate = () => {
+        setIsValidating(true);
+        setDialogConfig({
+            action: "confirm",
+            title: `Validasi Order ${order.title}`,
+            description: "Yakin ingin validasi order ini?.",
+            data: {
+                action: "validate",
+                reason: `Order ${order.title} selesai di uji dan tervalidasi.`,
+            },
+        });
+        setOpenDialog(true);
+        setIsValidating(false);
+    };
 
-    // const handleInvalidate = () => {
-    //     alert("Order berhasil diinvalidasi!");
-    //     // setLoading(true);
-    //     // router.post(`/manager/report-validation/${order.id}/invalidate`, {}, {
-    //     //     onFinish: () => setLoading(false),
-    //     //     onSuccess: () => alert("Order berhasil diinvalidasi!"),
-    //     // });
-    // };
+    const handleDialogConfirm = async (data) => {
+        try {
+            await update.mutateAsync({ id, data });
+            setOpenDialog(false);
+            setTimeout(() => {
+                window.location.href = route(
+                    " manager.report-validations.index"
+                );
+            }, 500);
+        } catch (error) {
+            toast.error(error.message || "Gagal Validasi Order");
+        }
+    };
 
-    if (isLoading) {
+    if (isLoading || isLoadingUpdate) {
         return (
-            <DashboardLayout title="Detail Order">
+            <DashboardLayout title="Detail Order" header="Detail Order">
                 <Loading />
             </DashboardLayout>
         );
     }
 
-    if (error) {
+    if (error || errorUpdate) {
         return (
-            <DashboardLayout title="Detail Order">
+            <DashboardLayout title="Detail Order" header="Detail Order">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Gagal memuat detail order"}
                 </div>
@@ -77,7 +102,7 @@ export default function ManagerDetailOrder() {
 
     if (!order) {
         return (
-            <DashboardLayout title="Detail Order">
+            <DashboardLayout title="Detail Order" header="Detail Order">
                 <div className="py-8 text-center">
                     Data order tidak ditemukan.
                 </div>
@@ -183,6 +208,22 @@ export default function ManagerDetailOrder() {
                         resultValue={order.result_value}
                     />
                 </div>
+
+                <OrderValidation
+                    status={order.status}
+                    onValidationAction={handleValidate}
+                    isLoading={isValidating}
+                />
+
+                <ActionSupervisorDialog
+                    action={dialogConfig.action}
+                    open={openDialog}
+                    onOpenChange={setOpenDialog}
+                    data={dialogConfig.data}
+                    title={dialogConfig.title}
+                    description={dialogConfig.description}
+                    onConfirm={handleDialogConfirm}
+                />
             </div>
         </DashboardLayout>
     );
