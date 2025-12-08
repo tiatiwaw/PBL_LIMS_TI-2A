@@ -162,6 +162,14 @@ Route::middleware(['auth', 'role:staff'])
         Route::prefix('orders')
             ->name('order.')
             ->group(function () {
+                Route::inertia('/all-orders', 'staff/orders/all-orders/index')->name('all');
+                Route::get('/all-orders/{id}', function ($id) {
+                    return Inertia::render('staff/orders/detail/index', [
+                        'id' => $id,
+                        'canValidate' => true,
+                    ]);
+                })->name('show');
+                Route::inertia('/make-order', 'staff/orders/make-order/index')->name('index');
                 Route::get('/', [StaffController::class, 'indexOrder'])->name('index');
                 Route::post('/', [StaffController::class, 'storeOrder'])->name('store');
                 Route::post('/sample', [StaffController::class, 'storeSample'])->name('storeSample');
