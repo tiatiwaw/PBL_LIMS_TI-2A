@@ -243,8 +243,6 @@ Route::controller(ClientController::class)
                 Route::get('/checkout/{id}', 'checkout')->name('checkout');
 
                 Route::get('/transaction/{reference}', 'orderTransaction')->name('transaction');
-
-                Route::get('/download/{id}', 'downloadReport')->name('download');
             });
 
         // History

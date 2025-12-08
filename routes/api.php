@@ -188,14 +188,17 @@ Route::prefix('v1')->group(function () {
                     Route::get('/{id}', [ClientOrderController::class, 'show']);
                     Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
 
-                    // Route::get('/transaction/{reference}', [ClientTransactionController::class, 'show'])
-                    //     ->name('transaction.show');
                     Route::get('/payment/{id}', [TripayController::class, 'paymentChannels']);
                     Route::post('/transaction/{order}', [ClientTransactionController::class, 'store'])
                         ->name('transaction.store');
                     Route::get('/receipt/{order_number}', [ClientReceiptController::class, 'index'])->name('receipt');
 
-                    Route::get('/download/{id}', [ClientOrderController::class, 'downloadReport'])->name('download');
+                    Route::get('/download-options/{order_number}', [ClientClientController::class, 'getDownloadOptions'])
+                        ->name('download.options');
+                    Route::get('/download-receipt/{order_number}', [ClientClientController::class, 'downloadReceipt'])
+                        ->name('download.receipt');
+                    Route::get('/download-report/{id}', [ClientClientController::class, 'downloadReportFile'])
+                        ->name('download.report');
                 });
             });
 
