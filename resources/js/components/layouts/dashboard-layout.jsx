@@ -27,7 +27,7 @@ export default function DashboardLayout({
 
     const sidebarMenu = useMemo(() => menuItems(url), [url]);
     const notificationCount = useMemo(
-        () => lowStockReagents.length ?? 0,
+        () => lowStockReagents?.length ?? 0,
         [lowStockReagents]
     );
     const handleLogout = useCallback(() => logout(), [logout]);
