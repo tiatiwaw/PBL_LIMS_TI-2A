@@ -6,6 +6,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editUnitFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useUnits } from "@/hooks/useAdmin";
+import { exportUnitReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function AdminUnitsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +20,8 @@ export default function AdminUnitsPage() {
     };
 
     const columns = useMemo(() => getUnitsColumns({ onShowDetail: handleShowDetail }), []);
+
+    const handleExport = () => exportUnitReportPDF(units)
 
     const handleCreate = async (formData) => createUnit.mutateAsync(formData);
 
@@ -61,6 +64,8 @@ export default function AdminUnitsPage() {
                 createTitle="Tambah Nilai Satuan"
                 editTitle="Edit Nilai Satuan"
                 deleteTitle="Hapus Nilai Satuan"
+                showExport={true}
+                onExport={handleExport}
             />
             <UnitDetailSheet data={selectedUnit} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>

@@ -247,7 +247,7 @@ const MENU_CONFIG = {
                 {
                     name: "Metode Uji",
                     icon: Microscope,
-                    href: "/manager/orders",
+                    href: "/manager/tests/methods",
                 },
                 {
                     name: "Nilai Satuan",

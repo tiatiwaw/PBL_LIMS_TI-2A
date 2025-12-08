@@ -4,7 +4,8 @@ import ReagentsDetailSheet from "@/components/shared/sheet/reagen_detail_sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { useMemo, useState } from "react";
 import Loading from "@/components/ui/loading";
-import { useGrades, useReagents, useSuppliers } from "@/hooks/useManapger";
+import { useGrades, useReagents, useSuppliers } from "@/hooks/useManager";
+import { exportReagentReportPDF } from "@/utils/pdf/export/tools-export";
 
 export default function ManagerReagentsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +19,8 @@ export default function ManagerReagentsPage() {
     const { data: grades, isLoading: gradesLoading, error: gradesError } = useGrades();
     const { data: suppliers, isLoading: suppliersLoading, error: suppliersError } = useSuppliers();
     const { data: reagents, isLoading: regeantsLoading, error: regeantsError } = useReagents();
+
+    const handleExport = () => exportReagentReportPDF(reagents);
 
     const columns = useMemo(() => getReagentsColumns({ onShowDetail: handleShowDetail }), []);
 
@@ -47,6 +50,9 @@ export default function ManagerReagentsPage() {
             <ManagedDataTable
                 data={reagents}
                 columns={columns}
+                onExport={handleExport}
+                showExport={true}
+                showCreate={false}
                 createTitle="Tambah Reagent"
                 editTitle="Edit Reagent"
                 deleteTitle="Hapus Reagent"

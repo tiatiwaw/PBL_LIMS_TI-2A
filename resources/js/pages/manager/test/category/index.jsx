@@ -6,12 +6,15 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editCategorySampleFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useCategories } from "@/hooks/useManager";
+import { exportCategoryReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function ManagerSampleCategoriesPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
     const { data: categories, isLoading, error } = useCategories();
+
+    const handleExport = () => exportCategoryReportPDF(categories);
 
     const handleShowDetail = (tests) => {
         setSelectedCategory(tests);
@@ -54,6 +57,8 @@ export default function ManagerSampleCategoriesPage() {
                 editTitle="Edit Kategori Sampel"
                 deleteTitle="Hapus Kategori Sampel"
                 showCreate={false}
+                showExport={true}
+                onExport={handleExport}
             />
             <CategoryDetailSheet
                 data={selectedCategory}

@@ -1,6 +1,8 @@
 import { useMemo } from "react";
+import { useMemo } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
+import { router } from "@inertiajs/react";
 import { router } from "@inertiajs/react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
@@ -8,6 +10,12 @@ import { useOrders } from "@/hooks/useAdmin";
 
 const filterData = [
     { value: "all", label: "All Status" },
+    { value: "completed", label: "Completed" },
+    { value: "in_progress", label: "In Progress" },
+    { value: "pending", label: "Pending" },
+    { value: "disapproved", label: "Disapproved" },
+    { value: "approved", label: "Approved" },
+    { value: "received", label: "Received" },
     { value: "completed", label: "Completed" },
     { value: "in_progress", label: "In Progress" },
     { value: "pending", label: "Pending" },
