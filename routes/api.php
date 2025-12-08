@@ -103,6 +103,7 @@ Route::prefix('v1')->group(function () {
 
                 // Materials
                 Route::prefix('materials')->name('materials.')->group(function () {
+                    Route::get('reagents/low-stock/notifications', [ReagentController::class, 'lowStockNotifications']);
                     Route::apiResource('reagents', ReagentController::class);
                     Route::apiResource('grades', GradeController::class);
                     Route::apiResource('suppliers', SupplierController::class);

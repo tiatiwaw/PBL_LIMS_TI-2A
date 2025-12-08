@@ -138,4 +138,27 @@ class ReagentController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Menampilkan reagent dengan stok yang menipis (< 5).
+     */
+    public function lowStockNotifications()
+    {
+        try {
+            $lowStockReagents = Reagent::with(['suppliers', 'grades', 'unit_values'])
+                ->where('stock', '<', 5)
+                ->orderBy('stock', 'asc')
+                ->get();
+
+            $count = $lowStockReagents->count();
+
+            return response()->json($lowStockReagents);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data notifikasi stok.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

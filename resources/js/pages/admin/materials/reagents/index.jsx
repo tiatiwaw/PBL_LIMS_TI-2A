@@ -64,7 +64,7 @@ export default function AdminReagentsPage() {
 
     if (gradesLoading || unitsLoading || suppliersLoading || regeantsLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+            <DashboardLayout title="Manajemen Reagen" header="Manajemen Reagen">
                 <Loading />
             </DashboardLayout>
         );
@@ -72,7 +72,7 @@ export default function AdminReagentsPage() {
 
     if (regeantsError || unitsError || suppliersError || gradesError) {
         return (
-            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+            <DashboardLayout title="Manajemen Reagen" header="Manajemen Reagen">
                 <div className="text-center text-red-500 py-8">
                     {"Terjadi kesalahan saat memuat data"}
                 </div>
