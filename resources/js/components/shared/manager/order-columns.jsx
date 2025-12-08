@@ -11,8 +11,8 @@ export const getOrdersColumns = ({ onShowDetail }) => [
     { accessorKey: "order_number", header: "No. Order" },
     { accessorKey: "title", header: "Judul Analisis" },
     {
-        accessorKey: "order_type",
-        header: "Tipe Order",
+        accessorKey: "samples",
+        header: "Sample",
         cell: ({ row }) => {
             const value = row.order_type;
             return (
@@ -25,29 +25,24 @@ export const getOrdersColumns = ({ onShowDetail }) => [
             );
         },
     },
+
     {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => {
-            const value = row.status;
-            return (
-                <Badge variant={getOrderStatusVariant(value)}>
-                    {getOrderStatusLabel(value)}
-                </Badge>
-            );
-        },
+        accessorKey: "analysts",
+        header: "Analis",
+        cell: ({ row }) => row.original.analysts?.name || "-",
     },
+
     {
         id: "aksi",
         header: "Aksi",
         cell: ({ row }) => (
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onShowDetail(row)}
+            <button
+                onClick={() => onShowDetail(row.original.id)}
+                w
+                className="px-3 py-1 rounded-lg border"
             >
                 Detail
-            </Button>
+            </button>
         ),
     },
 ];

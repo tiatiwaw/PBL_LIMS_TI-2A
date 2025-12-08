@@ -68,47 +68,43 @@ class ReportGeneratorService
     }
 
     /**
-     * Generate dan simpan PDF laporan
+     * Generate dan simpan PDF laporan untuk validasi manager
      * 
      * @param Order $order
      * @param array $reportData
      * @param string|null $notes
+     * @param int|null $managerId ID manager yang memvalidasi
      * @return string File path
      */
-    public static function generateAndSavePdf(Order $order, array $reportData, ?string $notes = null): string
+    public static function generateAndSavePdf(Order $order, array $reportData, ?string $notes = null, ?int $managerId = null): string
     {
-        // Load related users untuk signatures
-        $analyst = null;
+        // Ambil supervisor dari supervisor_id di order
         $supervisor = null;
+        if ($order->supervisor_id) {
+            $supervisor = \App\Models\User::find($order->supervisor_id);
+        }
+
+        // Ambil manager dari ID yang diberikan
         $manager = null;
-
-        // Ambil analyst dari order (pastikan relasi sudah di-load dengan signatures)
-        if ($order->analysts && $order->analysts->count() > 0) {
-            $analyst = $order->analysts->first()->users;
-        }
-
-        // Ambil supervisor dari order
-        if ($order->supervisors) {
-            $supervisor = $order->supervisors;
-        }
-
-        // Ambil manager (bisa dari field khusus atau dari user dengan role 'manager')
-        // Assuming ada relasi ke manager atau ambil dari config
-        if (method_exists($order, 'manager') && $order->manager) {
-            $manager = $order->manager;
+        if ($managerId) {
+            $manager = \App\Models\User::find($managerId);
         } else {
             // Fallback: ambil user pertama dengan role manager
-            // $manager = \App\Models\User::where('role', 'manager')->first();
             $manager = \App\Models\User::where('role', 'manager')->first();
         }
+
+        // Tanggal untuk signatures
+        $supervisorDate = $order->updated_at ?? now(); // Gunakan last update order
+        $managerDate = now(); // Tanggal hari ini (saat validasi)
 
         $pdf = Pdf::loadView('pdf.report', [
             'order' => $order,
             'data' => $reportData,
             'notes' => $notes,
-            'analyst' => $analyst,
             'supervisor' => $supervisor,
+            'supervisorDate' => $supervisorDate,
             'manager' => $manager,
+            'managerDate' => $managerDate,
         ]);
 
         $fileName = 'report_order_' . $order->id . '_' . time() . '.pdf';
@@ -125,9 +121,10 @@ class ReportGeneratorService
      * @param Order $order
      * @param array|null $selectedSampleIds
      * @param string|null $notes
+     * @param int|null $managerId ID manager yang memvalidasi
      * @return array
      */
-    public static function generateFullReport(Order $order, ?array $selectedSampleIds = null, ?string $notes = null): array
+    public static function generateFullReport(Order $order, ?array $selectedSampleIds = null, ?string $notes = null, ?int $managerId = null): array
     {
         try {
             $reportData = self::generateReportData($order, $selectedSampleIds);
@@ -139,7 +136,7 @@ class ReportGeneratorService
                 ];
             }
 
-            $filePath = self::generateAndSavePdf($order, $reportData, $notes);
+            $filePath = self::generateAndSavePdf($order, $reportData, $notes, $managerId);
 
             return [
                 'success' => true,

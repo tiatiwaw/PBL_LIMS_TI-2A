@@ -1,33 +1,38 @@
 import { serviceMethods } from "./baseService";
 
-// useFormData ditambahin buat kalo mau ada prosesa
-
 export const managerService = {
-    dashboard: serviceMethods("/manager", ),
+    orders: {
+        all: serviceMethods("/manager/orders"),
+        find: (id) => serviceMethods(`/manager/orders/${id}`),
+    },
 
-    equipments: serviceMethods("/manager/tools/equipments", ),
+    reportValidations: {
+        all: serviceMethods("/manager/report-validations"),
+        find: (id) => serviceMethods(`/manager/report-validations/${id}`),
+        update: serviceMethods("/manager/report-validations"),
+    },
 
-    brands: serviceMethods("/manager/tools/brands", ),
+    brands: serviceMethods("/manager/tools/brands"),
 
-    parameters: serviceMethods("/manager/tests/parameters", ),
+    equipments: serviceMethods("/manager/tools/equipments"),
 
-    methods: serviceMethods("/manager/tests/methods", ),
+    parameters: serviceMethods("/manager/tests/parameters"),
 
-    units: serviceMethods("/manager/tests/units", ),
+    methods: serviceMethods("/manager/tests/methods"),
 
-    references: serviceMethods("/manager/tests/references", ),
+    units: serviceMethods("/manager/tests/units"),
 
-    categories: serviceMethods("/manager/tests/categories", ),
+    references: serviceMethods("/manager/tests/references"),
 
-    grades: serviceMethods("/manager/materials/grades", ),
+    categories: serviceMethods("/manager/tests/categories"),
 
-    suppliers: serviceMethods("/manager/materials/suppliers", ),
+    grades: serviceMethods("/manager/materials/grades"),
 
-    reagents: serviceMethods("/manager/materials/reagents", ),
+    suppliers: serviceMethods("/manager/materials/suppliers"),
 
-    users: serviceMethods("/manager/users", ),
+    reagents: serviceMethods("/manager/materials/reagents"),
 
-    analysts: serviceMethods("/manager/analysts", ),
+    users: serviceMethods("/manager/users"),
 
-    orders: serviceMethods("/manager/orders", ),
+    analysts: serviceMethods("/manager/analysts"),
 };
