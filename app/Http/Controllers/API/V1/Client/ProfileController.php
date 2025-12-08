@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,10 +13,19 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
+        $clients = Client::where('user_id', $user->id)
+            ->first();
+
         return response()->json([
             'success' => true,
             'message' => 'Data profile berhasil diambil.',
-            'data' => $user
+            'data' => [
+                'name' => $user->name,
+                'email' => $user->email,
+                'address' => $clients->address,
+                'phone_number' => $clients->phone_number,  
+                'npwp_number' => $clients->npwp_number,
+            ]
         ]);
     }
 
