@@ -23,10 +23,6 @@ class ClientController extends Controller
         return Inertia::render('client/history/index');
     }
 
-
-    /**
-     * Show order detail page
-     */
     public function orderDetail($id)
     {
         return Inertia::render('client/detail/index', [
@@ -48,9 +44,6 @@ class ClientController extends Controller
         ]);
     }
 
-    /**
-     * Show order status page
-     */
     public function orderStatus($order_number)
     {
         return Inertia::render('client/history/index', [
