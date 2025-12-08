@@ -6,6 +6,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editCategorySampleFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useCategories } from "@/hooks/useAdmin";
+import { exportCategoryReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function AdminSampleCategoriesPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +20,8 @@ export default function AdminSampleCategoriesPage() {
     };
 
     const columns = useMemo(() => getSampleCategoriesColumns({ onShowDetail: handleShowDetail }), []);
+
+    const handleExport = () => exportCategoryReportPDF(categories);
 
     const handleCreate = async (formData) => createCategory.mutateAsync(formData);
 
@@ -61,6 +64,8 @@ export default function AdminSampleCategoriesPage() {
                 createTitle="Tambah Kategori Sampel"
                 editTitle="Edit Kategori Sampel"
                 deleteTitle="Hapus Kategori Sampel"
+                showExport={true}
+                onExport={handleExport}
             />
             <CategoryDetailSheet data={selectedCategory} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>

@@ -11,6 +11,7 @@ import {
     useSuppliers,
     useUnits,
 } from "@/hooks/useAdmin";
+import { exportReagentReportPDF } from "@/utils/pdf/export/tools-export";
 
 export default function AdminReagentsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -50,6 +51,8 @@ export default function AdminReagentsPage() {
         []
     );
 
+    const handleExportPDF = () => exportReagentReportPDF(reagents);
+
     const handleCreate = async (formData) =>
         createReagent.mutateAsync(formData);
 
@@ -61,7 +64,7 @@ export default function AdminReagentsPage() {
 
     if (gradesLoading || unitsLoading || suppliersLoading || regeantsLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+            <DashboardLayout title="Manajemen Reagen" header="Manajemen Reagen">
                 <Loading />
             </DashboardLayout>
         );
@@ -69,7 +72,7 @@ export default function AdminReagentsPage() {
 
     if (regeantsError || unitsError || suppliersError || gradesError) {
         return (
-            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+            <DashboardLayout title="Manajemen Reagen" header="Manajemen Reagen">
                 <div className="text-center text-red-500 py-8">
                     {"Terjadi kesalahan saat memuat data"}
                 </div>
@@ -86,6 +89,8 @@ export default function AdminReagentsPage() {
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 onCreate={handleCreate}
+                onExport={handleExportPDF}
+                showExport={true}
                 createTitle="Tambah Reagent"
                 editTitle="Edit Reagent"
                 deleteTitle="Hapus Reagent"

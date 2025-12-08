@@ -1,35 +1,72 @@
-import { useMemo, useState } from "react";
-import { orders } from "@/data/manager/orders";
+import { useMemo } from "react";
+import { useMemo } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
-import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { router } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
+import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
+import Loading from "@/components/ui/loading";
+import { useOrders } from "@/hooks/useAdmin";
 
 const filterData = [
     { value: "all", label: "All Status" },
-    { value: "Completed", label: "Completed" },
-    { value: "In Progress", label: "In Progress" },
-    { value: "Pending", label: "Pending" },
-    { value: "Disapproved", label: "Disapproved" },
-    { value: "Approved", label: "Approved" },
-    { value: "Received", label: "Received" },
+    { value: "completed", label: "Completed" },
+    { value: "in_progress", label: "In Progress" },
+    { value: "pending", label: "Pending" },
+    { value: "disapproved", label: "Disapproved" },
+    { value: "approved", label: "Approved" },
+    { value: "received", label: "Received" },
+    { value: "completed", label: "Completed" },
+    { value: "in_progress", label: "In Progress" },
+    { value: "pending", label: "Pending" },
+    { value: "disapproved", label: "Disapproved" },
+    { value: "approved", label: "Approved" },
+    { value: "received", label: "Received" },
 ];
 
-export default function OrdersPage({ auth, ordersData }) {
-    const handleShowDetail = () => {
-        router.visit(route("manager.orders.detail"));
+export default function AdminOrdersPage() {
+    const { data: orders, isLoading, error } = useOrders();
+
+    const handleShowDetail = (data) => {
+        router.visit(route("admin.order.show", data.id));
     };
 
-    const parameters = ordersData || orders;
+    const columns = useMemo(
+        () => getOrdersColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
-    const columns = useMemo(() => getOrdersColumns({ onShowDetail: handleShowDetail }), []);
+    if (isLoading) {
+        return (
+            <DashboardLayout
+                title="Manajemen Orderan"
+                header="Manajemen Orderan"
+            >
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout
+                title="Manajemen Orderan"
+                header="Manajemen Orderan"
+            >
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
-        <DashboardLayout title="Orders"  header="Orders">
+        <DashboardLayout title="Manajemen Orderan" header="Manajemen Orderan">
             <ManagedDataTable
-                data={parameters}
+                data={orders}
                 columns={columns}
                 showFilter={true}
+                showCreate={false}
                 filterColumn="status"
                 filterOptions={filterData}
             />

@@ -7,6 +7,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editParameterFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useParameters, useReferences, useUnits } from "@/hooks/useAdmin";
+import { exportParameterReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function AdminParametersPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -27,7 +28,7 @@ export default function AdminParametersPage() {
         []
     );
 
-
+    const handleExport = () => exportParameterReportPDF(parameters);
 
     const handleCreate = async (formData) => createParameter.mutateAsync(formData);
 
@@ -67,9 +68,11 @@ export default function AdminParametersPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                onExport={handleExport}
                 createTitle="Tambah Tes Parameter"
                 editTitle="Edit Tes Parameter"
                 deleteTitle="Hapus Tes Parameter"
+                showExport={true}
             />
             <ParameterDetailSheet data={selectedParameter} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>

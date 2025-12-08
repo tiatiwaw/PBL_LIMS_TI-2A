@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ClientController extends Controller
 {
@@ -69,26 +70,126 @@ class ClientController extends Controller
             ]
         ]);
     }
-    public function downloadReport($orderId)
-    {
-        $order = Order::findOrFail($orderId);
 
-        if (!$order->result_value) {
-            abort(404, 'Laporan belum digenerate.');
+    /**
+     * Download receipt (kuitansi)
+     */
+    public function downloadReceipt($order_number)
+    {
+        $user = Auth::user();
+        
+        $order = Order::where('order_number', $order_number)
+            ->where('client_id', $user->clients->id)
+            ->firstOrFail();
+
+        if (!$order->report_file_path) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Receipt not yet generated.'
+            ], 404);
         }
 
-        // Path asli PDF di storage/app/public/...
-        $realPath = storage_path('app/public/reports/client/' . $order->result_value);
+        $realPath = storage_path('app/public/' . $order->receipt_file_path);
 
         if (!file_exists($realPath)) {
-            abort(404, 'File laporan tidak ditemukan.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Receipt file not found at: ' . $realPath
+            ], 404);
         }
 
         return response()->download(
             $realPath,
-            'Laporan_Order_' . $order->id . '.pdf',
+            'Laporan_' . $order->order_number . '.pdf',
             ['Content-Type' => 'application/pdf']
         );
+    }
+
+    /**
+     * Download report (laporan hasil tes)
+     */
+    public function downloadReportFile($orderId)
+    {
+        $user = Auth::user();
+        
+        $order = Order::where('id', $orderId)
+            ->where('client_id', $user->clients->id)
+            ->firstOrFail();
+
+        if (!$order->report_file_path) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Report file not yet generated.'
+            ], 404);
+        }
+
+        // Path file laporan di storage/app/public/...
+        $realPath = storage_path('app/public/' . $order->report_file_path);
+
+        if (!file_exists($realPath)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Report file not found at: ' . $realPath
+            ], 404);
+        }
+
+        return response()->download(
+            $realPath,
+            'Laporan_' . $order->order_number . '.pdf',
+            ['Content-Type' => 'application/pdf']
+        );
+    }
+
+    /**
+     * Get download options (receipt / report)
+     */
+    public function getDownloadOptions($order_number)
+    {
+        $user = Auth::user();
+        $clientId = $user->clients->id ?? null;
+
+        if (!$clientId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Client profile not found.'
+            ], 404);
+        }
+
+        $order = Order::where('order_number', $order_number)
+            ->where('client_id', $clientId)
+            ->first();
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found.'
+            ], 404);
+        }
+
+        $options = [
+            [
+                'label' => 'Download Receipt (Kuitansi)',
+                'endpoint' => '/api/v1/client/orders/download-receipt/' . $order_number,
+                'type' => 'receipt'
+            ]
+        ];
+
+        if ($order->result_value && $order->status === 'completed') {
+            $options[] = [
+                'label' => 'Download Report (Laporan Hasil)',
+                'endpoint' => '/api/v1/client/orders/download-report/' . $order->id,
+                'type' => 'report'
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Download options retrieved.',
+            'data' => [
+                'order_number' => $order->order_number,
+                'options' => $options
+            ]
+        ]);
     }
 
     public function payment(Order $order){

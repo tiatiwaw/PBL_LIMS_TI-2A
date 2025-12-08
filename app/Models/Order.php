@@ -21,6 +21,7 @@ class Order extends Model
         'estimate_date',
         'report_issued_at',
         'report_file_path',
+        'receipt_file_path',
         'notes',
         'order_type',
         'status'

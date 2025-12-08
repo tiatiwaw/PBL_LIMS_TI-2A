@@ -5,6 +5,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
 import { useGrades } from "@/hooks/useAdmin";
 import { editGradeFields } from "@/utils/fields/admin";
+import { exportGradesReportPDF } from "@/utils/pdf/export/tools-export";
 import { useMemo, useState } from "react";
 
 export default function AdminGradesPage() {
@@ -19,6 +20,8 @@ export default function AdminGradesPage() {
     };
 
     const columns = useMemo(() => getGradesColumns({ onShowDetail: handleShowDetail }), []);
+
+    const handleExport = () => exportGradesReportPDF(grades);
 
     const handleCreate = async (formData) => createGrade.mutateAsync(formData);
 
@@ -59,6 +62,8 @@ export default function AdminGradesPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                onExport={handleExport}
+                showExport={true}
                 createTitle="Tambah Tingkatan"
                 editTitle="Edit Tingkatan"
                 deleteTitle="Hapus Tingkatan"

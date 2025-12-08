@@ -60,9 +60,6 @@ class ClientController extends Controller
         ]);
     }
 
-    /**
-     * Show order status page
-     */
     public function orderStatus($order_number)
     {
         return Inertia::render('client/history/index', [

@@ -5,6 +5,7 @@ import { getBrandsColumns } from "@/components/shared/admin/tool-columns";
 import { useMemo, useState } from "react";
 import Loading from "@/components/ui/loading";
 import { useBrands } from "@/hooks/useManager";
+import { exportBrandReportPDF } from "@/utils/pdf/export/tools-export";
 
 export default function ManagerBrandsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -16,6 +17,8 @@ export default function ManagerBrandsPage() {
         setSelectedBrand(brand);
         setIsOpen(true);
     };
+
+    const handleExport = () => exportBrandReportPDF(brands);
 
     const columns = useMemo(
         () => getBrandsColumns({ onShowDetail: handleShowDetail }),
@@ -48,6 +51,9 @@ export default function ManagerBrandsPage() {
             <ManagedDataTable
                 data={brands}
                 columns={columns}
+                onExport={handleExport}
+                showExport={true}
+                showCreate={false}
                 createTitle="Tambah Brand"
                 editTitle="Edit Brand"
                 deleteTitle="Hapus Brand"

@@ -53,6 +53,7 @@ use App\Http\Controllers\API\V1\Manager\TestMethodsController as ManagerTestMeth
 use App\Http\Controllers\API\V1\Manager\UnitValueController as ManagerUnitValueController;
 use App\Http\Controllers\API\V1\Manager\ReferenceController as ManagerReferenceController;
 use App\Http\Controllers\API\V1\Manager\SampleCategoryController as ManagerSampleCategoryController;
+use App\Http\Controllers\API\V1\Manager\OrdersController as MOrdersController;
 use App\Http\Controllers\API\V1\Payment\TripayController;
 use App\Models\Client;
 
@@ -64,6 +65,8 @@ Route::prefix('v1')->group(function () {
      * ============================
      */
     Route::post('/auth/login', [AuthController::class, 'login'])->name('api.auth.login');
+    Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])->name('api.auth.forgot-password');
+    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->name('api.auth.reset-password');
 
     /**
      * ============================
@@ -100,6 +103,7 @@ Route::prefix('v1')->group(function () {
 
                 // Materials
                 Route::prefix('materials')->name('materials.')->group(function () {
+                    Route::get('reagents/low-stock/notifications', [ReagentController::class, 'lowStockNotifications']);
                     Route::apiResource('reagents', ReagentController::class);
                     Route::apiResource('grades', GradeController::class);
                     Route::apiResource('suppliers', SupplierController::class);
@@ -192,7 +196,12 @@ Route::prefix('v1')->group(function () {
                         ->name('transaction.store');
                     Route::get('/download-receipt/{order_number}', [ClientReceiptController::class, 'index'])->name('receipt');
                     Route::post('/save-invoice-pdf', [ClientReceiptController::class, 'savePDF'])->name('saveInvoicePDF');
-                    Route::get('/download/{id}', [ClientOrderController::class, 'downloadReport'])->name('download');
+                    Route::get('/download-options/{order_number}', [ClientClientController::class, 'getDownloadOptions'])
+                        ->name('download.options');
+                    // Route::get('/download-receipt/{order_number}', [ClientClientController::class, 'downloadReceipt'])
+                    //     ->name('download.receipt'); 
+                    Route::get('/download-report/{id}', [ClientClientController::class, 'downloadReportFile'])
+                        ->name('download.report');
                 });
             });
 
@@ -233,6 +242,13 @@ Route::prefix('v1')->group(function () {
             ->name('api.manager.')
             ->group(function () {
 
+                // REPORT VALIDATIONS
+                Route::prefix('report-validations')->name('report-validations.')->group(function () {
+                    Route::get('/', [MOrdersController::class, 'reportValidations']);
+                    Route::get('/{id}', [MOrdersController::class, 'show'])->name('show');
+                    Route::put('/{id}', [MOrdersController::class, 'update'])->name('update');
+                });
+
                 // Tools
                 Route::prefix('tools')->name('tools.')->group(function () {
                     Route::apiResource('equipments', ManagerEquipmentController::class);
@@ -255,11 +271,52 @@ Route::prefix('v1')->group(function () {
                     Route::apiResource('categories', ManagerSampleCategoryController::class);
                 });
 
+                Route::get('orders', [OrdersController::class, 'index']);
+                Route::get('orders/{id}', [OrdersController::class, 'show']);
+
                 // Analyst
                 // Route::prefix('analyst')->name('analyst.')->group(function () {
                 //     Route::apiResource('trainings', ManagerTrainingController::class);
                 //     Route::apiResource('certificates', ManagerCertificateController::class);
                 // });
+            });
+        /**
+         * ============================
+         * MANAGER API
+         * ============================
+         */
+        Route::prefix('manager')
+            ->middleware('role:manager')
+            ->name('api.manager.')
+            ->group(function () {
+
+                // REPORT VALIDATIONS
+                Route::prefix('report-validations')->name('report-validations.')->group(function () {
+                    Route::get('/', [MOrdersController::class, 'reportValidations']);
+                    Route::get('/{id}', [MOrdersController::class, 'show'])->name('show');
+                });
+
+                // Tools
+                Route::prefix('tools')->name('tools.')->group(function () {
+                    Route::apiResource('equipments', ManagerEquipmentController::class);
+                    Route::apiResource('brands', ManagerBrandTypeController::class);
+                });
+
+                // Materials
+                Route::prefix('materials')->name('materials.')->group(function () {
+                    Route::apiResource('reagents', ManagerReagentController::class);
+                    Route::apiResource('grades', ManagerGradeController::class);
+                    Route::apiResource('suppliers', ManagerSupplierController::class);
+                });
+
+                // Tests
+                Route::prefix('tests')->name('tests.')->group(function () {
+                    Route::apiResource('parameters', ManagerParameterController::class);
+                    Route::apiResource('methods', ManagerTestMethodsController::class);
+                    Route::apiResource('units', ManagerUnitValueController::class);
+                    Route::apiResource('references', ManagerReferenceController::class);
+                    Route::apiResource('categories', ManagerSampleCategoryController::class);
+                });
             });
     });
 });

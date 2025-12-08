@@ -7,16 +7,18 @@ import { HeaderCard } from "../shared/dashboard/header-card";
 
 import { useAuth } from "@/hooks/useAuth";
 import { MobileSidebar } from "./mobile-sidebar";
+import { useLowStockReagents } from "@/hooks/useAdmin";
 
 export default function DashboardLayout({
     children,
     title,
     header = "Hello World!",
-    notificationCount = 3,
 }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { url } = usePage();
     const { user, logout } = useAuth();
+    const { data: lowStockReagents, isLoading: notificationsLoading } =
+        useLowStockReagents();
 
     const currentUser = useMemo(
         () => user ?? { name: "Guest", role: "guest" },
@@ -24,7 +26,10 @@ export default function DashboardLayout({
     );
 
     const sidebarMenu = useMemo(() => menuItems(url), [url]);
-
+    const notificationCount = useMemo(
+        () => lowStockReagents?.length ?? 0,
+        [lowStockReagents]
+    );
     const handleLogout = useCallback(() => logout(), [logout]);
 
     return (
@@ -53,6 +58,8 @@ export default function DashboardLayout({
                             title={header}
                             user={currentUser}
                             notificationCount={notificationCount}
+                            isNotificationLoading={notificationsLoading}
+                            lowStockReagents={lowStockReagents || []}
                             onLogout={handleLogout}
                             onMenuClick={() => setIsMobileMenuOpen(true)}
                         />

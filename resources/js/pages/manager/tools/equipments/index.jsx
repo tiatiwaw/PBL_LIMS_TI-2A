@@ -4,6 +4,7 @@ import EquipmentDetailSheet from "@/components/shared/sheet/equipment-detail-she
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
 import { useBrands, useEquipments } from "@/hooks/useManager";
+import { exportEquipmentReportPDF } from "@/utils/pdf/export/tools-export";
 import { useMemo, useState } from "react";
 
 const filterData = [
@@ -24,6 +25,8 @@ export default function ManagerEquipmentsPage() {
         setSelectedEquipment(equipment);
         setIsOpen(true);
     };
+
+    const handleExport = () => exportEquipmentReportPDF(equipments);
 
     const columns = useMemo(() => getEquipmentsColumns({ onShowDetail: handleShowDetail }), []);
 
@@ -53,6 +56,9 @@ export default function ManagerEquipmentsPage() {
             <ManagedDataTable
                 data={equipments}
                 columns={columns}
+                onExport={handleExport}
+                showExport={true}
+                showCreate={false}
                 createTitle="Tambah Data Peralatan"
                 editTitle="Edit Data Peralatan"
                 deleteTitle="Hapus Data Peralatan"

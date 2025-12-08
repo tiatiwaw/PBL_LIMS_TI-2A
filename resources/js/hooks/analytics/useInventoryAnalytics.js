@@ -22,8 +22,8 @@ export const useInventoryAnalytics = (data = {}, dateFilter, isYearlyView) => {
         const filteredOrders = orders.filter((o) => dateFilter(o.order_date));
 
         const statusCounts = {
-            unavailable: 0,
             available: 0,
+            unavailable: 0,
             maintenance: 0,
             broken: 0,
         };
@@ -65,21 +65,21 @@ export const useInventoryAnalytics = (data = {}, dateFilter, isYearlyView) => {
 
         const statusChartData = [
             {
-                name: "Tersedia",
+                name: "Available",
                 value: statusCounts.available,
                 color: "#2CACAD",
             },
             {
-                name: "Tidak Tersedia",
+                name: "Unavail",
                 value: statusCounts.unavailable,
-                color: "#ECC94B",
+                color: "#3B82F6",
             },
             {
-                name: "Perbaikan",
+                name: "Maintenance",
                 value: statusCounts.maintenance,
                 color: "#024D60",
             },
-            { name: "Rusak", value: statusCounts.broken, color: "#FF0000" },
+            { name: "Broken", value: statusCounts.broken, color: "#02364B" },
         ].filter((d) => d.value > 0);
 
         const brandChartData = objectToChartData(
@@ -151,6 +151,8 @@ export const useInventoryAnalytics = (data = {}, dateFilter, isYearlyView) => {
             gradeChartData,
             reagentUsageChartData,
             trendChartData,
+
+            isYearlyView,
         };
     }, [data, dateFilter, isYearlyView]);
 };
