@@ -16,6 +16,7 @@ export default function ClientTransaction({ auth, reference }) {
     errorMessage
   } = useTransaction(reference); // orderId sebagai parameter API
 
+
   // === STATE LOADING ===
   if (isLoading) {
     return (
