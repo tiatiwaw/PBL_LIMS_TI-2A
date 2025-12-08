@@ -11,6 +11,7 @@ use App\Models\Reagent;
 use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
@@ -38,67 +39,139 @@ class ReportController extends Controller
 
     public function inventory(Request $request)
     {
-        // Accept year and month query params. Frontend may send 'all' to indicate no filter.
-        $year = $request->query('year');
-        $month = $request->query('month');
+        $year = $request->input('year');
+        $month = $request->input('month');
 
-        $equipmentsQuery = Equipment::with('brand_types');
-        $reagentsQuery = Reagent::with(['suppliers', 'grades']);
-        $ordersQuery = Order::with([
-            'samples.n_parameter_methods.equipments',
-            'samples.n_parameter_methods.reagents'
-        ]);
-
-        if ($year !== null && $year !== 'all') {
-            $equipmentsQuery->whereYear('purchase_year', (int) $year);
-            $reagentsQuery->whereYear('created_at', (int) $year);
-            $ordersQuery->whereYear('order_date', (int) $year);
-        }
-
-        if ($month !== null && $month !== 'all') {
-            // Note: frontend month may be zero-based (0 = January). Convert to 1-based for SQL.
-            $monthInt = (int) $month;
-            if ($monthInt >= 0 && $monthInt <= 11) {
-                $monthInt = $monthInt;
+        $applyDateFilter = function ($query, $column) use ($year, $month) {
+            if ($year && $year !== 'all') {
+                $query->whereYear($column, $year);
             }
-            $equipmentsQuery->whereMonth('purchase_year', $monthInt);
-            $reagentsQuery->whereMonth('created_at', $monthInt);
-            $ordersQuery->whereMonth('order_date', $monthInt);
-        }
+            if ($month && $month !== 'all') {
+                $query->whereMonth($column, $month);
+            }
+        };
 
-        $equipments = $equipmentsQuery->get();
-        $reagents = $reagentsQuery->get();
-        $orders = $ordersQuery->get();
 
-        $suppliers = Supplier::all();
-        $brands = BrandType::all();
-        $grades = Grade::all();
+        $equipmentQuery = Equipment::query()->where(function ($q) use ($applyDateFilter) {
+            $applyDateFilter($q, 'equipments.purchase_year');
+        });
 
-        // Compute available years for filters (distinct years across models)
-        $equipmentYears = Equipment::selectRaw('YEAR(purchase_year) as year')->distinct()->pluck('year')->filter()->unique()->values()->all();
-        $reagentYears = Reagent::selectRaw('YEAR(created_at) as year')->distinct()->pluck('year')->filter()->unique()->values()->all();
-        $orderYears = Order::selectRaw('YEAR(order_date) as year')->distinct()->pluck('year')->filter()->unique()->values()->all();
+        $reagentQuery = Reagent::query()->where(function ($q) use ($applyDateFilter) {
+            $applyDateFilter($q, 'reagents.created_at');
+        });
 
-        $allYears = array_values(array_unique(array_merge($equipmentYears, $reagentYears, $orderYears)));
-        rsort($allYears);
+        $totalEquipment = (clone $equipmentQuery)->count();
+        $totalReagents = (clone $reagentQuery)->count();
+        $totalBrands = BrandType::count();
+        $totalSuppliers = Supplier::count();
+
+        $statusStats = (clone $equipmentQuery)
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $topEquipment = DB::table('n_order_samples')
+            ->join('orders', 'n_order_samples.order_id', '=', 'orders.id')
+            ->join('n_parameter_methods', 'n_order_samples.sample_id', '=', 'n_parameter_methods.sample_id')
+            ->join('n_equipments', 'n_parameter_methods.id', '=', 'n_equipments.n_parameter_method_id')
+            ->join('equipments', 'n_equipments.equipment_id', '=', 'equipments.id')
+            ->when($year && $year !== 'all', fn($q) => $q->whereYear('orders.order_date', $year))
+            ->when($month && $month !== 'all', fn($q) => $q->whereMonth('orders.order_date', $month))
+            ->select('equipments.name', DB::raw('count(*) as usage_count'))
+            ->groupBy('equipments.name')
+            ->orderByDesc('usage_count')
+            ->first();
+
+        $topReagent = DB::table('n_order_samples')
+            ->join('orders', 'n_order_samples.order_id', '=', 'orders.id')
+            ->join('n_parameter_methods', 'n_order_samples.sample_id', '=', 'n_parameter_methods.sample_id')
+            ->join('n_reagents', 'n_parameter_methods.id', '=', 'n_reagents.n_parameter_method_id')
+            ->join('reagents', 'n_reagents.reagent_id', '=', 'reagents.id')
+            ->when($year && $year !== 'all', fn($q) => $q->whereYear('orders.order_date', $year))
+            ->when($month && $month !== 'all', fn($q) => $q->whereMonth('orders.order_date', $month))
+            ->select('reagents.name', DB::raw('count(*) as usage_count'))
+            ->groupBy('reagents.name')
+            ->orderByDesc('usage_count')
+            ->first();
+
+        $statusChart = [
+            ['name' => 'Tersedia', 'value' => $statusStats['available'] ?? 0, 'color' => '#2CACAD'],
+            ['name' => 'Dipakai', 'value' => $statusStats['unavailable'] ?? 0, 'color' => '#3B82F6'],
+            ['name' => 'Perbaikan', 'value' => $statusStats['maintenance'] ?? 0, 'color' => '#024D60'],
+            ['name' => 'Rusak', 'value' => $statusStats['broken'] ?? 0, 'color' => '#02364B'],
+        ];
+
+        $brandChart = (clone $equipmentQuery)
+            ->join('brand_types', 'equipments.brand_type_id', '=', 'brand_types.id')
+            ->select('brand_types.name', DB::raw('count(*) as value'))
+            ->groupBy('brand_types.name')
+            ->orderByDesc('value')
+            ->limit(10)
+            ->get();
+
+        $supplierChart = (clone $reagentQuery)
+            ->join('suppliers', 'reagents.supplier_id', '=', 'suppliers.id')
+            ->select('suppliers.name', DB::raw('count(*) as value'))
+            ->groupBy('suppliers.name')
+            ->orderByDesc('value')
+            ->limit(10)
+            ->get();
+
+        $gradeChart = (clone $reagentQuery)
+            ->join('grades', 'reagents.grade_id', '=', 'grades.id')
+            ->select('grades.name', DB::raw('count(*) as value'))
+            ->groupBy('grades.name')
+            ->orderByDesc('value')
+            ->get()
+            ->map(function ($item, $key) {
+                $colors = ['#2CACAD', '#024D60', '#3B82F6', '#02364B'];
+                $item->color = $colors[$key % count($colors)];
+                return $item;
+            });
+
+        $trendData = (clone $equipmentQuery)
+            ->select(
+                DB::raw($year === 'all' ? 'YEAR(equipments.purchase_year) as label' : 'MONTHNAME(equipments.purchase_year) as label'),
+                DB::raw('count(*) as count')
+            )
+            ->groupBy('label')
+            ->orderBy('label')
+            ->get()
+            ->map(fn($item) => [
+                'name' => $year === 'all' ? (string)$item->label : substr($item->label, 0, 3),
+                'fullName' => (string)$item->label,
+                'count' => $item->count
+            ]);
+
+        $yearsAvailable = Equipment::selectRaw('YEAR(purchase_year) as year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->filter();
 
         return response()->json([
-            'equipments' => $equipments,
-            'reagents' => $reagents,
-            'suppliers' => $suppliers,
-            'brands' => $brands,
-            'grades' => $grades,
-            'orders' => $orders,
-            'selected_filters' => [
-                'year' => $year,
-                'month' => $month,
+            'meta' => [
+                'years' => $yearsAvailable->values()
             ],
-            'available_years' => [
-                'all' => $allYears,
-                'equipments' => $equipmentYears,
-                'reagents' => $reagentYears,
-                'orders' => $orderYears,
+            'kpi' => [
+                'total_equipment' => $totalEquipment,
+                'total_reagents' => $totalReagents,
+                'total_brands' => $totalBrands,
+                'total_suppliers' => $totalSuppliers,
+                'available_equipment' => $statusStats['available'] ?? 0,
+                'unavailable_equipment' => $statusStats['unavailable'] ?? 0,
+                'maintenance_equipment' => $statusStats['maintenance'] ?? 0,
+                'broken_equipment' => $statusStats['broken'] ?? 0,
+                'top_equipment' => $topEquipment ? ['name' => $topEquipment->name, 'count' => $topEquipment->usage_count] : ['name' => '-', 'count' => 0],
+                'top_reagent' => $topReagent ? ['name' => $topReagent->name, 'count' => $topReagent->usage_count] : ['name' => '-', 'count' => 0],
             ],
+            'charts' => [
+                'status' => array_values(array_filter($statusChart, fn($i) => $i['value'] > 0)),
+                'brands' => $brandChart,
+                'suppliers' => $supplierChart,
+                'grades' => $gradeChart,
+                'trend' => $trendData
+            ]
         ]);
     }
 

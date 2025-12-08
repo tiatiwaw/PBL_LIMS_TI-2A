@@ -1,61 +1,41 @@
-export const buildInventorySection = (analytics) => {
+export const buildInventorySection = (charts = {}) => {
     const rows = [];
+
+    const statusData = charts.status || [];
+    const brandData = charts.brands || [];
+    const supplierData = charts.suppliers || [];
+    const gradeData = charts.grades || [];
+    const trendData = charts.trend || [];
 
     rows.push(["STATUS PERALATAN"]);
     rows.push(["Status", "Jumlah"]);
-    rows.push(
-        ...analytics.statusChartData.map((item) => [item.name, item.value])
-    );
+    rows.push(...statusData.map((item) => [item.name, item.value]));
     rows.push([""]);
 
-    const maxRowBrandSupp = Math.max(
-        analytics.brandChartData.length,
-        analytics.supplierChartData.length
-    );
+    const maxRowBrandSupp = Math.max(brandData.length, supplierData.length);
 
     rows.push(["TOP BRAND PERALATAN", "", "", "TOP SUPPLIER REAGEN"]);
     rows.push(["Nama Brand", "Jumlah", "", "Nama Supplier", "Jumlah"]);
 
     for (let i = 0; i < maxRowBrandSupp; i++) {
-        const brand = analytics.brandChartData[i] || { name: "", value: "" };
-        const supplier = analytics.supplierChartData[i] || {
-            name: "",
-            value: "",
-        };
+        const brand = brandData[i] || { name: "", value: "" };
+        const supplier = supplierData[i] || { name: "", value: "" };
 
         rows.push([brand.name, brand.value, "", supplier.name, supplier.value]);
     }
     rows.push([""]);
 
-    const maxRowGradeUsage = Math.max(
-        analytics.gradeChartData.length,
-        analytics.reagentUsageChartData.length
-    );
+    rows.push(["DISTRIBUSI GRADE REAGEN"]);
+    rows.push(["Nama Grade", "Jumlah"]);
 
-    rows.push([
-        "DISTRIBUSI GRADE REAGEN",
-        "",
-        "",
-        "PENGGUNAAN REAGEN TERBANYAK",
-    ]);
-    rows.push(["Nama Grade", "Jumlah", "", "Nama Reagen", "Frekuensi Pakai"]);
-
-    for (let i = 0; i < maxRowGradeUsage; i++) {
-        const grade = analytics.gradeChartData[i] || { name: "", value: "" };
-        const usage = analytics.reagentUsageChartData[i] || {
-            name: "",
-            value: "",
-        };
-
-        rows.push([grade.name, grade.value, "", usage.name, usage.value]);
-    }
+    gradeData.forEach((grade) => {
+        rows.push([grade.name, grade.value]);
+    });
     rows.push([""]);
 
     rows.push(["TREN PENGADAAN ALAT"]);
     rows.push(["Tahun/Periode", "Jumlah Pengadaan"]);
-    rows.push(
-        ...analytics.trendChartData.map((item) => [item.name, item.count])
-    );
+    rows.push(...trendData.map((item) => [item.name, item.count]));
 
     return rows;
 };

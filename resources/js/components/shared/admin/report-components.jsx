@@ -136,6 +136,15 @@ export const EmptyState = ({
     </div>
 );
 
+const EmptyChartState = () => (
+    <div className="flex flex-col items-center justify-center h-full bg-slate-50/50 rounded-xl border border-dashed border-slate-200 text-slate-400">
+        <h3 className="text-lg font-semibold text-slate-600">
+            Data tidak ditemukan
+        </h3>
+        <p className="text-sm">Tidak ada data</p>
+    </div>
+);
+
 export const ChartCard = ({ title, children, delay = 0, className = "" }) => (
     <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -166,40 +175,46 @@ export const SimpleBarChart = ({
     className,
 }) => (
     <ChartCard title={title} delay={delay} className={className}>
-        <ResponsiveContainer width="100%" height={height}>
-            <BarChart
-                data={data}
-                margin={{ top: 20, right: 20, bottom: 20, left: 0 }}
-            >
-                <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="#f1f5f9"
-                />
-                <XAxis
-                    dataKey={categoryKey}
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#64748b", fontSize: 11 }}
-                    dy={10}
-                />
-                <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                />
-                <Tooltip
-                    content={<CustomTooltip />}
-                    cursor={{ fill: "#F8FAFC" }}
-                />
-                <Bar
-                    dataKey={dataKey}
-                    fill={color}
-                    radius={[4, 4, 0, 0]}
-                    barSize={barSize}
-                />
-            </BarChart>
-        </ResponsiveContainer>
+        {!data || data.length === 0 ? (
+            <div style={{ height }}>
+                <EmptyChartState />
+            </div>
+        ) : (
+            <ResponsiveContainer width="100%" height={height}>
+                <BarChart
+                    data={data}
+                    margin={{ top: 20, right: 20, bottom: 20, left: 0 }}
+                >
+                    <CartesianGrid
+                        strokeDasharray="3 3"
+                        vertical={false}
+                        stroke="#f1f5f9"
+                    />
+                    <XAxis
+                        dataKey={categoryKey}
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: "#64748b", fontSize: 11 }}
+                        dy={10}
+                    />
+                    <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: "#64748b", fontSize: 12 }}
+                    />
+                    <Tooltip
+                        content={<CustomTooltip />}
+                        cursor={{ fill: "#F8FAFC" }}
+                    />
+                    <Bar
+                        dataKey={dataKey}
+                        fill={color}
+                        radius={[4, 4, 0, 0]}
+                        barSize={barSize}
+                    />
+                </BarChart>
+            </ResponsiveContainer>
+        )}
     </ChartCard>
 );
 
@@ -215,46 +230,52 @@ export const RankingBarChart = ({
     colorTop = "#2CACAD",
 }) => (
     <ChartCard title={title} delay={delay} className={className}>
-        <ResponsiveContainer width="100%" height={height}>
-            <BarChart
-                data={data}
-                layout="vertical"
-                margin={{ left: 20, right: 20, top: 10, bottom: 10 }}
-            >
-                <CartesianGrid
-                    strokeDasharray="3 3"
-                    horizontal={true}
-                    vertical={false}
-                    stroke="#f1f5f9"
-                />
-                <XAxis type="number" hide />
-                <YAxis
-                    dataKey={categoryKey}
-                    type="category"
-                    axisLine={false}
-                    tickLine={false}
-                    width={120}
-                    tick={{ fill: "#64748b", fontSize: 11 }}
-                />
-                <Tooltip
-                    content={<CustomTooltip />}
-                    cursor={{ fill: "#F8FAFC" }}
-                />
-                <Bar
-                    dataKey={dataKey}
-                    fill={colorMain}
-                    radius={[0, 4, 4, 0]}
-                    barSize={20}
+        {!data || data.length === 0 ? (
+            <div style={{ height }}>
+                <EmptyChartState />
+            </div>
+        ) : (
+            <ResponsiveContainer width="100%" height={height}>
+                <BarChart
+                    data={data}
+                    layout="vertical"
+                    margin={{ left: 20, right: 20, top: 10, bottom: 10 }}
                 >
-                    {data.map((entry, index) => (
-                        <Cell
-                            key={`cell-${index}`}
-                            fill={index === 0 ? colorTop : colorMain}
-                        />
-                    ))}
-                </Bar>
-            </BarChart>
-        </ResponsiveContainer>
+                    <CartesianGrid
+                        strokeDasharray="3 3"
+                        horizontal={true}
+                        vertical={false}
+                        stroke="#f1f5f9"
+                    />
+                    <XAxis type="number" hide />
+                    <YAxis
+                        dataKey={categoryKey}
+                        type="category"
+                        axisLine={false}
+                        tickLine={false}
+                        width={120}
+                        tick={{ fill: "#64748b", fontSize: 11 }}
+                    />
+                    <Tooltip
+                        content={<CustomTooltip />}
+                        cursor={{ fill: "#F8FAFC" }}
+                    />
+                    <Bar
+                        dataKey={dataKey}
+                        fill={colorMain}
+                        radius={[0, 4, 4, 0]}
+                        barSize={20}
+                    >
+                        {data.map((entry, index) => (
+                            <Cell
+                                key={`cell-${index}`}
+                                fill={index === 0 ? colorTop : colorMain}
+                            />
+                        ))}
+                    </Bar>
+                </BarChart>
+            </ResponsiveContainer>
+        )}
     </ChartCard>
 );
 
@@ -270,42 +291,48 @@ export const DistributionPieChart = ({
     showLegend = true,
 }) => (
     <ChartCard title={title} delay={delay} className={className}>
-        <ResponsiveContainer width="100%" height={height}>
-            <PieChart>
-                <Pie
-                    data={data}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={innerRadius}
-                    outerRadius={outerRadius}
-                    paddingAngle={5}
-                    dataKey={dataKey}
-                    labelLine={false}
-                    label={renderPieLabel}
-                    stroke="none"
-                >
-                    {data.map((entry, index) => (
-                        <Cell
-                            key={`cell-${index}`}
-                            fill={
-                                entry.color ||
-                                COLORS.chartPalette[
-                                    index % COLORS.chartPalette.length
-                                ]
-                            }
+        {!data || data.length === 0 ? (
+            <div style={{ height }}>
+                <EmptyChartState />
+            </div>
+        ) : (
+            <ResponsiveContainer width="100%" height={height}>
+                <PieChart>
+                    <Pie
+                        data={data}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={innerRadius}
+                        outerRadius={outerRadius}
+                        paddingAngle={5}
+                        dataKey={dataKey}
+                        labelLine={false}
+                        label={renderPieLabel}
+                        stroke="none"
+                    >
+                        {data.map((entry, index) => (
+                            <Cell
+                                key={`cell-${index}`}
+                                fill={
+                                    entry.color ||
+                                    COLORS.chartPalette[
+                                        index % COLORS.chartPalette.length
+                                    ]
+                                }
+                            />
+                        ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                    {showLegend && (
+                        <Legend
+                            verticalAlign="bottom"
+                            iconType="circle"
+                            wrapperStyle={{ fontSize: "11px" }}
                         />
-                    ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-                {showLegend && (
-                    <Legend
-                        verticalAlign="bottom"
-                        iconType="circle"
-                        wrapperStyle={{ fontSize: "11px" }}
-                    />
-                )}
-            </PieChart>
-        </ResponsiveContainer>
+                    )}
+                </PieChart>
+            </ResponsiveContainer>
+        )}
     </ChartCard>
 );
 
@@ -321,37 +348,43 @@ export const TrendLineChart = ({
     className,
 }) => (
     <ChartCard title={title} delay={delay} className={className}>
-        <ResponsiveContainer width="100%" height={height}>
-            <LineChart data={data} margin={{ left: 10, right: 10 }}>
-                <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="#f1f5f9"
-                />
-                <XAxis
-                    dataKey={categoryKey}
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                    axisLine={false}
-                    tickLine={false}
-                />
-                <YAxis
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                    allowDecimals={false}
-                    axisLine={false}
-                    tickLine={false}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Line
-                    type="monotone"
-                    name="Total"
-                    dataKey={dataKey}
-                    stroke={lineColor}
-                    strokeWidth={3}
-                    dot={{ fill: dotColor, r: 5 }}
-                    activeDot={{ r: 8, fill: lineColor }}
-                />
-            </LineChart>
-        </ResponsiveContainer>
+        {!data || data.length === 0 ? (
+            <div style={{ height }}>
+                <EmptyChartState />
+            </div>
+        ) : (
+            <ResponsiveContainer width="100%" height={height}>
+                <LineChart data={data} margin={{ left: 10, right: 10 }}>
+                    <CartesianGrid
+                        strokeDasharray="3 3"
+                        vertical={false}
+                        stroke="#f1f5f9"
+                    />
+                    <XAxis
+                        dataKey={categoryKey}
+                        tick={{ fill: "#64748b", fontSize: 12 }}
+                        axisLine={false}
+                        tickLine={false}
+                    />
+                    <YAxis
+                        tick={{ fill: "#64748b", fontSize: 12 }}
+                        allowDecimals={false}
+                        axisLine={false}
+                        tickLine={false}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Line
+                        type="monotone"
+                        name="Total"
+                        dataKey={dataKey}
+                        stroke={lineColor}
+                        strokeWidth={3}
+                        dot={{ fill: dotColor, r: 5 }}
+                        activeDot={{ r: 8, fill: lineColor }}
+                    />
+                </LineChart>
+            </ResponsiveContainer>
+        )}
     </ChartCard>
 );
 
@@ -367,60 +400,76 @@ export const TrendAreaChart = ({
     tooltipFormatter,
 }) => (
     <ChartCard title={title} delay={delay} className={className}>
-        <ResponsiveContainer width="100%" height={height}>
-            <AreaChart
-                data={data}
-                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-            >
-                <defs>
-                    <linearGradient
-                        id={`color-${dataKey}`}
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                    >
-                        <stop offset="5%" stopColor={color} stopOpacity={0.2} />
-                        <stop offset="95%" stopColor={color} stopOpacity={0} />
-                    </linearGradient>
-                </defs>
-                <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="#f1f5f9"
-                />
-                <XAxis
-                    dataKey={categoryKey}
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                    dy={10}
-                />
-                <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                    tickFormatter={(val) => formatCompactNumber(val)}
-                />
-                <Tooltip
-                    content={<CustomTooltip formatValue={tooltipFormatter} />}
-                    cursor={{
-                        stroke: color,
-                        strokeWidth: 1,
-                        strokeDasharray: "5 5",
-                    }}
-                />
-                <Area
-                    type="monotone"
-                    dataKey={dataKey}
-                    stroke={color}
-                    strokeWidth={3}
-                    fillOpacity={1}
-                    fill={`url(#color-${dataKey})`}
-                    activeDot={{ r: 6, strokeWidth: 0, fill: "#024D60" }}
-                />
-            </AreaChart>
-        </ResponsiveContainer>
+        {!data || data.length === 0 ? (
+            <div style={{ height }}>
+                <EmptyChartState />
+            </div>
+        ) : (
+            <ResponsiveContainer width="100%" height={height}>
+                <AreaChart
+                    data={data}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                >
+                    <defs>
+                        <linearGradient
+                            id={`color-${dataKey}`}
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                        >
+                            <stop
+                                offset="5%"
+                                stopColor={color}
+                                stopOpacity={0.2}
+                            />
+                            <stop
+                                offset="95%"
+                                stopColor={color}
+                                stopOpacity={0}
+                            />
+                        </linearGradient>
+                    </defs>
+                    <CartesianGrid
+                        strokeDasharray="3 3"
+                        vertical={false}
+                        stroke="#f1f5f9"
+                    />
+                    <XAxis
+                        dataKey={categoryKey}
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: "#64748b", fontSize: 12 }}
+                        dy={10}
+                    />
+                    <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: "#64748b", fontSize: 12 }}
+                        tickFormatter={(val) => formatCompactNumber(val)}
+                    />
+                    <Tooltip
+                        content={
+                            <CustomTooltip formatValue={tooltipFormatter} />
+                        }
+                        cursor={{
+                            stroke: color,
+                            strokeWidth: 1,
+                            strokeDasharray: "5 5",
+                        }}
+                    />
+                    <Area
+                        type="monotone"
+                        dataKey={dataKey}
+                        stroke={color}
+                        strokeWidth={3}
+                        fillOpacity={1}
+                        fill={`url(#color-${dataKey})`}
+                        activeDot={{ r: 6, strokeWidth: 0, fill: "#024D60" }}
+                    />
+                </AreaChart>
+            </ResponsiveContainer>
+        )}
     </ChartCard>
 );
 
@@ -517,89 +566,102 @@ export const TransactionTable = ({ data, page, setPage, pageSize = 10 }) => {
                 </div>
             </CardHeader>
             <CardContent className="p-0">
-                <Table>
-                    <TableHeader>
-                        <TableRow className="bg-slate-50 hover:bg-slate-50">
-                            <TableHead className="font-medium w-[150px]">
-                                No. Order
-                            </TableHead>
-                            <TableHead className="font-medium">Klien</TableHead>
-                            <TableHead className="font-medium">
-                                Tipe Order
-                            </TableHead>
-                            <TableHead className="font-medium">
-                                Tanggal
-                            </TableHead>
-                            <TableHead className="font-medium text-center">
-                                Jml Metode
-                            </TableHead>
-                            <TableHead className="font-medium text-right pr-6">
-                                Total Pendapatan
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {currentData.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                className="hover:bg-[#2CACAD]/5 transition-colors group"
-                            >
-                                <TableCell className="font-semibold text-[#02364B] group-hover:text-[#2CACAD] transition-colors">
-                                    {row.order_number}
-                                </TableCell>
-                                <TableCell className="text-slate-600">
-                                    {row.client_name}
-                                </TableCell>
-                                <TableCell>
-                                    <Badge
-                                        variant={getOrderTypeVariant(
-                                            row.order_type
-                                        )}
-                                        className="capitalize"
-                                    >
-                                        {row.order_type}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-slate-500 text-sm">
-                                    {row.order_date}
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-600 text-xs font-bold">
-                                        {row.method_count}
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right pr-6 font-bold text-[#02364B]">
-                                    {formatCurrency(row.revenue)}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-
-                {data.length > pageSize && (
-                    <div className="p-4 border-t border-slate-100 flex items-center justify-between">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            disabled={page === 1}
-                            onClick={() => setPage((p) => p - 1)}
-                            className="text-slate-500 hover:text-[#024D60] hover:bg-slate-50 gap-2 disabled:opacity-40"
-                        >
-                            <ChevronLeft size={14} /> Sebelumnya
-                        </Button>
-                        <span className="text-sm text-slate-500 select-none">
-                            Halaman {page} / {totalPages}
-                        </span>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            disabled={page === totalPages}
-                            onClick={() => setPage((p) => p + 1)}
-                            className="text-slate-500 hover:text-[#024D60] hover:bg-slate-50 gap-2 disabled:opacity-40"
-                        >
-                            Berikutnya <ChevronRight size={14} />
-                        </Button>
+                {!data || data.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-[200px] bg-slate-50/50 rounded-xl border border-dashed border-slate-200 text-slate-400 m-6">
+                        <h3 className="text-lg font-semibold text-slate-600">
+                            Data tidak ditemukan
+                        </h3>
+                        <p className="text-sm">Tidak ada transaksi</p>
                     </div>
+                ) : (
+                    <>
+                        <Table>
+                            <TableHeader>
+                                <TableRow className="bg-slate-50 hover:bg-slate-50">
+                                    <TableHead className="font-medium w-[150px]">
+                                        No. Order
+                                    </TableHead>
+                                    <TableHead className="font-medium">
+                                        Klien
+                                    </TableHead>
+                                    <TableHead className="font-medium">
+                                        Tipe Order
+                                    </TableHead>
+                                    <TableHead className="font-medium">
+                                        Tanggal
+                                    </TableHead>
+                                    <TableHead className="font-medium text-center">
+                                        Jml Metode
+                                    </TableHead>
+                                    <TableHead className="font-medium text-right pr-6">
+                                        Total Pendapatan
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {currentData.map((row) => (
+                                    <TableRow
+                                        key={row.id}
+                                        className="hover:bg-[#2CACAD]/5 transition-colors group"
+                                    >
+                                        <TableCell className="font-semibold text-[#02364B] group-hover:text-[#2CACAD] transition-colors">
+                                            {row.order_number}
+                                        </TableCell>
+                                        <TableCell className="text-slate-600">
+                                            {row.client_name}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={getOrderTypeVariant(
+                                                    row.order_type
+                                                )}
+                                                className="capitalize"
+                                            >
+                                                {row.order_type}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-slate-500 text-sm">
+                                            {row.order_date}
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-600 text-xs font-bold">
+                                                {row.method_count}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="text-right pr-6 font-bold text-[#02364B]">
+                                            {formatCurrency(row.revenue)}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+
+                        {data.length > pageSize && (
+                            <div className="p-4 border-t border-slate-100 flex items-center justify-between">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    disabled={page === 1}
+                                    onClick={() => setPage((p) => p - 1)}
+                                    className="text-slate-500 hover:text-[#024D60] hover:bg-slate-50 gap-2 disabled:opacity-40"
+                                >
+                                    <ChevronLeft size={14} /> Sebelumnya
+                                </Button>
+                                <span className="text-sm text-slate-500 select-none">
+                                    Halaman {page} / {totalPages}
+                                </span>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    disabled={page === totalPages}
+                                    onClick={() => setPage((p) => p + 1)}
+                                    className="text-slate-500 hover:text-[#024D60] hover:bg-slate-50 gap-2 disabled:opacity-40"
+                                >
+                                    Berikutnya <ChevronRight size={14} />
+                                </Button>
+                            </div>
+                        )}
+                    </>
                 )}
             </CardContent>
         </Card>
