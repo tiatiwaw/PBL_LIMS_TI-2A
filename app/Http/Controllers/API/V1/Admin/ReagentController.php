@@ -152,12 +152,7 @@ class ReagentController extends Controller
 
             $count = $lowStockReagents->count();
 
-            return response()->json([
-                'success' => true,
-                'message' => $count > 0 ? "Ada {$count} reagent dengan stok menipis." : 'Semua reagent memiliki stok yang cukup.',
-                'data' => $lowStockReagents,
-                'count' => $count,
-            ]);
+            return response()->json($lowStockReagents);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,

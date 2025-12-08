@@ -2,8 +2,6 @@ import { FlaskConical, Slash, Menu } from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { NotificationButton } from "./notification-button";
-import LowStockNotification from "./low-stock-notification";
 import { UserMenu } from "./user-menu";
 import {
     Breadcrumb,
@@ -14,11 +12,11 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { usePage } from "@inertiajs/react";
+import NotificationButton from "./notification-button";
 
 export const HeaderCard = ({
     title,
     user,
-    notificationCount = 3,
     onLogout,
     onMenuClick,
     lowStockReagents = [],
@@ -120,14 +118,10 @@ export const HeaderCard = ({
             </div>
 
             <div className="flex gap-2 md:gap-4 items-center">
-                {lowStockReagents && lowStockReagents.length > 0 ? (
-                    <LowStockNotification 
-                        reagents={lowStockReagents} 
-                        isLoading={isNotificationLoading}
-                    />
-                ) : (
-                    <NotificationButton count={notificationCount} />
-                )}
+                <NotificationButton
+                    isLoading={isNotificationLoading}
+                    reagents={lowStockReagents ?? []}
+                />
                 <UserMenu user={user} onLogout={onLogout} />
             </div>
         </motion.div>
