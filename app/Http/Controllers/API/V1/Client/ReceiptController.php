@@ -11,6 +11,22 @@ use Illuminate\Support\Facades\Auth;
 
 class ReceiptController extends Controller
 {
+
+    public function savePDF(Request $request)
+    {
+        $request->validate([
+            'invoice_pdf' => 'required|file|mimes:pdf',
+            'order_number' => 'required|string',
+        ]);
+
+        $file = $request->file('invoice_pdf');
+        $filename = 'invoice-' . $request->order_number . '.pdf';
+
+        $path = $file->storeAs('public/client/receipts', $filename);
+
+        return response()->json(['success' => true, 'path' => $path]);
+    }
+
     public function index(Request $request, $order_number)
     {
         $user = Auth::user();

@@ -190,8 +190,8 @@ Route::prefix('v1')->group(function () {
                     Route::get('/payment/{id}', [TripayController::class, 'paymentChannels']);
                     Route::post('/transaction/{order}', [ClientTransactionController::class, 'store'])
                         ->name('transaction.store');
-                    Route::get('/receipt/{order_number}', [ClientReceiptController::class, 'index'])->name('receipt');
-
+                    Route::get('/download-receipt/{order_number}', [ClientReceiptController::class, 'index'])->name('receipt');
+                    Route::post('/save-invoice-pdf', [ClientReceiptController::class, 'savePDF'])->name('saveInvoicePDF');
                     Route::get('/download/{id}', [ClientOrderController::class, 'downloadReport'])->name('download');
                 });
             });

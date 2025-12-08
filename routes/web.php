@@ -12,6 +12,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\SupervisorController;
 use Inertia\Inertia;
+use App\Http\Controllers\API\V1\Client\ReceiptController as ClientReceiptController;
 
 // Home
 Route::inertia('/', 'index')->name('home');
@@ -243,10 +244,9 @@ Route::controller(ClientController::class)
                 
                 Route::get('/checkout/{id}', 'checkout')->name('checkout');
 
-                Route::get('/receipt/{order_number}', 'receipt')->name('receipt');
+                Route::get('/download-receipt/{order_number}', 'downloadReceipt')->name('download.receipt');
 
                 Route::get('/transaction/{reference}', 'orderTransaction')->name('transaction');
-
                 
                 Route::get('/download/{id}', 'downloadReport')->name('download');
             });

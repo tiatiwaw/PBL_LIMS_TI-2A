@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import html2canvas from "html2canvas";
@@ -38,6 +38,62 @@ export default function InvoiceReceipt({ invoice}) {
     pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
     pdf.save(`invoice-${invoice.order.order_number}.pdf`);
   };
+
+  const handleSavePDFToServer = async () => {
+  const element = invoiceRef.current;
+  if (!element) return;
+
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: "#ffffff",
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+
+  const imgWidth = 210;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  const pdf = new jsPDF("p", "mm", [imgWidth, imgHeight]);
+  pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+
+  const pdfBlob = pdf.output("blob");
+
+  const formData = new FormData();
+  formData.append(
+    "invoice_pdf",
+    pdfBlob,
+    `invoice-${invoice.order.order_number}.pdf`
+  );
+  formData.append("order_number", invoice.order.order_number);
+
+  try {
+    const response = await fetch("/api/v1/client/orders/save-invoice-pdf", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Upload gagal - status: " + response.status);
+    }
+
+    const result = await response.json();
+    console.log("PDF berhasil disimpan:", result.path);
+
+  } catch (error) {
+    console.error("Gagal upload PDF:", error.message);
+  }
+};
+
+
+
+  // Otomatis simpan PDF ke server saat invoice tersedia
+  useEffect(() => {
+    if (invoice) {
+      handleSavePDFToServer();
+    }
+  }, [invoice]);
+
 
   return (
     <div className="w-full max-w-md mx-auto p-4">
