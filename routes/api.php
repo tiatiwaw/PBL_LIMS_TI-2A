@@ -64,6 +64,8 @@ Route::prefix('v1')->group(function () {
      * ============================
      */
     Route::post('/auth/login', [AuthController::class, 'login'])->name('api.auth.login');
+    Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])->name('api.auth.forgot-password');
+    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->name('api.auth.reset-password');
 
     /**
      * ============================
@@ -185,7 +187,7 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/{id}', [ClientOrderController::class, 'show']);
                     Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
-                    
+
                     // Route::get('/transaction/{reference}', [ClientTransactionController::class, 'show'])
                     //     ->name('transaction.show');
                     Route::get('/payment/{id}', [TripayController::class, 'paymentChannels']);

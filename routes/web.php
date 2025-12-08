@@ -20,6 +20,8 @@ Route::inertia('/', 'index')->name('home');
 // Auth
 Route::middleware('guest')->group(function () {
     Route::inertia('/auth/login', 'auth/login/index')->name('auth.login.form');
+    Route::inertia('/forgot-password', 'auth/forgot-password/index')->name('auth.forgot-password');
+    Route::inertia('/reset-password', 'auth/reset-password/index')->name('auth.reset-password');
 });
 
 // Admin
@@ -237,11 +239,11 @@ Route::controller(ClientController::class)
                 Route::get('/status/{id}', 'orderStatus')->name('status');
 
                 Route::get('/payment/{id}', 'orderPayment')->name('payment');
-                
+
                 Route::get('/checkout/{id}', 'checkout')->name('checkout');
 
                 Route::get('/transaction/{reference}', 'orderTransaction')->name('transaction');
-                
+
                 Route::get('/download/{id}', 'downloadReport')->name('download');
             });
 
