@@ -120,9 +120,9 @@ class TransactionController extends Controller
         ]);
 
         if ($status === 'PAID') {
-            $orders->update(['status' => 'pending']);
+            $orders->update(['status' => 'paid']);
             
-            $redirectUrl = route('download.receipt', ['order_number' => $orders->order_number]);
+            $redirectUrl = route('receipt.show', ['order_number' => $orders->order_number]);
         }
         
         return response()->json([

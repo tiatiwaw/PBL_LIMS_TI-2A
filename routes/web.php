@@ -270,7 +270,7 @@ Route::controller(ClientController::class)
 
                 Route::get('/payment/{id}', 'orderPayment')->name('payment');
 
-                Route::get('/download-receipt/{order_number}', 'downloadReceipt')->name('download.receipt');
+                Route::get('/receipt/{order_number}', 'downloadReceipt')->name('receipt.show');
 
                 Route::get('/transaction/{reference}', 'orderTransaction')->name('transaction');
             });

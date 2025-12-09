@@ -203,12 +203,14 @@ Route::prefix('v1')->group(function () {
                         ->name('transaction.show');
                     Route::post('/transaction/{order}', [ClientTransactionController::class, 'store'])
                         ->name('transaction.store');
-
+                    Route::get('/receipt/{order_number}', [ClientReceiptController::class, 'index'])
+                        ->name('receipt.show');
+                    
                     Route::get('/download-options/{order_number}', [ClientClientController::class, 'getDownloadOptions'])
                         ->name('download.options');
                     Route::get('/download-report/{id}', [ClientClientController::class, 'downloadReportFile'])
                         ->name('download.report');
-                    Route::get('/download-receipt/{order_number}', [ClientReceiptController::class, 'index'])
+                    Route::get('/download-receipt/{order_number}', [ClientClientController::class, 'downloadReceipt'])
                         ->name('download.receipt');
                     Route::post('/save-invoice-pdf', [ClientReceiptController::class, 'savePDF'])
                         ->name('saveInvoicePDF');
