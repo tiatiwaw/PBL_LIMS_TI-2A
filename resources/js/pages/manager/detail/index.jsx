@@ -141,7 +141,10 @@ export default function ManagerDetailOrder() {
     return (
         <DashboardLayout title="Detail Order" header="Detail Order">
             <div className="max-w-7xl mx-auto space-y-6">
-                <OrderDetailHeader order={order} />
+                <OrderDetailHeader 
+                    order={order} 
+                    backRoute="/manager/orders"
+                />
 
                 <ClientInfoCard
                     client={order.client ?? order.clients ?? { user: {} }}

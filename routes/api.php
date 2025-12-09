@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 // AUTH
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\API\V1\OrderController;
 
 // ADMIN CONTROLLERS
 use App\Http\Controllers\API\V1\Admin\AnalystController;
@@ -67,6 +68,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/auth/login', [AuthController::class, 'login'])->name('api.auth.login');
     Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])->name('api.auth.forgot-password');
     Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->name('api.auth.reset-password');
+    Route::get('/orders/download-report/{id}', [OrderController::class, 'downloadReport'])->name('api.order.download-report');
 
     /**
      * ============================
@@ -207,7 +209,7 @@ Route::prefix('v1')->group(function () {
                     Route::get('/download-report/{id}', [ClientClientController::class, 'downloadReportFile'])
                         ->name('download.report');
                     Route::get('/download-receipt/{order_number}', [ClientReceiptController::class, 'index'])
-                        ->name('receipt');
+                        ->name('download.receipt');
                     Route::post('/save-invoice-pdf', [ClientReceiptController::class, 'savePDF'])
                         ->name('saveInvoicePDF');
                 });
