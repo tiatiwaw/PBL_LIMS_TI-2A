@@ -12,6 +12,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->validateCsrfTokens(
+            except: [
+                'callback',
+                'https://f48a87bc30d7.ngrok-free.app/callback',
+                'api/client/orders/save-invoice-pdf',
+                '*orders/save-invoice-pdf*'
+            ]
+        );
+
         // register middleware using alias
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
@@ -28,11 +37,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
 
-        $middleware->redirectGuestsTo(function ($request) {
-            if ($request->expectsJson()) {
-                return null;
+        $middleware->redirectGuestsTo(fn($request) => route('auth.login.form'));
+
+        $middleware->redirectUsersTo(function ($request) {
+            if ($request->user()) {
+                return $request->user()->getRedirectRoute();
             }
-            return route('auth.login.form');
+            return '/';
         });
     })
     ->withExceptions(function (Exceptions $exceptions) {

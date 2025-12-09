@@ -5,6 +5,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
 import { useSuppliers } from "@/hooks/useAdmin";
 import { editSupplierFields } from "@/utils/fields/admin";
+import { exportSupplierReportPDF } from "@/utils/pdf/export/tools-export";
 import { useMemo, useState } from "react";
 
 export default function AdminSuppliersPage() {
@@ -19,6 +20,8 @@ export default function AdminSuppliersPage() {
     };
 
     const columns = useMemo(() => getSuppliersColumns({ onShowDetail: handleShowDetail }), []);
+
+    const handleExport = () => exportSupplierReportPDF(suppliers);
 
     const handleCreate = async (formData) => createSupplier.mutateAsync(formData);
 
@@ -58,6 +61,8 @@ export default function AdminSuppliersPage() {
                 onCreate={handleCreate}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
+                onExport={handleExport}
+                showExport={true}
                 createTitle="Tambah Pemasok"
                 editTitle="Edit Pemasok"
                 deleteTitle="Hapus Pemasok"

@@ -6,6 +6,7 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editStandardFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useReferences } from "@/hooks/useAdmin";
+import { exportReferenceReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function AdminStandardsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +20,8 @@ export default function AdminStandardsPage() {
     };
 
     const columns = useMemo(() => getStandardsColumns({ onShowDetail: handleShowDetail }), []);
+
+    const handleExport = () => exportReferenceReportPDF(references);
 
     const handleCreate = async (formData) => createReference.mutateAsync(formData);
 
@@ -61,6 +64,8 @@ export default function AdminStandardsPage() {
                 createTitle="Tambah Standar Referensi"
                 editTitle="Edit Standar Referensi"
                 deleteTitle="Hapus Standar Referensi"
+                showExport={true}
+                onExport={handleExport}
             />
             <ReferenceDetailSheet data={selectedReference} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>

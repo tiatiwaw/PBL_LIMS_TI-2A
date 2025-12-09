@@ -15,7 +15,7 @@ class ReagentController extends Controller
     public function index()
     {
         try {
-            $reagents = Reagent::with(['suppliers', 'grades', 'n_parameter_methods'])->get();
+            $reagents = Reagent::with(['suppliers', 'grades', 'unit_values', 'n_parameter_methods'])->get();
 
             return response()->json($reagents);
         } catch (Exception $e) {
@@ -36,9 +36,11 @@ class ReagentController extends Controller
             $validated = $request->validate([
                 'supplier_id' => 'required|exists:suppliers,id',
                 'grade_id' => 'required|exists:grades,id',
+                'unit_value_id' => 'required|exists:unit_values,id',
                 'name' => 'required|string|max:255',
                 'formula' => 'required|string|max:255',
                 'batch_number' => 'required|string|max:255',
+                'stock' => 'required|integer|min:1',
                 'storage_location' => 'required|string|max:255',
             ]);
 
@@ -91,9 +93,11 @@ class ReagentController extends Controller
             $validated = $request->validate([
                 'supplier_id' => 'required|exists:suppliers,id',
                 'grade_id' => 'required|exists:grades,id',
+                'unit_value_id' => 'required|exists:unit_values,id',
                 'name' => 'required|string|max:255',
                 'formula' => 'required|string|max:255',
                 'batch_number' => 'required|string|max:255',
+                'stock' => 'required|integer|min:1',
                 'storage_location' => 'required|string|max:255',
             ]);
 
@@ -130,6 +134,29 @@ class ReagentController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghapus reagent.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Menampilkan reagent dengan stok yang menipis (< 5).
+     */
+    public function lowStockNotifications()
+    {
+        try {
+            $lowStockReagents = Reagent::with(['suppliers', 'grades', 'unit_values'])
+                ->where('stock', '<', 5)
+                ->orderBy('stock', 'asc')
+                ->get();
+
+            $count = $lowStockReagents->count();
+
+            return response()->json($lowStockReagents);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data notifikasi stok.',
                 'error' => $e->getMessage(),
             ], 500);
         }

@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Testing\Fluent\Concerns\Has;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -49,6 +47,26 @@ class User extends Authenticatable
         ];
     }
 
+    public function getRedirectRoute(): string
+    {
+        $roleRedirects = [
+            'admin' => 'admin.index',
+            'manager' => 'manager.index',
+            'analyst' => 'analyst.index',
+            'supervisor' => 'supervisor.order.index',
+            'staff' => 'staff.order.all',
+            'client' => 'client.index'
+        ];
+
+        $routeName = $roleRedirects[$this->role] ?? 'index';
+
+        try {
+            return route($routeName);
+        } catch (\Exception $e) {
+            return route('index');
+        }
+    }
+
     public function clients()
     {
         return $this->hasOne(Client::class, 'user_id');
@@ -57,5 +75,10 @@ class User extends Authenticatable
     public function analyst()
     {
         return $this->hasOne(Analyst::class, 'user_id');
+    }
+
+    public function supervisors()
+    {
+        return $this->hasMany(Order::class, 'supervisor_id');
     }
 }

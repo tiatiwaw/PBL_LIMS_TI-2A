@@ -18,13 +18,16 @@ class OrderController extends Controller
     public function show($id): JsonResponse
     {
         $user = Auth::user();
+
+        // Ambil client ID dari user yang login
+        $clientId = $user->clients->id;
         
         $order = Order::with([
                 'samples.sample_categories', 
                 'clients',
                 'analysesMethods' // Gunakan relationship many-to-many
             ])
-            ->where('client_id', $user->id)
+            ->where('client_id',$clientId)
             ->where('id', $id)
             ->first();
 
@@ -88,6 +91,30 @@ class OrderController extends Controller
                 'order_details' => $orderData,
                 'table_data_sample' => $tableDataSamples,
             ]
-        ]);
+        ]); 
     }
+
+        /**
+     * Download laporan hasil analisis (PDF/DOC/ZIP)
+     */
+    public function downloadReport($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        if (!$order->result_value) {
+            abort(404, 'Laporan belum digenerate.');
+        }
+
+        $realPath = storage_path('app/public/reports/client/' . $order->report_file_path);
+
+        if (!file_exists($realPath)) {
+            abort(404, 'File laporan tidak ditemukan.');
+        }
+
+        return response()->download(
+            $realPath,
+            'Laporan_Order_' . $order->id . '.pdf',
+            ['Content-Type' => 'application/pdf']
+        );
+    }    
 }

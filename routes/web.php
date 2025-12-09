@@ -6,34 +6,28 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\AnalystController;
+use App\Http\Controllers\API\V1\Payment\TripayCallbackController;
 // use App\Http\Controllers\API\V1\AuthController as V1AuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\SupervisorController;
 use Inertia\Inertia;
+use App\Http\Controllers\API\V1\Client\ReceiptController as ClientReceiptController;
 
 // Home
-Route::controller(HomeController::class)->group(function () {
-    Route::get('/', 'index')->name('index');
-});
+Route::inertia('/', 'index')->name('home');
+
 
 Route::get('/profile', function () {
     return Inertia::render('profile');
 })->name('profile');
 
 // Auth
-Route::controller(AuthController::class)
-    ->prefix('auth')
-    ->name('auth.')
-    ->group(function () {
-        Route::middleware('guest')->group(function () {
-            Route::get('/login', 'index')->name('login.form');
-        });
-        Route::middleware('auth')->group(function () {
-            Route::post('/logout', 'logout')->name('logout');
-            Route::get('/logout', 'logout');
-        });
-    });
+Route::middleware('guest')->group(function () {
+    Route::inertia('/auth/login', 'auth/login/index')->name('auth.login.form');
+    Route::inertia('/forgot-password', 'auth/forgot-password/index')->name('auth.forgot-password');
+    Route::inertia('/reset-password', 'auth/reset-password/index')->name('auth.reset-password');
+});
 
 // Admin
 Route::middleware(['auth', 'role:admin'])
@@ -74,7 +68,12 @@ Route::middleware(['auth', 'role:admin'])
         })->name('order.show');
 
         Route::inertia('/users', 'admin/users/index')->name('users');
-        Route::inertia('/reports', 'admin/reports/index')->name('reports');
+        Route::prefix('reports')->as('reports.')->group(function () {
+            Route::inertia('/orders', 'admin/reports/orders')->name('orders');
+            Route::inertia('/inventory', 'admin/reports/inventory')->name('inventory');
+            Route::inertia('/transactions', 'admin/reports/transactions')->name('transactions');
+            Route::inertia('/users', 'admin/reports/users')->name('users');
+        });
     });
 
 // Manager
@@ -82,53 +81,103 @@ Route::middleware(['auth', 'role:manager'])
     ->prefix('manager')
     ->as('manager.')
     ->group(function () {
-        Route::inertia('/', 'manager/index')->name('index');
 
-        Route::prefix('report-validation')->as('report.validation.')->group(function () {
-            Route::inertia('/', 'manager/report-validation/index')->name('index');
+        // INDEX
+        Route::get('/', fn() => Inertia::render('manager/index'))
+            ->name('index');
+
+        // REPORT VALIDATION
+        Route::prefix('report-validations')->as('report-validations.')->group(function () {
+            Route::get('/', fn() => Inertia::render('manager/report-validation/index'))
+                ->name('index');
+
             Route::get('/{id}', function ($id) {
                 return Inertia::render('manager/detail/index', [
                     'id' => $id,
-                    'canValidate' => true,
                 ]);
             })->name('show');
         });
-
+        // ORDERS
         Route::prefix('orders')->as('orders.')->group(function () {
-            Route::inertia('/', 'manager/orders/index')->name('index');
+            Route::get('/', fn() => Inertia::render('manager/orders/index'))
+                ->name('index');
+
             Route::get('/{id}', function ($id) {
-                return Inertia::render('manager/detail/index', [
+                return Inertia::render('manager/orders/index', [
                     'id' => $id,
-                    'canValidate' => false,
                 ]);
             })->name('show');
         });
+        Route::prefix('resources')->as('resources.')->group(function () {
+            Route::inertia('/equipments', 'manager/tools/equipments/index')->name('equipments');
+            Route::inertia('/brands', 'manager/tools/brands/index')->name('brands');
+            Route::inertia('/reagents', 'manager/materials/reagents/index')->name('reagents');
+            Route::inertia('/grades', 'manager/materials/grades/index')->name('grades');
+            Route::inertia('/suppliers', 'manager/materials/suppliers/index')->name('suppliers');
+        });
+
+
+        Route::prefix('tests')->as('tests.')->group(function () {
+            Route::inertia('/categories', 'manager/test/category/index')->name('categories');
+            Route::inertia('/parameters', 'manager/test/parameter/index')->name('parameters');
+            Route::inertia('/methods', 'manager/test/method/index')->name('methods');
+            Route::inertia('/units', 'manager/test/unit-value/index')->name('units');
+            Route::inertia('/references', 'manager/test/standard-reference/index')->name('references');
+        });
+
+        Route::inertia('/reports', 'manager/reports/index')->name('reports');
+
+        Route::inertia('/orders', 'manager/orders/index')->name('orders');
+
+        Route::get('/orders/{id}', function ($id) {
+            return Inertia::render('manager/detail/index', [
+                'id' => $id,
+                'canValidate' => false,
+            ]);
+        })->name('order.show');
 
         Route::inertia('/users', 'manager/users/index')->name('users');
     });
 
-
 // Staff
-Route::controller(StaffController::class)
-    ->middleware(['auth', 'role:staff'])
+Route::middleware(['auth', 'role:staff'])
     ->prefix('staff')
     ->name('staff.')
     ->group(function () {
-        Route::redirect('/', '/staff/manage-clients');
+        Route::redirect('/', '/staff/orders/all-orders');
 
         // Manage Clients
         Route::prefix('manage-clients')
             ->name('client.')
             ->group(function () {
-                Route::get('/', 'index')->name('index');
+                Route::get('/', [StaffController::class, 'index'])->name('index');
+                Route::post('/', [StaffController::class, 'store'])->name('store');
+                Route::put('/{id}', [StaffController::class, 'update'])->name('update');
+                Route::delete('/{id}', [StaffController::class, 'destroy'])->name('delete');
             });
 
+        // Samples
+        Route::prefix('samples')
+            ->name('sample.')
+            ->group(function () {
+                Route::post('/', [StaffController::class, 'storeSample'])->name('store');
+            });
 
         // Orders
         Route::prefix('orders')
             ->name('order.')
             ->group(function () {
-                Route::get('/', 'indexOrder')->name('index');
+                Route::inertia('/all-orders', 'staff/orders/all-orders/index')->name('all');
+                Route::get('/all-orders/{id}', function ($id) {
+                    return Inertia::render('staff/orders/detail/index', [
+                        'id' => $id,
+                        'canValidate' => true,
+                    ]);
+                })->name('show');
+                Route::inertia('/make-order', 'staff/orders/make-order/index')->name('index');
+                Route::get('/', [StaffController::class, 'indexOrder'])->name('index');
+                Route::post('/', [StaffController::class, 'storeOrder'])->name('store');
+                Route::post('/sample', [StaffController::class, 'storeSample'])->name('storeSample');
             });
     });
 
@@ -138,7 +187,30 @@ Route::controller(SupervisorController::class)
     ->prefix('supervisor')
     ->name('supervisor.')
     ->group(function () {
-        Route::get('/', 'index')->name('index');
+        Route::redirect('/', '/supervisor/orders/follow-up')->name('index');
+
+        // Order
+        Route::prefix('orders')
+            ->name('order.')
+            ->group(function () {
+                Route::get('/history', 'ordersHistory')->name('history');
+                Route::get('/history/{id}', 'ordersHistoryDetail')->name('history.detail');
+                Route::prefix('follow-up')->group(function () {
+                    Route::get('/', 'ordersFollowUp')->name('index');
+                    Route::get('/{id}', 'ordersDetail')->name('detail');
+                    Route::get('/{id}/parameters', 'parameters')->name('parameter.index');
+                    Route::get('/{id}/parameters/detail', 'parametersDetail')->name('parameter.detail');
+                    Route::get('/{id}/confirm-validation', 'confirmValidation')->name('validation');
+                    Route::get('/{id}/repeat-test', 'repeatTest')->name('repeat-test');
+                });
+            });
+
+        // Analysts
+        Route::prefix('analysts')
+            ->name('analyst.')
+            ->group(function () {
+                Route::get('/', 'analysts')->name('index');
+            });
     });
 
 // Analyst
@@ -184,14 +256,28 @@ Route::controller(ClientController::class)
         Route::get('/', 'index')->name('index');
         Route::get('/profile', 'profile')->name('profile');
         Route::get('/history', 'history')->name('history');
+        Route::get('/payment', 'payment')->name('payment');
+        Route::get('/report', 'report')->name('report');
 
+        
         // Orders - sesuaikan dengan API structure
         Route::prefix('orders')
             ->name('orders.')
             ->group(function () {
                 Route::get('/{id}', 'orderDetail')->name('show');
                 Route::get('/status/{id}', 'orderStatus')->name('status');
+
+                Route::get('/payment/{id}', 'orderPayment')->name('payment');
+
+                Route::get('/receipt/{order_number}', 'downloadReceipt')->name('receipt.show');
+
+                Route::get('/transaction/{reference}', 'orderTransaction')->name('transaction');
             });
+
+        // History
+        Route::get('/history', 'history')->name('history');
     });
+
+Route::post('/callback', [TripayCallbackController::class, 'handle']);
 
 require __DIR__ . '/auth.php';

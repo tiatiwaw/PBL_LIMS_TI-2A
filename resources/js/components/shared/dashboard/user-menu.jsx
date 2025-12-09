@@ -1,5 +1,5 @@
-import { ChevronDown, User, Settings, LogOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ChevronDown, User, Settings, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -7,12 +7,12 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Link } from '@inertiajs/react';
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link } from "@inertiajs/react";
 
 export const UserMenu = ({ user, onLogout }) => {
-    const userInitial = user?.name?.charAt(0)?.toUpperCase() || 'U';
+    const userInitial = user?.name?.charAt(0)?.toUpperCase() || "U";
 
     const profileUrl = '/profile';
 
@@ -22,20 +22,25 @@ export const UserMenu = ({ user, onLogout }) => {
                 <Button
                     variant="ghost"
                     className="
-                        flex items-center gap-3 
+                        flex items-center gap-2 md:gap-3 
                         bg-white/10 hover:bg-white/20 
                         text-white rounded-xl 
-                        px-4 h-14 group
+                        px-3 md:px-4 h-10 md:h-14 group
                         transition-all duration-300
                     "
                 >
-                    <Avatar className="w-9 h-9 ring-2 ring-white/30 ring-offset-2 ring-offset-transparent">
-                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user?.role)}`} alt={user?.name} />
+                    <Avatar className="w-4 h-4 md:w-9 md:h-9 ring-2 ring-white/30 ring-offset-2 ring-offset-transparent">
+                        <AvatarImage
+                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
+                                user?.role || "user"
+                            )}`}
+                            alt={user?.name}
+                        />
                         <AvatarFallback className="bg-white/20 text-white font-semibold">
                             {userInitial}
                         </AvatarFallback>
                     </Avatar>
-                    <div className="text-left">
+                    <div className="text-left hidden md:block">
                         <p className="font-semibold text-sm leading-none text-white group-hover:text-gray-300">
                             {user?.name}
                         </p>
@@ -43,7 +48,10 @@ export const UserMenu = ({ user, onLogout }) => {
                             {user?.role}
                         </p>
                     </div>
-                    <ChevronDown size={16} className="opacity-70 group-hover:text-gray-300" />
+                    <ChevronDown
+                        size={16}
+                        className="opacity-70 group-hover:text-gray-300 hidden md:block"
+                    />
                 </Button>
             </DropdownMenuTrigger>
 
@@ -62,14 +70,17 @@ export const UserMenu = ({ user, onLogout }) => {
                             {user?.name}
                         </p>
                         <p className="text-xs leading-none text-white/70">
-                            {user?.email || 'admin@example.com'}
+                            {user?.email || "admin@example.com"}
                         </p>
                     </div>
                 </DropdownMenuLabel>
 
                 <DropdownMenuSeparator className="bg-white/10" />
 
-                <DropdownMenuItem className="hover:!bg-primary-hijauTerang cursor-pointer py-2.5">
+                <DropdownMenuItem
+                    onClick={() => (window.location.href = profileUrl)}
+                    className="hover:!bg-primary-hijauTerang cursor-pointer py-2.5"
+                >
                     <User className="mr-2 h-4 w-4" />
                     <Link href={route('profile')} className="w-full block">
                         Profile

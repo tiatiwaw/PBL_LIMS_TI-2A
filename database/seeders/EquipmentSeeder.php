@@ -25,9 +25,8 @@ class EquipmentSeeder extends Seeder
                 'brand_type_id' => $eppendorf->id,
                 'serial_number' => 'EPD-001',
                 'purchase_year' => '2022-01-15',
-                'calibration_schedule' => $calibration_values[array_rand($calibration_values)],
-               
-                'status' => $status_values[array_rand($status_values)], // <-- FIX: Baik (B)
+                'calibration_schedule' => 'internal',
+                'status' => 'available',
                 'location' => 'Laboratorium Kimia',
             ],
             [
@@ -45,9 +44,8 @@ class EquipmentSeeder extends Seeder
                 'brand_type_id' => $hanna->id,
                 'serial_number' => 'HAN-123',
                 'purchase_year' => '2023-03-05',
-                'calibration_schedule' => $calibration_values[array_rand($calibration_values)],
-               
-                'status' => $status_values[array_rand($status_values)], // <-- FIX: Rusak (R)
+                'calibration_schedule' => 'internal',
+                'status' => 'unavailable',
                 'location' => 'Laboratorium Mikrobiologi',
             ],
             [
@@ -63,7 +61,7 @@ class EquipmentSeeder extends Seeder
         ];
 
         foreach ($equipments as $eq) {
-             Equipment::firstOrCreate(['serial_number' => $eq['serial_number']], $eq);
+            Equipment::firstOrCreate(['serial_number' => $eq['serial_number']], $eq);
         }
     }
 }

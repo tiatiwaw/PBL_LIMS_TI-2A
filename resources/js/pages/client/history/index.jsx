@@ -1,3 +1,4 @@
+
 // resources/js/pages/client/history/index.jsx
 import React from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
@@ -76,7 +77,6 @@ export default function HistoryPage({ auth, orderId }) {
       header="Status Pesanan Anda"
     >
       <div className="w-full flex flex-col px-8 pt-8 pb-6 bg-gradient-to-br from-primary-hijauTerang via-white to-primary-toska overflow-auto rounded-3xl shadow-xl border border-primary-hijauPudar min-h-[75vh]">
-        
         <div className="flex-shrink-0 mb-8">
           <div className="inline-flex items-center gap-3 bg-primary-hijauTua text-white px-6 py-3 rounded-2xl shadow-md">
             <div className="w-2 h-2 rounded-full bg-primary-hijauMuda animate-pulse" />
@@ -86,7 +86,7 @@ export default function HistoryPage({ auth, orderId }) {
           </div>
         </div>
 
-        <div className="flex-grow flex flex-col justify-center w-full">
+        <div className="flex-grow flex flex-col justify-start w-full">
           <div className="relative w-full py-8 overflow-x-auto">
             <div className="relative flex flex-col lg:flex-row items-start lg:items-center gap-8 lg:gap-40 min-w-max px-5">
 

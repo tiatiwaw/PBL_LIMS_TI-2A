@@ -3,6 +3,7 @@ import DetailDialog from "../dialog/detail-dialog";
 const statusVariantMap = {
     done: "success",
     in_progress: "warning",
+    pending: "error",
 };
 
 const conditionVariantMap = {

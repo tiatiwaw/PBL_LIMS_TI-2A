@@ -66,4 +66,27 @@ export const adminService = {
     orders: serviceMethods("/admin/orders", {
         useFormData: false,
     }),
+
+    reports_orders: serviceMethods("/admin/reports/orders", {
+        useFormData: false,
+    }),
+
+    reports_inventory: serviceMethods("/admin/reports/inventory", {
+        useFormData: false,
+    }),
+
+    reports_transactions: serviceMethods("/admin/reports/transactions", {
+        useFormData: false,
+    }),
+
+    reports_users: serviceMethods("/admin/reports/users", {
+        useFormData: false,
+    }),
+
+    low_stock_reagents: serviceMethods(
+        "/admin/materials/reagents/low-stock/notifications",
+        {
+            useFormData: false,
+        }
+    ),
 };

@@ -14,7 +14,12 @@ import {
     ArrowDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import SearchFilter from "./searchfilter";
 import {
@@ -26,7 +31,10 @@ import {
 export function DataTableCard({ className, ...props }) {
     return (
         <Card
-            className={cn("w-full rounded-2xl shadow-lg border-none", className)}
+            className={cn(
+                "w-full rounded-2xl shadow-lg border-none",
+                className
+            )}
             {...props}
         />
     );
@@ -35,6 +43,7 @@ export function DataTableCard({ className, ...props }) {
 export function DataTableHeader({
     showSearch,
     showFilter,
+    showExport,
     filterOptions,
     searchTerm,
     onSearchChange,
@@ -42,6 +51,7 @@ export function DataTableHeader({
     onFilterChange,
     showCreate,
     onCreate,
+    onExport,
 }) {
     return (
         <CardHeader className="pb-0">
@@ -54,6 +64,8 @@ export function DataTableHeader({
                 filterValue={filterValue}
                 onFilterChange={onFilterChange}
                 onCreate={onCreate}
+                onExport={onExport}
+                showExport={showExport}
                 showCreate={showCreate}
             />
         </CardHeader>
@@ -73,10 +85,11 @@ export function DataTableContent({
     const tableColumns = columns.map((col) => ({
         accessorKey: col.accessorKey,
         header: col.header,
-        enableSorting: !["no", "select"].includes(col.accessorKey),
+        enableSorting: !["no", "aksi", "select"].includes(col.accessorKey),
         cell: (info) => {
             const row = info.row.original;
-            if (col.accessorKey === "no") return startIndex + info.row.index + 1;
+            if (col.accessorKey === "no")
+                return startIndex + info.row.index + 1;
             if (col.cell)
                 return col.cell({
                     row,
@@ -106,21 +119,35 @@ export function DataTableContent({
                             className="bg-primary-hijauTua hover:bg-primary-hijauTua"
                         >
                             {headerGroup.headers.map((header, index) => {
-                                const isSorted = sorting.length > 0 && sorting[0].id === header.column.id ? (sorting[0].desc ? 'desc' : 'asc') : false;
+                                const isSorted =
+                                    sorting.length > 0 &&
+                                    sorting[0].id === header.column.id
+                                        ? sorting[0].desc
+                                            ? "desc"
+                                            : "asc"
+                                        : false;
                                 const canSort = header.column.getCanSort();
                                 const handleToggleSorting = () => {
                                     if (!canSort) return;
 
                                     const currentId = header.column.id;
-                                    const isCurrentlySorted = sorting.length > 0 && sorting[0].id === currentId;
-                                    const isDesc = isCurrentlySorted ? sorting[0].desc : false;
+                                    const isCurrentlySorted =
+                                        sorting.length > 0 &&
+                                        sorting[0].id === currentId;
+                                    const isDesc = isCurrentlySorted
+                                        ? sorting[0].desc
+                                        : false;
 
                                     let newSorting = [];
                                     if (isCurrentlySorted && isDesc) {
                                     } else if (isCurrentlySorted) {
-                                        newSorting = [{ id: currentId, desc: true }];
+                                        newSorting = [
+                                            { id: currentId, desc: true },
+                                        ];
                                     } else {
-                                        newSorting = [{ id: currentId, desc: false }];
+                                        newSorting = [
+                                            { id: currentId, desc: false },
+                                        ];
                                     }
                                     setSorting(newSorting);
                                 };
@@ -132,13 +159,20 @@ export function DataTableContent({
                                         className={cn(
                                             "text-white font-bold select-none",
                                             canSort && "cursor-pointer",
-                                            header.column.id === "no" && "text-center",
+                                            header.column.id === "no" &&
+                                                "text-center",
                                             index === 0 ? "rounded-l-lg" : "",
-                                            index === headerGroup.headers.length - 1 ? "rounded-r-lg" : ""
+                                            index ===
+                                                headerGroup.headers.length - 1
+                                                ? "rounded-r-lg"
+                                                : ""
                                         )}
                                     >
                                         <div className="flex items-center gap-2">
-                                            {flexRender(header.column.columnDef.header, header.getContext())}
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
                                             {canSort &&
                                                 (isSorted === "asc" ? (
                                                     <ArrowUp className="w-3 h-3 opacity-80" />
@@ -170,9 +204,11 @@ export function DataTableContent({
                                         key={cell.id}
                                         className={cn(
                                             "py-4 font-medium",
-                                            cell.column.id === "no" && "text-center",
+                                            cell.column.id === "no" &&
+                                                "text-center",
                                             index === 0 ? "rounded-l-lg" : "",
-                                            index === row.getVisibleCells().length - 1
+                                            index ===
+                                                row.getVisibleCells().length - 1
                                                 ? "rounded-r-lg"
                                                 : ""
                                         )}
@@ -254,13 +290,11 @@ export function DataTablePagination({ currentPage, totalPages, goToPage }) {
                         <Button
                             key={page}
                             size="sm"
-                            variant={
-                                currentPage === page ? "default" : "ghost"
-                            }
+                            variant={currentPage === page ? "default" : "ghost"}
                             onClick={() => goToPage(page)}
                             className={cn(
                                 currentPage === page &&
-                                "bg-primary-hijauTua hover:bg-primary-hijauTua/90"
+                                    "bg-primary-hijauTua hover:bg-primary-hijauTua/90"
                             )}
                         >
                             {page}

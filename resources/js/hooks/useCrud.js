@@ -14,6 +14,9 @@ export const useCrud = (service, key, label, options = {}) => {
         ? useQuery({
               queryKey: [key, options.query],
               queryFn: () => service.getAll(options.query || {}),
+              staleTime: 5 * 60 * 1000, // 5 menit
+              refetchOnMount: "stale",
+              refetchOnWindowFocus: "stale",
           })
         : null;
 
@@ -49,7 +52,7 @@ export const useCrud = (service, key, label, options = {}) => {
 
     return {
         data: getAllQuery?.data,
-        isLoading: getAllQuery?.isLoading,
+        isLoading: getAllQuery?.isLoading || getAllQuery?.isRefetching,
         error: getAllQuery?.error,
 
         create: createMutation

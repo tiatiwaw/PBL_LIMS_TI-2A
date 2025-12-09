@@ -22,12 +22,24 @@ class RoleMiddleware
                 : redirect()->route('auth.login.form');
         }
 
-        if (!in_array(Auth::user()->role, $roles)) {
-            return $request->expectsJson()
-                ? response()->json(['message' => 'Forbidden'], 403)
-                : abort(403, 'Unauthorized access.');
+        $user = Auth::user();
+
+        if (empty($roles)) {
+            return $next($request);
         }
 
-        return $next($request);
+        foreach ($roles as $role) {
+            if ($user->hasRole($role)) {
+                return $next($request);
+            }
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Oops Not Found!',
+            ], 404);
+        }
+
+        return inertia('error/not-found')->toResponse($request)->setStatusCode(404);
     }
 }

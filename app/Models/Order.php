@@ -13,6 +13,7 @@ class Order extends Model
 
     protected $fillable = [
         'client_id',
+        'supervisor_id',
         'order_number',
         'title',
         'result_value',
@@ -20,6 +21,7 @@ class Order extends Model
         'estimate_date',
         'report_issued_at',
         'report_file_path',
+        'receipt_file_path',
         'notes',
         'order_type',
         'status'
@@ -39,22 +41,27 @@ class Order extends Model
             'order_id',                  // foreign key di pivot table
             'analyses_method_id'         // related key di pivot table
         )->withPivot('description', 'price') // kolom tambahan di pivot
-         ->withTimestamps();            // jika pivot table memiliki timestamps
+            ->withTimestamps();            // jika pivot table memiliki timestamps
     }
 
     public function samples()
     {
         return $this->belongsToMany(
-            Sample::class, 
+            Sample::class,
             'n_order_samples',
             'order_id',
             'sample_id'
-            )->withPivot('sample_volume', 'created_at', 'updated_at'); // Tambahkan pivot columns
+        )->withPivot('sample_volume', 'created_at', 'updated_at'); // Tambahkan pivot columns
     }
 
     public function clients()
     {
         return $this->belongsTo(Client::class, 'client_id');
+    }
+
+    public function supervisors()
+    {
+        return $this->belongsTo(User::class, 'supervisor_id');
     }
 
     public function n_analyses_methods_orders()
@@ -70,5 +77,57 @@ class Order extends Model
     public function analysts()
     {
         return $this->belongsToMany(Analyst::class, 'n_analysts', 'order_id', 'analyst_id');
+    }
+
+    /**
+     * Relasi ke Transaction terkait dari tabel pivot NAnalysesMethodsOrder
+     */
+    public function transaction()
+    {
+        return Transaction::whereHas('n_analyses_methods_order', function($query) {
+            $query->where('order_id', $this->id);
+        })
+        ->latest()
+        ->first();
+    }
+
+    /**
+     * Accessor: Status kombinasi
+     */
+    public function getCombinedStatusAttribute()
+    {
+        $transaction = $this->transaction();
+        
+        if ($this->status === 'received' && !$transaction) {
+            return 'pending_payment';
+        }
+        
+        if ($transaction && $transaction->status === 'unpaid') {
+            return 'pending_payment';
+        }
+        
+        if ($transaction && $transaction->status === 'paid' && $this->status === 'received') {
+            return 'in_progress';
+        }
+        
+        return $this->status;
+    }
+
+    /**
+     * Status pembayaran
+     */
+    public function getPaymentStatusAttribute()
+    {
+        $transaction = $this->transaction();
+        return $transaction ? $transaction->status : 'unpaid';
+    }
+
+    /**
+     * Cek apakah sudah dibayar
+     */
+    public function getIsPaidAttribute()
+    {
+        $transaction = $this->transaction();
+        return $transaction && $transaction->status === 'paid';
     }
 }

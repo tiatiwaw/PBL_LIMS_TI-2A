@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 
 export default function MethodInfoCard({ method }) {
+    if (!method) {
+        return null;
+    }
     return (
         <Card className="border border-slate-200 shadow-xl bg-white">
             <CardHeader className="bg-primary-hijauTua text-white rounded-t-2xl">
@@ -46,9 +49,7 @@ export default function MethodInfoCard({ method }) {
                         <Clock className="w-4 h-4" />
                         <span>Durasi</span>
                     </div>
-                    <Badge variant="info">
-                        {method.duration}
-                    </Badge>
+                    <Badge variant="info">{method.duration}</Badge>
                 </div>
 
                 <div className="space-y-2">
@@ -56,9 +57,7 @@ export default function MethodInfoCard({ method }) {
                         <Calendar className="w-4 h-4" />
                         <span>Masa Berlaku</span>
                     </div>
-                    <Badge variant="success">
-                        {method.validity_period}
-                    </Badge>
+                    <Badge variant="success">{method.validity_period}</Badge>
                 </div>
 
                 <div className="space-y-2 col-span-2">

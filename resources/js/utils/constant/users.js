@@ -1,5 +1,3 @@
-import { methods } from "@/data/staff/methods";
-
 export const FILTER_OPTIONS = [
     { value: "all", label: "All Role" },
     { value: "client", label: "Client" },
@@ -35,5 +33,22 @@ export const ENTITY_CONFIG = {
         description: "Pilih salah satu atau beberapa sampel untuk order ini",
         createTitle: "Tambah Sampel Baru",
         emptyMessage: "Tidak ada sampel tersedia",
+    },
+    reagents: {
+        title: "Pilih Reagen",
+        description: "Pilih salah satu atau beberapa reagen untuk sampel ini",
+        emptyMessage: "Tidak ada reagen tersedia",
+    },
+    equipments: {
+        title: "Pilih Equipment",
+        description:
+            "Pilih salah satu atau beberapa equipment untuk sampel ini",
+        emptyMessage: "Tidak ada equipment tersedia",
+    },
+    analysts: {
+        title: "Pilih Analis",
+        description: "Pilih salah satu atau beberapa analis untuk order ini",
+        createTitle: "Tambah Analis Baru",
+        emptyMessage: "Tidak ada analis tersedia",
     },
 };

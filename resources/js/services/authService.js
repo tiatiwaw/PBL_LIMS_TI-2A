@@ -1,13 +1,10 @@
 import api from "@/lib/api";
+import { serviceMethods } from "./baseService";
 
 export const authService = {
     login: async (credentials) => {
-        try {
-            const response = await api.post("/auth/login", credentials);
-            return response.data;
-        } catch (error) {
-            handleAuthError(error, "Login failed");
-        }
+        const response = await api.post("/auth/login", credentials);
+        return response.data;
     },
 
     logout: async () => {
@@ -18,12 +15,15 @@ export const authService = {
         }
     },
 
-    getUser: async () => {
+    downloadReport: async (orderId) => {
         try {
-            const response = await api.get("/auth/user");
-            return response.data;
+            const response = await api.get(`/orders/download-report/${orderId}`, {
+                responseType: 'blob',
+            });
+            return response;
         } catch (error) {
-            handleAuthError(error, "Failed to fetch user data");
+            // Re-throw dengan info yang lebih lengkap
+            throw error;
         }
     },
 };
