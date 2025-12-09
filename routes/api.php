@@ -179,29 +179,37 @@ Route::prefix('v1')->group(function () {
             ->name('api.client.')
             ->group(function () {
 
-                Route::get('/', [ClientClientController::class, 'index'])->name('index');
-                Route::get('/profile', [ClientProfileController::class, 'show'])->name('profile');
-                Route::post('/profile/update-photo', [ClientProfileController::class, 'updatePhoto'])->name('updatePhoto');
-                Route::post('profile/update-phone', [ClientProfileController::class, 'updatePhone'])->name('updatePhone');
-                Route::post('profile/change-password', [ClientProfileController::class, 'changePassword'])->name('client.changePassword');
+                Route::get('/', [ClientClientController::class, 'index'])
+                    ->name('index');
+                Route::get('/profile', [ClientProfileController::class, 'show'])
+                    ->name('profile');
+                Route::post('/profile/update-photo', [ClientProfileController::class, 'updatePhoto'])
+                    ->name('updatePhoto');
+                Route::post('profile/update-phone', [ClientProfileController::class, 'updatePhone'])
+                    ->name('updatePhone');
+                Route::post('profile/change-password', [ClientProfileController::class, 'changePassword'])
+                    ->name('client.changePassword');
 
 
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/{id}', [ClientOrderController::class, 'show']);
-                    Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
+                    Route::get('status/{id}', [ClientHistoryController::class, 'show'])
+                        ->name('status');
                     
-                    Route::get('/transaction/{reference}', [ClientTransactionController::class, 'show'])->name('transaction.show');
                     Route::get('/payment/{id}', [TripayController::class, 'paymentChannels']);
+                    Route::get('/transaction/{reference}', [ClientTransactionController::class, 'show'])
+                        ->name('transaction.show');
                     Route::post('/transaction/{order}', [ClientTransactionController::class, 'store'])
                         ->name('transaction.store');
-                    Route::get('/download-receipt/{order_number}', [ClientReceiptController::class, 'index'])->name('receipt');
-                    Route::post('/save-invoice-pdf', [ClientReceiptController::class, 'savePDF'])->name('saveInvoicePDF');
+
                     Route::get('/download-options/{order_number}', [ClientClientController::class, 'getDownloadOptions'])
                         ->name('download.options');
-                    // Route::get('/download-receipt/{order_number}', [ClientClientController::class, 'downloadReceipt'])
-                    //     ->name('download.receipt'); Untuk download receipt di dashboard (kayane)
                     Route::get('/download-report/{id}', [ClientClientController::class, 'downloadReportFile'])
                         ->name('download.report');
+                    Route::get('/download-receipt/{order_number}', [ClientReceiptController::class, 'index'])
+                        ->name('receipt');
+                    Route::post('/save-invoice-pdf', [ClientReceiptController::class, 'savePDF'])
+                        ->name('saveInvoicePDF');
                 });
             });
 

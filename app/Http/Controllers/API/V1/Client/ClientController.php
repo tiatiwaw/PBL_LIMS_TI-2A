@@ -33,7 +33,7 @@ class ClientController extends Controller
                 'order_number' => $order->order_number,
                 'title' => $order->title,
                 'estimate_date' => $order->estimate_date ? Carbon::parse($order->estimate_date)->format('d/m/Y') : null,
-                'status' => $order->status,
+                'status' => $order->combined_status, // PAKAI YANG BARU
             ];
         });
 
@@ -50,7 +50,7 @@ class ClientController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                    'stats' => [
+                'stats' => [
                     'total_orders' => $totalOrders,
                     'processing_orders' => $processingOrders,
                     'completed_orders' => $completedOrders,
