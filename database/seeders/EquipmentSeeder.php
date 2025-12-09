@@ -16,14 +16,18 @@ class EquipmentSeeder extends Seeder
         $hanna = BrandType::firstOrCreate(['name' => 'Hanna HI2211']);
         $shimadzu = BrandType::where('name', 'Shimadzu')->firstOrCreate(['name' => 'Shimadzu']);
 
+        $status_values = ['unavailable', 'available', 'maintenance', 'broken'];
+        $calibration_values = ['internal', 'eksternal'];
+
         $equipments = [
             [
                 'name' => 'Micropipette',
                 'brand_type_id' => $eppendorf->id,
                 'serial_number' => 'EPD-001',
                 'purchase_year' => '2022-01-15',
-                'calibration_schedule' => 'internal',
-                'status' => 'B', // <-- FIX: Baik (B)
+                'calibration_schedule' => $calibration_values[array_rand($calibration_values)],
+               
+                'status' => $status_values[array_rand($status_values)], // <-- FIX: Baik (B)
                 'location' => 'Laboratorium Kimia',
             ],
             [
@@ -31,8 +35,9 @@ class EquipmentSeeder extends Seeder
                 'brand_type_id' => $thermo->id,
                 'serial_number' => 'THM-045',
                 'purchase_year' => '2021-07-10',
-                'calibration_schedule' => 'eksternal',
-                'status' => 'P', // <-- FIX: Perbaikan (P)
+                'calibration_schedule' => $calibration_values[array_rand($calibration_values)],
+                
+                'status' => $status_values[array_rand($status_values)], // <-- FIX: Perbaikan (P)
                 'location' => 'Laboratorium Bioteknologi',
             ],
             [
@@ -40,8 +45,9 @@ class EquipmentSeeder extends Seeder
                 'brand_type_id' => $hanna->id,
                 'serial_number' => 'HAN-123',
                 'purchase_year' => '2023-03-05',
-                'calibration_schedule' => 'internal',
-                'status' => 'R', // <-- FIX: Rusak (R)
+                'calibration_schedule' => $calibration_values[array_rand($calibration_values)],
+               
+                'status' => $status_values[array_rand($status_values)], // <-- FIX: Rusak (R)
                 'location' => 'Laboratorium Mikrobiologi',
             ],
             [
@@ -49,8 +55,9 @@ class EquipmentSeeder extends Seeder
                 'brand_type_id' => $shimadzu->id,
                 'serial_number' => 'SHM-789',
                 'purchase_year' => '2020-11-20',
-                'calibration_schedule' => 'eksternal',
-                'status' => 'R', // <-- FIX: Rusak (R)
+                'calibration_schedule' => $calibration_values[array_rand($calibration_values)],
+                
+                'status' => $status_values[array_rand($status_values)], // <-- FIX: Rusak (R)
                 'location' => 'Laboratorium Analisis',
             ],
         ];

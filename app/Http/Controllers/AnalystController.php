@@ -16,7 +16,7 @@ class AnalystController extends Controller
     public function dashboard()
     {
         // Hanya render page, data diambil di React via hooks
-        return Inertia::render('analyst/dashboard');
+        return Inertia::render('analyst/index');
     }
 
     public function profile()
@@ -26,13 +26,13 @@ class AnalystController extends Controller
 
     public function order()
     {
-        return Inertia::render('analyst/order');
+        return Inertia::render('analyst/order/index');
     }
 
     public function detail($orderId)
     {
-        return Inertia::render('analyst/order-detail', [
-            'orderId' => $orderId // biar hook bisa fetch detail API
+        return Inertia::render('analyst/order/detail', [
+            'orderId' => $orderId
         ]);
     }
 }

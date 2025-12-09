@@ -23,7 +23,7 @@ const Dashboard = () => {
   const columns = useMemo(() => getOrdersColumns({ setSelectedTest }), []);
 
   const cards = [
-    { title: "Total Orders", value: String(dashboard?.stats?.totalOrder ?? 0), subtitle: "Semua pesanan yang tercatat", icon: ShoppingCart },
+    { title: "Total Pending Orders", value: String(dashboard?.stats?.pendingOrder ?? 0), subtitle: "Semua pesanan yang tercatat", icon: ShoppingCart },
     { title: "Total Processed Order", value: String(dashboard?.stats?.processedOrder ?? 0), subtitle: "Pesanan sedang dikerjakan", icon: Loader },
     { title: "Total Completed Order", value: String(dashboard?.stats?.completedOrder ?? 0), subtitle: "Pesanan selesai", icon: CheckCircle },
   ];

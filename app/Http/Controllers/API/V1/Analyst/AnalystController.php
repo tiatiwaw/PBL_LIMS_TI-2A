@@ -26,20 +26,18 @@ class AnalystController extends Controller
     {
         $analyst = $this->analyst();
         $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id));
+        $pendingOrders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id))->where('status', 'paid');
         $stats = [
-            'totalOrder' => $orders->count(),
+            'pendingOrder' => $pendingOrders->count(),
             'processedOrder' => $orders->where('status', 'in_progress')->count(),
             'completedOrder' => $orders->where('status', 'completed')->count(),
         ];
 
-        $pendingOrders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id))->where('status', 'pending')
-            ->latest()
-            ->take(5)
-            ->get();
-
         return response()->json([
             'analyst' => $analyst,
-            'orders' => $pendingOrders,
+            'orders' => $pendingOrders->latest()
+                        ->take(5)
+                        ->get(),
             'stats' => $stats,
         ]);
     }
@@ -49,7 +47,12 @@ class AnalystController extends Controller
         $analyst = $this->analyst();
 
         $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id))
-            ->whereNot('status', 'pending')
+            ->whereIn('status', [
+                'in_progress',
+                'completed',
+                'revision_test',
+                'received_test',
+            ])
             ->latest()
             ->get();
 
@@ -73,13 +76,11 @@ class AnalystController extends Controller
         ]);
     }
 
-     public function accept(Order $order)
+    public function accept(Order $order)
     {
         if (in_array($order->status, ['pending', 'paid'])) {
-            // 1. Update status order
             $order->update(['status' => 'in_progress']);
 
-            // 2. Update semua sample milik order
             $order->samples()
                 ->where('status', 'pending')
                 ->update(['status' => 'in_progress']);
@@ -89,24 +90,6 @@ class AnalystController extends Controller
             'message' => 'Order diterima',
             'order' => $order,
             'samples_updated' => $order->samples()->get()
-        ]);
-    }
-
-    public function confirm(Sample $sample)
-    {
-        $sample->update(['status' => 'done']);
-        return response()->json([
-            'message' => 'Sampel telah dikonfirmasi selesai.',
-            'sample' => $sample,
-        ]);
-    }
-
-    public function unconfirm(Sample $sample)
-    {
-        $sample->update(['status' => 'in_progress']);
-        return response()->json([
-            'message' => 'Status sampel dibatalkan.',
-            'sample' => $sample,
         ]);
     }
 
@@ -138,67 +121,12 @@ class AnalystController extends Controller
     {
         $order = Order::findOrFail($orderId);
 
-        $samples = $order->samples()->with([
-            'parameter.unit_values',
-            'parameter.reference_standards',
-        ])->get();
-
-        if ($samples->isEmpty()) {
-            return response()->json(['error' => 'Tidak ada sampel untuk dibuatkan laporan.'], 400);
-        }
-
-        $data = $samples->map(function ($sample) {
-            return [
-                'sample' => $sample->name,
-                'parameters' => $sample->parameter->map(function ($param) {
-                    return [
-                        'parameter_name' => $param->name ?? '-',
-                        'unit' => $param->unit_values->value ?? '-',
-                        'reference' => $param->reference_standards->name ?? '-',
-                        'result' => $param->pivot->result ?? '-',
-                    ];
-                })->toArray(),
-            ];
-        })->toArray();
-
-        // Generate PDF
-        $pdf = Pdf::loadView('pdf.report', [
-            'order' => $order,
-            'data' => $data,
-        ]);
-
-        $fileName = 'report_order_' . $order->id . '.pdf';
-        $filePath = 'reports/' . $fileName;
-        Storage::disk('public')->put($filePath, $pdf->output());
-
-        $order->update(['result_value' => $filePath]);
+        $order->status = 'received_test';
+        $order->save();
 
         return response()->json([
-            'message' => 'Report berhasil dibuat dan disimpan.',
-            'file_path' => $filePath,
+            'message' => 'Order berhasil disubmit.',
         ]);
-    }
-
-    public function downloadReport($orderId)
-    {
-        $order = Order::findOrFail($orderId);
-
-        if (!$order->result_value) {
-            abort(404, 'Laporan belum digenerate.');
-        }
-
-        $filePath = storage_path('app/public/' . $order->result_value);
-
-        if (!file_exists($filePath)) {
-            abort(404, 'File laporan tidak ditemukan.');
-        }
-
-        // Kirim file langsung → browser otomatis download
-        return response()->download(
-            $filePath,
-            'Laporan_Order_' . $order->id . '.pdf',
-            ['Content-Type' => 'application/pdf']
-        );
     }
 
     /**

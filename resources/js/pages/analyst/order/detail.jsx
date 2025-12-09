@@ -4,13 +4,21 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { getSampleColumns } from "@/components/shared/analyst/sample-columns";
 import SampleDetailsDialog from "@/components/shared/dialog/sample-detail-dialog";
-import SampleConfirmDialog from "@/components/shared/dialog/sample-confirm-dialog";
-import SampleUnConfirmDialog from "@/components/shared/dialog/sample-unconfirm-dialog";
 import { Button } from "@/components/ui/button";
-import { useOrderDetail, useResult, useSaveReagentUsage } from "@/hooks/useAnalyst";
+import { useOrderDetail, useResult, useSaveReagentUsage, useOrders } from "@/hooks/useAnalyst";
 import { toast } from "sonner";
 
 export default function OrderDetail({ orderId }) {
+    const [showSubmitBtn, setShowSubmitBtn] = useState(true)
+
+    const {update: submitOrder} = useOrders()
+
+    const handleSubmit = async (id) => {
+        await submitOrder.mutateAsync({ id }, {onSuccess: () => {
+            setShowSubmitBtn(false)
+        }});
+    };
+
     const {
         data,
         isLoading,
@@ -32,8 +40,6 @@ export default function OrderDetail({ orderId }) {
 
     const [viewMode, setViewMode] = useState("input"); // "table" | "input"
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-    const [isUnConfirmDialogOpen, setIsUnConfirmDialogOpen] = useState(false);
     const [selectedSample, setSelectedSample] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -66,13 +72,18 @@ export default function OrderDetail({ orderId }) {
             setReagentResults(
                 samples.map((sample) => ({
                     sample_id: sample.id,
-                    reagents: sample.n_parameter_methods.reagents.map((r) => ({
-                    reagent_id: r.id, // ID reagent dari model
-                    n_parameter_method_id: sample.n_parameter_methods.id, // ID dari n_parameter_methods
-                    name: r.name,
-                    reagent_used: "" // ✅ BLANK, bukan 0
-                    }))
+                    reagents: sample.n_parameter_methods.reagents.map((r) => {
+                            return ({
+                                reagent_id: r.id, // ID reagent dari model
+                                n_parameter_method_id: sample.n_parameter_methods.id, // ID dari n_parameter_methods
+                                name: r.name,
+                                reagent_used: "" // ✅ BLANK, bukan 0
+                            })
+                        }
+                    )
+                    
                 }))
+
             );
         }
     }, [samples]);
@@ -129,7 +140,7 @@ export default function OrderDetail({ orderId }) {
                 : s
             )
         );
-        };
+    };
 
     // --- 4. FUNCTION BARU: Save Reagen ---
     // Fungsi ini mengirim data ke endpoint khusus untuk menyimpan pemakaian reagen
@@ -139,12 +150,6 @@ export default function OrderDetail({ orderId }) {
             for (const r of sample.reagents) {
                 // Hanya save jika ada nilai reagent_used yang diinput (bukan blank)
                 if (r.reagent_used !== "" && Number(r.reagent_used) > 0) {
-                    console.log("KIRIM KE API:", {
-                        reagent_id: r.reagent_id,
-                        n_parameter_method_id: r.n_parameter_method_id,
-                        reagent_used: r.reagent_used,
-                    });
-
                     await saveReagentUsage({
                         reagent_id: r.reagent_id,
                         n_parameter_method_id: r.n_parameter_method_id,
@@ -164,27 +169,6 @@ export default function OrderDetail({ orderId }) {
     const handleShowDetail = (sample) => {
         setSelectedSample(sample);
         setIsDialogOpen(true);
-    };
-
-    const handleShowConfirm = (sample) => {
-        setSelectedSample(sample);
-        setIsConfirmDialogOpen(true);
-    };
-
-    const handleConfirmAction = (sample) => {
-        // Asumsi confirmSample ada di import atau hook (tidak ada di snippet asli, tapi dibiarkan)
-        // confirmSample.mutate(sample.id);
-        setIsConfirmDialogOpen(false);
-    };
-
-    const handleShowUnConfirm = (sample) => {
-        setSelectedSample(sample);
-        setIsUnConfirmDialogOpen(true);
-    };
-
-    const handleUnConfirmAction = (sample) => {
-        // unconfirmSample.mutate(sample.id);
-        setIsUnConfirmDialogOpen(false);
     };
 
     // --- MODIFIKASI: Save Utama Memanggil Kedua Fungsi ---
@@ -225,8 +209,6 @@ export default function OrderDetail({ orderId }) {
         () =>
             getSampleColumns({
                 onShowDetail: handleShowDetail,
-                onShowConfirm: handleShowConfirm,
-                onShowUnConfirm: handleShowUnConfirm,
             }),
     );
 
@@ -325,17 +307,16 @@ export default function OrderDetail({ orderId }) {
                         </h2>
 
                         <div className="flex flex-col gap-4 p-4 bg-white rounded-lg">
-                            {samples.map((sample) => {
+                            {samples.map((sample, index) => {
                                 const currentTest = testResults.find(tr => tr.id === sample.id);
                                 const param = sample.n_parameter_methods.test_parameters;
                                 const paramResult = currentTest?.parameter?.[0]?.result ?? "";
 
                                 // Ambil data reagen dari state baru untuk sample ini
                                 const currentReagents = reagentResults.find(r => r.sample_id === sample.id)?.reagents || [];
-                                console.log(currentReagents)
                                 return (
                                     <div
-                                        key={sample.id}
+                                        key={index}
                                         className="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-100"
                                     >
                                         {/* Header */}
@@ -409,8 +390,8 @@ export default function OrderDetail({ orderId }) {
                                                                     <span>Nama Reagen</span>
                                                                     <span>Volume</span>
                                                                 </div>
-                                                                {currentReagents.map((r) => (
-                                                                    <div key={`${r.reagent_id}-${r.n_parameter_method_id}`} className="grid grid-cols-[2fr_1fr] gap-2 items-center">
+                                                                {currentReagents.map((r, index) => (
+                                                                    <div key={index} className="grid grid-cols-[2fr_1fr] gap-2 items-center">
                                                                         <label className="text-sm text-gray-700 truncate">
                                                                         {r.name}
                                                                         </label>
@@ -459,8 +440,8 @@ export default function OrderDetail({ orderId }) {
                                                     }`}
                                                 >
                                                     <ul className="text-sm text-gray-600 list-disc ml-6 pb-3 pt-1">
-                                                        {sample.test_method.map((m) => (
-                                                            <li key={m.id}>{m.name}</li>
+                                                        {sample.test_method.map((m, key) => (
+                                                            <li key={key}>{m.name}</li>
                                                         ))}
                                                     </ul>
                                                 </div>
@@ -489,8 +470,8 @@ export default function OrderDetail({ orderId }) {
                                                     }`}
                                                 >
                                                     <ul className="text-sm text-gray-600 list-disc ml-6 pb-3 pt-1">
-                                                        {sample.n_parameter_methods.equipments.map((eq) => (
-                                                            <li key={eq.id}>{eq.name}</li>
+                                                        {sample.n_parameter_methods.equipments.map((eq, index) => (
+                                                            <li key={index}>{eq.name}</li>
                                                         ))}
                                                     </ul>
                                                 </div>
@@ -505,49 +486,68 @@ export default function OrderDetail({ orderId }) {
                         </div>
 
 
-                        {/* Tombol Edit / Save / Loading */}
-                        <div className="flex justify-end mt-6">
-                            {isEditing ? (
-                                <Button
-                                    onClick={handleSaveResults}
-                                    disabled={isSaving}
-                                    className="min-w-32 flex items-center gap-2 bg-primary-hijauTua hover:bg-primary-hijauMuda"
-                                >
-                                    {isSaving ? (
-                                        <>
-                                            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                                                <circle
-                                                    className="opacity-25"
-                                                    cx="12"
-                                                    cy="12"
-                                                    r="10"
-                                                    stroke="currentColor"
-                                                    strokeWidth="4"
-                                                    fill="none"
-                                                />
-                                                <path
-                                                    className="opacity-75"
-                                                    fill="currentColor"
-                                                    d="M4 12a8 8 0 018-8v8z"
-                                                />
-                                            </svg>
-                                            Menyimpan...
-                                        </>
-                                    ) : (
-                                        "Simpan Hasil"
-                                    )}
-                                </Button>
-                            ) : (
-                                <Button
-                                    onClick={() => setIsEditing(true)}
-                                    variant="outline"
-                                    className="border-primary-hijauTua text-primary-hijauTua hover:bg-primary-hijauTua hover:text-white"
-                                >
-                                    Edit Hasil Uji
-                                </Button>
-                            )}
-                        </div>
+                        {showSubmitBtn ? (
+                            <div className="flex justify-end mt-6">
+                                {isEditing ? (
+                                    <Button
+                                        onClick={handleSaveResults}
+                                        disabled={isSaving}
+                                        className="min-w-32 flex items-center gap-2 bg-primary-hijauTua hover:bg-primary-hijauMuda"
+                                    >
+                                        {isSaving ? (
+                                            <>
+                                                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                                                    <circle
+                                                        className="opacity-25"
+                                                        cx="12"
+                                                        cy="12"
+                                                        r="10"
+                                                        stroke="currentColor"
+                                                        strokeWidth="4"
+                                                        fill="none"
+                                                    />
+                                                    <path
+                                                        className="opacity-75"
+                                                        fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8v8z"
+                                                    />
+                                                </svg>
+                                                Menyimpan...
+                                            </>
+                                        ) : (
+                                            "Simpan Hasil"
+                                        )}
+                                    </Button>
+                                ) : (
+                                    <div className="gap-2 flex">
+                                        <Button
+                                            onClick={() => handleSubmit(data.order.id)}
+                                            variant="outline"
+                                            className="border-primary-hijauTua bg-primary-hijauTua text-white hover:bg-primary-hijauTua hover:text-white"
+                                        >
+                                            Laporkan Hasil
+                                        </Button>
+                                        <Button
+                                            onClick={() => setIsEditing(true)}
+                                            variant="outline"
+                                            className="border-primary-hijauTua text-primary-hijauTua hover:bg-primary-hijauTua hover:text-white"
+                                        >
+                                            Edit Hasil Uji
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                                <div className="flex justify-end mt-6">
 
+                                    <Button
+                                        variant="outline"
+                                        className="border-primary-hijauTua text-primary-hijauTua cursor-default"
+                                    >
+                                        Pesanan ini telah anda submit
+                                    </Button>
+                                </div>
+                            )}
                     </div>
                 )}
 
@@ -557,24 +557,13 @@ export default function OrderDetail({ orderId }) {
                     isOpen={isDialogOpen}
                     onOpenChange={setIsDialogOpen}
                 />
-                <SampleConfirmDialog
-                    sample={selectedSample}
-                    isOpen={isConfirmDialogOpen}
-                    onOpenChange={setIsConfirmDialogOpen}
-                    onConfirm={handleConfirmAction}
-                />
-                <SampleUnConfirmDialog
-                    sample={selectedSample}
-                    isOpen={isUnConfirmDialogOpen}
-                    onOpenChange={setIsUnConfirmDialogOpen}
-                    onUnconfirm={handleUnConfirmAction}
-                />
 
-                {/* Tombol kembali */}
                 <div className="w-full flex justify-end mt-4">
-                    <Button className="bg-primary-hijauTua hover:bg-primary-hijauMuda text-white">
-                        <Link href="/analyst/order">Kembali</Link>
-                    </Button>
+                    <Link href="/analyst/order">
+                        <Button className="bg-primary-hijauTua hover:bg-primary-hijauMuda text-white">
+                            Kembali
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </DashboardLayout>

@@ -4,21 +4,27 @@ import { Link } from '@inertiajs/react';
 import { AlertCircle } from "lucide-react";
 
 const statusLabelMap = {
-    completed: "Completed",
-    in_progress: "In Progress",
-    pending: "Pending",
-    disapproved: "Disapproved",
-    approved: "Approved",
     received: "Received",
+    disapproved: "Disapproved",
+    pending_payment: "Pending Payment",
+    paid: "Paid",
+    in_progress: "In Progress",
+    received_test: "Waiting for QC Result",
+    revision_test: "Test Revision",
+    pending: "Pending",
+    completed: "Completed",
 };
 
 const statusVariantMap = {
-    completed: "success",
-    in_progress: "warning",
-    pending: "info",
-    disapproved: "error",
-    approved: "approved",
-    received: "received",
+    received: "info",        // Biru/Informasi (Baru masuk)
+    disapproved: "error",    // Merah (Ditolak)
+    pending_payment: "warning", // Kuning/Peringatan (Menunggu pembayaran)
+    paid: "success",         // Hijau (Sudah Bayar)
+    in_progress: "warning",  // Kuning/Peringatan (Sedang dikerjakan)
+    received_test: "test",   // Varian khusus (Misalnya, ungu)
+    revision_test: "revision", // Varian khusus (Misalnya, oranye tua)
+    pending: "info",         // Biru/Informasi (Menunggu persetujuan/aksi)
+    completed: "success",    // Hijau (Selesai)
 };
 
 const tipeVariantMap = {

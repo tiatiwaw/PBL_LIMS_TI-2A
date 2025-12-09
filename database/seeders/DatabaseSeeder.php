@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
 
                 // Master Data Dependen
                 $this->call([
-                        // EquipmentSeeder::class,
+                        EquipmentSeeder::class,
                         ReagentSeeder::class,
                         TestMethodSeeder::class,
                         TestParameterSeeder::class,

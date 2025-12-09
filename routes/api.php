@@ -41,7 +41,10 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
 
-        Route::get('profile/{user}', [ProfileDetailController::class, 'index'])->name('profile');
+        Route::prefix('profile')->name('profile')->group(function () {
+            Route::get('/{userId}', [ProfileDetailController::class, 'index'])->name('profileDetail');
+            Route::put('/change-password/{userId}', [ProfileDetailController::class, 'changePassword'])->name('changePassword');
+        });
 
         Route::prefix('auth')->name('api.auth.')->group(function () {
             // Route::get('/user', [AuthController::class, 'user'])->name('user');
@@ -129,19 +132,26 @@ Route::prefix('v1')->group(function () {
                 ->middleware(['role:analyst'])
                 ->name('api.analyst.')
                 ->group(function () {
-                    Route::get('/dashboard', [AnalystAnalystController::class, 'dashboard'])->name('dashboard');
-                    Route::put('/dashboard/{order}', [AnalystAnalystController::class, 'accept'])->name('orders.accept');
-                    Route::get('/orders', [AnalystAnalystController::class, 'orders'])->name('orders');
-                    Route::get('/orders/{order}', [AnalystAnalystController::class, 'detail'])->name('orders.detail');
+                    Route::prefix('dashboard')->group(function () {
+                        Route::get('/', [AnalystAnalystController::class, 'dashboard'])->name('dashboard');
+                        Route::put('/{order}', [AnalystAnalystController::class, 'accept'])->name('accept');
+                    });
+
+                    Route::prefix('orders')->name('orders.')->group(function () {
+                        Route::get('/', [AnalystAnalystController::class, 'orders'])->name('.orders');
+                        Route::get('/{order}', [AnalystAnalystController::class, 'detail'])->name('.detail');
+                        Route::put('/{order}', [AnalystAnalystController::class, 'submitReport'])->name('.submit');
+                        Route::put('/save/{order}', [AnalystAnalystController::class, 'saveReport'])->name('.save');;
+                    });
+
                     Route::get('/samples/{order}', [AnalystAnalystController::class, 'detail'])->name('orders.detail');
-                    Route::post('/samples/{sample}/confirm', [AnalystAnalystController::class, 'confirm'])->name('samples.confirm');
-                    Route::post('/samples/{sample}/unconfirm', [AnalystAnalystController::class, 'unconfirm'])->name('samples.unconfirm');
-                    Route::put('/orders/save/{order}', [AnalystAnalystController::class, 'saveReport'])->name('orders.save');
-                    Route::put('/orders/submit/{order}', [AnalystAnalystController::class, 'submitReport'])->name('orders.submit');
-                    Route::put('/orders/download/{order}', [AnalystAnalystController::class, 'downloadReport'])->name('orders.download');
+
                     Route::post('/reagent-used/save', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent.save');
-                    Route::get('/profile/show', [AnalystProfileController::class, 'show'])->name('profile');
-                    Route::post('/profile/password', [AnalystProfileController::class, 'changePassword'])->name('password');
+                   
+                    Route::prefix('profile')->name('profile.')->group(function () {
+                        Route::get('/show', [AnalystProfileController::class, 'show'])->name('show');
+                        Route::post('/password', [AnalystProfileController::class, 'changePassword'])->name('changePassword');
+                    });
                 });
 
             // Client
