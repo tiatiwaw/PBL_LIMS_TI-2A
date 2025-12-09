@@ -42,6 +42,7 @@ class ClientController extends Controller
             'password' => Hash::make($validatedData['password']),
             'role' => 'client',
         ]);
+        $user->assignRole('client');
 
         $client = Client::create([
             'user_id' => $user->id,
@@ -51,6 +52,7 @@ class ClientController extends Controller
             'npwp_number' => $validatedData['npwp_number'],
             'email' => $validatedData['email'],
         ]);
+
 
         return response()->json([
             'message' => 'Client berhasil dibuat.',
