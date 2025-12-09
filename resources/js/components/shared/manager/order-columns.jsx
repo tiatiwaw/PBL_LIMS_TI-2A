@@ -29,7 +29,7 @@ export const getOrdersColumns = ({ onShowDetail }) => [
     {
         accessorKey: "analysts",
         header: "Analis",
-        cell: ({ row }) => row.original.analysts?.name || "-",
+        cell: ({ row }) => row.analysts?.name || "-",
     },
 
     {
@@ -37,7 +37,7 @@ export const getOrdersColumns = ({ onShowDetail }) => [
         header: "Aksi",
         cell: ({ row }) => (
             <button
-                onClick={() => onShowDetail(row.original.id)}
+                onClick={() => onShowDetail(row.id)}
                 w
                 className="px-3 py-1 rounded-lg border"
             >
