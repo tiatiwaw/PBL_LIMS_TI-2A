@@ -53,8 +53,11 @@ export const useAnalysts = () =>
 
 export const useOrder = (id) => useGetById(adminService.orders, "orders", id);
 
-export const useOrderReports = () =>
-    useCrud(adminService.reports_orders, "order-reports", "Laporan Pesanan");
+export const useOrderReports = (filters = {}) =>
+    useCrud(adminService.reports_orders, "order-reports", "Laporan Pesanan", {
+        only: ["getAll"],
+        query: filters,
+    });
 
 export const useInventoryReports = (filters = {}) =>
     useCrud(
