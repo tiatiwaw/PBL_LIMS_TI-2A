@@ -120,7 +120,7 @@ export const HeaderCard = ({
             <div className="flex gap-2 md:gap-4 items-center">
                 <NotificationButton
                     isLoading={isNotificationLoading}
-                    reagents={lowStockReagents ?? []}
+                    reagents={lowStockReagents ? lowStockReagents : []}
                 />
                 <UserMenu user={user} onLogout={onLogout} />
             </div>

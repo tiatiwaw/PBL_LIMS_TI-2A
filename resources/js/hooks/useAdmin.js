@@ -83,12 +83,13 @@ export const useUserReports = () =>
         only: ["getAll"],
     });
 
-export const useLowStockReagents = () =>
+export const useLowStockReagents = (enabled = true) =>
     useCrud(
         adminService.low_stock_reagents,
         "low-stock-reagents",
         "Notifikasi Stok Reagen",
         {
             only: ["getAll"],
+            enabled,
         }
     );
