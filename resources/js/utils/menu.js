@@ -1,7 +1,6 @@
 import {
     Home,
     Wrench,
-    FlaskConical,
     Beaker,
     Microscope,
     Gauge,
@@ -272,14 +271,35 @@ const MENU_CONFIG = {
             href: "/manager/orders",
         },
         {
-            name: "Laporan",
-            icon: ChartArea,
-            href: "/manager/reports",
-        },
-        {
             name: "Karyawan",
             icon: Users,
             href: "/manager/users",
+        },
+        {
+            name: "Laporan",
+            icon: TrendingUp,
+            subItems: [
+                {
+                    name: "Pesanan",
+                    icon: GraduationCap,
+                    href: "/manager/reports/orders",
+                },
+                {
+                    name: "Inventory",
+                    icon: Box,
+                    href: "/manager/reports/inventory",
+                },
+                {
+                    name: "Pengguna",
+                    icon: Users,
+                    href: "/manager/reports/users",
+                },
+                {
+                    name: "Transaksi",
+                    icon: DollarSign,
+                    href: "/manager/reports/transactions",
+                },
+            ],
         },
     ],
 

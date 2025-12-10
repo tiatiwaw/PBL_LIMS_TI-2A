@@ -10,10 +10,6 @@ import {
 } from "lucide-react";
 
 import { useTransactionReports } from "@/hooks/useAdmin";
-import { useReportFilters } from "@/hooks/useReportFilters";
-import { useTransactionsAnalytics } from "@/hooks/analytics/useTransactionsAnalytics";
-import { MONTHS } from "@/utils/constant/report";
-import { formatCurrency } from "@/utils/formatters";
 
 import {
     DistributionPieChart,
@@ -24,22 +20,41 @@ import {
 } from "@/components/shared/admin/report-components";
 import ReportLayout from "@/components/layouts/report-layout";
 import { exportTransactionsReport } from "@/utils/excel/export/transaction-report";
+import { formatCurrency } from "@/utils/formatters";
 
-export default function SalesReportDashboard() {
-    const { data: orders = [], isLoading, error } = useTransactionReports();
+export default function AdminReportTransactions() {
+    const [selectedYear, setSelectedYear] = useState("all");
+    const [selectedMonth, setSelectedMonth] = useState("all");
     const [page, setPage] = useState(1);
 
-    const filters = useReportFilters([orders], ["order_date"]);
-    const analytics = useTransactionsAnalytics(
-        orders,
-        filters.dateFilter,
-        filters.isYearlyView
-    );
+    const { data, isLoading, error } = useTransactionReports({
+        year: selectedYear,
+        month: selectedMonth,
+    });
 
-    const handleExport = () => exportTransactionsReport(analytics);
+    const kpi = data?.kpi || {};
+    const charts = data?.charts || {};
+    const meta = data?.meta || {};
+    const ordersList = data?.orders || [];
 
-    const getTruncatedClientName = (name) =>
-        name.length > 18 ? name.substring(0, 18) + "..." : name;
+    const handleClearFilters = () => {
+        setSelectedYear("all");
+        setSelectedMonth("all");
+    };
+
+    const getTruncatedClientName = (name) => {
+        if (!name) return "-";
+        return name.length > 18 ? name.substring(0, 18) + "..." : name;
+    };
+
+    const formattedOrders = ordersList.map((order) => ({
+        ...order,
+        order_date: new Date(order.order_date).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+        }),
+    }));
 
     return (
         <ReportLayout
@@ -48,68 +63,68 @@ export default function SalesReportDashboard() {
             subtitle="Analisis real-time metrik pendapatan laboratorium."
             isLoading={isLoading}
             error={error}
-            hasData={analytics.totalOrders > 0}
+            hasData={kpi.total_orders > 0}
             filterProps={{
-                selectedYear: filters.selectedYear,
-                selectedMonth: filters.selectedMonth,
-                availableYears: filters.availableYears,
-                onYearChange: filters.setSelectedYear,
-                onMonthChange: filters.setSelectedMonth,
-                onClearFilters: filters.clearFilters,
-                onExport: handleExport,
+                selectedYear,
+                selectedMonth,
+                availableYears: meta.years || [],
+                onYearChange: setSelectedYear,
+                onMonthChange: setSelectedMonth,
+                onClearFilters: handleClearFilters,
+                onExport: () => exportTransactionsReport(data),
             }}
             emptyStateIcon={Search}
-            emptyStateDescription="Coba sesuaikan filter tahun, bulan, atau kata kunci pencarian Anda."
+            emptyStateDescription="Coba sesuaikan filter tahun, bulan, atau belum ada transaksi."
             kpiContent={
                 <>
                     <KPICard
                         icon={Wallet}
                         title="Total Pendapatan"
-                        value={formatCurrency(analytics.totalRevenue)}
-                        subtitle={`Dari ${analytics.totalOrders} transaksi`}
+                        value={formatCurrency(kpi.total_revenue || 0)}
+                        subtitle={`Dari ${kpi.total_orders || 0} transaksi`}
                         delay={0.1}
                     />
                     <KPICard
                         icon={TrendingUp}
                         title="Order Tertinggi"
-                        value={formatCurrency(analytics.maxSingleOrderRevenue)}
+                        value={formatCurrency(kpi.max_single_order || 0)}
                         subtitle="Nilai transaksi tunggal maks"
                         delay={0.2}
                     />
                     <KPICard
                         icon={Users}
                         title="Pelanggan Top"
-                        value={getTruncatedClientName(analytics.topClient.name)}
+                        value={getTruncatedClientName(kpi.top_client?.name)}
                         subtitle={`Total: ${formatCurrency(
-                            analytics.topClient.revenue
+                            kpi.top_client?.revenue || 0
                         )}`}
                         delay={0.3}
                     />
                     <KPICard
                         icon={Package}
                         title="Metode Favorit"
-                        value={analytics.topMethod.name}
+                        value={kpi.top_method?.name || "-"}
                         subtitle={`${
-                            analytics.topMethod.count
+                            kpi.top_method?.count || 0
                         }x order (~${formatCurrency(
-                            analytics.topMethodAvgPrice
+                            kpi.top_method?.avg_price || 0
                         )})`}
                         delay={0.4}
                     />
                     <KPICard
                         icon={Activity}
                         title="Rerata Order"
-                        value={formatCurrency(analytics.avgRevenuePerOrder)}
+                        value={formatCurrency(kpi.avg_revenue_order || 0)}
                         subtitle="Nilai rata-rata per invoice"
                         delay={0.5}
                     />
                     <KPICard
                         icon={CreditCard}
                         title="Pendapatan Tipe Order Terbanyak"
-                        value={formatCurrency(
-                            analytics.mostCommonOrderTypeRevenue
-                        )}
-                        subtitle={`Dari tipe order ${analytics.mostCommonOrderTypeName}`}
+                        value={formatCurrency(kpi.top_order_type?.revenue || 0)}
+                        subtitle={`Dari tipe order ${
+                            kpi.top_order_type?.name || "-"
+                        }`}
                         delay={0.6}
                     />
                 </>
@@ -119,7 +134,7 @@ export default function SalesReportDashboard() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <TrendAreaChart
                             title="Tren Pendapatan"
-                            data={analytics.trendChartData}
+                            data={charts.trend || []}
                             dataKey="revenue"
                             tooltipFormatter={formatCurrency}
                             className="col-span-1 lg:col-span-2"
@@ -127,7 +142,7 @@ export default function SalesReportDashboard() {
                         />
                         <DistributionPieChart
                             title="Distribusi Metode"
-                            data={analytics.methodDistributionData}
+                            data={charts.method_distribution || []}
                             innerRadius={65}
                             outerRadius={85}
                             delay={0.2}
@@ -136,14 +151,14 @@ export default function SalesReportDashboard() {
 
                     <RankingBarChart
                         title="Pendapatan per Metode Analisis (Top 8)"
-                        data={analytics.methodRevenueData}
+                        data={charts.method_revenue || []}
                         dataKey="value"
                         height={350}
                         delay={0.3}
                     />
 
                     <TransactionTable
-                        data={analytics.detailedOrders}
+                        data={formattedOrders}
                         page={page}
                         setPage={setPage}
                         pageSize={10}

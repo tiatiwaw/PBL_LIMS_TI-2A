@@ -49,7 +49,10 @@ export default function AdminDetailOrder({ canValidate }) {
     return (
         <DashboardLayout title="Detail Order" header="Detail Order">
             <div className="max-w-7xl mx-auto space-y-6">
-                <OrderDetailHeader order={order} />
+                <OrderDetailHeader 
+                    order={order} 
+                    backRoute="/admin/orders"
+                />
 
                 <ClientInfoCard client={order.clients} />
 

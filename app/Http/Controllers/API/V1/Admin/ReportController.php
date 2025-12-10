@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\Reagent;
 use App\Models\Supplier;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -191,16 +192,165 @@ class ReportController extends Controller
         ]);
     }
 
-    public function transactions()
+    public function transactions(Request $request)
     {
-        $orders = Order::with([
-            'clients',
-            'analysesMethods'
-        ])
-            ->where('status', '!=', 'disapproved')
-            ->orderBy('order_date', 'desc')
-            ->get();
+        $year = $request->input('year');
+        $month = $request->input('month');
 
-        return response()->json($orders);
+        $query = Order::with([
+            'clients',
+        ])->where('status', '!=', 'disapproved');
+
+        if ($year && $year !== 'all') {
+            $query->whereYear('order_date', $year);
+        }
+        if ($month && $month !== 'all') {
+            $query->whereMonth('order_date', $month);
+        }
+
+        $orders = $query->orderBy('order_date', 'desc')->get();
+
+        $totalRevenue = 0;
+        $maxSingleOrderRevenue = 0;
+        $clientRevenueMap = [];
+        $methodStats = [];
+        $trendMap = [];
+        $orderTypeRevenueMap = [];
+
+        foreach ($orders as $order) {
+            $orderRevenue = 0;
+            $orderDate = Carbon::parse($order->order_date);
+
+            foreach ($order->analysesMethods as $method) {
+                $price = (float) ($method->pivot->price ?? 0);
+
+                $methodName = $method->name ?? $method->analyses_method ?? $method->pivot->description ?? 'Unknown Method';
+
+                $orderRevenue += $price;
+
+                if (!isset($methodStats[$methodName])) {
+                    $methodStats[$methodName] = ['count' => 0, 'revenue' => 0];
+                }
+                $methodStats[$methodName]['count']++;
+                $methodStats[$methodName]['revenue'] += $price;
+            }
+
+            $totalRevenue += $orderRevenue;
+
+            if ($orderRevenue > $maxSingleOrderRevenue) {
+                $maxSingleOrderRevenue = $orderRevenue;
+            }
+
+            $clientName = $order->clients->name ?? 'Umum/Tunai';
+            if (!isset($clientRevenueMap[$clientName])) {
+                $clientRevenueMap[$clientName] = 0;
+            }
+            $clientRevenueMap[$clientName] += $orderRevenue;
+
+            $type = $order->order_type ?? 'unknown';
+            if (!isset($orderTypeRevenueMap[$type])) {
+                $orderTypeRevenueMap[$type] = 0;
+            }
+            $orderTypeRevenueMap[$type] += $orderRevenue;
+
+            $trendKey = ($year === 'all')
+                ? $orderDate->year
+                : $orderDate->format('F');
+
+            if (!isset($trendMap[$trendKey])) {
+                $trendMap[$trendKey] = 0;
+            }
+            $trendMap[$trendKey] += $orderRevenue;
+        }
+
+        arsort($clientRevenueMap);
+        $topClientName = array_key_first($clientRevenueMap);
+
+        uasort($methodStats, fn($a, $b) => $b['count'] <=> $a['count']);
+        $topMethodName = array_key_first($methodStats);
+        $topMethodData = $methodStats[$topMethodName] ?? ['count' => 0, 'revenue' => 0];
+
+        arsort($orderTypeRevenueMap);
+        $topTypeName = array_key_first($orderTypeRevenueMap);
+
+        $trendChart = [];
+        foreach ($trendMap as $key => $value) {
+            $trendChart[] = [
+                'name' => ($year === 'all') ? (string)$key : substr($key, 0, 3),
+                'fullName' => (string)$key,
+                'revenue' => $value
+            ];
+        }
+        if ($year === 'all') {
+            usort($trendChart, fn($a, $b) => $a['name'] <=> $b['name']);
+        }
+
+        $methodDistribution = [];
+        $i = 0;
+        foreach ($methodStats as $name => $stat) {
+            if ($i++ >= 5) break;
+            $methodDistribution[] = ['name' => $name, 'value' => $stat['count']];
+        }
+
+        uasort($methodStats, fn($a, $b) => $b['revenue'] <=> $a['revenue']);
+        $methodRevenueChart = [];
+        $i = 0;
+        foreach ($methodStats as $name => $stat) {
+            if ($i++ >= 8) break;
+            $methodRevenueChart[] = ['name' => $name, 'value' => $stat['revenue']];
+        }
+
+        $yearsAvailable = Order::selectRaw('YEAR(order_date) as year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->filter()
+            ->values();
+
+        $detailedOrders = $orders->map(function ($order) {
+            $revenue = 0;
+            foreach ($order->analysesMethods as $m) {
+                $revenue += (float) ($m->pivot->price ?? 0);
+            }
+
+            return [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'client_name' => $order->clients->name ?? '-',
+                'order_type' => $order->order_type,
+                'order_date' => $order->order_date,
+                'method_count' => $order->analysesMethods->count(),
+                'revenue' => $revenue
+            ];
+        });
+
+        return response()->json([
+            'meta' => ['years' => $yearsAvailable],
+            'kpi' => [
+                'total_revenue' => $totalRevenue,
+                'total_orders' => $orders->count(),
+                'max_single_order' => $maxSingleOrderRevenue,
+                'avg_revenue_order' => ($orders->count() > 0) ? $totalRevenue / $orders->count() : 0,
+                'top_client' => [
+                    'name' => $topClientName ?? '-',
+                    'revenue' => $clientRevenueMap[$topClientName] ?? 0
+                ],
+                'top_method' => [
+                    'name' => $topMethodName ?? '-',
+                    'count' => $topMethodData['count'],
+                    'avg_price' => ($topMethodData['count'] > 0) ? $topMethodData['revenue'] / $topMethodData['count'] : 0
+                ],
+                'top_order_type' => [
+                    'name' => $topTypeName ?? '-',
+                    'revenue' => $orderTypeRevenueMap[$topTypeName] ?? 0
+                ]
+            ],
+            'charts' => [
+                'trend' => $trendChart,
+                'method_distribution' => $methodDistribution,
+                'method_revenue' => $methodRevenueChart
+            ],
+            'orders' => $detailedOrders
+        ]);
     }
 }

@@ -7,14 +7,64 @@ import {
     FileText,
     DollarSign,
     Download,
+    ArrowLeft,
 } from "lucide-react";
 import { getOrderTypeVariant } from "@/utils/statusUtils";
 import { formatDate, formatCurrency } from "@/utils/formatters";
+import { authService } from "@/services/authService";
+import { toast } from "sonner";
 
-export default function OrderDetailHeader({ order }) {
+export default function OrderDetailHeader({ order, backRoute }) {
     if (!order) {
         return null;
     }
+
+    const handleDownloadReport = async () => {
+        try {
+            const response = await authService.downloadReport(order.id);
+            
+            const url = window.URL.createObjectURL(response.data);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Laporan_${order.order_number}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            toast.success("Laporan berhasil diunduh!");
+        } catch (error) {
+            // Jika error response adalah JSON (error case)
+            let errorMessage = "Terjadi kesalahan saat mengunduh laporan.";
+            
+            if (error.response?.data) {
+                // Jika response data adalah blob, coba parse sebagai JSON
+                if (error.response.data instanceof Blob) {
+                    try {
+                        const text = await error.response.data.text();
+                        const jsonError = JSON.parse(text);
+                        errorMessage = jsonError.message || errorMessage;
+                    } catch (e) {
+                        // Jika bukan JSON, gunakan error generic
+                        errorMessage = "File tidak dapat diunduh.";
+                    }
+                } else {
+                    // Jika response data bukan blob
+                    errorMessage = error.response.data.message || errorMessage;
+                }
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            toast.error(errorMessage);
+        }
+    };
+
+    const handleBack = () => {
+        if (backRoute) {
+            window.location.href = backRoute;
+        }
+    };
+
     const totalPrice = (order.analyses_methods || []).reduce(
         (sum, method) => sum + (method?.pivot?.price || 0),
         0
@@ -49,10 +99,27 @@ export default function OrderDetailHeader({ order }) {
                     </div>
                 </div>
 
-                <Button className="bg-primary-hijauTerang text-primary-hijauTua hover:bg-primary-hijauTerang/80 flex items-center gap-2">
-                    <Download className="w-4 h-4" />
-                    Download Laporan
-                </Button>
+                <div className="flex items-center gap-3">
+                    {backRoute && (
+                        <Button
+                            onClick={handleBack}
+                            variant="outline"
+                            className="bg-primary-hijauTerang text-primary-hijauTua hover:bg-primary-hijauTerang/80 flex items-center gap-2"
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                            Kembali
+                        </Button>
+                    )}
+                    {order.status === "completed" && (
+                        <Button
+                            onClick={handleDownloadReport}
+                            className="bg-primary-hijauTerang text-primary-hijauTua hover:bg-primary-hijauTerang/80 flex items-center gap-2"
+                        >
+                            <Download className="w-4 h-4" />
+                            Download Laporan
+                        </Button>
+                    )}
+                </div>
             </div>
 
             <div className="grid grid-cols-4 gap-6">

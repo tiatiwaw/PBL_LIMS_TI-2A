@@ -12,6 +12,14 @@ export const managerService = {
         update: serviceMethods("/manager/report-validations"),
     },
 
+    reports_inventory: serviceMethods("/manager/reports/inventory", {
+        useFormData: false,
+    }),
+
+    reports_transactions: serviceMethods("/manager/reports/transactions", {
+        useFormData: false,
+    }),
+
     brands: serviceMethods("/manager/tools/brands"),
 
     equipments: serviceMethods("/manager/tools/equipments"),
@@ -32,7 +40,7 @@ export const managerService = {
 
     reagents: serviceMethods("/manager/materials/reagents"),
 
-    users: serviceMethods("/manager/users"),
+    employees: serviceMethods("/manager/employees"),
 
     analysts: serviceMethods("/manager/analysts"),
 };

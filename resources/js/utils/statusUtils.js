@@ -88,6 +88,19 @@ const VARIANTS = {
     },
 };
 
+export const filterStatusOrder = [
+    { value: "all", label: "Semua Status" },
+    { value: "received", label: "Diterima" },
+    { value: "disapproved", label: "Ditolak" },
+    { value: "pending_payment", label: "Menunggu Pembayaran" },
+    { value: "paid", label: "Sudah Dibayar" },
+    { value: "in_progress", label: "Sedang Diproses" },
+    { value: "received_test", label: "Sampel Diterima" },
+    { value: "revision_test", label: "Revisi Pengujian" },
+    { value: "pending", label: "Menunggu" },
+    { value: "completed", label: "Selesai" },
+];
+
 const getValue = (map, category, key, fallback = "default") => {
     return map?.[category]?.[key] || fallback;
 };

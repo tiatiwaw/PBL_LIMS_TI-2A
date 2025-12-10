@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 // AUTH
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\API\V1\OrderController;
+use App\Http\Controllers\API\V1\Profile\ProfileDetailController;
 
 // ADMIN CONTROLLERS
 use App\Http\Controllers\API\V1\Admin\AnalystController;
@@ -23,7 +25,7 @@ use App\Http\Controllers\API\V1\Admin\UserController;
 use App\Http\Controllers\API\V1\Admin\SupplierController;
 use App\Http\Controllers\API\V1\Admin\OrdersController;
 use App\Http\Controllers\API\V1\Admin\ReportController;
-
+use App\Http\Controllers\API\V1\Analyst\AnalystController as AnalystAnalystController;
 // STAFF CONTROLLERS
 use App\Http\Controllers\API\V1\Staff\ClientController as StaffClientController;
 use App\Http\Controllers\API\V1\Staff\OrderController as StaffOrderController;
@@ -41,6 +43,7 @@ use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryControl
 use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\TransactionController as ClientTransactionController;
 use App\Http\Controllers\API\V1\Client\ReceiptController as ClientReceiptController;
+use App\Http\Controllers\API\V1\Payment\TripayController;
 
 // MANAGER CONTROLLERS
 use App\Http\Controllers\API\V1\Manager\EquipmentController as ManagerEquipmentController;
@@ -49,13 +52,13 @@ use App\Http\Controllers\API\V1\Manager\ReagentController as ManagerReagentContr
 use App\Http\Controllers\API\V1\Manager\GradeController as ManagerGradeController;
 use App\Http\Controllers\API\V1\Manager\SupplierController as ManagerSupplierController;
 use App\Http\Controllers\API\V1\Manager\ParameterController as ManagerParameterController;
-use App\Http\Controllers\API\V1\Manager\TestMethodsController as ManagerTestMethodsController;
-use App\Http\Controllers\API\V1\Manager\UnitValueController as ManagerUnitValueController;
 use App\Http\Controllers\API\V1\Manager\ReferenceController as ManagerReferenceController;
+use App\Http\Controllers\API\V1\Manager\UnitValueController as ManagerUnitValueController;
+use App\Http\Controllers\API\V1\Manager\EmployeeController;
+use App\Http\Controllers\API\V1\Manager\TestMethodsController as ManagerTestMethodsController;
 use App\Http\Controllers\API\V1\Manager\SampleCategoryController as ManagerSampleCategoryController;
+use App\Http\Controllers\API\V1\Manager\ReportController as ManagerReportController;
 use App\Http\Controllers\API\V1\Manager\OrdersController as MOrdersController;
-use App\Http\Controllers\API\V1\Payment\TripayController;
-use App\Models\Client;
 
 Route::prefix('v1')->group(function () {
 
@@ -67,6 +70,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/auth/login', [AuthController::class, 'login'])->name('api.auth.login');
     Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])->name('api.auth.forgot-password');
     Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->name('api.auth.reset-password');
+    Route::get('/orders/download-report/{id}', [OrderController::class, 'downloadReport'])->name('api.order.download-report');
 
     /**
      * ============================
@@ -75,6 +79,17 @@ Route::prefix('v1')->group(function () {
      */
     Route::middleware('auth:sanctum')->group(function () {
 
+        Route::prefix('profile')->name('profile')->group(function () {
+            Route::get('/{userId}', [ProfileDetailController::class, 'index'])->name('profileDetail');
+            Route::put('/change-password/{userId}', [ProfileDetailController::class, 'changePassword'])->name('changePassword');
+            Route::put('/update/{userId}', [ProfileDetailController::class, 'updateProfile'])->name('updateProfile');
+            Route::post('/upload-signature', [ProfileDetailController::class, 'uploadSignature'])->name('uploadSignature');
+        });
+
+        Route::prefix('auth')->name('api.auth.')->group(function () {
+            // Route::get('/user', [AuthController::class, 'user'])->name('user');
+            Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        });
         Route::post('/auth/logout', [AuthController::class, 'logout'])->name('api.auth.logout');
 
         /**
@@ -189,19 +204,17 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('orders')->name('orders.')->group(function () {
                     Route::get('/{id}', [ClientOrderController::class, 'show']);
                     Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
-                    
-                    Route::get('/transaction/{reference}', [ClientTransactionController::class, 'show'])->name('transaction.show');
+
                     Route::get('/payment/{id}', [TripayController::class, 'paymentChannels']);
-                    Route::post('/transaction/{order}', [ClientTransactionController::class, 'store'])
-                        ->name('transaction.store');
-                    Route::get('/download-receipt/{order_number}', [ClientReceiptController::class, 'index'])->name('receipt');
+                    Route::get('/transaction/{reference}', [ClientTransactionController::class, 'show'])->name('transaction.show');
+                    Route::post('/transaction/{order}', [ClientTransactionController::class, 'store'])->name('transaction.store');
+
+                    Route::get('/receipt/{order_number}', [ClientReceiptController::class, 'index'])->name('receipt.show');
+                    
+                    Route::get('/download-options/{order_number}', [ClientClientController::class, 'getDownloadOptions'])->name('download.options');
+                    Route::get('/download-report/{id}', [ClientClientController::class, 'downloadReportFile'])->name('download.report');
+                    Route::get('/download-receipt/{order_number}', [ClientClientController::class, 'downloadReceipt'])->name('download.receipt');
                     Route::post('/save-invoice-pdf', [ClientReceiptController::class, 'savePDF'])->name('saveInvoicePDF');
-                    Route::get('/download-options/{order_number}', [ClientClientController::class, 'getDownloadOptions'])
-                        ->name('download.options');
-                    Route::get('/download-receipt/{order_number}', [ClientClientController::class, 'downloadReceipt'])
-                        ->name('download.receipt'); 
-                    Route::get('/download-report/{id}', [ClientClientController::class, 'downloadReportFile'])
-                        ->name('download.report');
                 });
             });
 
@@ -271,52 +284,48 @@ Route::prefix('v1')->group(function () {
                     Route::apiResource('categories', ManagerSampleCategoryController::class);
                 });
 
+                // Orders
                 Route::get('orders', [OrdersController::class, 'index']);
                 Route::get('orders/{id}', [OrdersController::class, 'show']);
 
-                // Analyst
-                // Route::prefix('analyst')->name('analyst.')->group(function () {
-                //     Route::apiResource('trainings', ManagerTrainingController::class);
-                //     Route::apiResource('certificates', ManagerCertificateController::class);
-                // });
+                // Employees
+                Route::get('employees', [EmployeeController::class, 'index']);
+
+                // Reports
+                Route::prefix('reports')
+                    ->name('reports.')
+                    ->group(function () {
+                        Route::get('orders', [ManagerReportController::class, 'orders']);
+                        Route::get('inventory', [ManagerReportController::class, 'inventory']);
+                        Route::get('transactions', [ManagerReportController::class, 'transactions']);
+                        Route::get('users', [ManagerReportController::class, 'users']);
+                    });
             });
+
         /**
          * ============================
-         * MANAGER API
+         * ANALYST API
          * ============================
-         */
-        Route::prefix('manager')
-            ->middleware('role:manager')
-            ->name('api.manager.')
+         */    
+        Route::prefix('analyst')
+            ->middleware(['role:analyst'])
+            ->name('api.analyst.')
             ->group(function () {
-
-                // REPORT VALIDATIONS
-                Route::prefix('report-validations')->name('report-validations.')->group(function () {
-                    Route::get('/', [MOrdersController::class, 'reportValidations']);
-                    Route::get('/{id}', [MOrdersController::class, 'show'])->name('show');
+                Route::prefix('dashboard')->group(function () {
+                    Route::get('/', [AnalystAnalystController::class, 'dashboard'])->name('dashboard');
+                    Route::put('/{order}', [AnalystAnalystController::class, 'accept'])->name('accept');
                 });
 
-                // Tools
-                Route::prefix('tools')->name('tools.')->group(function () {
-                    Route::apiResource('equipments', ManagerEquipmentController::class);
-                    Route::apiResource('brands', ManagerBrandTypeController::class);
+                Route::prefix('orders')->name('orders.')->group(function () {
+                    Route::get('/', [AnalystAnalystController::class, 'orders'])->name('.orders');
+                    Route::get('/{order}', [AnalystAnalystController::class, 'detail'])->name('.detail');
+                    Route::put('/{order}', [AnalystAnalystController::class, 'submitReport'])->name('.submit');
+                    Route::put('/save/{order}', [AnalystAnalystController::class, 'saveReport'])->name('.save');;
                 });
 
-                // Materials
-                Route::prefix('materials')->name('materials.')->group(function () {
-                    Route::apiResource('reagents', ManagerReagentController::class);
-                    Route::apiResource('grades', ManagerGradeController::class);
-                    Route::apiResource('suppliers', ManagerSupplierController::class);
-                });
+                Route::get('/samples/{order}', [AnalystAnalystController::class, 'detail'])->name('orders.detail');
 
-                // Tests
-                Route::prefix('tests')->name('tests.')->group(function () {
-                    Route::apiResource('parameters', ManagerParameterController::class);
-                    Route::apiResource('methods', ManagerTestMethodsController::class);
-                    Route::apiResource('units', ManagerUnitValueController::class);
-                    Route::apiResource('references', ManagerReferenceController::class);
-                    Route::apiResource('categories', ManagerSampleCategoryController::class);
-                });
+                    Route::post('/reagent-used/save', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent.save');
             });
+        });
     });
-});

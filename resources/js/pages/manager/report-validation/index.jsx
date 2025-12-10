@@ -11,7 +11,6 @@ export default function ReportValidationPage({ auth }) {
     const reportData = order?.data || [];
 
     const handleShowDetail = (id) => {
-        console.log("Navigating to detail with ID:", id);
         router.visit(route("manager.report-validations.show", id));
     };
 

@@ -38,6 +38,8 @@ class NParameterMethod extends Model
     }
     public function reagents()
     {
-        return $this->belongsToMany(Reagent::class, 'n_reagents', 'n_parameter_method_id', 'reagent_id');
+        return $this->belongsToMany(Reagent::class, 'n_reagents', 'n_parameter_method_id', 'reagent_id')
+            ->withPivot('reagent_used')
+            ->withTimestamps(); 
     }
 }

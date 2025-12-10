@@ -56,24 +56,25 @@ export const useOrder = (id) => useGetById(adminService.orders, "orders", id);
 export const useOrderReports = () =>
     useCrud(adminService.reports_orders, "order-reports", "Laporan Pesanan");
 
-export const useInventoryReports = (filters = {}) =>
+export const useInventoryReports = (query = {}) =>
     useCrud(
         adminService.reports_inventory,
         "inventory-reports",
         "Laporan Inventaris",
         {
             only: ["getAll"],
-            query: filters,
+            query,
         }
     );
 
-export const useTransactionReports = () =>
+export const useTransactionReports = (query = {}) =>
     useCrud(
         adminService.reports_transactions,
         "transaction-reports",
         "Laporan Transaksi",
         {
             only: ["getAll"],
+            query,
         }
     );
 
@@ -82,12 +83,13 @@ export const useUserReports = () =>
         only: ["getAll"],
     });
 
-export const useLowStockReagents = () =>
+export const useLowStockReagents = (enabled = true) =>
     useCrud(
         adminService.low_stock_reagents,
         "low-stock-reagents",
         "Notifikasi Stok Reagen",
         {
             only: ["getAll"],
+            enabled,
         }
     );
