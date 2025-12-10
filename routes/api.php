@@ -198,8 +198,8 @@ Route::prefix('v1')->group(function () {
                     Route::post('/save-invoice-pdf', [ClientReceiptController::class, 'savePDF'])->name('saveInvoicePDF');
                     Route::get('/download-options/{order_number}', [ClientClientController::class, 'getDownloadOptions'])
                         ->name('download.options');
-                    // Route::get('/download-receipt/{order_number}', [ClientClientController::class, 'downloadReceipt'])
-                    //     ->name('download.receipt'); Untuk download receipt di dashboard (kayane)
+                    Route::get('/download-receipt/{order_number}', [ClientClientController::class, 'downloadReceipt'])
+                        ->name('download.receipt'); 
                     Route::get('/download-report/{id}', [ClientClientController::class, 'downloadReportFile'])
                         ->name('download.report');
                 });
