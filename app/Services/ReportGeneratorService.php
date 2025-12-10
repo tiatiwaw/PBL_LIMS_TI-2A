@@ -108,7 +108,7 @@ class ReportGeneratorService
         ]);
 
         $fileName = 'report_order_' . $order->id . '_' . time() . '.pdf';
-        $filePath = 'reports/' . $fileName;
+        $filePath = 'client/reports/' . $fileName;
 
         Storage::disk('public')->put($filePath, $pdf->output());
 

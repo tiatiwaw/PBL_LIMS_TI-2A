@@ -235,7 +235,7 @@ class ParameterController extends Controller
         $order->update([
             'notes'         => $request->notes,
             'estimate_date' => $request->estimate_date,
-            'status'        => 'in_progress',
+            // 'status'        => 'in_progress',
         ]);
 
         $order->analysts()->sync($request->analysts);
