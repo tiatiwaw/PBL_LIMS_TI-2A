@@ -46,7 +46,7 @@ class AnalystController extends Controller
     {
         $analyst = $this->analyst();
 
-        $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id))
+        $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->analyst->id))
             ->whereIn('status', [
                 'in_progress',
                 'completed',
