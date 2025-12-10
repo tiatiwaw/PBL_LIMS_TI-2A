@@ -25,8 +25,8 @@ class AnalystController extends Controller
     public function dashboard(Request $request): JsonResponse
     {
         $analyst = $this->analyst();
-        $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id));
-        $pendingOrders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->id))->where('status', 'paid');
+        $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->analyst->id));
+        $pendingOrders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->analyst->id))->where('status', 'paid');
         $stats = [
             'pendingOrder' => $pendingOrders->count(),
             'processedOrder' => $orders->where('status', 'in_progress')->count(),
