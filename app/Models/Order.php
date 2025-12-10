@@ -106,8 +106,8 @@ class Order extends Model
             return 'pending_payment';
         }
         
-        if ($transaction && $transaction->status === 'paid' && $this->status === 'received') {
-            return 'in_progress';
+        if ($transaction && $transaction->status === 'paid') {
+            return 'paid';
         }
         
         return $this->status;
