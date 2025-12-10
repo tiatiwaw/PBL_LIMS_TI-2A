@@ -12,6 +12,7 @@ use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon; // Pastikan ini diimpor untuk logika sertifikat
 
 class ReportController extends Controller
 {
@@ -184,9 +185,12 @@ class ReportController extends Controller
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('created_at', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('created_at', $month));
     
+        $allUsers = User::all();
         $filteredAllIds = $userQuery->pluck('id');
         $filteredClientIds = (clone $userQuery)->where('role', 'client')->pluck('id');
         $filteredAnalystIds = (clone $userQuery)->where('role', 'analyst')->pluck('id');
+        $filteredAnalystSample = DB::table('n_analysts')->distinct()->pluck('analyst_id');
+
     
         $totalPengguna = $filteredAllIds->count();
         $totalAnalyst = $filteredAnalystIds->count();
@@ -195,36 +199,78 @@ class ReportController extends Controller
             ->whereNotIn('role', ['admin', 'client'])
             ->count();
     
-        $topClient = Order::whereIn('client_id', $filteredClientIds)
+        // =====================================================
+        // 1. CLIENT RANKING & ACTIVITY
+        // =====================================================
+        $clientRanking = Order::whereIn('client_id', $filteredClientIds)
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('order_date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('order_date', $month))
-            ->select('client_id', DB::raw('COUNT(*) as total_orders'))
+            ->select('client_id', DB::raw('COUNT(*) as orders'))
             ->groupBy('client_id')
-            ->orderByDesc('total_orders')
-            ->first();
+            ->orderByDesc('orders')
+            ->limit(10)
+            ->get();
     
-        $topClientData = $topClient
-            ? [
-                'name' => User::find($topClient->client_id)?->name ?? '-',
-                'orders' => $topClient->total_orders
-            ]
-            : ['name' => '-', 'orders' => 0];
+        $clientRankingData = $clientRanking->map(function ($client) use ($allUsers) {
+            $user = $allUsers->firstWhere('id', $client->client_id);
+            return [
+                'name' => $user->name ?? 'Client Tidak Ditemukan',
+                'orders' => $client->orders
+            ];
+        })->values();
     
-        $topAnalyst = DB::table('n_analysts')
+        $clientActivityTableData = $clientRankingData->take(5)->map(fn($item) => [
+            'client_name' => $item['name'],
+            'total_order' => $item['orders']
+        ])->values();
+    
+        $topClientData = $clientRankingData->first() ?? ['name' => '-', 'orders' => 0];
+    
+        // =====================================================
+        // 2. ROLE DISTRIBUTION
+        // =====================================================
+        $roleDistribution = User::whereIn('id', $filteredAllIds)
+            ->select('role', DB::raw('COUNT(*) as value'))
+            ->groupBy('role')
+            ->get()
+            ->map(fn($i) => ['name' => ucfirst($i->role), 'value' => $i->value])
+            ->values();
+    
+        // =====================================================
+        // 3. ANALYST ACTIVITY & PERFORMANCE
+        // =====================================================
+        $analystActivity = DB::table('n_analysts')
             ->join('users', 'n_analysts.analyst_id', '=', 'users.id')
             ->join('orders', 'n_analysts.order_id', '=', 'orders.id')
-            ->whereIn('users.id', $filteredAnalystIds)
+            ->whereIn('users.id', $filteredAnalystSample)
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('orders.order_date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('orders.order_date', $month))
-            ->select('users.name', DB::raw('COUNT(orders.id) as total_samples'))
-            ->groupBy('users.name')
+            ->select(
+                'users.id',
+                'users.name',
+                DB::raw('COUNT(n_analysts.id) as total_samples')
+            )
+            ->groupBy('users.id', 'users.name')
             ->orderByDesc('total_samples')
-            ->first();
+            ->get();
+
+        $analystActivityData = $analystActivity->map(fn($i) => [
+            'name' => $i->name,
+            'tests' => $i->total_samples
+        ])->values();
     
-        $topAnalystData = $topAnalyst
-            ? ['name' => $topAnalyst->name, 'samples' => $topAnalyst->total_samples]
+        $analystPerformanceTableData = $analystActivity->take(5)->map(fn($item) => [
+            'analyst_name' => $item->name,
+            'total_sample' => $item->total_samples
+        ])->values();
+    
+        $topAnalystData = $analystActivity->first()
+            ? ['name' => $analystActivity->first()->name, 'samples' => $analystActivity->first()->total_samples]
             : ['name' => '-', 'samples' => 0];
     
+        // =====================================================
+        // 4. ORDERS & SAMPLES
+        // =====================================================
         $ordersFiltered = Order::whereIn('client_id', $filteredClientIds)
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('order_date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('order_date', $month));
@@ -236,6 +282,9 @@ class ReportController extends Controller
             ? round($totalSamples / $totalOrders, 2)
             : 0;
     
+        // =====================================================
+        // 5. AVAILABLE YEARS
+        // =====================================================
         $yearsAvailable = User::selectRaw('YEAR(created_at) as year')
             ->distinct()
             ->orderByDesc('year')
@@ -243,31 +292,52 @@ class ReportController extends Controller
             ->filter()
             ->values();
     
-        $trend = $userQuery
-            ->select(
-                DB::raw($year === 'all' ? 'YEAR(created_at) as label' : 'MONTHNAME(created_at) as label'),
-                DB::raw('COUNT(*) as count')
-            )
-            ->groupBy('label')
-            ->orderBy('label')
-            ->get()
-            ->map(fn($i) => [
-                'name' => $year === 'all' ? (string)$i->label : substr($i->label, 0, 3),
-                'fullName' => (string)$i->label,
-                'count' => $i->count
+        // =====================================================
+        // 6. TREND (REPLACED WITH YOUR 12-MONTH VERSION)
+        // =====================================================
+        if ($year && $year !== 'all') {
+            // === BULANAN: selalu 12 bulan Jan–Dec ===
+            $months = collect([
+                'January','February','March','April','May','June',
+                'July','August','September','October','November','December'
             ]);
     
+            $trend = $months->map(function ($month) use ($userQuery, $year) {
+                return [
+                    'name' => substr($month, 0, 3),
+                    'fullName' => $month,
+                    'count' => (clone $userQuery)
+                        ->whereYear('created_at', $year)
+                        ->whereMonth('created_at', Carbon::parse($month)->month)
+                        ->count()
+                ];
+            });
+        } else {
+            // === TAHUNAN ===
+            $trend = User::select(
+                    DB::raw('YEAR(created_at) as label'),
+                    DB::raw('COUNT(*) as count')
+                )
+                ->groupBy('label')
+                ->orderBy('label')
+                ->get()
+                ->map(fn($i) => [
+                    'name' => (string)$i->label,
+                    'fullName' => (string)$i->label,
+                    'count' => $i->count
+                ]);
+        }
+    
+        // =====================================================
+        // 7. TRAINING ANALYST & CERTIFICATES
+        // =====================================================
         $trainingAnalyst = DB::table('analysts')
             ->leftJoin('n_training_analysts', 'analysts.id', '=', 'n_training_analysts.analyst_id')
             ->leftJoin('trainings', 'n_training_analysts.training_id', '=', 'trainings.id')
             ->join('users', 'analysts.user_id', '=', 'users.id')
             ->whereIn('users.id', $filteredAnalystIds)
-            ->when($year && $year !== 'all', fn($q) => 
-                $q->whereYear('trainings.date', $year)
-            )
-            ->when($month && $month !== 'all', fn($q) => 
-                $q->whereMonth('trainings.date', $month)
-            )
+            ->when($year && $year !== 'all', fn($q) => $q->whereYear('trainings.date', $year))
+            ->when($month && $month !== 'all', fn($q) => $q->whereMonth('trainings.date', $month))
             ->select(
                 'analysts.name',
                 DB::raw('COUNT(trainings.id) as total_training')
@@ -279,8 +349,8 @@ class ReportController extends Controller
                 'name' => $i->name,
                 'total_training' => (int)$i->total_training
             ]);
-        
-            $trainingCerts = DB::table('n_training_analysts')
+    
+        $trainingCerts = DB::table('n_training_analysts')
             ->join('trainings', 'n_training_analysts.training_id', '=', 'trainings.id')
             ->join('analysts', 'n_training_analysts.analyst_id', '=', 'analysts.id')
             ->join('users', 'analysts.user_id', '=', 'users.id')
@@ -292,9 +362,9 @@ class ReportController extends Controller
             )
             ->get()
             ->map(function ($row) {
-                $trainingDate = \Carbon\Carbon::parse($row->training_date);
-                $expiry = $trainingDate->copy()->addYear(); // masa berlaku sertif: 1 tahun
-        
+                $trainingDate = Carbon::parse($row->training_date);
+                $expiry = $trainingDate->copy()->addYear();
+    
                 return [
                     'analyst_name' => $row->analyst_name,
                     'training_name' => $row->training_name,
@@ -307,15 +377,18 @@ class ReportController extends Controller
                             : 'valid')
                 ];
             });
-        
+    
         $certificateSummary = [
             'expired' => $trainingCerts->where('status', 'expired')->count(),
             'near_expired' => $trainingCerts->where('status', 'near_expired')->count(),
             'valid' => $trainingCerts->where('status', 'valid')->count(),
         ];
-        
+    
         $certificateDetail = $trainingCerts->values();
-
+    
+        // =====================================================
+        // RETURN
+        // =====================================================
         return response()->json([
             'meta' => [
                 'years' => $yearsAvailable
@@ -327,16 +400,24 @@ class ReportController extends Controller
                 'total_karyawan_non_admin' => $totalKaryawan,
                 'top_client' => $topClientData,
                 'top_analyst' => $topAnalystData,
-                'avg_samples_per_order' => $avgSamplesPerOrder
+                'avg_analyst_per_order' => $avgSamplesPerOrder
             ],
             'charts' => [
+                'clientRankingData' => $clientRankingData,
+                'roleDistribution' => $roleDistribution,
+                'analystActivityData' => $analystActivityData,
+                'analystPerformance' => $analystPerformanceTableData,
+                'clientActivity' => $clientActivityTableData,
+    
+                // TREND CHART (modified)
                 'trend' => $trend,
+    
                 'training_analyst' => $trainingAnalyst,
                 'certificate_expiration' => $certificateSummary,
                 'certificate_detail' => $certificateDetail
             ]
         ]);
-    }    
+    }     
 
     public function transactions()
     {

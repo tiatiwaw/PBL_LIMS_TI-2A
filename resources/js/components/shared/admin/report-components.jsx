@@ -473,79 +473,220 @@ export const TrendAreaChart = ({
     </ChartCard>
 );
 
+// Di file SummaryTable.jsx (atau di mana pun komponen SummaryTable didefinisikan)
+
 export const SummaryTable = ({
     title,
     badgeText,
     columns,
     data,
     emptyMessage,
+    className = ""
 }) => {
+    // Fungsi untuk memberikan lebar minimum pada kolom tertentu
+    const getMinWidth = (key) => {
+        if (key === "analyst_name") return "min-w-[150px]";
+        if (key === "training_name") return "min-w-[180px]";
+        if (key === "training_date" || key === "expires_at") return "min-w-[120px]";
+        return "";
+    };
+
+    // Fungsi untuk mendapatkan data berdasarkan key (diperlukan untuk iterasi sel)
+    const getCellValue = (item, key) => {
+        const value = item[key];
+        
+        // --- LOGIKA KHUSUS KOLOM 'STATUS' ---
+        if (key === 'status') {
+            const statusText = item.status;
+            let badgeClass = '';
+            
+            // Asumsi input status dari backend/maping di UserReportDashboard adalah 'Kadaluarsa', 'Segera Kadaluarsa', atau 'Aktif'
+            switch (statusText) {
+                case 'Kadaluarsa':
+                    badgeClass = 'bg-red-100 text-red-800 border border-red-300'; // Tambahkan border merah
+                    break;
+                case 'Segera Kadaluarsa':
+                    badgeClass = 'bg-yellow-100 text-yellow-800 border border-yellow-300';
+                    break;
+                case 'Aktif':
+                default:
+                    badgeClass = 'bg-green-100 text-green-800 border border-green-300';
+                    break;
+            }
+            return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${badgeClass}`}>{statusText}</span>;
+        }
+        // --- AKHIR LOGIKA KHUSUS ---
+
+        return value ?? "-";
+    };
+    
     return (
-        <Card className="border-slate-200 shadow-sm">
+        <Card className={`border-slate-200 shadow-sm w-full ${className}`}>
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg text-[#02364B]">
                     {title}
                 </CardTitle>
-                <Badge
-                    variant="secondary"
-                    className="bg-[#E0F2F1] text-[#024D60]"
-                >
-                    {badgeText}
-                </Badge>
+
+                {badgeText && (
+                    <Badge
+                        variant="secondary"
+                        className="bg-[#E0F2F1] text-[#024D60]"
+                    >
+                        {badgeText}
+                    </Badge>
+                )}
             </CardHeader>
+
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow className="bg-[#024D60] hover:bg-[#024D60]">
-                            {columns.map((col, i) => (
-                                <TableHead
-                                    key={i}
-                                    className={`font-medium text-white ${
-                                        col.align === "right"
-                                            ? "text-right"
-                                            : ""
-                                    }`}
-                                >
-                                    {col.label}
-                                </TableHead>
-                            ))}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {data.length > 0 ? (
-                            data.map((item, index) => (
-                                <TableRow
-                                    key={index}
-                                    className={
-                                        index % 2 === 0
-                                            ? "bg-white"
-                                            : "bg-gray-50/50 hover:bg-[#2CACAD]/5"
-                                    }
-                                >
-                                    <TableCell className="font-semibold text-[#02364B]">
-                                        {item.name}
-                                    </TableCell>
-                                    <TableCell className="text-right font-bold text-[#024D60]">
-                                        {item.value}
+                <div className="overflow-x-auto w-full">
+                    <Table className="min-w-max w-full">
+                        <TableHeader>
+                            <TableRow className="bg-[#024D60] hover:bg-[#024D60]">
+                                {columns.map((col, i) => (
+                                    <TableHead
+                                        key={i}
+                                        // Terapkan min-width pada header
+                                        className={`font-medium text-white ${getMinWidth(col.key)} ${
+                                            col.align === "right" ? "text-right" : ""
+                                        }`}
+                                    >
+                                        {col.label}
+                                    </TableHead>
+                                ))}
+                            </TableRow>
+                        </TableHeader>
+
+                        <TableBody>
+                            {data.length > 0 ? (
+                                data.map((item, index) => (
+                                    <TableRow
+                                        key={index}
+                                        className={
+                                            index % 2 === 0
+                                                ? "bg-white"
+                                                : "bg-gray-50/50 hover:bg-[#2CACAD]/5"
+                                        }
+                                    >
+                                        {columns.map((col, i) => (
+                                            <TableCell
+                                                key={i}
+                                                // Terapkan min-width dan alignment pada cell
+                                                className={`${getMinWidth(col.key)} ${
+                                                    col.align === "right" ? "text-right" : ""
+                                                } text-[#02364B]`}
+                                            >
+                                                {/* PENTING: Panggil getCellValue di sini */}
+                                                {getCellValue(item, col.key)} 
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell
+                                        colSpan={columns.length}
+                                        className="text-center text-gray-400 py-4"
+                                    >
+                                        {emptyMessage}
                                     </TableCell>
                                 </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="text-center text-gray-400 py-4"
-                                >
-                                    {emptyMessage}
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
             </CardContent>
         </Card>
     );
 };
+
+// // Di file SummaryTable.jsx (atau di mana pun komponen SummaryTable didefinisikan)
+
+// export const SummaryTable = ({
+//     title,
+//     badgeText,
+//     columns,
+//     data,
+//     barSize = 32,
+//     delay = 0,
+//     height = 300,
+//     emptyMessage,
+// }) => {
+//     // Fungsi untuk memberikan lebar minimum pada kolom tertentu
+
+
+//     return (
+//         <Card className="border-slate-200 shadow-sm">
+//             <CardHeader className="flex flex-row items-center justify-between">
+//                 <CardTitle className="text-lg text-[#02364B]">
+//                     {title}
+//                 </CardTitle>
+//                 <Badge
+//                     variant="secondary"
+//                     className="bg-[#E0F2F1] text-[#024D60]"
+//                 >
+//                     {badgeText}
+//                 </Badge>
+//             </CardHeader>
+//             <CardContent>
+//                 {/* PENTING: Tambahkan wrapper overflow-x-auto untuk scroll horizontal */}
+//                 <div className="overflow-x-auto">
+//                     <Table>
+//                         <TableHeader>
+//                             <TableRow className="bg-[#024D60] hover:bg-[#024D60]">
+//                                 {columns.map((col, i) => (
+//                                     <TableHead
+//                                         key={i}
+//                                         // Terapkan min-width pada header
+//                                         className={`font-medium text-white ${getMinWidth(col.key)} ${
+//                                             col.align === "right" ? "text-right" : ""
+//                                         }`}
+//                                     >
+//                                         {col.label}
+//                                     </TableHead>
+//                                 ))}
+//                             </TableRow>
+//                         </TableHeader>
+//                         <TableBody>
+//                             {data.length > 0 ? (
+//                                 data.map((item, index) => (
+//                                     <TableRow
+//                                         key={index}
+//                                         className={
+//                                             index % 2 === 0
+//                                                 ? "bg-white"
+//                                                 : "bg-gray-50/50 hover:bg-[#2CACAD]/5"
+//                                         }
+//                                     >
+//                                         {columns.map((col, i) => (
+//                                             <TableCell
+//                                                 key={i}
+//                                                 // Terapkan min-width pada cell
+//                                                 className={`${getMinWidth(col.key)} ${
+//                                                     col.align === "right" ? "text-right" : ""
+//                                                 } text-[#02364B]`}
+//                                             >
+//                                                 {getCellValue(item, col.key)}
+//                                             </TableCell>
+//                                         ))}
+//                                     </TableRow>
+//                                 ))
+//                             ) : (
+//                                 <TableRow>
+//                                     <TableCell
+//                                         colSpan={columns.length}
+//                                         className="text-center text-gray-400 py-4"
+//                                     >
+//                                         {emptyMessage}
+//                                     </TableCell>
+//                                 </TableRow>
+//                             )}
+//                         </TableBody>
+//                     </Table>
+//                 </div>
+//             </CardContent>
+//         </Card>
+//     );
+// };
 
 export const TransactionTable = ({ data, page, setPage, pageSize = 10 }) => {
     const totalPages = Math.ceil(data.length / pageSize);
