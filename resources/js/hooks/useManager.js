@@ -94,6 +94,28 @@ export const useManagerOrder = (id) =>
         id
     );
 
+export const useInventoryReports = (query = {}) =>
+    useCrud(
+        managerService.reports_inventory,
+        "inventory-reports",
+        "Laporan Inventaris",
+        {
+            only: ["getAll"],
+            query,
+        }
+    );
+
+export const useTransactionReports = (query = {}) =>
+    useCrud(
+        managerService.reports_transactions,
+        "transaction-reports",
+        "Laporan Transaksi",
+        {
+            only: ["getAll"],
+            query,
+        }
+    );
+
 export const useManager = () => ({
     useBrands,
     useCategories,

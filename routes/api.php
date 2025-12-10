@@ -60,6 +60,7 @@ use App\Http\Controllers\API\V1\Supervisor\AnalystController as SupervisorAnalys
 use App\Http\Controllers\API\V1\Manager\TestMethodsController as ManagerTestMethodsController;
 use App\Http\Controllers\API\V1\Supervisor\ParameterController as SupervisorParameterController;
 use App\Http\Controllers\API\V1\Manager\SampleCategoryController as ManagerSampleCategoryController;
+use App\Http\Controllers\API\V1\Manager\ReportController as ManagerReportController;
 
 Route::prefix('v1')->group(function () {
 
@@ -316,16 +317,22 @@ Route::prefix('v1')->group(function () {
                     Route::apiResource('categories', ManagerSampleCategoryController::class);
                 });
 
+                // Orders
                 Route::get('orders', [OrdersController::class, 'index']);
                 Route::get('orders/{id}', [OrdersController::class, 'show']);
 
+                // Employees
                 Route::get('employees', [EmployeeController::class, 'index']);
 
-                // Analyst
-                // Route::prefix('analyst')->name('analyst.')->group(function () {
-                //     Route::apiResource('trainings', ManagerTrainingController::class);
-                //     Route::apiResource('certificates', ManagerCertificateController::class);
-                // });
+                // Reports
+                Route::prefix('reports')
+                    ->name('reports.')
+                    ->group(function () {
+                        Route::get('orders', [ManagerReportController::class, 'orders']);
+                        Route::get('inventory', [ManagerReportController::class, 'inventory']);
+                        Route::get('transactions', [ManagerReportController::class, 'transactions']);
+                        Route::get('users', [ManagerReportController::class, 'users']);
+                    });
             });
     });
 });
