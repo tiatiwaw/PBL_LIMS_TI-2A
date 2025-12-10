@@ -103,7 +103,7 @@ Route::middleware(['auth', 'role:manager'])
                 ->name('index');
 
             Route::get('/{id}', function ($id) {
-                return Inertia::render('manager/orders/index', [
+                return Inertia::render('manager/detail/index', [
                     'id' => $id,
                 ]);
             })->name('show');
@@ -128,13 +128,6 @@ Route::middleware(['auth', 'role:manager'])
         Route::inertia('/reports', 'manager/reports/index')->name('reports');
 
         Route::inertia('/orders', 'manager/orders/index')->name('orders');
-
-        Route::get('/orders/{id}', function ($id) {
-            return Inertia::render('manager/detail/index', [
-                'id' => $id,
-                'canValidate' => false,
-            ]);
-        })->name('order.show');
 
         Route::inertia('/users', 'manager/users/index')->name('users');
     });
@@ -236,7 +229,7 @@ Route::controller(AnalystController::class)
                 Route::get('/{order}', 'detail')->name('detail');
                 Route::put('/{order}/accept', 'accept')->name('accept');
                 Route::get('/download/{order}', 'downloadReport')->name('downloadReport');
-        });
+            });
 
         // Samples
         Route::prefix('samples')
@@ -244,7 +237,7 @@ Route::controller(AnalystController::class)
             ->group(function () {
                 Route::post('/{sample}/confirm', 'confirm')->name('confirm');
                 Route::post('/{sample}/unconfirm', 'unconfirm')->name('unconfirm');
-        });
+            });
     });
 
 // Client
@@ -259,7 +252,7 @@ Route::controller(ClientController::class)
         Route::get('/payment', 'payment')->name('payment');
         Route::get('/report', 'report')->name('report');
 
-        
+
         // Orders - sesuaikan dengan API structure
         Route::prefix('orders')
             ->name('orders.')
