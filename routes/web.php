@@ -18,7 +18,7 @@ use App\Http\Controllers\API\V1\Client\ReceiptController as ClientReceiptControl
 Route::inertia('/', 'index')->name('home');
 
 
-Route::get('/profile', function () {
+Route::middleware('auth')->get('/profile', function () {
     return Inertia::render('profile');
 })->name('profile');
 

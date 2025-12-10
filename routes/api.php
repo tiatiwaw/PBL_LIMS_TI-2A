@@ -203,22 +203,164 @@ Route::prefix('v1')->group(function () {
                     Route::post('/reagent-used/save', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent.save');
                 });
 
-            // Client
-            Route::prefix('client')
-                ->middleware(['role:client'])
-                ->name('api.client.')
-                ->group(function () {
+            /**
+         * ============================
+         * CLIENT API
+         * ============================
+         */
+        Route::prefix('client')
+            ->middleware(['role:client'])
+            ->name('api.client.')
+            ->group(function () {
 
-                    // Dashboard & Profile
-                    Route::get('/', [ClientClientController::class, 'index'])->name('index');
+                Route::get('/', [ClientClientController::class, 'index'])
+                    ->name('index');
+                Route::get('/profile', [ClientProfileController::class, 'show'])
+                    ->name('profile');
+                Route::post('/profile/update-photo', [ClientProfileController::class, 'updatePhoto'])
+                    ->name('updatePhoto');
+                Route::post('profile/update-phone', [ClientProfileController::class, 'updatePhone'])
+                    ->name('updatePhone');
+                Route::post('profile/change-password', [ClientProfileController::class, 'changePassword'])
+                    ->name('client.changePassword');
 
-                    // Orders - menggunakan apiResource untuk efisiensi
-                    Route::prefix('orders')
-                        ->name('orders.')
-                        ->group(function () {
-                            Route::get('/{id}', [ClientOrderController::class, 'show']);
-                            Route::get('status/{id}', [ClientHistoryController::class, 'show'])->name('status');
-                        });
+
+                Route::prefix('orders')->name('orders.')->group(function () {
+                    Route::get('/{id}', [ClientOrderController::class, 'show']);
+                    Route::get('status/{id}', [ClientHistoryController::class, 'show'])
+                        ->name('status');
+                    
+                    Route::get('/payment/{id}', [TripayController::class, 'paymentChannels']);
+                    Route::get('/transaction/{reference}', [ClientTransactionController::class, 'show'])
+                        ->name('transaction.show');
+                    Route::post('/transaction/{order}', [ClientTransactionController::class, 'store'])
+                        ->name('transaction.store');
+                    Route::get('/receipt/{order_number}', [ClientReceiptController::class, 'index'])
+                        ->name('receipt.show');
+                    
+                    Route::get('/download-options/{order_number}', [ClientClientController::class, 'getDownloadOptions'])
+                        ->name('download.options');
+                    Route::get('/download-report/{id}', [ClientClientController::class, 'downloadReportFile'])
+                        ->name('download.report');
+                    Route::get('/download-receipt/{order_number}', [ClientClientController::class, 'downloadReceipt'])
+                        ->name('download.receipt');
+                    Route::post('/save-invoice-pdf', [ClientReceiptController::class, 'savePDF'])
+                        ->name('saveInvoicePDF');
                 });
+            });
+
+        // supervisor
+        Route::prefix('supervisor')
+            ->middleware('role:supervisor')
+            ->name('api.supervisor.')
+            ->group(function () {
+
+                // Orders
+                Route::get('orders/history', [SupervisorOrderController::class, 'history'])->name('orders.history');
+                Route::get('orders/history/{id}', [SupervisorOrderController::class, 'show'])->name('orders.history.detail');
+                Route::prefix('orders/follow-up')->name('orders.')->group(function () {
+                    Route::get('/', [SupervisorOrderController::class, 'index'])->name('index');
+                    Route::get('/history', [SupervisorOrderController::class, 'history'])->name('history');
+                    Route::get('/{id}', [SupervisorOrderController::class, 'show'])->name('show');
+                    Route::put('/{id}', [SupervisorOrderController::class, 'updateStatus'])->name('update');
+                    Route::get('/{id}/parameters', [SupervisorParameterController::class, 'show'])->name('show');
+                    Route::post('/{id}/parameters', [SupervisorParameterController::class, 'store'])->name('store');
+                    Route::put('/{id}/parameters', [SupervisorParameterController::class, 'update'])->name('update');
+                    Route::post('/{id}/parameters/submit', [SupervisorParameterController::class, 'assignAnalyst'])->name('assign');
+                    Route::get('/{id}/repeat-test', [SupervisorOrderController::class, 'indexRepeatTest'])->name('repeat.index');
+                    Route::post('/{id}/repeat-test/submit', [SupervisorOrderController::class, 'submitRepeatTest'])->name('repeat');
+                });
+
+                Route::prefix('analysts')->name('analysts.')->group(function () {
+                    Route::get('/', [SupervisorAnalystController::class, 'index'])->name('index');
+                });
+            });
+
+        /**
+         * ============================
+         * MANAGER API
+         * ============================
+         */
+        Route::prefix('manager')
+            ->middleware('role:manager')
+            ->name('api.manager.')
+            ->group(function () {
+
+                // REPORT VALIDATIONS
+                Route::prefix('report-validations')->name('report-validations.')->group(function () {
+                    Route::get('/', [MOrdersController::class, 'reportValidations']);
+                    Route::get('/{id}', [MOrdersController::class, 'show'])->name('show');
+                    Route::put('/{id}', [MOrdersController::class, 'update'])->name('update');
+                });
+
+                // Tools
+                Route::prefix('tools')->name('tools.')->group(function () {
+                    Route::apiResource('equipments', ManagerEquipmentController::class);
+                    Route::apiResource('brands', ManagerBrandTypeController::class);
+                });
+
+                // Materials
+                Route::prefix('materials')->name('materials.')->group(function () {
+                    Route::apiResource('reagents', ManagerReagentController::class);
+                    Route::apiResource('grades', ManagerGradeController::class);
+                    Route::apiResource('suppliers', ManagerSupplierController::class);
+                });
+
+                // Tests
+                Route::prefix('tests')->name('tests.')->group(function () {
+                    Route::apiResource('parameters', ManagerParameterController::class);
+                    Route::apiResource('methods', ManagerTestMethodsController::class);
+                    Route::apiResource('units', ManagerUnitValueController::class);
+                    Route::apiResource('references', ManagerReferenceController::class);
+                    Route::apiResource('categories', ManagerSampleCategoryController::class);
+                });
+
+                Route::get('orders', [OrdersController::class, 'index']);
+                Route::get('orders/{id}', [OrdersController::class, 'show']);
+
+                // Analyst
+                // Route::prefix('analyst')->name('analyst.')->group(function () {
+                //     Route::apiResource('trainings', ManagerTrainingController::class);
+                //     Route::apiResource('certificates', ManagerCertificateController::class);
+                // });
+            });
+        /**
+         * ============================
+         * MANAGER API
+         * ============================
+         */
+        Route::prefix('manager')
+            ->middleware('role:manager')
+            ->name('api.manager.')
+            ->group(function () {
+
+                // REPORT VALIDATIONS
+                Route::prefix('report-validations')->name('report-validations.')->group(function () {
+                    Route::get('/', [MOrdersController::class, 'reportValidations']);
+                    Route::get('/{id}', [MOrdersController::class, 'show'])->name('show');
+                });
+
+                // Tools
+                Route::prefix('tools')->name('tools.')->group(function () {
+                    Route::apiResource('equipments', ManagerEquipmentController::class);
+                    Route::apiResource('brands', ManagerBrandTypeController::class);
+                });
+
+                // Materials
+                Route::prefix('materials')->name('materials.')->group(function () {
+                    Route::apiResource('reagents', ManagerReagentController::class);
+                    Route::apiResource('grades', ManagerGradeController::class);
+                    Route::apiResource('suppliers', ManagerSupplierController::class);
+                });
+
+                // Tests
+                Route::prefix('tests')->name('tests.')->group(function () {
+                    Route::apiResource('parameters', ManagerParameterController::class);
+                    Route::apiResource('methods', ManagerTestMethodsController::class);
+                    Route::apiResource('units', ManagerUnitValueController::class);
+                    Route::apiResource('references', ManagerReferenceController::class);
+                    Route::apiResource('categories', ManagerSampleCategoryController::class);
+                });
+            });
     });
 });
