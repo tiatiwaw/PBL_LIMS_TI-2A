@@ -15,10 +15,8 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState("");
 
   const { user, loading: authLoading } = useAuth();
-  const { data: profileData, isLoading: profileLoading } = getProfile(user?.id);
+  const { data: profileData, isLoading, error } = getProfile(user?.id);
 
-  if (authLoading || !user) return <Loading />;
-  if (profileLoading) return <Loading />;
 
   // ----------------------------------------
   //  HANDLERS
@@ -48,6 +46,24 @@ export default function ProfilePage() {
       toast.error(msg);
     }
   };
+
+  if (isLoading || authLoading) {
+          return (
+               <DashboardLayout title="Profil Pengguna" header="Profil Pengguna">
+                  <Loading />
+              </DashboardLayout>
+          );
+      }
+  
+      if (error) {
+          return (
+              <DashboardLayout title="Profil Pengguna" header="Profil Pengguna">
+                  <div className="text-center text-red-500 py-8">
+                      {error.message || "Terjadi kesalahan saat memuat data"}
+                  </div>
+              </DashboardLayout>
+          );
+      }
 
   return (
     <DashboardLayout title="Profil Pengguna" header="Profil Pengguna">

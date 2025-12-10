@@ -19,7 +19,7 @@ Route::inertia('/', 'index')->name('home');
 
 
 Route::middleware('auth')->get('/profile', function () {
-    return Inertia::render('profile');
+    return Inertia::render('profile/index');
 })->name('profile');
 
 // Auth

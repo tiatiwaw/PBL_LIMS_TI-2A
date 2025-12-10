@@ -193,7 +193,7 @@ export default function OrderDetail({ orderId }) {
             {
                 onSuccess: () => {
                     setIsEditing(false);
-                    toast.success("Berhasil disimpan (Parameter & Reagen)!");
+                    toast.success("Parameter berhasil disimpan");
                 },
                 onError: (err) => {
                     toast.error("Gagal menyimpan parameter!");
