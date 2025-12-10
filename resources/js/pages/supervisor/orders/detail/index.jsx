@@ -141,8 +141,8 @@ export default function DetailOrder({ canValidate }) {
                             "Yakin ingin mengkonfirmasi pengujian ini?.",
                         data: {
                             action: "validate_test",
-                            reason: "Menunggu Pembayaran dari Klien.",
-                            result_value: resultValue, // 🔹 Gunakan hasil dari getAllResults()
+                            reason: "Menunggu Persetujuan validasi dari Manager.",
+                            result_value: resultValue,
                         },
                     });
                     setOpenDialog(true);

@@ -205,14 +205,14 @@ export default function ManagerDetailOrder() {
                     />
                 </div>
 
-                {order.status === "pending" ||
-                    (order.status === "completed" && (
-                        <OrderValidation
-                            status={order.status}
-                            onValidationAction={handleValidate}
-                            isLoading={isValidating}
-                        />
-                    ))}
+                {(order.status === "pending" ||
+                    order.status === "completed") && (
+                    <OrderValidation
+                        status={order.status}
+                        onValidationAction={handleValidate}
+                        isLoading={isValidating}
+                    />
+                )}
 
                 <ActionSupervisorDialog
                     action={dialogConfig.action}
