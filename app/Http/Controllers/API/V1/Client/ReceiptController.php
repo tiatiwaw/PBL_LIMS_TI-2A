@@ -14,18 +14,38 @@ class ReceiptController extends Controller
 
     public function savePDF(Request $request)
     {
-        $request->validate([
-            'invoice_pdf' => 'required|file|mimes:pdf',
-            'order_number' => 'required|string',
-        ]);
+    $request->validate([
+        'invoice_pdf' => 'required|file|mimes:pdf',
+        'order_number' => 'required|string',
+    ]);
 
-        $file = $request->file('invoice_pdf');
-        $filename = 'invoice-' . $request->order_number . '.pdf';
+    // Simpan file
+    $file = $request->file('invoice_pdf');
+    $filename = 'invoice-' . $request->order_number . '.pdf';
 
-        $path = $file->storeAs('public/client/receipts', $filename);
+    $path = $file->storeAs('public/client/receipts', $filename);
 
-        return response()->json(['success' => true, 'path' => $path]);
+    // Cari order berdasarkan order_number
+    $order = Order::where('order_number', $request->order_number)->first();
+
+    if (!$order) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Order tidak ditemukan'
+        ], 404);
     }
+
+    // Update path ke database
+    $order->receipt_file_path = $path; // simpan path storage
+    $order->save();
+
+    return response()->json([
+        'success' => true,
+        'path' => $path,
+        'message' => 'PDF berhasil disimpan dan path telah diupdate ke database'
+    ]);
+    }
+
 
     public function index(Request $request, $order_number)
     {
