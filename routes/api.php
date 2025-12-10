@@ -83,6 +83,8 @@ Route::prefix('v1')->group(function () {
         Route::prefix('profile')->name('profile')->group(function () {
             Route::get('/{userId}', [ProfileDetailController::class, 'index'])->name('profileDetail');
             Route::put('/change-password/{userId}', [ProfileDetailController::class, 'changePassword'])->name('changePassword');
+            Route::put('/update/{userId}', [ProfileDetailController::class, 'updateProfile'])->name('updateProfile');
+            Route::post('/upload-signature', [ProfileDetailController::class, 'uploadSignature'])->name('uploadSignature');
         });
 
         Route::prefix('auth')->name('api.auth.')->group(function () {
