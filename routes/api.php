@@ -42,6 +42,7 @@ use App\Http\Controllers\API\V1\Client\HistoryController as ClientHistoryControl
 use App\Http\Controllers\API\V1\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\API\V1\Client\TransactionController as ClientTransactionController;
 use App\Http\Controllers\API\V1\Client\ReceiptController as ClientReceiptController;
+use App\Http\Controllers\API\V1\Payment\TripayController;
 
 // MANAGER CONTROLLERS
 use App\Http\Controllers\API\V1\Manager\EquipmentController as ManagerEquipmentController;
@@ -57,8 +58,6 @@ use App\Http\Controllers\API\V1\Manager\TestMethodsController as ManagerTestMeth
 use App\Http\Controllers\API\V1\Manager\SampleCategoryController as ManagerSampleCategoryController;
 use App\Http\Controllers\API\V1\Manager\ReportController as ManagerReportController;
 use App\Http\Controllers\API\V1\Manager\OrdersController as MOrdersController;
-use App\Http\Controllers\API\V1\Payment\TripayController;
-use App\Models\Client;
 
 Route::prefix('v1')->group(function () {
 
@@ -248,6 +247,7 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('report-validations')->name('report-validations.')->group(function () {
                     Route::get('/', [MOrdersController::class, 'reportValidations']);
                     Route::get('/{id}', [MOrdersController::class, 'show'])->name('show');
+                    Route::put('/{id}', [MOrdersController::class, 'update'])->name('update');
                 });
 
                 // Tools
@@ -271,6 +271,23 @@ Route::prefix('v1')->group(function () {
                     Route::apiResource('references', ManagerReferenceController::class);
                     Route::apiResource('categories', ManagerSampleCategoryController::class);
                 });
+
+                // Orders
+                Route::get('orders', [OrdersController::class, 'index']);
+                Route::get('orders/{id}', [OrdersController::class, 'show']);
+
+                // Employees
+                Route::get('employees', [EmployeeController::class, 'index']);
+
+                // Reports
+                Route::prefix('reports')
+                    ->name('reports.')
+                    ->group(function () {
+                        Route::get('orders', [ManagerReportController::class, 'orders']);
+                        Route::get('inventory', [ManagerReportController::class, 'inventory']);
+                        Route::get('transactions', [ManagerReportController::class, 'transactions']);
+                        Route::get('users', [ManagerReportController::class, 'users']);
+                    });
             });
 
         /**
@@ -297,6 +314,6 @@ Route::prefix('v1')->group(function () {
                 Route::get('/samples/{order}', [AnalystAnalystController::class, 'detail'])->name('orders.detail');
 
                     Route::post('/reagent-used/save', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent.save');
-                });
+            });
+        });
     });
-});
