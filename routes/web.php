@@ -108,6 +108,7 @@ Route::middleware(['auth', 'role:manager'])
                 ]);
             })->name('show');
         });
+        // INVENTORY
         Route::prefix('resources')->as('resources.')->group(function () {
             Route::inertia('/equipments', 'manager/tools/equipments/index')->name('equipments');
             Route::inertia('/brands', 'manager/tools/brands/index')->name('brands');
@@ -116,7 +117,7 @@ Route::middleware(['auth', 'role:manager'])
             Route::inertia('/suppliers', 'manager/materials/suppliers/index')->name('suppliers');
         });
 
-
+        // TEST
         Route::prefix('tests')->as('tests.')->group(function () {
             Route::inertia('/categories', 'manager/test/category/index')->name('categories');
             Route::inertia('/parameters', 'manager/test/parameter/index')->name('parameters');
@@ -125,9 +126,16 @@ Route::middleware(['auth', 'role:manager'])
             Route::inertia('/references', 'manager/test/standard-reference/index')->name('references');
         });
 
-        Route::inertia('/reports', 'manager/reports/index')->name('reports');
-
+        // EMPLOYEES
         Route::inertia('/users', 'manager/users/index')->name('users');
+
+        // REPORT
+        Route::prefix('reports')->as('reports.')->group(function () {
+            Route::inertia('/orders', 'manager/reports/orders')->name('orders');
+            Route::inertia('/inventory', 'manager/reports/inventory')->name('inventory');
+            Route::inertia('/transactions', 'manager/reports/transactions')->name('transactions');
+            Route::inertia('/users', 'manager/reports/users')->name('users');
+        });
     });
 
 // Staff
