@@ -127,8 +127,6 @@ Route::middleware(['auth', 'role:manager'])
 
         Route::inertia('/reports', 'manager/reports/index')->name('reports');
 
-        Route::inertia('/orders', 'manager/orders/index')->name('orders');
-
         Route::inertia('/users', 'manager/users/index')->name('users');
     });
 

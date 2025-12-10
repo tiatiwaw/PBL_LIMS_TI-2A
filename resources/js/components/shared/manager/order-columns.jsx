@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
     getOrderStatusLabel,
     getOrderStatusVariant,
@@ -43,7 +42,6 @@ export const getOrdersColumns = ({ onShowDetail }) => [
         cell: ({ row }) => (
             <button
                 onClick={() => onShowDetail(row.id)}
-                w
                 className="px-3 py-1 rounded-lg border"
             >
                 Detail

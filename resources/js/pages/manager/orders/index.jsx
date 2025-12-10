@@ -11,7 +11,7 @@ export default function AdminOrdersPage() {
     const { data: orders, isLoading, error } = useOrders();
 
     const handleShowDetail = (id) => {
-        router.visit(route("manager.order.show", id));
+        router.visit(route("manager.orders.show", id));
     };
 
     const columns = useMemo(
