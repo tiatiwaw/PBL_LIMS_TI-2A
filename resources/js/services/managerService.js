@@ -32,7 +32,7 @@ export const managerService = {
 
     reagents: serviceMethods("/manager/materials/reagents"),
 
-    users: serviceMethods("/manager/users"),
+    employees: serviceMethods("/manager/employees"),
 
     analysts: serviceMethods("/manager/analysts"),
 };

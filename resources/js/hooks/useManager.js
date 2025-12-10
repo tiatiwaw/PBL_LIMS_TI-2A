@@ -2,9 +2,6 @@ import { useCrud } from "./useCrud";
 import { useGetById } from "./useGetById";
 import { managerService } from "@/services/managerService";
 
-// ===========================
-// GET ALL
-// ===========================
 export const useBrands = () =>
     useCrud(managerService.brands, "brands", "Merek", { only: ["getAll"] });
 
@@ -57,17 +54,16 @@ export const useSuppliers = () =>
 export const useUnits = () =>
     useCrud(managerService.units, "units", "Satuan", { only: ["getAll"] });
 
-export const useUsers = () =>
-    useCrud(managerService.users, "users", "Pengguna", { only: ["getAll"] });
+export const useEmployees = () =>
+    useCrud(managerService.employees, "employees", "Karyawan", {
+        only: ["getAll"],
+    });
 
 export const useAnalysts = () =>
     useCrud(managerService.analysts, "analysts", "Analyst", {
         only: ["getAll"],
     });
 
-// ===========================
-// REPORT VALIDATIONS
-// ===========================
 export const useReportValidations = () =>
     useCrud(
         managerService.reportValidations.all,
@@ -88,15 +84,9 @@ export const useUpdateReportValidation = () =>
         "Update Validation"
     );
 
-// ===========================
-// ORDER BY ID (ADMIN)
-// ===========================
 export const useOrder = (id) =>
     useGetById(managerService.orders.all, "orders", id);
 
-// ===========================
-// ORDER BY ID (MANAGER)
-// ===========================
 export const useManagerOrder = (id) =>
     useGetById(
         managerService.reportValidations.all,
@@ -104,7 +94,6 @@ export const useManagerOrder = (id) =>
         id
     );
 
-// ===========================
 export const useManager = () => ({
     useBrands,
     useCategories,
