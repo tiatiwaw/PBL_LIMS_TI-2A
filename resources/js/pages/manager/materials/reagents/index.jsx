@@ -1,10 +1,10 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { getReagentsColumns } from "@/components/shared/admin/material-columns";
+import { getReagentsColumns } from "@/components/shared/manager/material-columns";
 import ReagentsDetailSheet from "@/components/shared/sheet/reagen_detail_sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { useMemo, useState } from "react";
 import Loading from "@/components/ui/loading";
-import { useGrades, useReagents, useSuppliers } from "@/hooks/useManager";
+import { useReagents } from "@/hooks/useManager";
 import { exportReagentReportPDF } from "@/utils/pdf/export/tools-export";
 
 export default function ManagerReagentsPage() {
@@ -16,25 +16,30 @@ export default function ManagerReagentsPage() {
         setIsOpen(true);
     };
 
-    const { data: grades, isLoading: gradesLoading, error: gradesError } = useGrades();
-    const { data: suppliers, isLoading: suppliersLoading, error: suppliersError } = useSuppliers();
-    const { data: reagents, isLoading: regeantsLoading, error: regeantsError } = useReagents();
+    const {
+        data: reagents,
+        isLoading: regeantsLoading,
+        error: regeantsError,
+    } = useReagents();
 
     const handleExport = () => exportReagentReportPDF(reagents);
 
-    const columns = useMemo(() => getReagentsColumns({ onShowDetail: handleShowDetail }), []);
+    const columns = useMemo(
+        () => getReagentsColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
-    if (gradesLoading || suppliersLoading || regeantsLoading) {
+    if (regeantsLoading) {
         return (
-            <DashboardLayout title="Dashboard Manager"  header="Selamat Datang">
+            <DashboardLayout title="Dashboard Manager" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
     }
 
-    if (regeantsError || suppliersError || gradesError) {
+    if (regeantsError) {
         return (
-            <DashboardLayout title="Dashboard Manager"  header="Selamat Datang">
+            <DashboardLayout title="Dashboard Manager" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
                     {"Terjadi kesalahan saat memuat data"}
                 </div>
@@ -43,21 +48,19 @@ export default function ManagerReagentsPage() {
     }
 
     return (
-        <DashboardLayout
-            title="Manajemen Reagen"
-            header="Manajemen Reagen"
-        >
+        <DashboardLayout title="Manajemen Reagen" header="Manajemen Reagen">
             <ManagedDataTable
                 data={reagents}
                 columns={columns}
                 onExport={handleExport}
                 showExport={true}
                 showCreate={false}
-                createTitle="Tambah Reagent"
-                editTitle="Edit Reagent"
-                deleteTitle="Hapus Reagent"
             />
-            <ReagentsDetailSheet data={selectedReagents} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <ReagentsDetailSheet
+                data={selectedReagents}
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
+            />
         </DashboardLayout>
     );
 }

@@ -1,19 +1,17 @@
 import { useMemo } from "react";
-import { useMemo } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
 import { router } from "@inertiajs/react";
-import { router } from "@inertiajs/react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
-import { useOrders } from "@/hooks/useAdmin";
+import { useOrders } from "@/hooks/useManager";
 import { filterStatusOrder } from "@/utils/statusUtils";
 
 export default function AdminOrdersPage() {
     const { data: orders, isLoading, error } = useOrders();
 
-    const handleShowDetail = (data) => {
-        router.visit(route("admin.order.show", data.id));
+    const handleShowDetail = (id) => {
+        router.visit(route("manager.orders.show", id));
     };
 
     const columns = useMemo(

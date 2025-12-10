@@ -1,11 +1,10 @@
 import Loading from "@/components/ui/loading";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { getMethodsColumns } from "@/components/shared/admin/test-columns";
+import { getMethodsColumns } from "@/components/shared/manager/test-columns";
 import MethodDetailSheet from "@/components/shared/sheet/method-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { editMethodFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
-import { useMethods, useReferences } from "@/hooks/useManager";
+import { useMethods } from "@/hooks/useManager";
 import { exportMethodReportPDF } from "@/utils/pdf/export/test-export";
 
 export default function ManagerMethodsPage() {
@@ -13,11 +12,6 @@ export default function ManagerMethodsPage() {
     const [selectedMethod, setSelectedMethod] = useState(null);
 
     const { data: methods, isLoading, error } = useMethods();
-    const {
-        data: references,
-        isLoading: referenceLoading,
-        error: referenceError,
-    } = useReferences();
 
     const handleExport = () => exportMethodReportPDF(methods, references);
 
@@ -31,7 +25,7 @@ export default function ManagerMethodsPage() {
         []
     );
 
-    if (isLoading || referenceLoading) {
+    if (isLoading) {
         return (
             <DashboardLayout title="Dashboard Manager" header="Selamat Datang">
                 <Loading />
@@ -57,10 +51,6 @@ export default function ManagerMethodsPage() {
             <ManagedDataTable
                 data={methods}
                 columns={columns}
-                editFields={editMethodFields(references)}
-                createTitle="Tambah Metode Uji"
-                editTitle="Edit Metode Uji"
-                deleteTitle="Hapus Metode Uji"
                 showCreate={false}
                 showExport={true}
                 onExport={handleExport}

@@ -7,8 +7,8 @@ import Loading from "@/components/ui/loading";
 import { useAuth } from "@/hooks/useAuth";
 
 const OrderPage = () => {
-  const { user, loading: authLoading } = useAuth();
-  const { data: ordersData, isLoading8 } = useOrders();
+
+  const { data: ordersData, isLoading, error } = useOrders();
   const orders = ordersData?.orders
 
   const filterData = [
@@ -23,10 +23,27 @@ const OrderPage = () => {
 
   const columns = useMemo(() => getOrdersColumns());
 
+   if (isLoading) {
+          return (
+              <DashboardLayout title="Daftar Pesanan" header="Lihat Daftar Pesanan">
+                  <Loading />
+              </DashboardLayout>
+          );
+      }
+  
+      if (error) {
+          return (
+             <DashboardLayout title="Daftar Pesanan" header="Lihat Daftar Pesanan">
+                  <div className="text-center text-red-500 py-8">
+                      {error.message || "Terjadi kesalahan saat memuat data"}
+                  </div>
+              </DashboardLayout>
+          );
+      }
+
   return (
     <DashboardLayout
       title="Daftar Pesanan"
-      user={user}
       header="Lihat Daftar Pesanan"
     >
       <ManagedDataTable

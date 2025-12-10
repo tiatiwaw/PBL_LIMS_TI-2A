@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const useCrud = (service, key, label, options = {}) => {
-    const { only, except } = options;
+    const { only, except, enabled } = options;
 
     const allow = (method) => {
         if (only) return only.includes(method);
@@ -14,6 +14,7 @@ export const useCrud = (service, key, label, options = {}) => {
         ? useQuery({
               queryKey: [key, options.query],
               queryFn: () => service.getAll(options.query || {}),
+              enabled,
               staleTime: 5 * 60 * 1000, // 5 menit
               refetchOnMount: "stale",
               refetchOnWindowFocus: "stale",

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\V1\Admin;
+namespace App\Http\Controllers\API\V1\Manager;
 
 use App\Http\Controllers\Controller;
 use App\Models\BrandType;
@@ -322,7 +322,7 @@ class ReportController extends Controller
                 'method_count' => $order->analysesMethods->count(),
                 'revenue' => $revenue
             ];
-        });
+        })->sortByDesc("revenue")->take(10)->values();
 
         return response()->json([
             'meta' => ['years' => $yearsAvailable],

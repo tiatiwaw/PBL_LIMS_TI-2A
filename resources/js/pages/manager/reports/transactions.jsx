@@ -9,7 +9,7 @@ import {
     Search,
 } from "lucide-react";
 
-import { useTransactionReports } from "@/hooks/useAdmin";
+import { useTransactionReports } from "@/hooks/useManager";
 
 import {
     DistributionPieChart,

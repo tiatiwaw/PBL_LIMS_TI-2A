@@ -1,9 +1,8 @@
 import Loading from "@/components/ui/loading";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { getSampleCategoriesColumns } from "@/components/shared/admin/test-columns";
+import { getSampleCategoriesColumns } from "@/components/shared/manager/test-columns";
 import CategoryDetailSheet from "@/components/shared/sheet/category-detail-sheets";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { editCategorySampleFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
 import { useCategories } from "@/hooks/useManager";
 import { exportCategoryReportPDF } from "@/utils/pdf/export/test-export";
@@ -52,10 +51,6 @@ export default function ManagerSampleCategoriesPage() {
             <ManagedDataTable
                 data={categories}
                 columns={columns}
-                editFields={editCategorySampleFields}
-                createTitle="Tambah Kategori Sampel"
-                editTitle="Edit Kategori Sampel"
-                deleteTitle="Hapus Kategori Sampel"
                 showCreate={false}
                 showExport={true}
                 onExport={handleExport}

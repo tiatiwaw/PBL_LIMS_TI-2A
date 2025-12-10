@@ -51,14 +51,7 @@ export const getEquipmentsColumns = ({ onShowDetail }) => [
         id: "aksi",
         header: "Aksi",
         enableSorting: false,
-        cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn
-                onDetail={onShowDetail}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                row={row}
-            />
-        ),
+        cell: ({ row }) => <ActionColumn onDetail={onShowDetail} row={row} />,
     },
 ];
 
@@ -69,13 +62,6 @@ export const getBrandsColumns = ({ onShowDetail }) => [
         id: "aksi",
         header: "Aksi",
         enableSorting: false,
-        cell: ({ row, onEdit, onDelete }) => (
-            <ActionColumn
-                onDetail={onShowDetail}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                row={row}
-            />
-        ),
+        cell: ({ row }) => <ActionColumn onDetail={onShowDetail} row={row} />,
     },
 ];

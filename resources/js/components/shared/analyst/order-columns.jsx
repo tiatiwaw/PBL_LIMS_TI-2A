@@ -43,8 +43,19 @@ const tipeLabelMap = {
 
 export const getOrdersColumns = () => [
     { accessorKey: "order_number", header: "Kode Pesanan" },
-    { accessorKey: "title", header: "Judul Pesanan" },
-    { accessorKey: "estimate_date", header: "Estimasi Selesai" },
+    { accessorKey: "title", header: "Judul Pesanan" },,
+    {
+        accessorKey: "estimate_date",
+        header: "Estimasi Selesai",
+        cell: ({ row }) => {
+            const value = row.estimate_date;
+            return (
+                <>
+                    {value}
+                </>
+            );
+        },
+    },
     {
         accessorKey: "tipe",
         header: "Tipe Pesanan",
@@ -59,7 +70,7 @@ export const getOrdersColumns = () => [
             );
         },
     },
-        {
+    {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
