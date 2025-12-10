@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function PaymentSummary({ methods = [], diskon, admin }) {
+export default function PaymentSummary({ summary }) {
     const formatRupiah = (value) => {
         return new Intl.NumberFormat("id-ID", {
             style: "currency",
@@ -9,48 +9,35 @@ export default function PaymentSummary({ methods = [], diskon, admin }) {
         }).format(value);
     };
 
-    // ➤ Hitung subtotal otomatis dari semua metode analisis
-    const subtotal = methods.reduce((acc, m) => acc + (m.harga || 0), 0);
-
-    // ➤ PPN = 11% dari subtotal
-    const ppn = Math.floor(subtotal * 0.11);
-
-    const total = subtotal + ppn - diskon + admin;
+    if (!summary) return null;
 
     return (
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 mt-4">
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 mt-1">
             <h2 className="text-xl font-bold mb-5 text-gray-800">
                 Ringkasan Pembayaran
             </h2>
 
-            <div className="space-y-2 text-gray-700">
+            <div className="space-y-2 text-gray-600">
                 <div className="flex justify-between">
                     <span>Subtotal Pemesanan</span>
-                    <span>{formatRupiah(subtotal)}</span>
+                    <span className="text-primary-hijauTua">
+                        {formatRupiah(summary.subtotal)}
+                    </span>
                 </div>
-                <div className="flex justify-between">
-                    <span>PPN (11%)</span>
-                    <span>{formatRupiah(ppn)}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Diskon</span>
-                    <span>{diskon ? formatRupiah(diskon) : "Rp.-"}</span>
-                </div>
+
                 <div className="flex justify-between">
                     <span>Biaya Admin</span>
-                    <span>{formatRupiah(admin)}</span>
+                    <span className="text-primary-hijauTua">
+                        {formatRupiah(summary.admin)}
+                    </span>
                 </div>
             </div>
 
-            <div className="mt-5 p-4 bg-primary-hijauMuda/20 rounded-xl shadow font-semibold flex justify-between">
+            <div className="w-full bg-green-100 px-4 py-3 rounded-lg flex justify-between text-lg font-bold border border-green-200 mt-4">
                 <span>Total Pembayaran</span>
-                <span className="text-lg">{formatRupiah(total)}</span>
-            </div>
-
-            <div className="text-right mt-5">
-                <button className="bg-primary-hijauTua text-white px-6 py-2 rounded-xl hover:bg-primary-hijauGelap transition">
-                    Lakukan Pembayaran
-                </button>
+                <span className="text-lg text-primary-hijauTua">
+                    {formatRupiah(summary.total)}
+                </span>
             </div>
         </div>
     );

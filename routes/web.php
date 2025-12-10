@@ -12,10 +12,15 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\SupervisorController;
 use Inertia\Inertia;
+use App\Http\Controllers\API\V1\Client\ReceiptController as ClientReceiptController;
 
 // Home
 Route::inertia('/', 'index')->name('home');
 
+
+Route::middleware('auth')->get('/profile', function () {
+    return Inertia::render('profile');
+})->name('profile');
 
 // Auth
 Route::middleware('guest')->group(function () {
@@ -162,6 +167,14 @@ Route::middleware(['auth', 'role:staff'])
         Route::prefix('orders')
             ->name('order.')
             ->group(function () {
+                Route::inertia('/all-orders', 'staff/orders/all-orders/index')->name('all');
+                Route::get('/all-orders/{id}', function ($id) {
+                    return Inertia::render('staff/orders/detail/index', [
+                        'id' => $id,
+                        'canValidate' => true,
+                    ]);
+                })->name('show');
+                Route::inertia('/make-order', 'staff/orders/make-order/index')->name('index');
                 Route::get('/', [StaffController::class, 'indexOrder'])->name('index');
                 Route::post('/', [StaffController::class, 'storeOrder'])->name('store');
                 Route::post('/sample', [StaffController::class, 'storeSample'])->name('storeSample');
@@ -200,7 +213,6 @@ Route::controller(SupervisorController::class)
             });
     });
 
-
 // Analyst
 Route::controller(AnalystController::class)
     ->middleware(['auth', 'role:analyst'])
@@ -208,35 +220,31 @@ Route::controller(AnalystController::class)
     ->name('analyst.')
     ->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('/inbox', 'inbox')->name('inbox');
-        Route::get('/history', 'history')->name('history');
+        Route::get('/order', 'order')->name('order');
+        Route::get('/profile', 'profile')->name('profile');
+
         Route::get('/dashboard', 'dashboard')->name('dashboard');
+        Route::post('/{order}/save', 'saveReport')->name('saveReport');
+        Route::post('/{order}/submit', 'submitReport')->name('submitReport');
+        Route::post('/reagent-usage/store', 'saveReagentUsage')->name('reagent-usage.store');
 
         // Orders
-        Route::prefix('orders')
+        Route::prefix('order')
             ->name('order.')
             ->group(function () {
                 Route::get('/', 'order')->name('index');
-                Route::get('/{id}', 'orderDetail')->name('detail');
-                Route::put('/{id}/accept', 'acceptOrder')->name('accept');
-                Route::post('/{id}/download', 'downloadOrder')->name('download');
-            });
+                Route::get('/{order}', 'detail')->name('detail');
+                Route::put('/{order}/accept', 'accept')->name('accept');
+                Route::get('/download/{order}', 'downloadReport')->name('downloadReport');
+        });
 
         // Samples
         Route::prefix('samples')
             ->name('sample.')
             ->group(function () {
-                Route::post('/{id}/confirm', 'confirmSample')->name('confirm');
-                Route::post('/{id}/unconfirm', 'unconfirmSample')->name('unconfirm');
-            });
-
-        // Reports
-        Route::prefix('reports')
-            ->name('report.')
-            ->group(function () {
-                Route::post('/', 'createReport')->name('create');
-                Route::put('/{id}', 'updateReport')->name('update');
-            });
+                Route::post('/{sample}/confirm', 'confirm')->name('confirm');
+                Route::post('/{sample}/unconfirm', 'unconfirm')->name('unconfirm');
+        });
     });
 
 // Client
@@ -248,7 +256,10 @@ Route::controller(ClientController::class)
         Route::get('/', 'index')->name('index');
         Route::get('/profile', 'profile')->name('profile');
         Route::get('/history', 'history')->name('history');
+        Route::get('/payment', 'payment')->name('payment');
+        Route::get('/report', 'report')->name('report');
 
+        
         // Orders - sesuaikan dengan API structure
         Route::prefix('orders')
             ->name('orders.')
@@ -258,7 +269,7 @@ Route::controller(ClientController::class)
 
                 Route::get('/payment/{id}', 'orderPayment')->name('payment');
 
-                Route::get('/checkout/{id}', 'checkout')->name('checkout');
+                Route::get('/receipt/{order_number}', 'downloadReceipt')->name('receipt.show');
 
                 Route::get('/transaction/{reference}', 'orderTransaction')->name('transaction');
             });

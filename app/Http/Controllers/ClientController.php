@@ -23,6 +23,22 @@ class ClientController extends Controller
         return Inertia::render('client/history/index');
     }
 
+    public function downloadReceipt($order_number)
+    {
+    return Inertia::render('client/receipt/index', [
+        'order_number' => $order_number
+    ]);
+    }
+
+    public function report()
+    {
+        return Inertia::render('client/report/index');
+    }
+
+
+    /**
+     * Show order detail page
+     */
     public function orderDetail($id)
     {
         return Inertia::render('client/detail/index', [

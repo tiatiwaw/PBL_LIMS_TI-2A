@@ -10,5 +10,13 @@ export const clientService = {
     history: serviceMethods("/client/orders/status", { 
         useFormData: false,
     }),
-
+    payment: serviceMethods("/client/orders/payment", { 
+            useFormData: false,
+    }),
+    transaction: serviceMethods("/client/orders/transaction", { 
+            useFormData: false,
+    }),
+    receipt: serviceMethods("/client/orders/receipt", { 
+            useFormData: false,
+    }),
 };

@@ -52,6 +52,7 @@ export default function LoginPage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    
                     <InputField
                         id="email"
                         label="Email or Username"

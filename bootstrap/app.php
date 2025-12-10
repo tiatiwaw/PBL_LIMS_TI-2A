@@ -15,7 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(
             except: [
                 'callback',
-                'https://f48a87bc30d7.ngrok-free.app/callback'
+                'https://f48a87bc30d7.ngrok-free.app/callback',
+                'api/client/orders/save-invoice-pdf',
+                '*orders/save-invoice-pdf*'
             ]
         );
 

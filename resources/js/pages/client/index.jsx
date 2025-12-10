@@ -7,16 +7,7 @@ import { getOrdersColumns } from "@/components/shared/client/order-columns";
 import Loading from "@/components/ui/loading";
 import { router } from "@inertiajs/react";
 import { useDashboard } from "@/hooks/useClient";
-
-const filterData = [
-    { value: "all", label: "All Status" },
-    { value: "Completed", label: "Completed" },
-    { value: "In Progress", label: "In Progress" },
-    { value: "Pending", label: "Pending" },
-    { value: "Disapproved", label: "Disapproved" },
-    { value: "Approved", label: "Approved" },
-    { value: "Received", label: "Received" },
-];
+import { filterStatusOrder } from "@/utils/statusUtils";
 
 export default function ClientPage({ auth }) {
 
@@ -161,10 +152,10 @@ export default function ClientPage({ auth }) {
                     <ManagedDataTable
                         data={dashboard?.data?.orders || []}
                         columns={columns}
+                        filterOptions={filterStatusOrder}
                         showFilter={true}
                         showCreate={false}
                         filterColumn="status"
-                        filterOptions={filterData}
                     />
                 </div>
 

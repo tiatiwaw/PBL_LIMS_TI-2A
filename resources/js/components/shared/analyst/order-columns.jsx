@@ -3,19 +3,42 @@ import { Button } from "@/components/ui/button";
 import { Link } from '@inertiajs/react';
 import { AlertCircle } from "lucide-react";
 
+const statusLabelMap = {
+    received: "Received",
+    disapproved: "Disapproved",
+    pending_payment: "Pending Payment",
+    paid: "Paid",
+    in_progress: "In Progress",
+    received_test: "Waiting for QC Result",
+    revision_test: "Test Revision",
+    pending: "Pending",
+    completed: "Completed",
+};
+
 const statusVariantMap = {
-    Completed: "success",
-    "In Progress": "warning",
-    Pending: "info",
-    Disapproved: "error",
-    Approved: "approved",
-    Received: "received",
+    received: "info",        // Biru/Informasi (Baru masuk)
+    disapproved: "error",    // Merah (Ditolak)
+    pending_payment: "warning", // Kuning/Peringatan (Menunggu pembayaran)
+    paid: "success",         // Hijau (Sudah Bayar)
+    in_progress: "warning",  // Kuning/Peringatan (Sedang dikerjakan)
+    received_test: "test",   // Varian khusus (Misalnya, ungu)
+    revision_test: "revision", // Varian khusus (Misalnya, oranye tua)
+    pending: "info",         // Biru/Informasi (Menunggu persetujuan/aksi)
+    completed: "success",    // Hijau (Selesai)
 };
 
 const tipeVariantMap = {
-    Eksternal: "warning",
-    Internal: "info",
-    Urgent: "error",
+    external: "warning",
+    internal: "info",
+    urgent: "error",
+    regular: "secondary",
+};
+
+const tipeLabelMap = {
+    external: "External",
+    internal: "Internal",
+    urgent: "Urgent",
+    regular: "Regular",
 };
 
 export const getOrdersColumns = () => [
@@ -26,25 +49,26 @@ export const getOrdersColumns = () => [
         accessorKey: "tipe",
         header: "Tipe Pesanan",
         cell: ({ row }) => {
-            const value = row.tipe;
+            const value = row.order_type;
             return (
                 <Badge
                     variant={tipeVariantMap[value] || "outline"}
-                    className="capitalize"
                 >
-                    {value}
+                    {tipeLabelMap[value]}
                 </Badge>
             );
         },
     },
-    {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => {
+        {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
             const value = row.status;
             return (
-                <Badge variant={statusVariantMap[value] || "outline"}>
-                    {value}
+                <Badge
+                    variant={statusVariantMap[value] || "outline"}
+                >
+                    {statusLabelMap[value]}
                 </Badge>
             );
         },
@@ -53,12 +77,12 @@ export const getOrdersColumns = () => [
         id: "aksi",
         header: "Aksi",
         cell: ({ row }) => (
-            <Link href="/analyst/order/details">
+            <Link href={`/analyst/order/${row.id}`}>
                 <Button
                 variant="outline"
                 size="sm"
                 >
-                        <AlertCircle/>
+                    <AlertCircle/>
                 </Button>
             </Link>
         ),

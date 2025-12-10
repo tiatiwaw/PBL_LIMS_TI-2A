@@ -18,13 +18,16 @@ class OrderController extends Controller
     public function show($id): JsonResponse
     {
         $user = Auth::user();
+
+        // Ambil client ID dari user yang login
+        $clientId = $user->clients->id;
         
         $order = Order::with([
                 'samples.sample_categories', 
                 'clients',
                 'analysesMethods' // Gunakan relationship many-to-many
             ])
-            ->where('client_id', $user->clients->id)
+            ->where('client_id',$clientId)
             ->where('id', $id)
             ->first();
 
