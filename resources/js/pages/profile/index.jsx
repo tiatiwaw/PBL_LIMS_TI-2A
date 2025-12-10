@@ -6,7 +6,7 @@ import { Award, FileText, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { getProfile, useChangePassword, useUpdateProfile, useUploadSignature } from "@/hooks/useProfile";
-import SignaturePad from "@/components/signature-pad";
+import SignaturePad from "@/components/profile/signature-pad";
 
 export default function ProfilePage() {
   const changePassword = useChangePassword();
