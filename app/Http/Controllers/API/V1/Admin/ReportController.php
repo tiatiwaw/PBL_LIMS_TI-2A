@@ -12,7 +12,7 @@ use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon; // Pastikan ini diimpor untuk logika sertifikat
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
@@ -180,37 +180,33 @@ class ReportController extends Controller
     {
         $year = $request->input('year');
         $month = $request->input('month');
-    
+
         $userQuery = User::query()
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('created_at', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('created_at', $month));
-    
+
         $allUsers = User::all();
         $filteredAllIds = $userQuery->pluck('id');
         $filteredClientIds = (clone $userQuery)->where('role', 'client')->pluck('id');
         $filteredAnalystIds = (clone $userQuery)->where('role', 'analyst')->pluck('id');
         $filteredAnalystSample = DB::table('n_analysts')->distinct()->pluck('analyst_id');
 
-    
         $totalPengguna = $filteredAllIds->count();
         $totalAnalyst = $filteredAnalystIds->count();
         $totalClient = $filteredClientIds->count();
         $totalKaryawan = User::whereIn('id', $filteredAllIds)
             ->whereNotIn('role', ['admin', 'client'])
             ->count();
-    
-        // =====================================================
-        // 1. CLIENT RANKING & ACTIVITY
-        // =====================================================
+
         $clientRanking = Order::whereIn('client_id', $filteredClientIds)
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('order_date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('order_date', $month))
             ->select('client_id', DB::raw('COUNT(*) as orders'))
             ->groupBy('client_id')
             ->orderByDesc('orders')
-            ->limit(10)
+            ->limit(5)
             ->get();
-    
+
         $clientRankingData = $clientRanking->map(function ($client) use ($allUsers) {
             $user = $allUsers->firstWhere('id', $client->client_id);
             return [
@@ -218,38 +214,28 @@ class ReportController extends Controller
                 'orders' => $client->orders
             ];
         })->values();
-    
+
         $clientActivityTableData = $clientRankingData->take(5)->map(fn($item) => [
             'client_name' => $item['name'],
             'total_order' => $item['orders']
         ])->values();
-    
+
         $topClientData = $clientRankingData->first() ?? ['name' => '-', 'orders' => 0];
-    
-        // =====================================================
-        // 2. ROLE DISTRIBUTION
-        // =====================================================
+
         $roleDistribution = User::whereIn('id', $filteredAllIds)
             ->select('role', DB::raw('COUNT(*) as value'))
             ->groupBy('role')
             ->get()
             ->map(fn($i) => ['name' => ucfirst($i->role), 'value' => $i->value])
             ->values();
-    
-        // =====================================================
-        // 3. ANALYST ACTIVITY & PERFORMANCE
-        // =====================================================
+
         $analystActivity = DB::table('n_analysts')
             ->join('users', 'n_analysts.analyst_id', '=', 'users.id')
             ->join('orders', 'n_analysts.order_id', '=', 'orders.id')
             ->whereIn('users.id', $filteredAnalystSample)
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('orders.order_date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('orders.order_date', $month))
-            ->select(
-                'users.id',
-                'users.name',
-                DB::raw('COUNT(n_analysts.id) as total_samples')
-            )
+            ->select('users.id', 'users.name', DB::raw('COUNT(n_analysts.id) as total_samples'))
             ->groupBy('users.id', 'users.name')
             ->orderByDesc('total_samples')
             ->get();
@@ -257,51 +243,35 @@ class ReportController extends Controller
         $analystActivityData = $analystActivity->map(fn($i) => [
             'name' => $i->name,
             'tests' => $i->total_samples
-        ])->values();
-    
+        ])->values()->take(5);
+
         $analystPerformanceTableData = $analystActivity->take(5)->map(fn($item) => [
             'analyst_name' => $item->name,
             'total_sample' => $item->total_samples
         ])->values();
-    
+
         $topAnalystData = $analystActivity->first()
             ? ['name' => $analystActivity->first()->name, 'samples' => $analystActivity->first()->total_samples]
             : ['name' => '-', 'samples' => 0];
-    
-        // =====================================================
-        // 4. ORDERS & SAMPLES
-        // =====================================================
+
         $ordersFiltered = Order::whereIn('client_id', $filteredClientIds)
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('order_date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('order_date', $month));
-    
+
         $totalOrders = $ordersFiltered->count();
         $totalSamples = $ordersFiltered->withCount('samples')->get()->sum('samples_count');
-    
-        $avgSamplesPerOrder = $totalOrders > 0
-            ? round($totalSamples / $totalOrders, 2)
-            : 0;
-    
-        // =====================================================
-        // 5. AVAILABLE YEARS
-        // =====================================================
+
+        $avgSamplesPerOrder = $totalOrders > 0 ? round($totalSamples / $totalOrders, 2) : 0;
+
         $yearsAvailable = User::selectRaw('YEAR(created_at) as year')
             ->distinct()
             ->orderByDesc('year')
             ->pluck('year')
             ->filter()
             ->values();
-    
-        // =====================================================
-        // 6. TREND (REPLACED WITH YOUR 12-MONTH VERSION)
-        // =====================================================
+
         if ($year && $year !== 'all') {
-            // === BULANAN: selalu 12 bulan Jan–Dec ===
-            $months = collect([
-                'January','February','March','April','May','June',
-                'July','August','September','October','November','December'
-            ]);
-    
+            $months = collect(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']);
             $trend = $months->map(function ($month) use ($userQuery, $year) {
                 return [
                     'name' => substr($month, 0, 3),
@@ -313,11 +283,7 @@ class ReportController extends Controller
                 ];
             });
         } else {
-            // === TAHUNAN ===
-            $trend = User::select(
-                    DB::raw('YEAR(created_at) as label'),
-                    DB::raw('COUNT(*) as count')
-                )
+            $trend = User::select(DB::raw('YEAR(created_at) as label'), DB::raw('COUNT(*) as count'))
                 ->groupBy('label')
                 ->orderBy('label')
                 ->get()
@@ -327,10 +293,7 @@ class ReportController extends Controller
                     'count' => $i->count
                 ]);
         }
-    
-        // =====================================================
-        // 7. TRAINING ANALYST & CERTIFICATES
-        // =====================================================
+
         $trainingAnalyst = DB::table('analysts')
             ->leftJoin('n_training_analysts', 'analysts.id', '=', 'n_training_analysts.analyst_id')
             ->leftJoin('trainings', 'n_training_analysts.training_id', '=', 'trainings.id')
@@ -338,57 +301,44 @@ class ReportController extends Controller
             ->whereIn('users.id', $filteredAnalystIds)
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('trainings.date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('trainings.date', $month))
-            ->select(
-                'analysts.name',
-                DB::raw('COUNT(trainings.id) as total_training')
-            )
+            ->select('analysts.name', DB::raw('COUNT(trainings.id) as total_training'))
             ->groupBy('analysts.name')
             ->orderByDesc('total_training')
             ->get()
             ->map(fn($i) => [
                 'name' => $i->name,
                 'total_training' => (int)$i->total_training
-            ]);
-    
+            ])->take(5);
+
         $trainingCerts = DB::table('n_training_analysts')
             ->join('trainings', 'n_training_analysts.training_id', '=', 'trainings.id')
             ->join('analysts', 'n_training_analysts.analyst_id', '=', 'analysts.id')
             ->join('users', 'analysts.user_id', '=', 'users.id')
             ->whereIn('users.id', $filteredAnalystIds)
-            ->select(
-                'trainings.name as training_name',
-                'trainings.date as training_date',
-                'analysts.name as analyst_name'
-            )
+            ->select('trainings.name as training_name', 'trainings.date as training_date', 'analysts.name as analyst_name')
             ->get()
             ->map(function ($row) {
                 $trainingDate = Carbon::parse($row->training_date);
                 $expiry = $trainingDate->copy()->addYear();
-    
                 return [
                     'analyst_name' => $row->analyst_name,
                     'training_name' => $row->training_name,
-                    'training_date' => $trainingDate->format('Y-m-d'),
-                    'expires_at' => $expiry->format('Y-m-d'),
+                    'training_date' => $trainingDate->format('d-M-Y'),
+                    'expires_at' => $expiry->format('d-M-Y'),
                     'status' => $expiry->isPast()
                         ? 'expired'
-                        : ($expiry->isBefore(now()->addDays(30))
-                            ? 'near_expired'
-                            : 'valid')
+                        : ($expiry->isBefore(now()->addDays(30)) ? 'near_expired' : 'valid')
                 ];
             });
-    
+
         $certificateSummary = [
             'expired' => $trainingCerts->where('status', 'expired')->count(),
             'near_expired' => $trainingCerts->where('status', 'near_expired')->count(),
-            'valid' => $trainingCerts->where('status', 'valid')->count(),
+            'valid' => $trainingCerts->where('status', 'valid')->count()
         ];
-    
+
         $certificateDetail = $trainingCerts->values();
-    
-        // =====================================================
-        // RETURN
-        // =====================================================
+
         return response()->json([
             'meta' => [
                 'years' => $yearsAvailable
@@ -408,16 +358,13 @@ class ReportController extends Controller
                 'analystActivityData' => $analystActivityData,
                 'analystPerformance' => $analystPerformanceTableData,
                 'clientActivity' => $clientActivityTableData,
-    
-                // TREND CHART (modified)
                 'trend' => $trend,
-    
                 'training_analyst' => $trainingAnalyst,
                 'certificate_expiration' => $certificateSummary,
                 'certificate_detail' => $certificateDetail
             ]
         ]);
-    }     
+    }
 
     public function transactions()
     {
