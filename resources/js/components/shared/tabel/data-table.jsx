@@ -157,7 +157,7 @@ export function DataTableContent({
                                         key={header.id}
                                         onClick={handleToggleSorting}
                                         className={cn(
-                                            "text-white font-bold select-none",
+                                            "text-white text-sm font-bold select-none",
                                             canSort && "cursor-pointer",
                                             header.column.id === "no" &&
                                                 "text-center",
@@ -195,7 +195,7 @@ export function DataTableContent({
                             <TableRow
                                 key={row.id}
                                 className={cn(
-                                    "font-medium text-primary-hijauTua transition-colors duration-150 ease-in-out",
+                                    "font-medium text-sm text-primary-hijauTua transition-colors duration-150 ease-in-out",
                                     "hover:bg-gray-100 hover:text-primary-hijauTua"
                                 )}
                             >

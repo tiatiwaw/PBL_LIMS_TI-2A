@@ -23,12 +23,27 @@ class OrderController extends Controller
             'clients.users',
             'analysesMethods',
             'samples.sample_categories',
+            'analysts'
         ])
             ->where('supervisor_id', $supervisorId)
             ->whereIn('status', ['received', 'paid', 'received_test'])
-            ->orderByRaw("CASE WHEN order_type = 'urgent' THEN 0 ELSE 1 END")
-            ->orderBy('order_date', 'asc')
-            ->get();
+            ->get()
+            ->filter(function ($order) {
+                // Jika status 'paid', hanya tampilkan jika tidak ada analyst
+                if ($order->status === 'paid') {
+                    return $order->analysts->isEmpty();
+                }
+                // Status lain (received, received_test) selalu tampil
+                return true;
+            })
+            ->values() // Reset array keys
+            ->sortByDesc(function ($order) {
+                // Prioritas: urgent order dulu
+                return $order->order_type === 'urgent' ? 1 : 0;
+            })
+            ->sortBy('order_date') // Kemudian sort berdasarkan tanggal
+            ->values();
+
         return response()->json($orders);
     }
 
@@ -133,6 +148,7 @@ class OrderController extends Controller
             Equipment::whereIn('id', $allUsedEquipmentIds)->update(['status' => 'available']);
 
             $order->status = 'pending';
+            $order->notes = $request->reason;
             $order->result_value = $validated['result_value'];
         } else {
             $order->status = 'disapproved';

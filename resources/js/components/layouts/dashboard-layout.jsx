@@ -17,19 +17,23 @@ export default function DashboardLayout({
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { url } = usePage();
     const { user, logout } = useAuth();
-    const { data: lowStockReagents, isLoading: notificationsLoading } =
-        useLowStockReagents();
 
     const currentUser = useMemo(
         () => user ?? { name: "Guest", role: "guest" },
         [user]
     );
 
+    const isShowNotification = currentUser.role === "admin";
+
+    const { data: lowStockReagents, isLoading: notificationsLoading } =
+        useLowStockReagents(isShowNotification);
+
+    const notificationCount = useMemo(() => {
+        if (!isShowNotification) return 0;
+        return lowStockReagents?.length ?? 0;
+    }, [isShowNotification, lowStockReagents]);
+
     const sidebarMenu = useMemo(() => menuItems(url), [url]);
-    const notificationCount = useMemo(
-        () => lowStockReagents?.length ?? 0,
-        [lowStockReagents]
-    );
     const handleLogout = useCallback(() => logout(), [logout]);
 
     return (
@@ -59,7 +63,9 @@ export default function DashboardLayout({
                             user={currentUser}
                             notificationCount={notificationCount}
                             isNotificationLoading={notificationsLoading}
-                            lowStockReagents={lowStockReagents || []}
+                            lowStockReagents={
+                                lowStockReagents ? lowStockReagents : []
+                            }
                             onLogout={handleLogout}
                             onMenuClick={() => setIsMobileMenuOpen(true)}
                         />

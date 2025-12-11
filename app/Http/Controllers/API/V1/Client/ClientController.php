@@ -33,7 +33,7 @@ class ClientController extends Controller
                 'order_number' => $order->order_number,
                 'title' => $order->title,
                 'estimate_date' => $order->estimate_date ? Carbon::parse($order->estimate_date)->format('d/m/Y') : null,
-                'status' => $order->status,
+                'status' => $order->combined_status, // PAKAI YANG BARU
             ];
         });
 
@@ -50,7 +50,7 @@ class ClientController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                    'stats' => [
+                'stats' => [
                     'total_orders' => $totalOrders,
                     'processing_orders' => $processingOrders,
                     'completed_orders' => $completedOrders,
@@ -82,14 +82,14 @@ class ClientController extends Controller
             ->where('client_id', $user->clients->id)
             ->firstOrFail();
 
-        if (!$order->report_file_path) {
+        if (!$order->receipt_file_path) {
             return response()->json([
                 'success' => false,
                 'message' => 'Receipt not yet generated.'
             ], 404);
         }
 
-        $realPath = storage_path('app/public/' . $order->receipt_file_path);
+        $realPath = storage_path('app/' . $order->receipt_file_path);
 
         if (!file_exists($realPath)) {
             return response()->json([
@@ -100,7 +100,7 @@ class ClientController extends Controller
 
         return response()->download(
             $realPath,
-            'Laporan_' . $order->order_number . '.pdf',
+            'invoice-' . $order->order_number . '.pdf',
             ['Content-Type' => 'application/pdf']
         );
     }
@@ -124,7 +124,7 @@ class ClientController extends Controller
         }
 
         // Path file laporan di storage/app/public/...
-        $realPath = storage_path('app/public/' . $order->report_file_path);
+        $realPath = storage_path('app/public/reports/client/' . $order->report_file_path);
 
         if (!file_exists($realPath)) {
             return response()->json([
@@ -135,7 +135,7 @@ class ClientController extends Controller
 
         return response()->download(
             $realPath,
-            'Laporan_' . $order->order_number . '.pdf',
+            'report_order_' . $order->id . '.pdf',
             ['Content-Type' => 'application/pdf']
         );
     }

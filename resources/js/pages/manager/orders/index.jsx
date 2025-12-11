@@ -1,34 +1,17 @@
 import { useMemo } from "react";
-import { useMemo } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
 import { router } from "@inertiajs/react";
-import { router } from "@inertiajs/react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
-import { useOrders } from "@/hooks/useAdmin";
-
-const filterData = [
-    { value: "all", label: "All Status" },
-    { value: "completed", label: "Completed" },
-    { value: "in_progress", label: "In Progress" },
-    { value: "pending", label: "Pending" },
-    { value: "disapproved", label: "Disapproved" },
-    { value: "approved", label: "Approved" },
-    { value: "received", label: "Received" },
-    { value: "completed", label: "Completed" },
-    { value: "in_progress", label: "In Progress" },
-    { value: "pending", label: "Pending" },
-    { value: "disapproved", label: "Disapproved" },
-    { value: "approved", label: "Approved" },
-    { value: "received", label: "Received" },
-];
+import { useOrders } from "@/hooks/useManager";
+import { filterStatusOrder } from "@/utils/statusUtils";
 
 export default function AdminOrdersPage() {
     const { data: orders, isLoading, error } = useOrders();
 
-    const handleShowDetail = (data) => {
-        router.visit(route("admin.order.show", data.id));
+    const handleShowDetail = (id) => {
+        router.visit(route("manager.orders.show", id));
     };
 
     const columns = useMemo(
@@ -68,7 +51,7 @@ export default function AdminOrdersPage() {
                 showFilter={true}
                 showCreate={false}
                 filterColumn="status"
-                filterOptions={filterData}
+                filterOptions={filterStatusOrder}
             />
         </DashboardLayout>
     );

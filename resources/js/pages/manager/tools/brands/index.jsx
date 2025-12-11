@@ -1,7 +1,7 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import BrandDetailSheet from "@/components/shared/sheet/brand-detail-sheet";
-import { getBrandsColumns } from "@/components/shared/admin/tool-columns";
+import { getBrandsColumns } from "@/components/shared/manager/tool-columns";
 import { useMemo, useState } from "react";
 import Loading from "@/components/ui/loading";
 import { useBrands } from "@/hooks/useManager";
@@ -54,9 +54,6 @@ export default function ManagerBrandsPage() {
                 onExport={handleExport}
                 showExport={true}
                 showCreate={false}
-                createTitle="Tambah Brand"
-                editTitle="Edit Brand"
-                deleteTitle="Hapus Brand"
             />
             <BrandDetailSheet
                 data={selectedBrand}

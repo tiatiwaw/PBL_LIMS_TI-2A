@@ -1,9 +1,9 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { getEquipmentsColumns } from "@/components/shared/admin/tool-columns";
+import { getEquipmentsColumns } from "@/components/shared/manager/tool-columns";
 import EquipmentDetailSheet from "@/components/shared/sheet/equipment-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
-import { useBrands, useEquipments } from "@/hooks/useManager";
+import { useEquipments } from "@/hooks/useManager";
 import { exportEquipmentReportPDF } from "@/utils/pdf/export/tools-export";
 import { useMemo, useState } from "react";
 
@@ -18,8 +18,11 @@ export default function ManagerEquipmentsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEquipment, setSelectedEquipment] = useState(null);
 
-    const { data: brands, isLoading: brandLoading, error: brandError } = useBrands();
-    const { data: equipments, isLoading: equipmentLoading, error: equipmentError } = useEquipments();
+    const {
+        data: equipments,
+        isLoading: equipmentLoading,
+        error: equipmentError,
+    } = useEquipments();
 
     const handleShowDetail = (equipment) => {
         setSelectedEquipment(equipment);
@@ -28,9 +31,12 @@ export default function ManagerEquipmentsPage() {
 
     const handleExport = () => exportEquipmentReportPDF(equipments);
 
-    const columns = useMemo(() => getEquipmentsColumns({ onShowDetail: handleShowDetail }), []);
+    const columns = useMemo(
+        () => getEquipmentsColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
-    if (brandLoading || equipmentLoading) {
+    if (equipmentLoading) {
         return (
             <DashboardLayout title="Dashboard Manager" header="Selamat Datang">
                 <Loading />
@@ -38,35 +44,34 @@ export default function ManagerEquipmentsPage() {
         );
     }
 
-    if (brandError || equipmentError) {
+    if (equipmentError) {
         return (
             <DashboardLayout title="Dashboard Manager" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
-                    {equipmentError.message || "Terjadi kesalahan saat memuat data"}
+                    {equipmentError.message ||
+                        "Terjadi kesalahan saat memuat data"}
                 </div>
             </DashboardLayout>
         );
     }
 
     return (
-        <DashboardLayout
-            title="Manajemen Alat"
-            header="Manajemen Alat"
-        >
+        <DashboardLayout title="Manajemen Alat" header="Manajemen Alat">
             <ManagedDataTable
                 data={equipments}
                 columns={columns}
                 onExport={handleExport}
                 showExport={true}
                 showCreate={false}
-                createTitle="Tambah Data Peralatan"
-                editTitle="Edit Data Peralatan"
-                deleteTitle="Hapus Data Peralatan"
                 showFilter={true}
                 filterColumn="status"
                 filterOptions={filterData}
             />
-            <EquipmentDetailSheet data={selectedEquipment} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <EquipmentDetailSheet
+                data={selectedEquipment}
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
+            />
         </DashboardLayout>
     );
 }

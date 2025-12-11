@@ -47,7 +47,6 @@ export const getReportsColumns = ({ onShowDetail }) => [
         header: "Status",
         cell: ({ row }) => {
             const value = row.status;
-            console.log(value);
             return (
                 <Badge
                     variant={getOrderStatusVariant(value)}
