@@ -1,43 +1,80 @@
+import Loading from "@/components/ui/loading";
+
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getParametersColumns } from "@/components/shared/admin/test-columns";
 import ParameterDetailSheet from "@/components/shared/sheet/parameter-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { parameters } from "@/data/admin/tests";
 import { editParameterFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
+import { useParameters, useReferences, useUnits } from "@/hooks/useAdmin";
+import { exportParameterReportPDF } from "@/utils/pdf/export/test-export";
 
-export default function ParametersPage({ auth, parametersData }) {
+export default function AdminParametersPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedParameter, setSelectedParameter] = useState(null);
-        
-    const handleShowDetail = (tests) => {
-            setSelectedParameter(tests);
-            setIsOpen(true);
+
+
+    const { data: parameters, isLoading, error, create: createParameter, update: updateParameter, delete: deleteParameter } = useParameters();
+    const { data: units, isLoading: unitLoading, error: unitError } = useUnits();
+    const { data: references, isLoading: referenceLoading, error: referenceError } = useReferences();
+
+    const handleShowDetail = (brand) => {
+        setSelectedParameter(brand);
+        setIsOpen(true);
     };
-    
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const data = parametersData || parameters;
+    const columns = useMemo(
+        () => getParametersColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
-    const columns = useMemo(() => getParametersColumns({ onShowDetail: handleShowDetail }), []);
-    
+    const handleExport = () => exportParameterReportPDF(parameters);
+
+    const handleCreate = async (formData) => createParameter.mutateAsync(formData);
+
+    const handleEdit = async (id, formData) => {
+        await updateParameter.mutateAsync({ id, data: formData });
+    };
+
+    const handleDelete = async (id) => deleteParameter.mutateAsync(id);
+
+    if (isLoading || unitLoading || referenceLoading) {
+        return (
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
+
     return (
         <DashboardLayout
             title="Manajemen Tes Parameter"
-            user={currentUser}
             header="Manajemen Tes Parameter"
         >
             <ManagedDataTable
-                data={data}
+                data={parameters}
                 columns={columns}
-                editFields={editParameterFields}
-                createUrl="admin.test.parameter.create"
-                editUrl="admin.test.parameter.update"
-                deleteUrl="admin.test.parameter.destroy"
+                editFields={editParameterFields(units, references)}
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onExport={handleExport}
+                createTitle="Tambah Tes Parameter"
                 editTitle="Edit Tes Parameter"
                 deleteTitle="Hapus Tes Parameter"
+                showExport={true}
             />
-        <ParameterDetailSheet data={selectedParameter} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <ParameterDetailSheet data={selectedParameter} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }

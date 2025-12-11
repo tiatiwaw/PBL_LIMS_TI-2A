@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Reagent;
 use App\Models\Supplier;
 use App\Models\Grade;
+use App\Models\UnitValue;
 
 class ReagentSeeder extends Seeder
 {
@@ -17,9 +18,10 @@ class ReagentSeeder extends Seeder
         // Pastikan supplier & grade sudah ada
         $suppliers = Supplier::all();
         $grades = Grade::all();
+        $unit = UnitValue::all();
 
-        if ($suppliers->isEmpty() || $grades->isEmpty()) {
-            $this->command->warn('⚠️ Jalankan SupplierSeeder dan GradeSeeder terlebih dahulu!');
+        if ($suppliers->isEmpty() || $grades->isEmpty() || $unit->isEmpty()) {
+            $this->command->warn('⚠️ Jalankan SupplierSeeder, GradeSeeder, dan UnitValueSeeder terlebih dahulu!');
             return;
         }
 
@@ -28,30 +30,35 @@ class ReagentSeeder extends Seeder
                 'name' => 'Asam Sulfat',
                 'formula' => 'H2SO4',
                 'batch_number' => 'AS-2024-01',
+                'stock' => 120,
                 'storage_location' => 'Rak A1',
             ],
             [
                 'name' => 'Natrium Klorida',
                 'formula' => 'NaCl',
                 'batch_number' => 'NK-2024-02',
+                'stock' => 60,
                 'storage_location' => 'Rak B3',
             ],
             [
                 'name' => 'Etanol',
                 'formula' => 'C2H5OH',
                 'batch_number' => 'ET-2024-03',
+                'stock' => 20,
                 'storage_location' => 'Lemari Kimia 2',
             ],
             [
                 'name' => 'Aseton',
                 'formula' => 'C3H6O',
                 'batch_number' => 'AC-2024-04',
+                'stock' => 110,
                 'storage_location' => 'Lemari Pelarut',
             ],
             [
                 'name' => 'Kalium Permanganat',
                 'formula' => 'KMnO4',
                 'batch_number' => 'KP-2024-05',
+                'stock' => 100,
                 'storage_location' => 'Rak C2',
             ],
         ];
@@ -61,6 +68,7 @@ class ReagentSeeder extends Seeder
                 ...$data,
                 'supplier_id' => $suppliers->random()->id,
                 'grade_id' => $grades->random()->id,
+                'unit_value_id' => $unit->random()->id
             ]);
         }
     }

@@ -8,7 +8,7 @@ export default function CategoryDetailSheet({ data, isOpen, onOpenChange }) {
             open={isOpen}
             onOpenChange={onOpenChange}
             title={`Detail Kategori #${data.id}`}
-            description={`Detail Kategori ${data.name}.`}
+            description={`Detail Training ${data.name}.`}
             fields={[
                 { label: "Nama Kategori", value: data.name },
             ]}

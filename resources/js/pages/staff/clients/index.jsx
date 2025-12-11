@@ -4,22 +4,20 @@ import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { editClientFields } from "@/utils/fields/staff";
 import { useMemo, useState } from "react";
 import ClientDetailSheet from "@/components/shared/sheet/client-detail-sheet";
-import { useAuth } from "@/hooks/useAuth";
-import { useClients } from "@/hooks/useClient";
 import Loading from "@/components/ui/loading";
+import { useClients } from "@/hooks/useStaff";
 
 export default function ClientPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
 
-    const { user, loading: authLoading } = useAuth();
     const {
-        clients,
+        data: clients,
         isLoading,
         error,
-        createClient,
-        updateClient,
-        deleteClient,
+        create: createClient,
+        update: updateClient,
+        delete: deleteClient,
     } = useClients();
 
     const handleShowDetail = (client) => {
@@ -27,7 +25,6 @@ export default function ClientPage() {
         setIsOpen(true);
     };
 
-    const currentUser = user || { name: "Staff", role: "Staff" };
     const handleCreate = async (formData) => createClient.mutateAsync(formData);
     const handleEdit = async (id, formData) => {
         await updateClient.mutateAsync({ id, data: formData });
@@ -39,13 +36,9 @@ export default function ClientPage() {
         []
     );
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return (
-            <DashboardLayout
-                title="Manajemen Client"
-                header="Client"
-                user={currentUser}
-            >
+            <DashboardLayout title="Manajemen Client" header="Client">
                 <Loading />
             </DashboardLayout>
         );
@@ -53,11 +46,7 @@ export default function ClientPage() {
 
     if (error) {
         return (
-            <DashboardLayout
-                title="Manajemen Client"
-                header="Client"
-                user={currentUser}
-            >
+            <DashboardLayout title="Manajemen Client" header="Client">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -66,11 +55,7 @@ export default function ClientPage() {
     }
 
     return (
-        <DashboardLayout
-            title="Manajemen Client"
-            user={currentUser}
-            header="Client"
-        >
+        <DashboardLayout title="Manajemen Client" header="Client">
             <ManagedDataTable
                 data={clients}
                 columns={columns}
@@ -78,8 +63,9 @@ export default function ClientPage() {
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                editTitle="Edit Client"
-                deleteTitle="Hapus Client"
+                createTitle="Tambah Data Klien"
+                editTitle="Edit Data Klien"
+                deleteTitle="Hapus Data Klien"
             />
             <ClientDetailSheet
                 data={selectedClient}

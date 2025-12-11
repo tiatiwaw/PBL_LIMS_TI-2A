@@ -1,88 +1,191 @@
-import { FlaskConical, SlashIcon } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { NotificationButton } from './notification-button';
-import { UserMenu } from './user-menu';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { Link, usePage } from '@inertiajs/react';
+import { FlaskConical, Menu, Clock, Calendar } from "lucide-react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { UserMenu } from "./user-menu";
+import { usePage } from "@inertiajs/react";
+import NotificationButton from "./notification-button";
+import { useState, useEffect } from "react";
 
-export const HeaderCard = ({ title, user, notificationCount = 3, onLogout }) => {
-    const { url } = usePage();
-    const segments = url.split('/').filter(Boolean);
+export const HeaderCard = ({
+    title,
+    user,
+    onLogout,
+    onMenuClick,
+    lowStockReagents = [],
+    isNotificationLoading = false,
+}) => {
+    const [currentTime, setCurrentTime] = useState(new Date());
 
-    const formatLabel = (segment) => {
-        return segment
-            .replace(/-/g, ' ')
-            .replace(/\b\w/g, (c) => c.toUpperCase());
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const formatTime = (date) => {
+        return date.toLocaleTimeString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+        });
+    };
+
+    const formatDate = (date) => {
+        return date.toLocaleDateString("id-ID", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+    };
+
+    const getGreeting = () => {
+        const hour = currentTime.getHours();
+        if (hour < 12) return "Selamat Pagi";
+        if (hour < 15) return "Selamat Siang";
+        if (hour < 18) return "Selamat Sore";
+        return "Selamat Malam";
     };
 
     return (
-        <div
+        <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
             className="
-                flex items-center gap-4 px-6 py-4
-                bg-primary-hijauTua
-                rounded-2xl shadow-xl 
-                border border-white/5
+                overflow-hidden
+                flex items-center gap-3 md:gap-6 px-4 md:px-8 py-4 md:py-5
+                bg-gradient-to-br from-primary-hijauTua via-primary-hijauTua to-primary-hijauTua/90
+                rounded-3xl shadow-2xl 
+                border border-white/10
                 w-full justify-between
+                backdrop-blur-sm
             "
         >
-            <div className="flex items-center gap-4">
-                <FlaskConical size={48} className="text-white/90" />
-                <div className="flex-1">
-                    <h2 className="text-2xl font-bold tracking-tight text-white">
-                        {title}
-                    </h2>
-
-                    <Badge
-                        variant="secondary"
-                        className="mt-2 text-xs bg-white/15 text-white/90 hover:bg-white/25 border-white/10 px-2 py-1"
+            <div className="flex items-center gap-3 md:gap-6 flex-1 min-w-0">
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={onMenuClick}
+                        className="
+                            md:hidden w-11 h-11
+                            bg-white/10 hover:bg-white/20 
+                            text-white rounded-xl
+                            transition-all duration-300
+                            backdrop-blur-sm
+                            border border-white/10
+                        "
                     >
-                        <Breadcrumb>
-                            <BreadcrumbList className="flex items-center gap-1">
-                                {segments.length === 0 && (
-                                    <BreadcrumbItem>
-                                        <BreadcrumbPage className="text-white text-xs">Dashboard</BreadcrumbPage>
-                                    </BreadcrumbItem>
-                                )}
+                        <Menu size={20} />
+                    </Button>
+                </motion.div>
 
-                                {segments.map((segment, index) => {
-                                    const href = '/' + segments.slice(0, index + 1).join('/');
-                                    const isLast = index === segments.length - 1;
+                <motion.div
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: [0, -10, 10, 0] }}
+                    transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatDelay: 3,
+                    }}
+                    className="hidden md:block"
+                >
+                    <div
+                        className="
+                        w-14 h-14 rounded-2xl 
+                        bg-white/10 backdrop-blur-md
+                        border border-white/20
+                        flex items-center justify-center
+                        shadow-lg
+                    "
+                    >
+                        <FlaskConical size={28} className="text-white" />
+                    </div>
+                </motion.div>
 
-                                    return (
-                                        <div key={index} className="flex items-center gap-1">
-                                            <BreadcrumbItem>
-                                                {isLast ? (
-                                                    <BreadcrumbPage className="text-white/90 text-xs">
-                                                        {formatLabel(segment)}
-                                                    </BreadcrumbPage>
-                                                ) : (
-                                                    <BreadcrumbLink asChild>
-                                                        <Link
-                                                            href={href}
-                                                            className="text-white hover:!text-white/80 transition-colors text-xs"
-                                                        >
-                                                            {formatLabel(segment)}
-                                                        </Link>
-                                                    </BreadcrumbLink>
-                                                )}
-                                            </BreadcrumbItem>
-                                            {!isLast && (
-                                                <BreadcrumbSeparator>
-                                                    <SlashIcon className="h-3 w-3 text-white/50" />
-                                                </BreadcrumbSeparator>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </BreadcrumbList>
-                        </Breadcrumb>
-                    </Badge>
+                <div className="flex-1 min-w-0 space-y-1.5">
+                    <div className="flex items-center gap-3 flex-wrap">
+                        <h2 className="text-xl md:text-3xl font-bold tracking-tight text-white truncate drop-shadow-lg">
+                            {title}
+                        </h2>
+
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.2, type: "spring" }}
+                            className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/20"
+                        >
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                            <span className="text-xs font-medium text-white/90">
+                                Active
+                            </span>
+                        </motion.div>
+                    </div>
+
+                    <div className="flex items-center gap-4 flex-wrap text-xs md:text-sm">
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="flex items-center gap-2 text-white/80 font-medium"
+                        >
+                            <span className="hidden sm:inline">
+                                {getGreeting()},
+                            </span>
+                            <span className="text-white">
+                                {user?.name || "User"}
+                            </span>
+                        </motion.div>
+
+                        <div className="hidden md:block w-px h-4 bg-white/20" />
+
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="hidden md:flex items-center gap-2 text-white/70"
+                        >
+                            <Clock size={14} className="text-white/50" />
+                            <span className="font-mono">
+                                {formatTime(currentTime)}
+                            </span>
+                        </motion.div>
+
+                        <div className="hidden lg:block w-px h-4 bg-white/20" />
+
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.5 }}
+                            className="hidden lg:flex items-center gap-2 text-white/70"
+                        >
+                            <Calendar size={14} className="text-white/50" />
+                            <span>{formatDate(currentTime)}</span>
+                        </motion.div>
+                    </div>
                 </div>
             </div>
-            <div className="flex gap-4">
-                <NotificationButton count={notificationCount} />
-                <UserMenu user={user} onLogout={onLogout} />
+
+            <div className="flex gap-2 md:gap-3 items-center">
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    <NotificationButton
+                        isLoading={isNotificationLoading}
+                        reagents={lowStockReagents ? lowStockReagents : []}
+                    />
+                </motion.div>
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    <UserMenu user={user} onLogout={onLogout} />
+                </motion.div>
             </div>
-        </div>
+        </motion.div>
     );
 };

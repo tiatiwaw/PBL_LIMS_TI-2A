@@ -1,42 +1,73 @@
+import Loading from "@/components/ui/loading";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getStandardsColumns } from "@/components/shared/admin/test-columns";
 import ReferenceDetailSheet from "@/components/shared/sheet/reference-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { standards } from "@/data/admin/tests";
 import { editStandardFields } from "@/utils/fields/admin";
 import { useMemo, useState } from "react";
+import { useReferences } from "@/hooks/useAdmin";
+import { exportReferenceReportPDF } from "@/utils/pdf/export/test-export";
 
-export default function StandardsPage({ auth, standardsData }) {
+export default function AdminStandardsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedReference, setSelectedReference] = useState(null);
-            
+
+    const { data: references, isLoading, error, create: createReference, update: updateReference, delete: deleteReference } = useReferences();
+
     const handleShowDetail = (tests) => {
-            setSelectedReference(tests);
-            setIsOpen(true);
+        setSelectedReference(tests);
+        setIsOpen(true);
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = standardsData || standards;
-
     const columns = useMemo(() => getStandardsColumns({ onShowDetail: handleShowDetail }), []);
+
+    const handleExport = () => exportReferenceReportPDF(references);
+
+    const handleCreate = async (formData) => createReference.mutateAsync(formData);
+
+    const handleEdit = async (id, formData) => {
+        await updateReference.mutateAsync({ id, data: formData });
+    };
+
+    const handleDelete = async (id) => deleteReference.mutateAsync(id);
+
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
         <DashboardLayout
             title="Manajemen Standar Referensi"
-            user={currentUser}
             header="Manajemen Standar Referensi"
         >
             <ManagedDataTable
-                data={parameters}
+                data={references}
                 columns={columns}
                 editFields={editStandardFields}
-                createUrl="admin.test.standard.create"
-                editUrl="admin.test.standard.update"
-                deleteUrl="admin.test.standard.destroy"
-                editTitle="Edit Pengguna"
-                deleteTitle="Hapus Pengguna"
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                createTitle="Tambah Standar Referensi"
+                editTitle="Edit Standar Referensi"
+                deleteTitle="Hapus Standar Referensi"
+                showExport={true}
+                onExport={handleExport}
             />
-        <ReferenceDetailSheet data={selectedReference} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <ReferenceDetailSheet data={selectedReference} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }

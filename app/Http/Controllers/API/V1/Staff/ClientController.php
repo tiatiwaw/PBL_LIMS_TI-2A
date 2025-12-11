@@ -22,6 +22,7 @@ class ClientController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
+            'contact_person' => 'required|string|max:255',
             'address' => 'required|string',
             'phone_number' => 'required|string',
             'npwp_number' => 'required|string',
@@ -36,11 +37,12 @@ class ClientController extends Controller
 
 
         $user = User::create([
-            'name' => $validatedData['name'],
+            'name' => $validatedData['contact_person'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
             'role' => 'client',
         ]);
+        $user->assignRole('client');
 
         $client = Client::create([
             'user_id' => $user->id,
@@ -50,6 +52,7 @@ class ClientController extends Controller
             'npwp_number' => $validatedData['npwp_number'],
             'email' => $validatedData['email'],
         ]);
+
 
         return response()->json([
             'message' => 'Client berhasil dibuat.',
@@ -106,10 +109,4 @@ class ClientController extends Controller
             'data' => $client,
         ], 201);
     }
-
-    // ================================
-    // SAMPLE
-    // ================================
-
-
 }

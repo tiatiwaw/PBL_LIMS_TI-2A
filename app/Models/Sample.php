@@ -37,4 +37,14 @@ class Sample extends Model
     {
         return $this->hasOne(NParameterMethod::class, 'sample_id');
     }
+
+    public function parameter()
+    {
+        return $this->belongsToMany(TestParameter::class, 'n_parameter_methods')->withPivot('result', 'status');
+    }
+
+    public function test_method()
+    {
+        return $this->belongsToMany(TestMethod::class, 'n_parameter_methods');
+    }
 }

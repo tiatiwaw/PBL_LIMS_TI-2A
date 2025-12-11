@@ -23,16 +23,18 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    (error) => {
-        if (error.response?.status === 401) {
-            if (typeof window !== 'undefined') {
-                window.dispatchEvent(new Event('auth:unauthorized'));
-            }
+    response => response,
+    error => {
+        const status = error.response?.status;
+
+        if (status === 401) {
+            window.dispatchEvent(new Event("auth:unauthorized"));
         }
-        
+
+        if (status === 403) {
+            window.dispatchEvent(new Event("auth:forbidden"));
+        }
+
         return Promise.reject(error);
     }
 );

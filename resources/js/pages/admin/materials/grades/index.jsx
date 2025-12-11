@@ -2,42 +2,73 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getGradesColumns } from "@/components/shared/admin/material-columns";
 import GradeDetailSheet from "@/components/shared/sheet/grade-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-import { grades } from "@/data/admin/materials";
+import Loading from "@/components/ui/loading";
+import { useGrades } from "@/hooks/useAdmin";
 import { editGradeFields } from "@/utils/fields/admin";
+import { exportGradesReportPDF } from "@/utils/pdf/export/tools-export";
 import { useMemo, useState } from "react";
 
-export default function GradesPage({ auth, gradesData }) {
+export default function AdminGradesPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedGrades, setSelectedGrades] = useState(null);
-    
+
+    const { data: grades, isLoading, error, create: createGrade, update: updateGrade, delete: deleteGrade } = useGrades();
+
     const handleShowDetail = (materials) => {
-            setSelectedGrades(materials);
-            setIsOpen(true);
+        setSelectedGrades(materials);
+        setIsOpen(true);
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = gradesData || grades;
-
     const columns = useMemo(() => getGradesColumns({ onShowDetail: handleShowDetail }), []);
-    
+
+    const handleExport = () => exportGradesReportPDF(grades);
+
+    const handleCreate = async (formData) => createGrade.mutateAsync(formData);
+
+    const handleEdit = async (id, formData) => {
+        await updateGrade.mutateAsync({ id, data: formData });
+    };
+
+    const handleDelete = async (id) => deleteGrade.mutateAsync(id);
+
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Dashboard Admin" header="Selamat Datang">
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
+
 
     return (
         <DashboardLayout
             title="Manajemen Jenis Grade"
-            user={currentUser}
             header="Manajemen Jenis Grade"
         >
             <ManagedDataTable
-                data={parameters}
+                data={grades}
                 columns={columns}
                 editFields={editGradeFields}
-                createUrl="admin.materials.grade.create"
-                editUrl="admin.materials.grade.update"
-                deleteUrl="admin.materials.grade.destroy"
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onExport={handleExport}
+                showExport={true}
+                createTitle="Tambah Tingkatan"
                 editTitle="Edit Tingkatan"
                 deleteTitle="Hapus Tingkatan"
             />
-        <GradeDetailSheet data={selectedGrades} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <GradeDetailSheet data={selectedGrades} isOpen={isOpen} onOpenChange={setIsOpen} />
         </DashboardLayout>
     );
 }

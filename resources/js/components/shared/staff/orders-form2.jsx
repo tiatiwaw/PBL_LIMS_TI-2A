@@ -13,9 +13,10 @@ import { getSampleColumnsOrder } from "./sample-order-colums";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { editSampleFields } from "@/utils/fields/staff";
+import { useSamples } from "@/hooks/useStaff";
+import EntitySelectorDialog from "../dialog/entity-selector-dialog";
 
 export default function OrdersForm2({
-    samples,
     categories,
     createSample,
     data,
@@ -189,28 +190,54 @@ export default function OrdersForm2({
                     <DatePicker
                         label="Tanggal Order"
                         value={data.tanggalOrder}
-                        onChange={(date) =>
+                        onChange={(date) => {
+                            if (!date) {
+                                setData((prev) => ({
+                                    ...prev,
+                                    tanggalOrder: "",
+                                }));
+                                return;
+                            }
+                            // Convert to YYYY-MM-DD without timezone conversion
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(
+                                2,
+                                "0"
+                            );
+                            const day = String(date.getDate()).padStart(2, "0");
+                            const dateString = `${year}-${month}-${day}`;
                             setData((prev) => ({
                                 ...prev,
-                                tanggalOrder: date
-                                    ? date.toISOString().split("T")[0]
-                                    : "",
-                            }))
-                        }
+                                tanggalOrder: dateString,
+                            }));
+                        }}
                     />
 
                     {/* Estimasi Order Selesai - Menggunakan DatePicker */}
                     <DatePicker
                         label="Estimasi Order Selesai"
                         value={data.estimasiSelesai}
-                        onChange={(date) =>
+                        onChange={(date) => {
+                            if (!date) {
+                                setData((prev) => ({
+                                    ...prev,
+                                    estimasiSelesai: "",
+                                }));
+                                return;
+                            }
+                            // Convert to YYYY-MM-DD without timezone conversion
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(
+                                2,
+                                "0"
+                            );
+                            const day = String(date.getDate()).padStart(2, "0");
+                            const dateString = `${year}-${month}-${day}`;
                             setData((prev) => ({
                                 ...prev,
-                                estimasiSelesai: date
-                                    ? date.toISOString().split("T")[0]
-                                    : "",
-                            }))
-                        }
+                                estimasiSelesai: dateString,
+                            }));
+                        }}
                     />
 
                     {/* Catatan */}
@@ -302,8 +329,20 @@ export default function OrdersForm2({
                 </div>
             </div>
 
+            <EntitySelectorDialog
+                type={"samples"}
+                hook={useSamples}
+                isOpen={isSampleDialogOpen}
+                onOpenChange={handleDialogChange}
+                selectedItems={selectedSamples}
+                onSelect={handleSampleSelect}
+                onConfirm={handleTambahSamples}
+                getColumns={getSampleColumnsOrder}
+                editFields={editSampleFields(categories)}
+            />
+
             {/* Dialog Pilih Sampel */}
-            <Dialog open={isSampleDialogOpen} onOpenChange={handleDialogChange}>
+            {/* <Dialog open={isSampleDialogOpen} onOpenChange={handleDialogChange}>
                 <DialogContent className="max-w-4xl flex flex-col max-h-[90vh]">
                     <DialogHeader>
                         <DialogTitle>Pilih Sampel</DialogTitle>
@@ -343,7 +382,7 @@ export default function OrdersForm2({
                         </Button>
                     </DialogFooter>
                 </DialogContent>
-            </Dialog>
+            </Dialog> */}
         </div>
     );
 }

@@ -11,8 +11,8 @@ export default function ReagentsDetailSheet({ data, isOpen, onOpenChange }) {
             description={`Detail materials ${data.name}.`}
             fields={[
                 { label: "Nama Reagen", value: data.name },
-                { label: "Suplier", value: data.supplier},
-                { label: "Grade", value: data.grade },
+                { label: "Suplier", value: data.suppliers.name},
+                { label: "Grade", value: data.grades.name },
                 { label: "Formula", value: data.formula },
                 { label: "Batch Number", value: data.batch_number },
                 { label: "Storage Location", value: data.storage_location}

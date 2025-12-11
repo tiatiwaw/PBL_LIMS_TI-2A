@@ -18,4 +18,15 @@ class AnalysesMethod extends Model
     {
         return $this->hasMany(NAnalysesMethodsOrder::class, 'analyses_method_id');
     }
+
+    public function orders()
+    {
+        return $this->belongsToMany(
+            Order::class,
+            'n_analyses_methods_orders',
+            'analyses_method_id',
+            'order_id'
+        )->withPivot('description', 'price')
+         ->withTimestamps();
+    }
 }

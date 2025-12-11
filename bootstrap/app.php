@@ -12,24 +12,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->validateCsrfTokens(
+            except: [
+                'callback',
+                'https://f48a87bc30d7.ngrok-free.app/callback',
+                'api/client/orders/save-invoice-pdf',
+                '*orders/save-invoice-pdf*'
+            ]
+        );
+
         // register middleware using alias
         $middleware->alias([
-            'admin' => App\Http\Middleware\AdminMiddleware::class,
-            'analyst' => App\Http\Middleware\AnalystMiddleware::class,
-            'manager' => App\Http\Middleware\ManagerMiddleware::class,
-            'staff' => App\Http\Middleware\StaffMiddleware::class,
-            'supervisor' => App\Http\Middleware\SupervisorMiddleware::class,
-            'client' => App\Http\Middleware\ClientMiddleware::class,
-        ]);
-
-        // Custom middleware group
-        $middleware->group('role', [
-            App\Http\Middleware\AdminMiddleware::class,
-            App\Http\Middleware\AnalystMiddleware::class,
-            App\Http\Middleware\ManagerMiddleware::class,
-            App\Http\Middleware\StaffMiddleware::class,
-            App\Http\Middleware\SupervisorMiddleware::class,
-            App\Http\Middleware\ClientMiddleware::class,
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
 
         // global web middleware
@@ -43,7 +37,14 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
 
-        $middleware->redirectGuestsTo(fn() => route('auth.login.form'));
+        $middleware->redirectGuestsTo(fn($request) => route('auth.login.form'));
+
+        $middleware->redirectUsersTo(function ($request) {
+            if ($request->user()) {
+                return $request->user()->getRedirectRoute();
+            }
+            return '/';
+        });
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

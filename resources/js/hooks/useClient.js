@@ -1,55 +1,13 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { staffService } from "@/services/staffService";
+import { clientService } from "@/services/clientService";
+import { useCrud } from "./useCrud";
+import { useGetById } from "./useGetById";
+import { useQuery } from "@tanstack/react-query";
 
-export const useClients = () => {
-    const queryClient = useQueryClient();
+export const useDashboard = () => useCrud(clientService.dashboard, "client", "dashboard");
+export const useOrderDetail = (orderId) => useGetById(clientService.order, "order", orderId);
+export const useHistory = (orderId) => useGetById(clientService.history, "status", orderId);
+export const usePayment = (orderId) => useGetById(clientService.payment, "payment", orderId);
+export const useTransaction = (reference) => useGetById(clientService.transaction, "transaction", reference);
+export const useReceipt = (order_number) => useGetById(clientService.receipt, "receipt", order_number);
 
-    const {
-        data: clients,
-        isLoading,
-        error,
-        refetch,
-    } = useQuery({
-        queryKey: ["clients"],
-        queryFn: staffService.clients.getAll,
-    });
 
-    const createClient = useMutation({
-        mutationFn: staffService.clients.create,
-        onSuccess: () => {
-            queryClient.invalidateQueries(["clients"]);
-            toast.success("Client berhasil ditambahkan");
-        },
-        onError: (err) => toast.error(err?.message || "Gagal menambah Client"),
-    });
-
-    const updateClient = useMutation({
-        mutationFn: ({ id, data }) => staffService.clients.update(id, data),
-        onSuccess: () => {
-            queryClient.invalidateQueries(["clients"]);
-            toast.success("Client berhasil diperbarui");
-        },
-        onError: (err) =>
-            toast.error(err?.message || "Gagal memperbarui Client"),
-    });
-
-    const deleteClient = useMutation({
-        mutationFn: staffService.clients.delete,
-        onSuccess: () => {
-            queryClient.invalidateQueries(["clients"]);
-            toast.success("Client berhasil dihapus");
-        },
-        onError: (err) => toast.error(err?.message || "Gagal menghapus Client"),
-    });
-
-    return {
-        clients,
-        isLoading,
-        error,
-        refetch,
-        createClient,
-        updateClient,
-        deleteClient,
-    };
-};

@@ -1,38 +1,57 @@
-import { useMemo, useState } from "react";
-import { orders } from "@/data/manager/orders";
+import { useMemo } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { getOrdersColumns } from "@/components/shared/manager/order-columns";
-import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { router } from "@inertiajs/react";
+import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
+import Loading from "@/components/ui/loading";
+import { useOrders } from "@/hooks/useManager";
+import { filterStatusOrder } from "@/utils/statusUtils";
 
-const filterData = [
-    { value: "all", label: "All Status" },
-    { value: "Completed", label: "Completed" },
-    { value: "In Progress", label: "In Progress" },
-    { value: "Pending", label: "Pending" },
-    { value: "Disapproved", label: "Disapproved" },
-    { value: "Approved", label: "Approved" },
-    { value: "Received", label: "Received" },
-];
+export default function AdminOrdersPage() {
+    const { data: orders, isLoading, error } = useOrders();
 
-export default function OrdersPage({ auth, ordersData }) {
-    const handleShowDetail = () => {
-        router.visit(route("manager.orders.detail"));
+    const handleShowDetail = (id) => {
+        router.visit(route("manager.orders.show", id));
     };
 
-    const currentUser = auth?.user || { name: "King Akbar", role: "Manager" };
-    const parameters = ordersData || orders;
+    const columns = useMemo(
+        () => getOrdersColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
-    const columns = useMemo(() => getOrdersColumns({ onShowDetail: handleShowDetail }), []);
+    if (isLoading) {
+        return (
+            <DashboardLayout
+                title="Manajemen Orderan"
+                header="Manajemen Orderan"
+            >
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout
+                title="Manajemen Orderan"
+                header="Manajemen Orderan"
+            >
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
 
     return (
-        <DashboardLayout title="Orders" user={currentUser} header="Orders">
+        <DashboardLayout title="Manajemen Orderan" header="Manajemen Orderan">
             <ManagedDataTable
-                data={parameters}
+                data={orders}
                 columns={columns}
                 showFilter={true}
+                showCreate={false}
                 filterColumn="status"
-                filterOptions={filterData}
+                filterOptions={filterStatusOrder}
             />
         </DashboardLayout>
     );

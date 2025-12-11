@@ -9,7 +9,8 @@ const LABELS = {
         failed: "Gagal",
     },
     equipmentStatus: {
-        active: "Aktif",
+        available: "Tersedia",
+        unavailable: "Dipakai",
         maintenance: "Perbaikan",
         broken: "Rusak",
     },
@@ -20,18 +21,23 @@ const LABELS = {
         disapproved: "Ditolak",
         approved: "Disetujui",
         received: "Diterima",
+        pending_payment: "Menunggu Pembayaran",
+        paid: "Sudah Dibayar",
+        received_test: "Sampel Diterima",
+        revision_test: "Revisi Pengujian",
     },
-    orderType: {
-        eksternal: "Eksternal",
-        internal: "Internal",
-        urgent: "Urgent",
+    conditionType: {
+        good: "Baik",
+        damaged: "Rusak",
+        expired: "Kadaluarsa",
     },
 };
 
 const VARIANTS = {
     orderType: {
-        eksternal: "warning",
-        internal: "info",
+        external: "warning",
+        internal: "success",
+        regular: "info",
         urgent: "error",
     },
     orderStatus: {
@@ -41,13 +47,18 @@ const VARIANTS = {
         disapproved: "error",
         approved: "approved",
         received: "received",
+        pending_payment: "pending_payment",
+        paid: "paid",
+        received_test: "received_test",
+        revision_test: "revision_test",
     },
     sampleStatus: {
         success: "success",
         failed: "error",
     },
     equipmentStatus: {
-        active: "success",
+        available: "success",
+        unavailable: "info",
         maintenance: "warning",
         broken: "error",
     },
@@ -77,6 +88,19 @@ const VARIANTS = {
     },
 };
 
+export const filterStatusOrder = [
+    { value: "all", label: "Semua Status" },
+    { value: "received", label: "Diterima" },
+    { value: "disapproved", label: "Ditolak" },
+    { value: "pending_payment", label: "Menunggu Pembayaran" },
+    { value: "paid", label: "Sudah Dibayar" },
+    { value: "in_progress", label: "Sedang Diproses" },
+    { value: "received_test", label: "Sampel Diterima" },
+    { value: "revision_test", label: "Revisi Pengujian" },
+    { value: "pending", label: "Menunggu" },
+    { value: "completed", label: "Selesai" },
+];
+
 const getValue = (map, category, key, fallback = "default") => {
     return map?.[category]?.[key] || fallback;
 };
@@ -89,8 +113,8 @@ export const getEquipmentStatusLabel = (status) =>
     getValue(LABELS, "equipmentStatus", status, status);
 export const getOrderStatusLabel = (status) =>
     getValue(LABELS, "orderStatus", status, status);
-export const getOrderTypeLabel = (type) =>
-    getValue(LABELS, "orderType", type, type);
+export const getConditionTypeLabel = (type) =>
+    getValue(LABELS, "conditionType", type, type);
 
 export const getOrderTypeVariant = (type) =>
     getValue(VARIANTS, "orderType", type);

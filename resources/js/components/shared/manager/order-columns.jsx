@@ -1,13 +1,14 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { getOrderStatusLabel, getOrderStatusVariant, getOrderTypeLabel, getOrderTypeVariant } from "@/utils/statusUtils";
+import {
+    getOrderStatusLabel,
+    getOrderStatusVariant,
+    getOrderTypeVariant,
+} from "@/utils/statusUtils";
 
 export const getOrdersColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "order_number", header: "No. Order" },
     { accessorKey: "title", header: "Judul Analisis" },
-    { accessorKey: "estimated_date", header: "Estimasi Selesai" },
-    { accessorKey: "report_issued_at", header: "Tanggal Laporan" },
     {
         accessorKey: "order_type",
         header: "Tipe Order",
@@ -16,8 +17,9 @@ export const getOrdersColumns = ({ onShowDetail }) => [
             return (
                 <Badge
                     variant={getOrderTypeVariant(value)}
+                    className="capitalize"
                 >
-                    {getOrderTypeLabel(value)}
+                    {value}
                 </Badge>
             );
         },
@@ -38,13 +40,12 @@ export const getOrdersColumns = ({ onShowDetail }) => [
         id: "aksi",
         header: "Aksi",
         cell: ({ row }) => (
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onShowDetail(row)}
+            <button
+                onClick={() => onShowDetail(row.id)}
+                className="px-3 py-1 rounded-lg border"
             >
                 Detail
-            </Button>
+            </button>
         ),
     },
 ];

@@ -15,21 +15,21 @@ export default function ManagedDataTable({
     columns,
     editFields,
 
-    // callback
     onCreate,
     onEdit,
     onDelete,
+    onExport,
+    onFormOpen,
 
-    // konfigurasi
     filterOptions = [],
     filterColumn = "status",
     showSearch = true,
     showFilter = false,
     showCreate = true,
+    showExport = false,
     pageSize = 10,
     meta = {},
 
-    // teks
     createTitle = "Tambah Data Baru",
     createDescription = "Isi data baru, lalu simpan.",
     editTitle = "Edit Data",
@@ -55,9 +55,18 @@ export default function ManagedDataTable({
         data: null,
     });
 
-    const handleOpenCreate = () => setFormDialog({ open: true, data: null, mode: "create" });
-    const handleOpenEdit = (row) => setFormDialog({ open: true, data: row, mode: "edit" });
-    const handleOpenDelete = (row) => setDeleteDialog({ open: true, data: row });
+    const handleOpenCreate = () => {
+        onFormOpen?.(null);
+        setFormDialog({ open: true, data: null, mode: "create" });
+    };
+
+    const handleOpenEdit = (row) => {
+        onFormOpen?.(row);
+        setFormDialog({ open: true, data: row, mode: "edit" });
+    };
+
+    const handleOpenDelete = (row) =>
+        setDeleteDialog({ open: true, data: row });
 
     const handleSave = async (formData) => {
         const isEdit = formDialog.mode === "edit";
@@ -94,7 +103,9 @@ export default function ManagedDataTable({
                     showSearch={showSearch}
                     showFilter={showFilter}
                     showCreate={showCreate}
+                    showExport={showExport}
                     onCreate={handleOpenCreate}
+                    onExport={onExport}
                     filterOptions={filterOptions}
                     searchTerm={table.searchTerm}
                     onSearchChange={table.setSearchTerm}
@@ -109,6 +120,8 @@ export default function ManagedDataTable({
                     onEdit={handleOpenEdit}
                     onDelete={handleOpenDelete}
                     meta={meta}
+                    sorting={table.sorting}
+                    setSorting={table.setSorting}
                 />
 
                 <DataTablePagination
