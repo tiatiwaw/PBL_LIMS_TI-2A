@@ -1,5 +1,5 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { getGradesColumns } from "@/components/shared/admin/material-columns";
+import { getGradesColumns } from "@/components/shared/manager/material-columns";
 import GradeDetailSheet from "@/components/shared/sheet/grade-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
@@ -18,7 +18,10 @@ export default function ManagerGradesPage() {
         setIsOpen(true);
     };
 
-    const columns = useMemo(() => getGradesColumns({ onShowDetail: handleShowDetail }), []);
+    const columns = useMemo(
+        () => getGradesColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
     const handleExport = () => exportGradesReportPDF(grades);
 
@@ -42,7 +45,6 @@ export default function ManagerGradesPage() {
         );
     }
 
-
     return (
         <DashboardLayout
             title="Manajemen Jenis Grade"
@@ -51,15 +53,15 @@ export default function ManagerGradesPage() {
             <ManagedDataTable
                 data={grades}
                 columns={columns}
-                onDelete={handleDelete}
                 onExport={handleExport}
                 showExport={true}
                 showCreate={false}
-                createTitle="Tambah Tingkatan"
-                editTitle="Edit Tingkatan"
-                deleteTitle="Hapus Tingkatan"
             />
-            <GradeDetailSheet data={selectedGrades} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <GradeDetailSheet
+                data={selectedGrades}
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
+            />
         </DashboardLayout>
     );
 }

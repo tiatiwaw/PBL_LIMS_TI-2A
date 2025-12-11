@@ -1,5 +1,5 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { getSuppliersColumns } from "@/components/shared/admin/material-columns";
+import { getSuppliersColumns } from "@/components/shared/manager/material-columns";
 import SupplierDetailSheet from "@/components/shared/sheet/supplier-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
@@ -11,19 +11,26 @@ export default function ManagerSuppliersPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
 
-    const { data: suppliers, isLoading: suppliersLoading, error: suppliersError } = useSuppliers();
+    const {
+        data: suppliers,
+        isLoading: suppliersLoading,
+        error: suppliersError,
+    } = useSuppliers();
 
     const handleShowDetail = (materials) => {
         setSelectedSupplier(materials);
         setIsOpen(true);
     };
 
-    const columns = useMemo(() => getSuppliersColumns({ onShowDetail: handleShowDetail }), []);
+    const columns = useMemo(
+        () => getSuppliersColumns({ onShowDetail: handleShowDetail }),
+        []
+    );
 
     const handleExport = () => exportSupplierReportPDF(suppliers);
     if (suppliersLoading) {
         return (
-            <DashboardLayout title="Dashboard Manager"  header="Selamat Datang">
+            <DashboardLayout title="Dashboard Manager" header="Selamat Datang">
                 <Loading />
             </DashboardLayout>
         );
@@ -31,9 +38,10 @@ export default function ManagerSuppliersPage() {
 
     if (suppliersError) {
         return (
-            <DashboardLayout title="Dashboard Manager"  header="Selamat Datang">
+            <DashboardLayout title="Dashboard Manager" header="Selamat Datang">
                 <div className="text-center text-red-500 py-8">
-                    {suppliersError.message || "Terjadi kesalahan saat memuat data"}
+                    {suppliersError.message ||
+                        "Terjadi kesalahan saat memuat data"}
                 </div>
             </DashboardLayout>
         );
@@ -50,11 +58,12 @@ export default function ManagerSuppliersPage() {
                 onExport={handleExport}
                 showExport={true}
                 showCreate={false}
-                createTitle="Tambah Pemasok"
-                editTitle="Edit Pemasok"
-                deleteTitle="Hapus Pemasok"
             />
-            <SupplierDetailSheet data={selectedSupplier} isOpen={isOpen} onOpenChange={setIsOpen} />
+            <SupplierDetailSheet
+                data={selectedSupplier}
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
+            />
         </DashboardLayout>
     );
 }

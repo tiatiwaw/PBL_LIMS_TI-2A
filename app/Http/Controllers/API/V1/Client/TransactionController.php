@@ -90,24 +90,23 @@ class TransactionController extends Controller
         ];
 
         $tripay = new TripayController();
-        $transaction = $tripay->requestTransaction($method, $orderData);
+        $tripayResponse = $tripay->requestTransaction($method, $orderData);
         
-        $transactionData = isset($transaction->data) ? $transaction->data : $transaction;
+        $transactionData = isset($tripayResponse->data) ? $tripayResponse->data : $tripayResponse;
         
         if (!isset($transactionData->reference)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to get transaction reference',
-                'transaction_response' => $transaction
+                'transaction_response' => $tripayResponse
             ], 500);
         }
 
-        // Cari id NAnalysesMethodsOrder yang relevan (jika ada). Gunakan first() sebagai fallback.
         $nAnalysesId = $orders->n_analyses_methods_orders()->exists()
             ? $orders->n_analyses_methods_orders()->first()->id
             : null;
 
-        // Tentukan status awal berdasarkan response gateway (fallback UNPAID)
+        // Tentukan status awal berdasar response gateway (fallback UNPAID)
         $gatewayStatus = strtolower(data_get($transactionData, 'status', ''));
         $status = $gatewayStatus === 'paid' ? 'PAID' : 'UNPAID';
 
@@ -120,6 +119,12 @@ class TransactionController extends Controller
             'status' => $status
         ]);
 
+        if ($status === 'PAID') {
+            $orders->update(['status' => 'paid']);
+            
+            $redirectUrl = route('receipt.show', ['order_number' => $orders->order_number]);
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'Transaction successfully created.',
@@ -133,6 +138,7 @@ class TransactionController extends Controller
                 'expired_time' => isset($transactionData->expired_time) 
                     ? date('Y-m-d H:i:s', $transactionData->expired_time) 
                     : null,
+                'redirect_url' => $redirectUrl ?? null,
                 'customer' => [
                     'name' => $user->name,
                     'email' => $user->email,

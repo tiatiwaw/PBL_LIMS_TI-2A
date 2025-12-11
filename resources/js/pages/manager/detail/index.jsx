@@ -70,13 +70,9 @@ export default function ManagerDetailOrder() {
 
     const handleDialogConfirm = async (data) => {
         try {
-            await update.mutateAsync({ id, data });
+            update.mutateAsync({ id, data });
             setOpenDialog(false);
-            setTimeout(() => {
-                window.location.href = route(
-                    " manager.report-validations.index"
-                );
-            }, 500);
+            window.location.href = `/manager/report-validations/${id}`;
         } catch (error) {
             toast.error(error.message || "Gagal Validasi Order");
         }
@@ -141,7 +137,7 @@ export default function ManagerDetailOrder() {
     return (
         <DashboardLayout title="Detail Order" header="Detail Order">
             <div className="max-w-7xl mx-auto space-y-6">
-                <OrderDetailHeader order={order} />
+                <OrderDetailHeader order={order} backRoute="/manager/orders" />
 
                 <ClientInfoCard
                     client={order.client ?? order.clients ?? { user: {} }}
@@ -209,11 +205,14 @@ export default function ManagerDetailOrder() {
                     />
                 </div>
 
-                <OrderValidation
-                    status={order.status}
-                    onValidationAction={handleValidate}
-                    isLoading={isValidating}
-                />
+                {(order.status === "pending" ||
+                    order.status === "completed") && (
+                    <OrderValidation
+                        status={order.status}
+                        onValidationAction={handleValidate}
+                        isLoading={isValidating}
+                    />
+                )}
 
                 <ActionSupervisorDialog
                     action={dialogConfig.action}

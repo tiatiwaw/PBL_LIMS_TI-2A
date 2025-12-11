@@ -122,6 +122,8 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+    
+    'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
 
     /*
      * Package Service Providers...

@@ -23,6 +23,10 @@ class TestParameter extends Model
         return $this->belongsTo(UnitValue::class, 'unit_value_id');
     }
 
+    // public function reagents() {
+    //     return $this->belongsToMany(Reagent::class, 'n_reagents');
+    // }
+    
     public function reference_standards()
     {
         return $this->belongsTo(ReferenceStandard::class, 'reference_id');
@@ -32,4 +36,5 @@ class TestParameter extends Model
     {
         return $this->hasMany(NParameterMethod::class, 'test_parameter_id');
     }
+    
 }

@@ -105,29 +105,6 @@ export default function ClientOrderDetail({ auth, orderId }) {
           </div>
         </div>
 
-        {/* --- Unduh Laporan --- */}
-        <div className="bg-white rounded-xl shadow-md p-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary-hijauMuda/30">
-              <FileDown className="text-primary-hijauTua" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-800">
-                Laporan Pengujian
-              </p>
-              <p className="text-xs text-gray-500">File PDF tersedia</p>
-            </div>
-          </div>
-
-          <a
-            href={order?.order_details?.direktori_file || "#"}
-            download
-            className="px-3 py-1.5 rounded-lg bg-primary-hijauTua text-white text-sm hover:bg-primary-hijauTua/90"
-          >
-            Download
-          </a>
-        </div>
-
         {/* --- Tabel Sampel --- */}
         <ManagedDataTable
           data={order?.data?.table_data_sample || []}

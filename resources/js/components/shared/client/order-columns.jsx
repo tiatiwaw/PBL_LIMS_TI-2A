@@ -15,6 +15,20 @@ const statusVariantMap = {
     revision_test: "warning",
 };
 
+const statusLabelMap = {
+    completed: "Selesai",
+    in_progress: "Dalam Proses",
+    pending: "Menunggu",
+    disapproved: "Ditolak",
+    approved: "Disetujui",
+    received: "Diterima",
+    pending_payment: "Menunggu Pembayaran",
+    paid: "Sudah Dibayar",
+    received_test: "Sampel Diterima",
+    revision_test: "Revisi Pengujian",
+};
+
+
 export const getOrdersColumns = ({ onShowDetail, onShowHistory, onPayment, onDownload }) => [
     { accessorKey: "no", header: "No." },
     { accessorKey: "order_number", header: "Kode Pesanan" },
@@ -28,7 +42,7 @@ export const getOrdersColumns = ({ onShowDetail, onShowHistory, onPayment, onDow
             const value = row.status;
             return (
                 <Badge variant={statusVariantMap[value] || "outline"}>
-                    {value}
+                    {statusLabelMap[value] || value}
                 </Badge>
             );
         },

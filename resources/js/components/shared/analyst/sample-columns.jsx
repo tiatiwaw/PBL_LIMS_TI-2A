@@ -4,21 +4,37 @@ import { Link } from '@inertiajs/react';
 import { FileText, Check, Ban } from "lucide-react";
 
 const statusVariantMap = {
-    Done: "success",
-    "In Progress": "warning",
+    done: "success",
+    in_progress: "warning",
+};
+
+const statusLabelMap = {
+  done: "Done",
+  in_progress: "In Progress",
 };
 
 export const getSampleColumns = ({ onShowDetail, onShowConfirm, onShowUnConfirm }) => [
     { accessorKey: "name", header: "Nama Sampel" },
-    { accessorKey: "cathegory", header: "Kategori Sampel" },
+    {
+        accessorKey: "sample_categories.name",
+        header: "Kategori Sampel",
+        cell: ({ row }) => {
+            const value = row?.sample_categories.name;
+            return (
+                <>
+                    {value}
+                </>
+            );
+        },
+    },
     {
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => {
             const value = row.status;
             return (
-                <Badge variant={statusVariantMap[value] || "outline"}>
-                    {value}
+                <Badge variant={statusVariantMap[row.status] || "outline"}>
+                    {statusLabelMap[value]}
                 </Badge>
             );
         },
@@ -35,7 +51,7 @@ export const getSampleColumns = ({ onShowDetail, onShowConfirm, onShowUnConfirm 
                 >
                     <FileText/>
                 </Button>
-                {row.status === 'In Progress' && (
+                {/* {row.status === 'in_progress' && (
                     <Button
                     variant="outline"
                     size="sm"
@@ -44,7 +60,7 @@ export const getSampleColumns = ({ onShowDetail, onShowConfirm, onShowUnConfirm 
                         <Check/>
                     </Button>
                 )}
-                {row.status === 'Done' && (
+                {row.status === 'done' && (
                     <Button
                     variant="outline"
                     size="sm"
@@ -52,7 +68,7 @@ export const getSampleColumns = ({ onShowDetail, onShowConfirm, onShowUnConfirm 
                     >
                         <Ban className="text-red-600"/>
                     </Button>
-                )}
+                )} */}
             </div>
         ),
     },

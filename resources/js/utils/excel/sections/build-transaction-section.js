@@ -1,28 +1,30 @@
 import { formatCurrency } from "@/utils/formatters";
 
-export const buildTransactionsSection = (analytics) => {
+export const buildTransactionsSection = (data) => {
+    const charts = data.charts || {};
+    const orders = data.orders || [];
     const rows = [];
 
     rows.push(["DATA TREN PENDAPATAN"]);
     rows.push(["Periode", "Pendapatan"]);
-    rows.push(
-        ...analytics.trendChartData.map((i) => [
-            i.name,
-            formatCurrency(i.revenue),
-        ])
-    );
+
+    const trendData = charts.trend || [];
+    rows.push(...trendData.map((i) => [i.name, formatCurrency(i.revenue)]));
     rows.push([""]);
 
     rows.push(["ANALISIS PERFORMA METODE"]);
     rows.push(["Nama Metode", "Jumlah Penggunaan", "Total Pendapatan"]);
 
     const revenueMap = {};
-    analytics.methodRevenueData.forEach((m) => {
+    const methodRevenue = charts.method_revenue || [];
+    const methodDist = charts.method_distribution || [];
+
+    methodRevenue.forEach((m) => {
         revenueMap[m.name] = m.value;
     });
 
     rows.push(
-        ...analytics.methodDistributionData.map((m) => [
+        ...methodDist.map((m) => [
             m.name,
             m.value,
             formatCurrency(revenueMap[m.name] || 0),
@@ -42,7 +44,7 @@ export const buildTransactionsSection = (analytics) => {
     ]);
 
     rows.push(
-        ...analytics.detailedOrders.map((order, index) => [
+        ...orders.map((order, index) => [
             index + 1,
             order.order_number,
             order.client_name,
