@@ -12,6 +12,10 @@ export const managerService = {
         update: serviceMethods("/manager/report-validations"),
     },
 
+    reports_orders: serviceMethods("/manager/reports/orders", {
+        useFormData: false,
+    }),
+
     reports_inventory: serviceMethods("/manager/reports/inventory", {
         useFormData: false,
     }),

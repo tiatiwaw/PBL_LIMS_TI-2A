@@ -94,6 +94,13 @@ export const useManagerOrder = (id) =>
         id
     );
 
+export const useOrderReports = (filters = {}) =>
+    useCrud(managerService.reports_orders, "order-reports", "Laporan Pesanan", {
+        only: ["getAll"],
+        query: filters,
+    });
+
+
 export const useInventoryReports = (query = {}) =>
     useCrud(
         managerService.reports_inventory,
