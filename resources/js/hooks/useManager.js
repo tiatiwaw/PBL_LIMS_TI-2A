@@ -105,6 +105,12 @@ export const useInventoryReports = (query = {}) =>
         }
     );
 
+export const useUserReports = (filters = {}) =>
+    useCrud(managerService.reports_users, "user-reports", "Laporan Pengguna", {
+        only: ["getAll"],
+        query: filters,
+    });
+
 export const useTransactionReports = (query = {}) =>
     useCrud(
         managerService.reports_transactions,

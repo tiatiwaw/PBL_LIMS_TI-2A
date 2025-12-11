@@ -16,6 +16,10 @@ export const managerService = {
         useFormData: false,
     }),
 
+    reports_users: serviceMethods("/manager/reports/users", {
+        useFormData: false,
+    }),
+
     reports_transactions: serviceMethods("/manager/reports/transactions", {
         useFormData: false,
     }),
