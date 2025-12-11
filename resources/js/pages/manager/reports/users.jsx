@@ -7,7 +7,7 @@ import {
     Activity,
     ShieldAlert,
 } from "lucide-react";
-import { useUserReports } from "@/hooks/useAdmin";
+import { useUserReports } from "@/hooks/useManager";
 import {
     DistributionPieChart,
     KPICard,
@@ -19,7 +19,7 @@ import {
 import ReportLayout from "@/components/layouts/report-layout";
 import { exportUsersReport } from "@/utils/excel/export/users-report";
 
-export default function UserReportDashboard() {
+export default function UserReportsManager() {
     const [selectedYear, setSelectedYear] = useState("all");
     const [selectedMonth, setSelectedMonth] = useState("all");
 

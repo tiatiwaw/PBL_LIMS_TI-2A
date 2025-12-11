@@ -60,7 +60,7 @@ class TripayCallbackController extends Controller
                 case 'PAID':
                     $transaction->update(['status' => 'PAID']);
 
-                    $this->updateOrderStatusToInProgress($transaction);
+                    $this->OrderStatusReader($transaction);
                     break;
 
                 case 'EXPIRED':
@@ -86,7 +86,7 @@ class TripayCallbackController extends Controller
         ]);
     }
 
-    private function updateOrderStatusToInProgress($transaction)
+    private function OrderStatusReader($transaction)
     {
         try {
             $nAnalysesMethodOrder = $transaction->n_analyses_methods_order;
@@ -101,12 +101,6 @@ class TripayCallbackController extends Controller
             if (!$order) {
                 logger()->warning('Order not found for n_analyses_methods_order: ' . $nAnalysesMethodOrder->id);
                 return;
-            }
-            
-            if ($order->status === 'received') {
-                $order->update(['status' => 'in_progress']);
-                
-                logger()->info('Order status updated to in_progress for order: ' . $order->order_number);
             }
             
         } catch (\Exception $e) {

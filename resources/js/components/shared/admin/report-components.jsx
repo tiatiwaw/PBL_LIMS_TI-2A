@@ -205,6 +205,7 @@ export const SimpleBarChart = ({
                         axisLine={false}
                         tickLine={false}
                         tick={{ fill: "#64748b", fontSize: 12 }}
+                        allowDecimals={false}
                     />
                     <Tooltip
                         content={<CustomTooltip />}
@@ -483,69 +484,129 @@ export const SummaryTable = ({
     columns,
     data,
     emptyMessage,
+    className = "",
 }) => {
+    const getMinWidth = (key) => {
+        if (key === "analyst_name") return "min-w-[150px]";
+        if (key === "training_name") return "min-w-[180px]";
+        if (key === "training_date" || key === "expires_at")
+            return "min-w-[120px]";
+        return "";
+    };
+
+    const getCellValue = (item, key) => {
+        const value = item[key];
+
+        if (key === "status") {
+            const statusText = item.status;
+            let badgeClass = "";
+
+            switch (statusText) {
+                case "Kadaluarsa":
+                    badgeClass =
+                        "bg-red-100 text-red-800 border border-red-300";
+                    break;
+                case "Segera Kadaluarsa":
+                    badgeClass =
+                        "bg-yellow-100 text-yellow-800 border border-yellow-300";
+                    break;
+                case "Aktif":
+                default:
+                    badgeClass =
+                        "bg-green-100 text-green-800 border border-green-300";
+                    break;
+            }
+            return (
+                <span
+                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${badgeClass}`}
+                >
+                    {statusText}
+                </span>
+            );
+        }
+
+        return value ?? "-";
+    };
+
     return (
-        <Card className="border-slate-200 shadow-sm">
+        <Card className={`border-slate-200 shadow-sm w-full ${className}`}>
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg text-[#02364B]">
                     {title}
                 </CardTitle>
-                <Badge
-                    variant="secondary"
-                    className="bg-[#E0F2F1] text-[#024D60]"
-                >
-                    {badgeText}
-                </Badge>
+
+                {badgeText && (
+                    <Badge
+                        variant="secondary"
+                        className="bg-[#E0F2F1] text-[#024D60]"
+                    >
+                        {badgeText}
+                    </Badge>
+                )}
             </CardHeader>
+
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow className="bg-[#024D60] hover:bg-[#024D60]">
-                            {columns.map((col, i) => (
-                                <TableHead
-                                    key={i}
-                                    className={`font-medium text-white ${
-                                        col.align === "right"
-                                            ? "text-right"
-                                            : ""
-                                    }`}
-                                >
-                                    {col.label}
-                                </TableHead>
-                            ))}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {data.length > 0 ? (
-                            data.map((item, index) => (
-                                <TableRow
-                                    key={index}
-                                    className={
-                                        index % 2 === 0
-                                            ? "bg-white"
-                                            : "bg-gray-50/50 hover:bg-[#2CACAD]/5"
-                                    }
-                                >
-                                    <TableCell className="font-semibold text-[#02364B]">
-                                        {item.name}
-                                    </TableCell>
-                                    <TableCell className="text-right font-bold text-[#024D60]">
-                                        {item.value}
+                <div className="overflow-x-auto w-full">
+                    <Table className="min-w-max w-full">
+                        <TableHeader>
+                            <TableRow className="bg-[#024D60] hover:bg-[#024D60]">
+                                {columns.map((col, i) => (
+                                    <TableHead
+                                        key={i}
+                                        className={`font-medium text-white ${getMinWidth(
+                                            col.key
+                                        )} ${
+                                            col.align === "right"
+                                                ? "text-right"
+                                                : ""
+                                        }`}
+                                    >
+                                        {col.label}
+                                    </TableHead>
+                                ))}
+                            </TableRow>
+                        </TableHeader>
+
+                        <TableBody>
+                            {data.length > 0 ? (
+                                data.map((item, index) => (
+                                    <TableRow
+                                        key={index}
+                                        className={
+                                            index % 2 === 0
+                                                ? "bg-white"
+                                                : "bg-gray-50/50 hover:bg-[#2CACAD]/5"
+                                        }
+                                    >
+                                        {columns.map((col, i) => (
+                                            <TableCell
+                                                key={i}
+                                                className={`${getMinWidth(
+                                                    col.key
+                                                )} ${
+                                                    col.align === "right"
+                                                        ? "text-right"
+                                                        : ""
+                                                } text-[#02364B]`}
+                                            >
+                                                {getCellValue(item, col.key)}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell
+                                        colSpan={columns.length}
+                                        className="text-center text-gray-400 py-4"
+                                    >
+                                        {emptyMessage}
                                     </TableCell>
                                 </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="text-center text-gray-400 py-4"
-                                >
-                                    {emptyMessage}
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
             </CardContent>
         </Card>
     );

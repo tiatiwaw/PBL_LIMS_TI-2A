@@ -89,7 +89,7 @@ class ClientController extends Controller
             ], 404);
         }
 
-        $realPath = storage_path('app/public/client/receipts/' . $order->receipt_file_path);
+        $realPath = storage_path('app/' . $order->receipt_file_path);
 
         if (!file_exists($realPath)) {
             return response()->json([
