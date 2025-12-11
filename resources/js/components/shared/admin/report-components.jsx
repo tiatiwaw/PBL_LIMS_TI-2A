@@ -49,7 +49,11 @@ export const KPICard = ({ icon: Icon, title, value, subtitle, delay = 0 }) => (
         <p className="text-2xl font-bold text-[#02364B] mb-1 tracking-tight">
             {value}
         </p>
-        {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
+        {subtitle && (
+            <p className="text-xs text-slate-400 max-w-80 md:max-w-40 lg:max-w-full truncate">
+                {subtitle}
+            </p>
+        )}
     </motion.div>
 );
 

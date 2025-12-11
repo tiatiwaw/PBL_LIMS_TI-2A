@@ -16,176 +16,172 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
-public function orders(Request $request)
-{
-    $year = $request->input('year');
-    $month = $request->input('month');
+    public function orders(Request $request)
+    {
+        $year = $request->input('year');
+        $month = $request->input('month');
 
-    $applyDateFilter = function ($query, $column) use ($year, $month) {
-        if ($year && $year !== 'all') {
-            $query->whereYear($column, $year);
-        }
-        if ($month && $month !== 'all') {
-            $query->whereMonth($column, $month);
-        }
-    };
+        $applyDateFilter = function ($query, $column) use ($year, $month) {
+            if ($year && $year !== 'all') {
+                $query->whereYear($column, $year);
+            }
+            if ($month && $month !== 'all') {
+                $query->whereMonth($column, $month);
+            }
+        };
 
-    // base query
-    $ordersQuery = Order::with([
-        'clients',
-        'analysts',
-        'analysesMethods',
-        'samples.sample_categories',
-        'samples.n_parameter_methods' => function ($q) {
-            $q->with([
-                'test_parameters',
-                'test_methods'
-            ]);
-        }
-    ])->orderBy('order_date', 'desc');
+        $ordersQuery = Order::with([
+            'clients',
+            'analysts',
+            'analysesMethods',
+            'samples.sample_categories',
+            'samples.n_parameter_methods' => function ($q) {
+                $q->with([
+                    'test_parameters',
+                    'test_methods'
+                ]);
+            }
+        ])->orderBy('order_date', 'desc');
 
-    // apply date filter
-    $applyDateFilter($ordersQuery, 'order_date');
+        $applyDateFilter($ordersQuery, 'order_date');
 
-    $orders = $ordersQuery->get();
+        $orders = $ordersQuery->get();
 
-    // --------- KPI computations ----------
-    $totalOrders = $orders->count();
-    $completedOrders = $orders->where('status', 'completed')->count();
-    $totalSamples = $orders->reduce(function ($carry, $order) {
-        return $carry + ($order->samples ? $order->samples->count() : 0);
-    }, 0);
+        $totalOrders = $orders->count();
+        $completedOrders = $orders->where('status', 'completed')->count();
+        $totalSamples = $orders->reduce(function ($carry, $order) {
+            return $carry + ($order->samples ? $order->samples->count() : 0);
+        }, 0);
 
-    // total analysis method occurrences
-    $totalAnalysisMethods = 0;
-    $methodsCount = [];
-    $paramsCount = [];
-    $typeCounts = ['internal' => 0, 'regular' => 0, 'external' => 0, 'urgent' => 0];
-    $statusDist = [];
-    $typeDist = [];
-    $samplesPerOrder = [];
-    $categoryDist = [];
+        $totalAnalysisMethods = 0;
+        $methodsCount = [];
+        $paramsCount = [];
+        $typeCounts = ['internal' => 0, 'regular' => 0, 'external' => 0, 'urgent' => 0];
+        $statusDist = [];
+        $typeDist = [];
+        $samplesPerOrder = [];
+        $categoryDist = [];
 
-    // initialize status labels from config (if you want server-side consistency)
-    $statusLabelsMap = [
-        'pending' => 'Menunggu',
-        'completed' => 'Selesai',
-        'processing' => 'Diproses',
-        // tambahkan sesuai STATUS_CONFIG di frontend
-    ];
-
-    foreach ($orders as $order) {
-        // type counts
-        if (isset($typeCounts[$order->order_type])) {
-            $typeCounts[$order->order_type]++;
-        }
-
-        // status distribution
-        $statusLabel = $statusLabelsMap[$order->status] ?? $order->status;
-        if (!isset($statusDist[$statusLabel])) $statusDist[$statusLabel] = 0;
-        $statusDist[$statusLabel]++;
-
-        // type distribution (label)
-        $typeLabel = $order->order_type; // optionally map to friendly label
-        if (!isset($typeDist[$typeLabel])) $typeDist[$typeLabel] = 0;
-        $typeDist[$typeLabel]++;
-
-        // samples per order
-        $sampleCount = $order->samples ? $order->samples->count() : 0;
-        $totalSamples += 0; // already counted above; skip if double counting
-        $samplesPerOrder[] = [
-            'order' => $order->order_number ?? "Order-{$order->id}",
-            'count' => $sampleCount
+        $statusLabelsMap = [
+            'pending' => 'Menunggu',
+            'completed' => 'Selesai',
+            'processing' => 'Diproses',
         ];
 
-        // categoryDist and params/methods count
-        if ($order->samples) {
-            foreach ($order->samples as $sample) {
-                $catName = $sample->sample_categories->name ?? 'Tanpa Kategori';
-                if (!isset($categoryDist[$catName])) $categoryDist[$catName] = 0;
-                $categoryDist[$catName]++;
+        foreach ($orders as $order) {
+            if (isset($typeCounts[$order->order_type])) {
+                $typeCounts[$order->order_type]++;
+            }
 
-                // n_parameter_methods might be relation or attribute - adapt if necessary
-                if ($sample->n_parameter_methods) {
-                    $pmList = is_array($sample->n_parameter_methods) ? $sample->n_parameter_methods : [$sample->n_parameter_methods];
-                    foreach ($pmList as $pm) {
-                        // test_parameters
-                        if (!empty($pm->test_parameters->name)) {
-                            $pn = $pm->test_parameters->name;
-                            if (!isset($paramsCount[$pn])) $paramsCount[$pn] = ['count' => 0, 'firstSeen' => strtotime($order->order_date)];
-                            $paramsCount[$pn]['count']++;
-                            $paramsCount[$pn]['firstSeen'] = min($paramsCount[$pn]['firstSeen'], strtotime($order->order_date));
-                        }
+            $statusLabel = $statusLabelsMap[$order->status] ?? $order->status;
+            if (!isset($statusDist[$statusLabel])) $statusDist[$statusLabel] = 0;
+            $statusDist[$statusLabel]++;
 
-                        // test_methods
-                        if (!empty($pm->test_methods->name)) {
-                            $mn = $pm->test_methods->name;
-                            if (!isset($methodsCount[$mn])) $methodsCount[$mn] = ['count' => 0, 'firstSeen' => strtotime($order->order_date)];
-                            $methodsCount[$mn]['count']++;
-                            $methodsCount[$mn]['firstSeen'] = min($methodsCount[$mn]['firstSeen'], strtotime($order->order_date));
-                            $totalAnalysisMethods++;
+            $typeLabel = $order->order_type;
+            if (!isset($typeDist[$typeLabel])) $typeDist[$typeLabel] = 0;
+            $typeDist[$typeLabel]++;
+
+            $sampleCount = $order->samples ? $order->samples->count() : 0;
+            $totalSamples += 0;
+            $samplesPerOrder[] = [
+                'order' => $order->order_number ?? "Order-{$order->id}",
+                'count' => $sampleCount
+            ];
+
+            if ($order->samples) {
+                foreach ($order->samples as $sample) {
+                    $catName = $sample->sample_categories->name ?? 'Tanpa Kategori';
+                    if (!isset($categoryDist[$catName])) $categoryDist[$catName] = 0;
+                    $categoryDist[$catName]++;
+
+                    if ($sample->n_parameter_methods) {
+                        $pmList = is_array($sample->n_parameter_methods) ? $sample->n_parameter_methods : [$sample->n_parameter_methods];
+                        foreach ($pmList as $pm) {
+                            if (!empty($pm->test_parameters->name)) {
+                                $pn = $pm->test_parameters->name;
+                                if (!isset($paramsCount[$pn])) $paramsCount[$pn] = ['count' => 0, 'firstSeen' => strtotime($order->order_date)];
+                                $paramsCount[$pn]['count']++;
+                                $paramsCount[$pn]['firstSeen'] = min($paramsCount[$pn]['firstSeen'], strtotime($order->order_date));
+                            }
+
+                            if (!empty($pm->test_methods->name)) {
+                                $mn = $pm->test_methods->name;
+                                if (!isset($methodsCount[$mn])) $methodsCount[$mn] = ['count' => 0, 'firstSeen' => strtotime($order->order_date)];
+                                $methodsCount[$mn]['count']++;
+                                $methodsCount[$mn]['firstSeen'] = min($methodsCount[$mn]['firstSeen'], strtotime($order->order_date));
+                                $totalAnalysisMethods++;
+                            }
                         }
                     }
                 }
             }
         }
+
+        $formatForChart = function ($assoc, $limit = 5, $withColor = false) {
+            $items = [];
+            foreach ($assoc as $k => $v) {
+                if (is_array($v) && isset($v['count'])) {
+                    $value = $v['count'];
+                } else {
+                    $value = $v;
+                }
+                if ($value > 0) {
+                    $items[] = ['name' => $k, 'value' => $value];
+                }
+            }
+            usort($items, function ($a, $b) {
+                return $b['value'] <=> $a['value'];
+            });
+            return array_slice($items, 0, $limit);
+        };
+
+        $statusChart = $formatForChart($statusDist, 9);
+        $typeChart = $formatForChart($typeDist, 4);
+        $methodsChart = $formatForChart(array_map(function ($v) {
+            return is_array($v) ? $v['count'] : $v;
+        }, $methodsCount), 7);
+        $categoriesChart = $formatForChart($categoryDist, 6);
+
+        $yearsAvailable = Order::selectRaw('YEAR(order_date) as year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->filter();
+
+        uasort($paramsCount, function ($a, $b) {
+            if ($a['count'] !== $b['count']) {
+                return $b['count'] <=> $a['count'];
+            }
+            return $a['firstSeen'] <=> $b['firstSeen'];
+        });
+
+        $kpi = [
+            'total_orders' => $totalOrders,
+            'completed_orders' => $completedOrders,
+            'total_samples' => $totalSamples,
+            'total_analysis_methods' => $totalAnalysisMethods,
+            'top_test_methods' => array_map(
+                fn($item) => $item['name'],
+                array_slice($methodsChart, 0, 5)
+            ),
+            'top_test_parameters' => array_keys(array_slice($paramsCount, 0, 5)),
+        ];
+
+        return response()->json([
+            'meta' => [
+                'years' => $yearsAvailable->values()
+            ],
+            'kpi' => $kpi,
+            'charts' => [
+                'status' => $statusChart,
+                'type' => $typeChart,
+                'samples_per_order' => $samplesPerOrder,
+                'methods' => $methodsChart,
+                'categories' => $categoriesChart
+            ]
+        ]);
     }
 
-    // format for charts
-    $formatForChart = function ($assoc, $limit = 5, $withColor = false) {
-        $items = [];
-        foreach ($assoc as $k => $v) {
-            if (is_array($v) && isset($v['count'])) {
-                $value = $v['count'];
-            } else {
-                $value = $v;
-            }
-            if ($value > 0) {
-                $items[] = ['name' => $k, 'value' => $value];
-            }
-        }
-        usort($items, function ($a, $b) {
-            return $b['value'] <=> $a['value'];
-        });
-        return array_slice($items, 0, $limit);
-    };
-
-    $statusChart = $formatForChart($statusDist, 9);
-    $typeChart = $formatForChart($typeDist, 4);
-    $methodsChart = $formatForChart(array_map(function($v){ return is_array($v)?$v['count']:$v; }, $methodsCount), 7);
-    $categoriesChart = $formatForChart($categoryDist, 6);
-
-    // years available (from order_date)
-    $yearsAvailable = Order::selectRaw('YEAR(order_date) as year')
-        ->distinct()
-        ->orderByDesc('year')
-        ->pluck('year')
-        ->filter();
-
-    // Prepare KPI object
-    $kpi = [
-        'total_orders' => $totalOrders,
-        'completed_orders' => $completedOrders,
-        'total_samples' => $totalSamples,
-        'total_analysis_methods' => $totalAnalysisMethods,
-        'top_test_methods' => array_keys(array_slice($methodsChart, 0, 5)),
-        'top_test_parameters' => array_keys(array_slice($paramsCount, 0, 5)), // may need sorting by count+firstSeen
-    ];
-
-    return response()->json([
-        'meta' => [
-            'years' => $yearsAvailable->values()
-        ],
-        'kpi' => $kpi,
-        'charts' => [
-            'status' => $statusChart,
-            'type' => $typeChart,
-            'samples_per_order' => $samplesPerOrder, // trimmed at frontend if needed
-            'methods' => $methodsChart,
-            'categories' => $categoriesChart
-        ]
-    ]);
-}
     public function inventory(Request $request)
     {
         $year = $request->input('year');
@@ -291,17 +287,16 @@ public function orders(Request $request)
                 'fullName' => (string)$item->label,
                 'count' => $item->count
             ]);
-        
+
         $trendReagent = Reagent::select(
-                DB::raw('MONTHNAME(created_at) as label'),
-                DB::raw('COUNT(*) as count')
-            )
+            DB::raw('MONTHNAME(created_at) as label'),
+            DB::raw('COUNT(*) as count')
+        )
             ->groupBy('label')
             ->orderByRaw('MONTH(created_at)')
             ->get()
             ->map(fn($item) => [
-                'name'     => substr($item->label, 0, 3), // Jan, Feb, Mar
-                'fullName' => $item->label,               // January, February
+                'name'     => substr($item->label, 0, 3),
                 'count'    => $item->count
             ]);
 
@@ -312,7 +307,7 @@ public function orders(Request $request)
             ->pluck('year')
             ->filter();
 
-        
+
 
         return response()->json([
             'meta' => [

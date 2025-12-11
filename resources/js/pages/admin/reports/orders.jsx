@@ -7,7 +7,7 @@ import {
     ListTodo,
 } from "lucide-react";
 import { useOrderReports } from "@/hooks/useAdmin";
-import { COLORS, STATUS_CONFIG } from "@/utils/constant/report";
+import { COLORS } from "@/utils/constant/report";
 import {
     DistributionPieChart,
     KPICard,
@@ -26,7 +26,6 @@ export default function OrdersReportDashboard() {
         month: selectedMonth,
     });
 
-    // fallback structures (sesuaikan dengan response backend)
     const kpi = data?.kpi || {};
     const charts = data?.charts || {};
     const meta = data?.meta || {};
@@ -56,7 +55,6 @@ export default function OrdersReportDashboard() {
                 onMonthChange: setSelectedMonth,
                 onClearFilters: handleClearFilters,
                 onExport: () => exportOrdersReport(data),
-
             }}
             emptyStateIcon={Search}
             emptyStateDescription="Coba sesuaikan filter atau kata kunci pencarian Anda."
@@ -94,14 +92,18 @@ export default function OrdersReportDashboard() {
                         icon={Activity}
                         title="Metode Tes Paling Sering Digunakan"
                         value={kpi.top_test_methods?.[0] ?? "-"}
-                        subtitle={`${(kpi.top_test_methods || []).slice(0,5).join(" | ")}`}
+                        subtitle={`${(kpi.top_test_methods || [])
+                            .slice(0, 5)
+                            .join(" | ")}`}
                         delay={0.3}
                     />
                     <KPICard
                         icon={CheckCircle}
                         title="Parameter Paling Sering Digunakan"
                         value={kpi.top_test_parameters?.[0] ?? "-"}
-                        subtitle={`${(kpi.top_test_parameters || []).slice(0,5).join(" | ")}`}
+                        subtitle={`${(kpi.top_test_parameters || [])
+                            .slice(0, 5)
+                            .join(" | ")}`}
                         delay={0.35}
                     />
                 </>
