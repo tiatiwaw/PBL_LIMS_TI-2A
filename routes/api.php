@@ -48,6 +48,7 @@ use App\Http\Controllers\API\V1\Payment\TripayController;
 // MANAGER CONTROLLERS
 use App\Http\Controllers\API\V1\Manager\EquipmentController as ManagerEquipmentController;
 use App\Http\Controllers\API\V1\Manager\BrandTypeController as ManagerBrandTypeController;
+use App\Http\Controllers\API\V1\Manager\DashboardController as ManagerDashboardController;
 use App\Http\Controllers\API\V1\Manager\ReagentController as ManagerReagentController;
 use App\Http\Controllers\API\V1\Manager\GradeController as ManagerGradeController;
 use App\Http\Controllers\API\V1\Manager\SupplierController as ManagerSupplierController;
@@ -59,6 +60,7 @@ use App\Http\Controllers\API\V1\Manager\TestMethodsController as ManagerTestMeth
 use App\Http\Controllers\API\V1\Manager\SampleCategoryController as ManagerSampleCategoryController;
 use App\Http\Controllers\API\V1\Manager\ReportController as ManagerReportController;
 use App\Http\Controllers\API\V1\Manager\OrdersController as MOrdersController;
+use App\Http\Controllers\API\V1\NotificationController;
 
 Route::prefix('v1')->group(function () {
 
@@ -92,6 +94,8 @@ Route::prefix('v1')->group(function () {
         });
         Route::post('/auth/logout', [AuthController::class, 'logout'])->name('api.auth.logout');
 
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('api.notifications.index');
+
         /**
          * ============================
          * ADMIN API
@@ -118,7 +122,6 @@ Route::prefix('v1')->group(function () {
 
                 // Materials
                 Route::prefix('materials')->name('materials.')->group(function () {
-                    Route::get('reagents/low-stock/notifications', [ReagentController::class, 'lowStockNotifications']);
                     Route::apiResource('reagents', ReagentController::class);
                     Route::apiResource('grades', GradeController::class);
                     Route::apiResource('suppliers', SupplierController::class);
@@ -210,7 +213,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('/transaction/{order}', [ClientTransactionController::class, 'store'])->name('transaction.store');
 
                     Route::get('/receipt/{order_number}', [ClientReceiptController::class, 'index'])->name('receipt.show');
-                    
+
                     Route::get('/download-options/{order_number}', [ClientClientController::class, 'getDownloadOptions'])->name('download.options');
                     Route::get('/download-report/{id}', [ClientClientController::class, 'downloadReportFile'])->name('download.report');
                     Route::get('/download-receipt/{order_number}', [ClientClientController::class, 'downloadReceipt'])->name('download.receipt');
@@ -254,6 +257,8 @@ Route::prefix('v1')->group(function () {
             ->middleware('role:manager')
             ->name('api.manager.')
             ->group(function () {
+                // Dashboard
+                Route::get('/', [ManagerDashboardController::class, 'index']);
 
                 // REPORT VALIDATIONS
                 Route::prefix('report-validations')->name('report-validations.')->group(function () {
@@ -306,7 +311,7 @@ Route::prefix('v1')->group(function () {
          * ============================
          * ANALYST API
          * ============================
-         */    
+         */
         Route::prefix('analyst')
             ->middleware(['role:analyst'])
             ->name('api.analyst.')
@@ -325,7 +330,7 @@ Route::prefix('v1')->group(function () {
 
                 Route::get('/samples/{order}', [AnalystAnalystController::class, 'detail'])->name('orders.detail');
 
-                    Route::post('/reagent-used/save', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent.save');
+                Route::post('/reagent-used/save', [AnalystAnalystController::class, 'saveReagentUsage'])->name('reagent.save');
             });
-        });
     });
+});

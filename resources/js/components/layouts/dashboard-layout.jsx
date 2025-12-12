@@ -4,10 +4,9 @@ import { motion } from "framer-motion";
 import { menuItems } from "@/utils/menu";
 import { Sidebar } from "./sidebar";
 import { HeaderCard } from "../shared/dashboard/header-card";
-
 import { useAuth } from "@/hooks/useAuth";
 import { MobileSidebar } from "./mobile-sidebar";
-import { useLowStockReagents } from "@/hooks/useAdmin";
+import { useNotifications } from "@/hooks/useNotification";
 
 export default function DashboardLayout({
     children,
@@ -23,15 +22,7 @@ export default function DashboardLayout({
         [user]
     );
 
-    const isShowNotification = currentUser.role === "admin";
-
-    const { data: lowStockReagents, isLoading: notificationsLoading } =
-        useLowStockReagents(isShowNotification);
-
-    const notificationCount = useMemo(() => {
-        if (!isShowNotification) return 0;
-        return lowStockReagents?.length ?? 0;
-    }, [isShowNotification, lowStockReagents]);
+    const { data: notifications, isLoading } = useNotifications();
 
     const sidebarMenu = useMemo(() => menuItems(url), [url]);
     const handleLogout = useCallback(() => logout(), [logout]);
@@ -61,11 +52,8 @@ export default function DashboardLayout({
                         <HeaderCard
                             title={header}
                             user={currentUser}
-                            notificationCount={notificationCount}
-                            isNotificationLoading={notificationsLoading}
-                            lowStockReagents={
-                                lowStockReagents ? lowStockReagents : []
-                            }
+                            isLoading={isLoading}
+                            notifications={notifications}
                             onLogout={handleLogout}
                             onMenuClick={() => setIsMobileMenuOpen(true)}
                         />

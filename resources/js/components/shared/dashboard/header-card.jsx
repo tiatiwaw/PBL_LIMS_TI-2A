@@ -2,7 +2,6 @@ import { FlaskConical, Menu, Clock, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { UserMenu } from "./user-menu";
-import { usePage } from "@inertiajs/react";
 import NotificationButton from "./notification-button";
 import { useState, useEffect } from "react";
 
@@ -11,8 +10,8 @@ export const HeaderCard = ({
     user,
     onLogout,
     onMenuClick,
-    lowStockReagents = [],
-    isNotificationLoading = false,
+    notifications = [],
+    isLoading = false,
 }) => {
     const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -175,8 +174,8 @@ export const HeaderCard = ({
                     whileTap={{ scale: 0.95 }}
                 >
                     <NotificationButton
-                        isLoading={isNotificationLoading}
-                        reagents={lowStockReagents ? lowStockReagents : []}
+                        isLoading={isLoading}
+                        notifications={notifications ?? []}
                     />
                 </motion.div>
                 <motion.div
