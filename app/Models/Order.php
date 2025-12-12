@@ -99,7 +99,7 @@ class Order extends Model
         $transaction = $this->transaction();
         
         if ($this->status === 'received' && !$transaction) {
-            return 'pending_payment';
+            return 'received';
         }
         
         if ($transaction && $transaction->status === 'unpaid') {
