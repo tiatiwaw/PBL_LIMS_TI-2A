@@ -1,7 +1,8 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import StatCard from "@/components/shared/card/stat-card";
-import { stats, Pendapatan, TotalOrder } from "@/data/manager/beranda";
+import { BookText, Wallet, Clock } from "lucide-react";
 import React from 'react';
+import { useDashboard } from "@/hooks/useManager";
 import { TrendingUp } from "lucide-react";
 import { Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label, Area, AreaChart } from 'recharts';
 
@@ -11,6 +12,33 @@ export default function ManagerPage() {
     role: 'Manager',
     avatar: 'https://i.pravatar.cc/150?img=3',
   }
+  const { data: dashboard, isLoading, error } = useDashboard();
+  console.log("📊 DASHBOARD DATA:", dashboard);
+
+  const stats = [
+    {
+      title: "Total Orders",
+      value: dashboard?.total_orders ?? 0,
+      subtitle: "Increased from last month",
+      icon: BookText,
+    },
+    {
+      title: "Pendapatan",
+      value: `Rp ${dashboard?.total_revenue?.toLocaleString() ?? 0}`,
+      subtitle: "Increased from last month",
+      icon: Wallet,
+    },
+  ];
+
+  const Pendapatan = dashboard?.chart?.map(item => ({
+      month: item.month,
+      penjualan: item.revenue,
+  })) ?? [];
+
+  const TotalOrder = dashboard?.chart?.map(item => ({
+      months: item.month,
+      pesanan: item.orders,
+  })) ?? [];
 
   return (
     <DashboardLayout title="Dashboard Manager" user={user} header='Selamat Datang, Manager!'>

@@ -59,6 +59,7 @@ use App\Http\Controllers\API\V1\Manager\TestMethodsController as ManagerTestMeth
 use App\Http\Controllers\API\V1\Manager\SampleCategoryController as ManagerSampleCategoryController;
 use App\Http\Controllers\API\V1\Manager\ReportController as ManagerReportController;
 use App\Http\Controllers\API\V1\Manager\OrdersController as MOrdersController;
+use App\Http\Controllers\API\V1\Manager\DashboardController as ManagerDashboardController;
 
 Route::prefix('v1')->group(function () {
 
@@ -290,6 +291,9 @@ Route::prefix('v1')->group(function () {
 
                 // Employees
                 Route::get('employees', [EmployeeController::class, 'index']);
+
+                // Dashboard
+                Route::get('dashboard', [ManagerDashboardController::class, 'index']);
 
                 // Reports
                 Route::prefix('reports')

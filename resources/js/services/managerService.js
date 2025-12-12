@@ -51,4 +51,6 @@ export const managerService = {
     employees: serviceMethods("/manager/employees"),
 
     analysts: serviceMethods("/manager/analysts"),
+
+    dashboard: serviceMethods("/manager/dashboard"),
 };
