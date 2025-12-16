@@ -1,4 +1,3 @@
-// /pages/analyst/profile.jsx
 import { useState } from "react";
 import { router } from "@inertiajs/react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
