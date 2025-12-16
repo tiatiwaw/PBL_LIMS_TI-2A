@@ -1,0 +1,56 @@
+import { serviceMethods } from "./baseService";
+
+export const managerService = {
+    orders: {
+        all: serviceMethods("/manager/orders"),
+        find: (id) => serviceMethods(`/manager/orders/${id}`),
+    },
+
+    reportValidations: {
+        all: serviceMethods("/manager/report-validations"),
+        find: (id) => serviceMethods(`/manager/report-validations/${id}`),
+        update: serviceMethods("/manager/report-validations"),
+    },
+
+    reports_orders: serviceMethods("/manager/reports/orders", {
+        useFormData: false,
+    }),
+
+    reports_inventory: serviceMethods("/manager/reports/inventory", {
+        useFormData: false,
+    }),
+
+    reports_users: serviceMethods("/manager/reports/users", {
+        useFormData: false,
+    }),
+
+    reports_transactions: serviceMethods("/manager/reports/transactions", {
+        useFormData: false,
+    }),
+
+    brands: serviceMethods("/manager/tools/brands"),
+
+    equipments: serviceMethods("/manager/tools/equipments"),
+
+    parameters: serviceMethods("/manager/tests/parameters"),
+
+    methods: serviceMethods("/manager/tests/methods"),
+
+    units: serviceMethods("/manager/tests/units"),
+
+    references: serviceMethods("/manager/tests/references"),
+
+    categories: serviceMethods("/manager/tests/categories"),
+
+    grades: serviceMethods("/manager/materials/grades"),
+
+    suppliers: serviceMethods("/manager/materials/suppliers"),
+
+    reagents: serviceMethods("/manager/materials/reagents"),
+
+    employees: serviceMethods("/manager/employees"),
+
+    analysts: serviceMethods("/manager/analysts"),
+
+    dashboard: serviceMethods("/manager"),
+};

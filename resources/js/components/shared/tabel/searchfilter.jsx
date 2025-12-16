@@ -1,0 +1,121 @@
+import React from "react";
+import { Search, ListFilter, PlusCircle, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+
+export default function SearchFilter({
+    showSearch,
+    showFilter,
+    showCreate,
+    showExport,
+    onCreate,
+    onExport,
+    filterOptions = [],
+    searchTerm,
+    onSearchChange,
+    filterValue,
+    onFilterChange,
+}) {
+    return (
+        <div
+            className={cn(
+                "flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4"
+            )}
+        >
+            {/* Search */}
+            {showSearch && (
+                <div className="relative w-full md:max-w-sm">
+                    <div className="relative flex items-center">
+                        <Input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => onSearchChange(e.target.value)}
+                            className={cn(
+                                "w-full bg-white/10 backdrop-blur-md border border-primary-hijauTua/30 rounded-lg py-2.5 pl-12 pr-4 text-sm font-semibold text-primary-hijauTua placeholder:text-primary-hijauTua/60",
+                                "focus:outline-none focus:ring focus:ring-primary-hijauTua/50 focus:border-primary-hijauTua/10",
+                                "hover:border-primary-hijauTua/50 transition-all duration-300",
+                                "shadow-sm hover:shadow-md"
+                            )}
+                            placeholder="Search..."
+                            aria-label="Search input"
+                        />
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className={cn(
+                                "absolute left-2 top-1/2 -translate-y-1/2 rounded-full",
+                                "bg-transparent hover:bg-transparent text-primary-hijauTua hover:text-primary-hijauTua border-none",
+                                "transition-all duration-75 ease-in"
+                            )}
+                            aria-label="Search"
+                        >
+                            <Search size={18} className="animate-pulse" />
+                        </Button>
+                    </div>
+                </div>
+            )}
+
+            {/* Right side: Filter / Create / Export */}
+            <div
+                className={cn(
+                    "flex flex-wrap items-center gap-3 md:gap-4",
+                    "md:justify-end justify-start"
+                )}
+            >
+                {showFilter && (
+                    <Select value={filterValue} onValueChange={onFilterChange}>
+                        <SelectTrigger
+                            className={cn(
+                                "flex items-center gap-2 border-primary-hijauTua text-primary-hijauTua",
+                                "hover:text-primary-hijauTua/60 hover:bg-primary-hijauTua/10",
+                                "focus:ring-2 focus:ring-primary-hijauTua/50",
+                                "w-full sm:w-[180px]" // RESPONSIF
+                            )}
+                        >
+                            <ListFilter size={16} />
+                            <SelectValue placeholder="Select filter" />
+                        </SelectTrigger>
+                        <SelectContent className="text-primary-hijauTua font-medium shadow-lg">
+                            {filterOptions.map((option, index) => (
+                                <SelectItem
+                                    key={index}
+                                    value={option.value}
+                                    className="focus:bg-primary-hijauMuda focus:text-white cursor-pointer"
+                                >
+                                    {option.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                )}
+
+                {showCreate && (
+                    <Button
+                        onClick={onCreate}
+                        className="bg-primary-hijauTua hover:bg-primary-hijauTua/90 w-full sm:w-auto"
+                    >
+                        <PlusCircle size={18} className="mr-2" />
+                        Tambah Data
+                    </Button>
+                )}
+
+                {showExport && (
+                    <Button
+                        onClick={onExport}
+                        className="gap-2 bg-[#024D60] hover:bg-[#02364B] text-white shadow-md shadow-[#024D60]/20 w-full sm:w-auto"
+                    >
+                        <Download size={16} /> Ekspor
+                    </Button>
+                )}
+            </div>
+        </div>
+    );
+}
