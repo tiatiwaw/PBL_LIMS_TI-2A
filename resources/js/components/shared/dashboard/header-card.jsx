@@ -10,7 +10,7 @@ export const HeaderCard = ({
     user,
     onLogout,
     onMenuClick,
-    notifications = [],
+    notifications = {},
     isLoading = false,
 }) => {
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -169,17 +169,15 @@ export const HeaderCard = ({
             </div>
 
             <div className="flex gap-2 md:gap-3 items-center">
-                {notifications.length > 0 && (
-                    <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                    >
-                        <NotificationButton
-                            isLoading={isLoading}
-                            notifications={notifications ?? []}
-                        />
-                    </motion.div>
-                )}
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    <NotificationButton
+                        isLoading={isLoading}
+                        notifications={notifications ?? []}
+                    />
+                </motion.div>
                 <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

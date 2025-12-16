@@ -482,7 +482,7 @@ export const SummaryTable = ({
     title,
     badgeText,
     columns,
-    data,
+    data = [],
     emptyMessage,
     className = "",
 }) => {

@@ -31,7 +31,7 @@ class ReportController extends Controller
         };
 
         $ordersQuery = Order::with([
-            'clients',
+            'clients.users',
             'analysts',
             'analysesMethods',
             'samples.sample_categories',
@@ -82,7 +82,6 @@ class ReportController extends Controller
             $typeDist[$typeLabel]++;
 
             $sampleCount = $order->samples ? $order->samples->count() : 0;
-            $totalSamples += 0;
             $samplesPerOrder[] = [
                 'order' => $order->order_number ?? "Order-{$order->id}",
                 'count' => $sampleCount
@@ -117,7 +116,7 @@ class ReportController extends Controller
             }
         }
 
-        $formatForChart = function ($assoc, $limit = 5, $withColor = false) {
+        $formatForChart = function ($assoc, $limit = 5) {
             $items = [];
             foreach ($assoc as $k => $v) {
                 if (is_array($v) && isset($v['count'])) {
@@ -167,6 +166,23 @@ class ReportController extends Controller
             'top_test_parameters' => array_keys(array_slice($paramsCount, 0, 5)),
         ];
 
+        $filteredOrders = $orders->map(function ($order) {
+            return [
+                'order_number' => $order->order_number,
+                'clients' => $order->clients ? [
+                    'name' => $order->clients->name,
+                    'users' => $order->clients->users ? ['name' => $order->clients->users->name] : null
+                ] : null,
+                'order_type' => $order->order_type,
+                'status' => $order->status,
+                'order_date' => $order->order_date,
+                'estimate_date' => $order->estimate_date,
+                'samples' => $order->samples,
+                'analysts' => $order->analysts->map(fn($a) => ['name' => $a->name]),
+                'result_value' => $order->result_value ?? null,
+            ];
+        });
+
         return response()->json([
             'meta' => [
                 'years' => $yearsAvailable->values()
@@ -178,7 +194,16 @@ class ReportController extends Controller
                 'samples_per_order' => $samplesPerOrder,
                 'methods' => $methodsChart,
                 'categories' => $categoriesChart
-            ]
+            ],
+            'filteredOrders' => $filteredOrders,
+            'totalOrders' => $totalOrders,
+            'completedOrders' => $completedOrders,
+            'totalSamples' => $totalSamples,
+            'totalAnalysisMethods' => $totalAnalysisMethods,
+            'topTestMethods' => $kpi['top_test_methods'],
+            'topTestParameters' => $kpi['top_test_parameters'],
+            'statusChart' => $statusChart,
+            'typeChart' => $typeChart,
         ]);
     }
 
@@ -293,7 +318,7 @@ class ReportController extends Controller
             DB::raw('COUNT(*) as count')
         )
             ->groupBy('label')
-            ->orderByRaw('MONTH(created_at)')
+            ->orderByRaw('MIN(created_at)')
             ->get()
             ->map(fn($item) => [
                 'name'     => substr($item->label, 0, 3),
@@ -341,15 +366,26 @@ class ReportController extends Controller
         $year = $request->input('year');
         $month = $request->input('month');
 
-        $userQuery = User::query()
+        // Filter untuk Registrasi User (KPI Count & Trend)
+        $userRegistrationQuery = User::query()
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('created_at', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('created_at', $month));
 
-        $allUsers = User::all();
-        $filteredAllIds = $userQuery->pluck('id');
-        $filteredClientIds = (clone $userQuery)->where('role', 'client')->pluck('id');
-        $filteredAnalystIds = (clone $userQuery)->where('role', 'analyst')->pluck('id');
-        $filteredAnalystSample = DB::table('n_analysts')->distinct()->pluck('analyst_id');
+        // Filter untuk Aktivitas (Order & Analyst Performance)
+        // Gunakan Closure agar bisa digunakan berulang pada query Orders
+        $activityFilter = function ($query) use ($year, $month) {
+            if ($year && $year !== 'all') {
+                $query->whereYear('orders.order_date', $year);
+            }
+            if ($month && $month !== 'all') {
+                $query->whereMonth('orders.order_date', $month);
+            }
+        };
+
+        // --- KPI Counts (Berdasarkan Filter Registrasi) ---
+        $filteredAllIds = $userRegistrationQuery->pluck('id');
+        $filteredClientIds = (clone $userRegistrationQuery)->where('role', 'client')->pluck('id');
+        $filteredAnalystIds = (clone $userRegistrationQuery)->where('role', 'analyst')->pluck('id');
 
         $totalPengguna = $filteredAllIds->count();
         $totalAnalyst = $filteredAnalystIds->count();
@@ -358,30 +394,29 @@ class ReportController extends Controller
             ->whereNotIn('role', ['admin', 'client'])
             ->count();
 
-        $clientRanking = Order::whereIn('client_id', $filteredClientIds)
+        // --- Client Ranking (Berdasarkan Aktivitas Order) ---
+        // Top client dihitung dari order di bulan tersebut, BUKAN kapan client daftar.
+        $clientRanking = Order::with(['clients.users'])
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('order_date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('order_date', $month))
-            ->select('client_id', DB::raw('COUNT(*) as orders'))
+            ->select('client_id', DB::raw('count(*) as total_orders'))
             ->groupBy('client_id')
-            ->orderByDesc('orders')
+            ->orderByDesc('total_orders')
             ->limit(5)
             ->get();
 
-        $clientRankingData = $clientRanking->map(function ($client) use ($allUsers) {
-            $user = $allUsers->firstWhere('id', $client->client_id);
+        $clientRankingData = $clientRanking->map(function ($item) {
+            $name = $item->clients->users->name ?? $item->clients->name ?? 'Unknown Client';
             return [
-                'name' => $user->name ?? 'Client Tidak Ditemukan',
-                'orders' => $client->orders
+                'name' => $name,
+                'orders' => $item->total_orders
             ];
         })->values();
 
-        $clientActivityTableData = $clientRankingData->take(5)->map(fn($item) => [
-            'client_name' => $item['name'],
-            'total_order' => $item['orders']
-        ])->values();
-
+        $clientActivityTableData = $clientRankingData;
         $topClientData = $clientRankingData->first() ?? ['name' => '-', 'orders' => 0];
 
+        // --- Role Distribution (Berdasarkan User yang Terdaftar di Filter Ini) ---
         $roleDistribution = User::whereIn('id', $filteredAllIds)
             ->select('role', DB::raw('COUNT(*) as value'))
             ->groupBy('role')
@@ -389,12 +424,11 @@ class ReportController extends Controller
             ->map(fn($i) => ['name' => ucfirst($i->role), 'value' => $i->value])
             ->values();
 
+        // --- Analyst Activity (Berdasarkan Sampel yang Dikerjakan di Bulan Ini) ---
         $analystActivity = DB::table('n_analysts')
             ->join('users', 'n_analysts.analyst_id', '=', 'users.id')
             ->join('orders', 'n_analysts.order_id', '=', 'orders.id')
-            ->whereIn('users.id', $filteredAnalystSample)
-            ->when($year && $year !== 'all', fn($q) => $q->whereYear('orders.order_date', $year))
-            ->when($month && $month !== 'all', fn($q) => $q->whereMonth('orders.order_date', $month))
+            ->where($activityFilter) // Filter berdasarkan tanggal order
             ->select('users.id', 'users.name', DB::raw('COUNT(n_analysts.id) as total_samples'))
             ->groupBy('users.id', 'users.name')
             ->orderByDesc('total_samples')
@@ -402,27 +436,30 @@ class ReportController extends Controller
 
         $analystActivityData = $analystActivity->map(fn($i) => [
             'name' => $i->name,
-            'tests' => $i->total_samples
+            'tests' => (int)$i->total_samples
         ])->values()->take(5);
 
-        $analystPerformanceTableData = $analystActivity->take(5)->map(fn($item) => [
-            'analyst_name' => $item->name,
-            'total_sample' => $item->total_samples
+        $analystPerformanceTableData = $analystActivityData->map(fn($item) => [
+            'analyst_name' => $item['name'],
+            'total_sample' => $item['tests']
         ])->values();
 
-        $topAnalystData = $analystActivity->first()
-            ? ['name' => $analystActivity->first()->name, 'samples' => $analystActivity->first()->total_samples]
+        $topAnalystData = $analystActivityData->first()
+            ? ['name' => $analystActivityData->first()['name'], 'samples' => $analystActivityData->first()['tests']]
             : ['name' => '-', 'samples' => 0];
 
-        $ordersFiltered = Order::whereIn('client_id', $filteredClientIds)
+        // --- Rerata Analis per Order ---
+        // Hitung berdasarkan order yang ada di periode ini
+        $ordersFiltered = Order::query()
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('order_date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('order_date', $month));
 
-        $totalOrders = $ordersFiltered->count();
-        $totalSamples = $ordersFiltered->withCount('samples')->get()->sum('samples_count');
+        $totalOrdersInPeriod = $ordersFiltered->count();
+        $totalSamplesInPeriod = $ordersFiltered->withCount('samples')->get()->sum('samples_count');
 
-        $avgSamplesPerOrder = $totalOrders > 0 ? round($totalSamples / $totalOrders, 2) : 0;
+        $avgSamplesPerOrder = $totalOrdersInPeriod > 0 ? round($totalSamplesInPeriod / $totalOrdersInPeriod, 2) : 0;
 
+        // --- Trend Registrasi User ---
         $yearsAvailable = User::selectRaw('YEAR(created_at) as year')
             ->distinct()
             ->orderByDesc('year')
@@ -432,13 +469,12 @@ class ReportController extends Controller
 
         if ($year && $year !== 'all') {
             $months = collect(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']);
-            $trend = $months->map(function ($month) use ($userQuery, $year) {
+            $trend = $months->map(function ($monthName) use ($year) {
                 return [
-                    'name' => substr($month, 0, 3),
-                    'fullName' => $month,
-                    'count' => (clone $userQuery)
-                        ->whereYear('created_at', $year)
-                        ->whereMonth('created_at', Carbon::parse($month)->month)
+                    'name' => substr($monthName, 0, 3),
+                    'fullName' => $monthName,
+                    'count' => User::whereYear('created_at', $year)
+                        ->whereMonth('created_at', Carbon::parse($monthName)->month)
                         ->count()
                 ];
             });
@@ -454,28 +490,33 @@ class ReportController extends Controller
                 ]);
         }
 
+        // --- Training Activity (Filter by Training Date, bukan User Join Date) ---
         $trainingAnalyst = DB::table('analysts')
             ->leftJoin('n_training_analysts', 'analysts.id', '=', 'n_training_analysts.analyst_id')
             ->leftJoin('trainings', 'n_training_analysts.training_id', '=', 'trainings.id')
             ->join('users', 'analysts.user_id', '=', 'users.id')
-            ->whereIn('users.id', $filteredAnalystIds)
+            // Filter training date
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('trainings.date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('trainings.date', $month))
             ->select('analysts.name', DB::raw('COUNT(trainings.id) as total_training'))
             ->groupBy('analysts.name')
             ->orderByDesc('total_training')
+            ->having('total_training', '>', 0)
+            ->limit(5)
             ->get()
             ->map(fn($i) => [
                 'name' => $i->name,
                 'total_training' => (int)$i->total_training
-            ])->take(5);
+            ]);
 
+        // --- Certificate Status (Show ALL active analysts status, ignore date filter for validity) ---
+        // Sertifikat ditampilkan semua status terbarunya agar admin tau mana yang expired
         $trainingCerts = DB::table('n_training_analysts')
             ->join('trainings', 'n_training_analysts.training_id', '=', 'trainings.id')
             ->join('analysts', 'n_training_analysts.analyst_id', '=', 'analysts.id')
             ->join('users', 'analysts.user_id', '=', 'users.id')
-            ->whereIn('users.id', $filteredAnalystIds)
             ->select('trainings.name as training_name', 'trainings.date as training_date', 'analysts.name as analyst_name')
+            ->orderByDesc('trainings.date')
             ->get()
             ->map(function ($row) {
                 $trainingDate = Carbon::parse($row->training_date);
@@ -496,8 +537,6 @@ class ReportController extends Controller
             'near_expired' => $trainingCerts->where('status', 'near_expired')->count(),
             'valid' => $trainingCerts->where('status', 'valid')->count()
         ];
-
-        $certificateDetail = $trainingCerts->values();
 
         return response()->json([
             'meta' => [
@@ -521,8 +560,21 @@ class ReportController extends Controller
                 'trend' => $trend,
                 'training_analyst' => $trainingAnalyst,
                 'certificate_expiration' => $certificateSummary,
-                'certificate_detail' => $certificateDetail
-            ]
+                'certificate_detail' => $trainingCerts->values()
+            ],
+            // Data Flat untuk Export Excel (Sesuai JS Export)
+            'sortedClients' => $clientRankingData,
+            'sortedAnalysts' => $analystActivityData,
+            'totalAnalysts' => $totalAnalyst,
+            'totalClients' => $totalClient,
+            'topClient' => $topClientData,
+            'topAnalyst' => [
+                'name' => $topAnalystData['name'],
+                'tests' => $topAnalystData['samples']
+            ],
+            'avgAnalystsPerOrder' => $avgSamplesPerOrder,
+            'totalNonAdmins' => $totalKaryawan,
+            'roleDistribution' => $roleDistribution,
         ]);
     }
 
@@ -656,7 +708,9 @@ class ReportController extends Controller
                 'method_count' => $order->analysesMethods->count(),
                 'revenue' => $revenue
             ];
-        });
+        })
+            ->sortByDesc('revenue')
+            ->values();;
 
         return response()->json([
             'meta' => ['years' => $yearsAvailable],

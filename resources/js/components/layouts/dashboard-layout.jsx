@@ -53,7 +53,7 @@ export default function DashboardLayout({
                             title={header}
                             user={currentUser}
                             isLoading={isLoading}
-                            notifications={notifications}
+                            notifications={notifications || {}}
                             onLogout={handleLogout}
                             onMenuClick={() => setIsMobileMenuOpen(true)}
                         />

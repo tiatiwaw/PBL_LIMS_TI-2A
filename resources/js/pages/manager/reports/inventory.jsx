@@ -125,20 +125,23 @@ export default function ManagerReportInventory() {
                         delay={0.5}
                     />
 
-                    <RankingBarChart
-                        title="Top Supplier Reagen"
-                        data={charts.suppliers || []}
-                        dataKey="value"
-                        colorMain="#024D60"
-                        className="lg:col-span-2"
-                        delay={0.6}
-                    />
+                    <div className="col-span-3 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <RankingBarChart
+                            title="Top Supplier Reagen"
+                            data={charts.suppliers || []}
+                            dataKey="value"
+                            colorMain="#024D60"
+                            delay={0.6}
+                        />
 
-                    <DistributionPieChart
-                        title="Distribusi Grade Reagen"
-                        data={charts.grades || []}
-                        delay={0.7}
-                    />
+                        <RankingBarChart
+                            title="Distribusi Grade Reagen"
+                            data={charts.grades || []}
+                            dataKey="value"
+                            colorMain="#024D60"
+                            delay={0.6}
+                        />
+                    </div>
 
                     <TrendLineChart
                         title={`Tren Pengadaan Alat (${
@@ -150,6 +153,18 @@ export default function ManagerReportInventory() {
                         dataKey="count"
                         className="lg:col-span-3"
                         delay={0.8}
+                    />
+
+                    <TrendLineChart
+                        title={`Tren Pengadaan Reagen (${
+                            selectedMonth === "all"
+                                ? "Bulanan"
+                                : `Tahunan - ${selectedMonth}`
+                        })`}
+                        data={charts.reagent || []}
+                        dataKey="count"
+                        className="lg:col-span-3"
+                        delay={0.85}
                     />
                 </div>
             }

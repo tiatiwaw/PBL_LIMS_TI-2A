@@ -16,9 +16,9 @@ export const useAuth = () => {
 
             toast.success(ERROR_MESSAGES.SUCCESSFUL_LOGIN);
 
-            const targetUrl = response.data?.redirect_url || '/';
+            const targetUrl = response.data?.redirect_url || "/";
 
-            router.visit(targetUrl);
+            window.location.href = targetUrl;
 
             return response;
         } catch (error) {
@@ -37,7 +37,7 @@ export const useAuth = () => {
 
             toast.success(ERROR_MESSAGES.SUCCESSFUL_LOGOUT);
 
-            router.visit("/auth/login");
+            window.location.href = "/auth/login";
         } catch (error) {
             toast.error(error.message || ERROR_MESSAGES.LOGOUT_FAILED);
         } finally {
