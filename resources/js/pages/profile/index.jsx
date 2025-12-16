@@ -1,4 +1,3 @@
-// /pages/analyst/profile.jsx
 import { useState } from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import Loading from "@/components/ui/loading";
