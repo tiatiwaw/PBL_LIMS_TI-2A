@@ -8,6 +8,7 @@ import Loading from "@/components/ui/loading";
 import { router } from "@inertiajs/react";
 import { useDashboard } from "@/hooks/useClient";
 import { filterStatusOrder } from "@/utils/statusUtils";
+import { toast } from "sonner";
 
 export default function ClientPage({ auth }) {
 
@@ -70,13 +71,57 @@ export default function ClientPage({ auth }) {
     };
 
     const handleSelectDownload = (endpoint) => {
-        // Buka endpoint di tab/window baru atau langsung download
-        window.location.href = endpoint;
-        
-        // Tutup modal setelah beberapa ms
-        setTimeout(() => {
-            setDownloadModal({ open: false, options: [], order: null, loading: false });
-        }, 500);
+        // Use fetch to handle download and catch errors
+        fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${auth.token}`,
+                'Accept': 'application/json',
+            },
+        })
+        .then(res => {
+            // Check if response is successful
+            if (!res.ok) {
+                return res.json().then(data => {
+                    throw new Error(data.message || 'Gagal mengunduh file');
+                });
+            }
+            
+            // Check if response is JSON (error) or blob (file)
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return res.json().then(data => {
+                    throw new Error(data.message || 'Gagal mengunduh file');
+                });
+            }
+            
+            return res.blob();
+        })
+        .then(blob => {
+            // Create blob URL and trigger download
+            if (blob instanceof Blob) {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = endpoint.split('/').pop() + '.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                toast.success('File berhasil diunduh');
+            }
+        })
+        .catch(err => {
+            console.error('Download error:', err);
+            toast.error(err.message || 'Terjadi kesalahan saat mengunduh file');
+        })
+        .finally(() => {
+            // Tutup modal setelah beberapa ms
+            setTimeout(() => {
+                setDownloadModal({ open: false, options: [], order: null, loading: false });
+            }, 500);
+        });
     };
 
     const handleCloseModal = () => {

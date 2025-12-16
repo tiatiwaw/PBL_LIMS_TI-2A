@@ -124,7 +124,7 @@ class ClientController extends Controller
         }
 
         // Path file laporan di storage/app/public/...
-        $realPath = storage_path('app/public/reports/client/' . $order->report_file_path);
+        $realPath = storage_path('app/public/' . $order->report_file_path);
 
         if (!file_exists($realPath)) {
             return response()->json([
@@ -135,7 +135,7 @@ class ClientController extends Controller
 
         return response()->download(
             $realPath,
-            'report_order_' . $order->id . '.pdf',
+            'report_order_' . $order->order_number . '.pdf',
             ['Content-Type' => 'application/pdf']
         );
     }
