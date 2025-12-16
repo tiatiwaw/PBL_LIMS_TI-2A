@@ -5,8 +5,7 @@ import {
     ClientInfoCard,
     SampleSelector,
     SampleInfoCard,
-    ParameterInfoCard,
-    MethodInfoCard,
+    ParameterMethodCard,
     EquipmentCard,
     ReagentCard,
     AnalystTeamCard,
@@ -70,7 +69,7 @@ export default function ManagerDetailOrder() {
 
     const handleDialogConfirm = async (data) => {
         try {
-            update.mutateAsync({ id, data });
+            await update.mutateAsync({ id, data });
             setOpenDialog(false);
             window.location.href = `/manager/report-validations/${id}`;
         } catch (error) {
@@ -110,26 +109,6 @@ export default function ManagerDetailOrder() {
         (sample) => sample.id.toString() === selectedSampleId
     );
 
-    // --- BAGIAN PERBAIKAN UTAMA DI SINI ---
-    // Kita memetakan struktur data baru (nested) ke struktur flat yang diharapkan komponen
-    const normalizedSample = selectedSample
-        ? {
-              ...selectedSample,
-
-              // 1. Ambil Parameter dari n_parameter_methods -> test_parameters
-              parameter:
-                  selectedSample.n_parameter_methods?.test_parameters ?? null,
-
-              // 2. Ambil Method dari n_parameter_methods -> test_methods
-              method: selectedSample.n_parameter_methods?.test_methods ?? null,
-
-              // 3. Ambil Equipments & Reagents dari dalam n_parameter_methods juga
-              equipments: selectedSample.n_parameter_methods?.equipments ?? [],
-              reagents: selectedSample.n_parameter_methods?.reagents ?? [],
-          }
-        : null;
-    // --------------------------------------
-
     const safeAnalysts = Array.isArray(order.analysts)
         ? order.analysts.filter((item) => item && typeof item === "object")
         : [];
@@ -137,11 +116,12 @@ export default function ManagerDetailOrder() {
     return (
         <DashboardLayout title="Detail Order" header="Detail Order">
             <div className="max-w-7xl mx-auto space-y-6">
-                <OrderDetailHeader order={order} backRoute="/manager/orders" />
-
-                <ClientInfoCard
-                    client={order.client ?? order.clients ?? { user: {} }}
+                <OrderDetailHeader 
+                    order={order} 
+                    backRoute="/supervisor/orders/follow-up"
                 />
+
+                <ClientInfoCard client={order.clients} />
 
                 <SampleSelector
                     samples={order.samples}
@@ -149,61 +129,89 @@ export default function ManagerDetailOrder() {
                     onSampleChange={setSelectedSampleId}
                 />
 
-                {normalizedSample && (
+                {selectedSample && (
                     <>
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <SampleInfoCard sample={normalizedSample} />
-
-                            <div className="space-y-6">
-                                {normalizedSample.parameter ? (
-                                    <ParameterInfoCard
-                                        parameter={normalizedSample.parameter}
-                                    />
-                                ) : (
-                                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
-                                        Data parameter tidak tersedia untuk
-                                        sample ini.
+                        {/* Check if we have complete data for new layout */}
+                        {selectedSample?.n_parameter_methods &&
+                        selectedSample?.n_parameter_methods?.test_methods &&
+                        selectedSample?.n_parameter_methods?.test_parameters &&
+                        order?.analysts &&
+                        order?.analysts.length > 0 ? (
+                            // New layout - when data is complete
+                            <>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <SampleInfoCard sample={selectedSample} />
+                                    <div className="space-y-6">
+                                        <ParameterMethodCard
+                                            data={
+                                                selectedSample?.n_parameter_methods
+                                            }
+                                        />
                                     </div>
-                                )}
+                                </div>
 
-                                {normalizedSample.method ? (
-                                    <MethodInfoCard
-                                        method={normalizedSample.method}
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <EquipmentCard
+                                        equipments={
+                                            selectedSample.n_parameter_methods
+                                                ?.equipments
+                                        }
                                     />
-                                ) : (
-                                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
-                                        Data metode tidak tersedia untuk sample
-                                        ini.
+                                    <ReagentCard
+                                        reagents={
+                                            selectedSample.n_parameter_methods
+                                                ?.reagents
+                                        }
+                                    />
+                                </div>
+
+                                <AnalysisMethodCard
+                                    methods={order.analyses_methods}
+                                    reportIssuedAt={order.report_issued_at}
+                                    reportFilePath={order.report_file_path}
+                                    resultValue={order.result_value}
+                                />
+
+                                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                                    <div className="xl:col-span-2">
+                                        <AnalystTeamCard
+                                            analysts={order.analysts}
+                                        />
                                     </div>
-                                )}
+                                    <NotesCard
+                                        notes={order.notes}
+                                        resultValue={order.result_value}
+                                    />
+                                </div>
+                            </>
+                        ) : (
+                            // Old layout - when data is incomplete
+                            <div className="grid grid-cols-1 gap-6">
+                                <SampleInfoCard sample={selectedSample} />
                             </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <EquipmentCard
-                                equipments={normalizedSample.equipments}
-                            />
-                            <ReagentCard reagents={normalizedSample.reagents} />
-                        </div>
+                        )}
                     </>
                 )}
 
-                <AnalysisMethodCard
-                    methods={order.analyses_methods ?? []}
-                    reportIssuedAt={order.report_issued_at}
-                    reportFilePath={order.report_file_path}
-                    resultValue={order.result_value}
-                />
-
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                    <div className="xl:col-span-2">
-                        <AnalystTeamCard analysts={safeAnalysts} />
+                {/* Always show AnalysisMethodCard if no complete data */}
+                {!selectedSample?.n_parameter_methods ||
+                !selectedSample?.n_parameter_methods?.test_methods ||
+                !selectedSample?.n_parameter_methods?.test_parameters ||
+                !order?.analysts ||
+                order?.analysts.length === 0 ? (
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <AnalysisMethodCard
+                            methods={order.analyses_methods}
+                            reportIssuedAt={order.report_issued_at}
+                            reportFilePath={order.report_file_path}
+                            resultValue={order.result_value}
+                        />
+                        <NotesCard
+                            notes={order.notes}
+                            resultValue={order.result_value}
+                        />
                     </div>
-                    <NotesCard
-                        notes={order.notes ?? ""}
-                        resultValue={order.result_value}
-                    />
-                </div>
+                ) : null}
 
                 {(order.status === "pending" ||
                     order.status === "completed") && (

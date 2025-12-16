@@ -5,21 +5,12 @@ import { getOrdersColumns } from "@/components/shared/analyst/order-columns";
 import { useOrders } from "@/hooks/useAnalyst";
 import Loading from "@/components/ui/loading";
 import { useAuth } from "@/hooks/useAuth";
+import { filterStatusOrder } from "@/utils/statusUtils";
 
 const OrderPage = () => {
 
   const { data: ordersData, isLoading, error } = useOrders();
   const orders = ordersData?.orders
-
-  const filterData = [
-    { value: "all", label: "All Status" },
-    { value: "completed", label: "Completed" },
-    { value: "in_progress", label: "In Progress" },
-    { value: "pending", label: "Pending" },
-    { value: "disapproved", label: "Disapproved" },
-    { value: "approved", label: "Approved" },
-    { value: "received", label: "Received" },
-  ];
 
   const columns = useMemo(() => getOrdersColumns());
 
@@ -49,7 +40,7 @@ const OrderPage = () => {
       <ManagedDataTable
         data={orders ?? []}
         columns={columns}
-        filterOptions={filterData}
+        filterOptions={filterStatusOrder}
         searchColumn="title"
         showFilter={true}
         showCreate={false}

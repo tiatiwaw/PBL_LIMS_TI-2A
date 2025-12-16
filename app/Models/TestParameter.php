@@ -15,7 +15,9 @@ class TestParameter extends Model
         'name',
         'category',
         'detection_limit',
-        'quality_standard'
+        'quality_standard',
+        'quality_min',
+        'quality_max'
     ];
 
     public function unit_values()

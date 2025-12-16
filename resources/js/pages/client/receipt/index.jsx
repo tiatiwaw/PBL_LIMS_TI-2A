@@ -5,6 +5,7 @@ import { useReceipt } from "@/hooks/useClient";
 import { XCircle } from "lucide-react";
 import { Link } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
+import Loading from "@/components/ui/loading";
 
 export default function InvoicePage({ order_number }) {
   const { data, isLoading, isError, errorMessage } = useReceipt(order_number);
@@ -16,7 +17,7 @@ export default function InvoicePage({ order_number }) {
   if (isLoading) {
     return (
       <DashboardLayout title="Invoice" header="Memuat Data...">
-        <div className="text-center py-20 text-gray-500">Loading...</div>
+          <Loading/>
       </DashboardLayout>
     );
   }

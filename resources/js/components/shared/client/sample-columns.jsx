@@ -1,17 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { getSampleStatusVariant } from "@/utils/statusUtils";
 import { FileText } from "lucide-react";
-
-const statusVariantMap = {
-    done: "success",
-    in_progress: "warning",
-};
-
-const conditionVariantMap = {
-    Eksternal: "warning",
-    Internal: "info",
-    Urgent: "error",
-};
 
 export const getSampleColumns = ({ onShowDetail }) => [
   {
@@ -22,7 +18,7 @@ export const getSampleColumns = ({ onShowDetail }) => [
     accessorKey: "sample_categories.name",
     header: "Kategori Sampel",
     cell: ({ row }) => {
-      const category = row.sample_categories?.name || "-";
+      const category = row.sample_categories.name || "-";
       return <span>{category}</span>;
     },
   },
@@ -30,9 +26,9 @@ export const getSampleColumns = ({ onShowDetail }) => [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const value = row.original.status;
+      const value = row.status;
       return (
-        <Badge variant={statusVariantMap[value] || "outline"}>
+        <Badge className="capitalize" variant={getSampleStatusVariant(value) || "outline"}>
           {value}
         </Badge>
       );
@@ -42,15 +38,24 @@ export const getSampleColumns = ({ onShowDetail }) => [
     id: "aksi",
     header: "Aksi",
     cell: ({ row }) => (
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onShowDetail(row.original)}
-        >
-          <FileText />
-        </Button>
-      </div>
+      <TooltipProvider>
+        <div className="flex gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onShowDetail(row)}
+              >
+                <FileText size={16} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Detail Sampel</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </TooltipProvider>
     ),
   },
 ];

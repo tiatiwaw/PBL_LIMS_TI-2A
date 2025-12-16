@@ -8,6 +8,7 @@ export const editClientFields = [
         name: "contact_person",
         label: "Narahubung",
         placeholder: "Masukkan nama narahubung",
+        initialValuePath: "users.name",
     },
     {
         name: "email",

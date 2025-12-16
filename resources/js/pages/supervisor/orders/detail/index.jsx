@@ -194,7 +194,7 @@ export default function DetailOrder({ canValidate }) {
 
     if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin">
+            <DashboardLayout title="Detail Order">
                 <Loading />
             </DashboardLayout>
         );
@@ -206,7 +206,7 @@ export default function DetailOrder({ canValidate }) {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin">
+            <DashboardLayout title="Detail Order">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>

@@ -38,6 +38,7 @@ class OrderSeeder extends Seeder
                     'estimate_date' => now()->addDays(rand(3, 10)),
                     'report_issued_at' => rand(0, 1) ? now()->subDays(rand(1, 5)) : null,
                     'report_file_path' => null,
+                    'receipt_file_path' => null,
                     'notes' => fake()->sentence(),
                     'order_type' => fake()->randomElement(['internal', 'regular', 'external', 'urgent']),
                     'status' => fake()->randomElement(['received', 'disapproved', 'pending_payment', 'paid', 'in_progress', 'received_test', 'revision_test', 'pending', 'completed']),

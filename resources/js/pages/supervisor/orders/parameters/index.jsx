@@ -41,7 +41,7 @@ export default function SupervisorParametersIndex() {
         analysts,
     } = data || {};
 
-    // State untuk handle step
+    // State untuk handle step - HARUS di atas semua conditional returns
     const [currentStep, setCurrentStep] = useState("index"); // index, first, second, analysts, review, detail
     const [parameterStep, setParameterStep] = useState(1);
     const [currentSampleId, setCurrentSampleId] = useState(null);
@@ -236,6 +236,25 @@ export default function SupervisorParametersIndex() {
         createOrder.mutateAsync(submissionData);
     };
 
+    // Conditional renders - SETELAH semua hooks
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Parameter" header="Parameter">
+                <Loading />
+            </DashboardLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <DashboardLayout title="Parameter" header="Parameter">
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
+    }
+
     // Render berdasarkan step
     if (currentStep === "first") {
         return (
@@ -309,7 +328,6 @@ export default function SupervisorParametersIndex() {
                     analystsData={analysts}
                     nParameterData={n_parameter_methods}
                     samples={samples}
-                    // isSubmitting={isSubmitting}
                     setSample={setCurrentSampleId}
                     onSubmit={handleActionSubmit}
                     onDetail={() => {
@@ -351,24 +369,6 @@ export default function SupervisorParametersIndex() {
                                 : handleStepChange("index")
                         }
                     />
-                </div>
-            </DashboardLayout>
-        );
-    }
-
-    if (isLoading) {
-        return (
-            <DashboardLayout title="Parameter" header="Parameter">
-                <Loading />
-            </DashboardLayout>
-        );
-    }
-
-    if (error) {
-        return (
-            <DashboardLayout title="Parameter" header="Parameter">
-                <div className="text-center text-red-500 py-8">
-                    {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
             </DashboardLayout>
         );

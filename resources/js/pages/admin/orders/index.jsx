@@ -10,8 +10,8 @@ import { filterStatusOrder } from "@/utils/statusUtils";
 export default function AdminOrdersPage() {
     const { data: orders, isLoading, error } = useOrders();
 
-    const handleShowDetail = (data) => {
-        router.visit(route("admin.order.show", data.id));
+    const handleShowDetail = (id) => {
+        router.visit(route("admin.order.show", id));
     };
 
     const columns = useMemo(

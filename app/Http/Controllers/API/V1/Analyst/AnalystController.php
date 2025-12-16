@@ -109,14 +109,16 @@ class AnalystController extends Controller
 
             foreach ($validated['results'] as $result) {
                 // 1️⃣ Update n_parameter_method yang spesifik dengan result dan status success
-                NParameterMethod::where('sample_id', $result['sample_id'])
+                NParameterMethod::where('status', '!=', 'failed')
+                    ->where('sample_id', $result['sample_id'])
                     ->where('test_parameter_id', $result['parameter']['id'])
                     ->update(['result' => $result['result'], 'status' => 'success']);
 
                 // 2️⃣ Update status sample
                 $sample = Sample::findOrFail($result['sample_id']);
-                $totalParams = NParameterMethod::where('sample_id', $sample->id)->count();
-                $allDone = NParameterMethod::where('sample_id', $sample->id)
+                $totalParams = NParameterMethod::where('status', '!=', 'failed')->where('sample_id', $sample->id)->count();
+                $allDone = NParameterMethod::where('status', '!=', 'failed')
+                    ->where('sample_id', $sample->id)
                     ->whereNotNull('result')
                     ->count();
 

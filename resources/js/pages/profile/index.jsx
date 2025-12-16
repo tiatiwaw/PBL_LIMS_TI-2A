@@ -1,5 +1,6 @@
 // /pages/analyst/profile.jsx
 import { useState } from "react";
+import { router } from "@inertiajs/react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import Loading from "@/components/ui/loading";
 import { Award, FileText, Upload } from "lucide-react";
@@ -103,7 +104,11 @@ export default function ProfilePage() {
               <p className="text-sm opacity-90 mt-1">Ini adalah halaman profil Anda.</p>
             </div>
             <button
-              onClick={() => window.history.back()}
+              onClick={() => {
+                if (window.history.length > 1) {
+                  window.history.back();
+                } 
+              }}
               className="px-4 py-2 bg-primary-hijauTerang text-primary-hijauTua hover:bg-primary-hijauTerang/80 rounded-lg transition text-sm font-medium"
             >
               ← Kembali

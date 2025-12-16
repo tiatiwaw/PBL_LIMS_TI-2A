@@ -6,6 +6,7 @@ import { Link } from "@inertiajs/react";
 import { useTransaction } from "@/hooks/useClient"; 
 import Transaction from "@/components/shared/client/transaction.jsx";
 import { Button } from "@/components/ui/button";
+import Loading from "@/components/ui/loading";
 
 export default function ClientTransaction({ auth, reference }) {
   const [pollingCount, setPollingCount] = useState(0);
@@ -39,9 +40,7 @@ export default function ClientTransaction({ auth, reference }) {
   if (isLoading) {
     return (
       <DashboardLayout title="Detail Transaksi" header="Memuat Data...">
-        <div className="flex items-center justify-center min-h-[60vh] text-gray-500">
-          Loading...
-        </div>
+          <Loading/>
       </DashboardLayout>
     );
   }

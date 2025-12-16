@@ -21,6 +21,9 @@ class ReportGeneratorService
             ? $order->samples()->whereIn('id', $selectedSampleIds)
             ->with([
                 'sample_categories',
+                'n_parameter_methods' => function ($query) {
+                    $query->where('status', '!=', 'failed');
+                },
                 'n_parameter_methods.test_parameters.unit_values',
                 'n_parameter_methods.test_parameters.reference_standards',
             ])
@@ -28,6 +31,9 @@ class ReportGeneratorService
             : $order->samples()
             ->with([
                 'sample_categories',
+                'n_parameter_methods' => function ($query) {
+                    $query->where('status', '!=', 'failed');
+                },
                 'n_parameter_methods.test_parameters.unit_values',
                 'n_parameter_methods.test_parameters.reference_standards',
             ])
@@ -49,12 +55,42 @@ class ReportGeneratorService
             $parameters = [];
             if ($nParams && is_array($nParams)) {
                 foreach ($nParams as $nParam) {
+                    $testParam = $nParam->test_parameters;
+                    $result = $nParam->result ?? '-';
+                    $qualityMin = $testParam?->quality_min ?? '-';
+                    $qualityMax = $testParam?->quality_max ?? '-';
+                    
+                    // Generate keterangan berdasarkan hasil vs quality standards
+                    $keterangan = '-';
+                    if ($result !== '-' && $qualityMin !== '-' && $qualityMax !== '-') {
+                        $resultVal = floatval($result);
+                        $minVal = floatval($qualityMin);
+                        $maxVal = floatval($qualityMax);
+                        $range = $maxVal - $minVal;
+                        $threshold = $range * 0.15; // 15% dari range untuk menentukan "mendekati"
+                        
+                        if ($resultVal < $minVal) {
+                            $keterangan = 'Dibawah Baku Mutu Minimal';
+                        } elseif ($resultVal > $maxVal) {
+                            $keterangan = 'Melebihi Baku Mutu Maksimal';
+                        } elseif ($resultVal >= $minVal && $resultVal < ($minVal + $threshold)) {
+                            $keterangan = 'Mendekati Baku Mutu Minimal';
+                        } elseif ($resultVal > ($maxVal - $threshold) && $resultVal <= $maxVal) {
+                            $keterangan = 'Mendekati Baku Mutu Maksimal';
+                        } else {
+                            $keterangan = 'Sesuai Baku Mutu';
+                        }
+                    }
+                    
                     $parameters[] = [
-                        'parameter_name' => $nParam->test_parameters?->name ?? '-',
-                        'unit'      => $nParam->test_parameters?->unit_values?->value ?? '-',
-                        'reference' => $nParam->test_methods?->reference_standards?->name ?? '-',
-                        'result'    => $nParam->result ?? '-',
-                        'quality'   => $nParam->test_parameters?->quality_standard ?? '-',
+                        'parameter_name' => $testParam?->name ?? '-',
+                        'unit'      => $testParam?->unit_values?->value ?? '-',
+                        'quality_max' => $testParam?->quality_max ?? '-',
+                        'result'    => $result,
+                        'detection_limit' => $testParam?->quality_min ?? '-',
+                        'quality_standard' => $testParam?->quality_standard ?? '-',
+                        'reference' => $testParam?->reference_standards?->name ?? '-',
+                        'keterangan' => $keterangan,
                     ];
                 }
             }

@@ -11,32 +11,57 @@ class NOrderSampleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * 
+     * Strategi:
+     * - Setiap sample hanya digunakan SEKALI saja di seluruh order
+     * - Tidak ada duplikasi sample antar order
+     * - Distribusi sample secara merata di setiap order
      */
     public function run(): void
     {
         $orders = Order::all();
-        $samples = Sample::all();
+        $samples = Sample::all()->toArray();
 
-        // Pastikan ada data order dan sample
-        if ($orders->count() === 0 || $samples->count() === 0) {
+        if (count($orders) === 0 || count($samples) === 0) {
             $this->command->warn('⚠️ Tidak ada data di tabel orders atau samples. Jalankan seeder untuk kedua tabel tersebut dulu.');
             return;
         }
 
-        // Loop setiap order dan assign beberapa sample
-        foreach ($orders as $order) {
-            // Ambil 1–3 sample acak untuk setiap order
-            $selectedSamples = $samples->random(rand(1, 3));
+        // Shuffle samples untuk distribusi random yang merata
+        shuffle($samples);
 
-            foreach ($selectedSamples as $sample) {
+        $sampleIndex = 0;
+        $sampleCount = count($samples);
+
+        // Assign samples dengan strategi: setiap sample hanya digunakan sekali
+        foreach ($orders as $order) {
+            // Tentukan jumlah sample per order (1-3 samples)
+            $samplesPerOrder = rand(1, 3);
+
+            // Pastikan kita tidak kehabisan sample
+            if ($sampleIndex + $samplesPerOrder > $sampleCount) {
+                $samplesPerOrder = $sampleCount - $sampleIndex;
+            }
+
+            // Jika sudah tidak ada sample tersisa, stop
+            if ($samplesPerOrder <= 0) {
+                break;
+            }
+
+            // Ambil sample berikutnya dari pool yang belum digunakan
+            for ($i = 0; $i < $samplesPerOrder; $i++) {
+                $currentSample = $samples[$sampleIndex];
+
                 NOrderSample::create([
                     'order_id' => $order->id,
-                    'sample_id' => $sample->id,
+                    'sample_id' => $currentSample['id'],
                     'sample_volume' => fake()->randomFloat(2, 0.5, 5) . ' ml',
                 ]);
+
+                $sampleIndex++;
             }
         }
 
-        $this->command->info('✅ NOrderSampleSeeder berhasil dijalankan!');
+        $this->command->info('✅ NOrderSampleSeeder berhasil dijalankan! Semua sample unik per order.');
     }
 }

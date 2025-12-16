@@ -3,10 +3,10 @@ import { usePage, Link, router } from '@inertiajs/react';
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { getSampleColumns } from "@/components/shared/analyst/sample-columns";
-import SampleDetailsDialog from "@/components/shared/dialog/sample-detail-dialog";
 import { Button } from "@/components/ui/button";
 import { useOrderDetail, useResult, useSaveReagentUsage, useOrders } from "@/hooks/useAnalyst";
 import { toast } from "sonner";
+import SampleDetailSheet from "@/components/shared/sheet/sample-detail-sheet";
 
 export default function OrderDetail({ orderId }) {
     const [showSubmitBtn, setShowSubmitBtn] = useState(true)
@@ -552,8 +552,8 @@ export default function OrderDetail({ orderId }) {
                 )}
 
                 {/* --- Dialogs --- */}
-                <SampleDetailsDialog
-                    sample={selectedSample}
+                <SampleDetailSheet
+                    data={selectedSample}
                     isOpen={isDialogOpen}
                     onOpenChange={setIsDialogOpen}
                 />

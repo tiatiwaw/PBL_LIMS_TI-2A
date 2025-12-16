@@ -6,6 +6,7 @@ const LABELS = {
     },
     parameterStatus: {
         success: "Berhasil",
+        in_progress: "Sedang Diproses",
         failed: "Gagal",
     },
     equipmentStatus: {
@@ -14,16 +15,20 @@ const LABELS = {
         maintenance: "Perbaikan",
         broken: "Rusak",
     },
+    sampleForm: {
+        gas: "Gas",
+        solid: "Padat",
+        liquid: "Cair",
+    },
     orderStatus: {
         completed: "Selesai",
         in_progress: "Sedang Diproses",
         pending: "Menunggu",
         disapproved: "Ditolak",
-        approved: "Disetujui",
         received: "Diterima",
         pending_payment: "Menunggu Pembayaran",
         paid: "Sudah Dibayar",
-        received_test: "Sampel Diterima",
+        received_test: "Selesai Pengujian",
         revision_test: "Revisi Pengujian",
     },
     conditionType: {
@@ -52,9 +57,15 @@ const VARIANTS = {
         received_test: "received_test",
         revision_test: "revision_test",
     },
-    sampleStatus: {
+    parameterStatus: {
         success: "success",
+        in_progress: "warning",
         failed: "error",
+    },
+    sampleStatus: {
+        done: "success",
+        in_progress: "warning",
+        pending: "info",
     },
     equipmentStatus: {
         available: "success",
@@ -95,7 +106,7 @@ export const filterStatusOrder = [
     { value: "pending_payment", label: "Menunggu Pembayaran" },
     { value: "paid", label: "Sudah Dibayar" },
     { value: "in_progress", label: "Sedang Diproses" },
-    { value: "received_test", label: "Sampel Diterima" },
+    { value: "received_test", label: "Selesai Pengujian" },
     { value: "revision_test", label: "Revisi Pengujian" },
     { value: "pending", label: "Menunggu" },
     { value: "completed", label: "Selesai" },
@@ -109,6 +120,8 @@ export const getStatusLabel = (status) =>
     getValue(LABELS, "status", status, status);
 export const getStatusParameterLabel = (status) =>
     getValue(LABELS, "parameterStatus", status, status);
+export const getSampleFormLabel = (status) =>
+    getValue(LABELS, "sampleForm", status, status);
 export const getEquipmentStatusLabel = (status) =>
     getValue(LABELS, "equipmentStatus", status, status);
 export const getOrderStatusLabel = (status) =>
@@ -120,6 +133,8 @@ export const getOrderTypeVariant = (type) =>
     getValue(VARIANTS, "orderType", type);
 export const getOrderStatusVariant = (status) =>
     getValue(VARIANTS, "orderStatus", status);
+export const getParameterStatusVariant = (status) =>
+    getValue(VARIANTS, "parameterStatus", status);
 export const getSampleStatusVariant = (status) =>
     getValue(VARIANTS, "sampleStatus", status);
 export const getEquipmentStatusVariant = (status) =>

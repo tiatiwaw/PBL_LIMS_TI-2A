@@ -108,7 +108,7 @@ const Dashboard = () => {
                 {/* Modal konfirmasi */}
                 {selectedTest && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                        <Card className="border-0 w-[450px] bg-primary-hijauMuda relative rounded-2xl shadow-xl text-[#02364B]">
+                        <Card className="border-0 w-[450px] bg-background relative rounded-2xl shadow-xl text-[#02364B]">
                             <button
                                 onClick={() => setSelectedTest(null)}
                                 className="absolute top-4 right-4 text-primary-hijauTua hover:opacity-80"
@@ -138,7 +138,7 @@ const Dashboard = () => {
                                 <Button
                                     onClick={() => setSelectedTest(null)}
                                     variant="outline"
-                                    className="rounded-lg px-6 border-primary-hijauTua text-primary-hijauTua hover:bg-primary-hijauTua hover:text-white"
+                                    className="rounded-lg px-6 border-primary-hijauTua text-primary-hijauTua hover:bg-gray-200"
                                 >
                                     Batal
                                 </Button>

@@ -112,12 +112,15 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 5%;">No</th>
-                    <th style="width: 35%;">Nama Parameter</th>
-                    <th style="width: 15%; text-align: center;">Hasil</th>
-                    <th style="width: 25%;">Baku Mutu</th>
-                    <th style="width: 20%;">Satuan</th>
-                    <th style="width: 25%;">Standar Acuan</th>
+                    <th style="width: 3%;">No</th>
+                    <th style="width: 20%;">Nama Parameter</th>
+                    <th style="width: 8%; text-align: center;">Satuan</th>
+                    <th style="width: 10%; text-align: center;">Standar Maksimal</th>
+                    <th style="width: 10%; text-align: center;">Hasil</th>
+                    <th style="width: 12%; text-align: center;">Standar Minimal</th>
+                    <th style="width: 12%; text-align: center;">Baku Mutu</th>
+                    <th style="width: 12%; text-align: center;">Standar Acuan</th>
+                    <th style="width: 13%;">Keterangan</th>
                 </tr>
             </thead>
             <tbody>
@@ -126,10 +129,13 @@
                     <tr>
                         <td class="text-center">{{ $no++ }}</td>
                         <td>{{ $param['parameter_name'] }}</td>
+                        <td class="text-center">{{ $param['unit'] }}</td>
+                        <td class="text-center">{{ $param['quality_max'] }}</td>
                         <td class="text-center">{{ $param['result'] }}</td>
-                        <td>{{ $param['quality'] }}</td>
-                        <td>{{ $param['unit'] }}</td>
-                        <td>{{ $param['reference'] }}</td>
+                        <td class="text-center">{{ $param['detection_limit'] }}</td>
+                        <td class="text-center">{{ $param['quality_standard'] }}</td>
+                        <td class="text-center">{{ $param['reference'] }}</td>
+                        <td>{{ $param['keterangan'] }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -144,7 +150,7 @@
                 <td style="border: none; width: 50%; text-align: center; vertical-align: top;">
                     <div style="min-height: 80px; border-bottom: 1px solid #000; margin-bottom: 5px;">
                         @if($supervisor && $supervisor->signature)
-                            <img src="{{ $supervisor->signature }}" style="max-width: 100px; max-height: 60px;" />
+                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/' . $supervisor->signature))) }}" style="max-width: 100px; max-height: 60px;" />
                         @endif
                     </div>
                     <p style="margin: 0; font-weight: bold; font-size: 11px;">Supervisor Laboratorium</p>
@@ -156,7 +162,7 @@
                 <td style="border: none; width: 50%; text-align: center; vertical-align: top;">
                     <div style="min-height: 80px; border-bottom: 1px solid #000; margin-bottom: 5px;">
                         @if($manager && $manager->signature)
-                            <img src="{{ $manager->signature }}" style="max-width: 100px; max-height: 60px;" />
+                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/' . $manager->signature))) }}" style="max-width: 100px; max-height: 60px;" />
                         @endif
                     </div>
                     <p style="margin: 0; font-weight: bold; font-size: 11px;">Manager Laboratorium</p>

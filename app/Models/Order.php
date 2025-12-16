@@ -90,7 +90,6 @@ class Order extends Model
         ->latest()
         ->first();
     }
-
     /**
      * Accessor: Status kombinasi
      */
