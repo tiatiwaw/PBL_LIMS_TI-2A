@@ -33,7 +33,9 @@ export default function MethodPayment({ selected, setSelected, channels = [] }) 
                             src={`/logo_payment/${channel.code}.jpeg`}
                             alt={channel.name}
                             className="w-16 h-16 object-contain mb-2"
-                            onError={(e) => { e.target.src = "/logo_payment/default.jpg"; }}
+                            onError={(e) => {
+                                e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect fill='%23f0f0f0' width='64' height='64'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='12' fill='%23999' text-anchor='middle' dominant-baseline='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
+                            }}
                         />
 
                         {/* Nama metode */}

@@ -3,6 +3,12 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { router, usePage } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { CircleAlert, Edit, Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -401,72 +407,123 @@ export default function SupervisorParametersIndex() {
 
                             {/* Action Buttons */}
                             <div className="flex items-center gap-3 justify-start">
-                                {/* Detail */}
-                                <Button
-                                    size="icon"
-                                    onClick={() => {
-                                        setCurrentSampleId(s.id);
-                                        handleStepChange("detail");
-                                    }}
-                                    className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-md w-10 h-10"
-                                >
-                                    <CircleAlert
-                                        size={25}
-                                        className="transform scale-y-[-1]"
-                                    />
-                                </Button>
-                                {n_parameter_methods?.some(
-                                    (item) => item.sample_id === s.id
-                                ) ? (
-                                    <>
-                                        {/* Edit */}
-                                        <Button
-                                            size="icon"
-                                            onClick={() => {
-                                                setIsUpdate(true);
-                                                handleEditSample(s.id);
-                                            }}
-                                            className="bg-green-500 hover:bg-green-600 text-white rounded-md w-10 h-10"
-                                        >
-                                            <Edit size={25} />
-                                        </Button>
-                                    </>
-                                ) : (
-                                    <>
-                                        {/* Arrow */}
-                                        <Button
-                                            size="icon"
-                                            onClick={() =>
-                                                handleEditSample(s.id)
-                                            }
-                                            className="bg-teal-600 hover:bg-teal-700 text-white rounded-md w-10 h-10"
-                                        >
-                                            <Plus size={25} />
-                                        </Button>
-                                    </>
-                                )}
+                                <TooltipProvider>
+                                    {/* Detail */}
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                size="icon"
+                                                onClick={() => {
+                                                    setCurrentSampleId(s.id);
+                                                    handleStepChange("detail");
+                                                }}
+                                                className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-md w-10 h-10"
+                                            >
+                                                <CircleAlert
+                                                    size={25}
+                                                    className="transform scale-y-[-1]"
+                                                />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            Detail parameter
+                                        </TooltipContent>
+                                    </Tooltip>
+
+                                    {n_parameter_methods?.some(
+                                        (item) => item.sample_id === s.id
+                                    ) ? (
+                                        <>
+                                            {/* Edit */}
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        size="icon"
+                                                        onClick={() => {
+                                                            setIsUpdate(true);
+                                                            handleEditSample(
+                                                                s.id
+                                                            );
+                                                        }}
+                                                        className="bg-green-500 hover:bg-green-600 text-white rounded-md w-10 h-10"
+                                                    >
+                                                        <Edit size={25} />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    Edit parameter & metode
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {/* Add */}
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        size="icon"
+                                                        onClick={() =>
+                                                            handleEditSample(
+                                                                s.id
+                                                            )
+                                                        }
+                                                        className="bg-teal-600 hover:bg-teal-700 text-white rounded-md w-10 h-10"
+                                                    >
+                                                        <Plus size={25} />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    Tambah parameter & metode
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </>
+                                    )}
+                                </TooltipProvider>
                             </div>
                         </CardContent>
                     </Card>
                 ))}
                 {/* BUTTON LANJUT */}
                 <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
-                    <Button
-                        onClick={() => {
-                            router.visit(route("supervisor.order.detail", id));
-                        }}
-                        className="bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 px-8 py-3"
-                    >
-                        Batal
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            handleStepChange("analysts"), setParameterStep(2);
-                        }}
-                        className="bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 px-8 py-3"
-                    >
-                        Lanjut
-                    </Button>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    onClick={() => {
+                                        router.visit(
+                                            route(
+                                                "supervisor.order.detail",
+                                                id
+                                            )
+                                        );
+                                    }}
+                                    className="bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 px-8 py-3"
+                                >
+                                    Batal
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Kembali ke halaman order detail
+                            </TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    onClick={() => {
+                                        handleStepChange("analysts"),
+                                            setParameterStep(2);
+                                    }}
+                                    className="bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 px-8 py-3"
+                                >
+                                    Lanjut
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Lanjut ke pilih analyst dan estimasi selesai
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </div>
             </div>
         </DashboardLayout>

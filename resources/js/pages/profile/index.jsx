@@ -23,6 +23,7 @@ export default function ProfilePage() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [signatureFile, setSignatureFile] = useState(null);
+  const [isNavigatingBack, setIsNavigatingBack] = useState(false);
 
   const { user } = useAuth();
   const { data: profileData, isLoading, error } = getProfile(user?.id);
@@ -30,6 +31,12 @@ export default function ProfilePage() {
   const handleEditClick = () => {
     setEditName(profileData?.name || "");
     setShowEditModal(true);
+  };
+
+  const handleBackClick = () => {
+    if (isNavigatingBack) return;
+    setIsNavigatingBack(true);
+    window.history.back();
   };
 
   const handleSaveName = async () => {
@@ -103,12 +110,9 @@ export default function ProfilePage() {
               <p className="text-sm opacity-90 mt-1">Ini adalah halaman profil Anda.</p>
             </div>
             <button
-              onClick={() => {
-                if (window.history.length > 1) {
-                  window.history.back();
-                } 
-              }}
-              className="px-4 py-2 bg-primary-hijauTerang text-primary-hijauTua hover:bg-primary-hijauTerang/80 rounded-lg transition text-sm font-medium"
+              onClick={handleBackClick}
+              disabled={isNavigatingBack}
+              className="px-4 py-2 bg-primary-hijauTerang text-primary-hijauTua hover:bg-primary-hijauTerang/80 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition text-sm font-medium"
             >
               ← Kembali
             </button>
