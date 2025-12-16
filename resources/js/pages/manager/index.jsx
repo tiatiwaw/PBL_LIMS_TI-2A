@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import Loading from "@/components/ui/loading";
 import { useDashboard } from "@/hooks/useManager";
+import { formatCurrency } from "@/utils/formatters";
 
 const CHART_CONFIG = {
     margin: { left: 40, top: 5, right: 30, bottom: 5 },
@@ -38,8 +39,6 @@ const CHART_CONFIG = {
         fontSize: "15px",
     },
 };
-
-const formatCurrency = (amount) => `Rp ${amount.toLocaleString()}`;
 
 const transformRevenueData = (chart = []) =>
     chart.map((item) => ({
@@ -86,10 +85,18 @@ const RevenueChart = ({ data }) => (
             <AreaChart data={data} margin={CHART_CONFIG.margin}>
                 <CartesianGrid strokeDasharray="3 8" stroke="#594f4fff" />
                 <XAxis dataKey="month" stroke={CHART_CONFIG.axis.stroke} />
-                <YAxis stroke={CHART_CONFIG.axis.stroke}>
-                    <YAxisLabel value="Total Pendapatan (IDR)" />
-                </YAxis>
-                <Tooltip contentStyle={CHART_CONFIG.tooltip} />
+
+                <YAxis
+                    stroke={CHART_CONFIG.axis.stroke}
+                    tickFormatter={formatCurrency}
+                    width={100}
+                ></YAxis>
+
+                <Tooltip
+                    contentStyle={CHART_CONFIG.tooltip}
+                    formatter={(value) => [formatCurrency(value), "Pendapatan"]}
+                />
+
                 <Line
                     type="monotone"
                     dataKey="penjualan"
@@ -150,6 +157,7 @@ export default function ManagerPage() {
 
     const revenueData = transformRevenueData(dashboard?.chart);
     const orderData = transformOrderData(dashboard?.chart);
+    console.log(revenueData);
 
     if (isLoading) {
         return (

@@ -23,15 +23,6 @@ export default function UserReportsManager() {
     const [selectedYear, setSelectedYear] = useState("all");
     const [selectedMonth, setSelectedMonth] = useState("all");
 
-    const handleMonthChange = (monthValue) => {
-        if (monthValue === "all") {
-            setSelectedMonth("all");
-        } else {
-            const monthNumber = parseInt(monthValue);
-            setSelectedMonth((monthNumber + 1).toString());
-        }
-    };
-
     const { data, isLoading, error } = useUserReports({
         year: selectedYear,
         month: selectedMonth,
@@ -68,7 +59,7 @@ export default function UserReportsManager() {
                 selectedMonth,
                 availableYears: meta.years || [],
                 onYearChange: setSelectedYear,
-                onMonthChange: handleMonthChange,
+                onMonthChange: setSelectedMonth,
                 onClearFilters: handleClearFilters,
                 onExport: () => exportUsersReport(data),
             }}
@@ -165,10 +156,10 @@ export default function UserReportsManager() {
                             title="Aktivitas Pelanggan"
                             badgeText="Order Terbanyak"
                             columns={[
-                                { label: "Nama Klien", key: "client_name" },
+                                { label: "Nama Klien", key: "name" },
                                 {
                                     label: "Total Order",
-                                    key: "total_order",
+                                    key: "orders",
                                     align: "right",
                                 },
                             ]}
