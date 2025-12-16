@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 // AUTH
-use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\API\V1\AuthController;
 use App\Http\Controllers\API\V1\OrderController;
 use App\Http\Controllers\API\V1\Profile\ProfileDetailController;
 
