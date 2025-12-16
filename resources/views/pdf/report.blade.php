@@ -148,9 +148,9 @@
         <table style="border: none; width: 100%; margin-top: 30px;">
             <tr style="border: none;">
                 <td style="border: none; width: 50%; text-align: center; vertical-align: top;">
-                    <div style="min-height: 80px; border-bottom: 1px solid #000; margin-bottom: 5px;">
+                    <div style="min-height: 120px; border-bottom: 1px solid #000; margin-bottom: 5px;">
                         @if($supervisor && $supervisor->signature)
-                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/' . $supervisor->signature))) }}" style="max-width: 100px; max-height: 60px;" />
+                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/' . $supervisor->signature))) }}" style="max-width: 150px; max-height: 100px;" />
                         @endif
                     </div>
                     <p style="margin: 0; font-weight: bold; font-size: 11px;">Supervisor Laboratorium</p>
@@ -160,9 +160,9 @@
                     @endif
                 </td>
                 <td style="border: none; width: 50%; text-align: center; vertical-align: top;">
-                    <div style="min-height: 80px; border-bottom: 1px solid #000; margin-bottom: 5px;">
+                    <div style="min-height: 120px; border-bottom: 1px solid #000; margin-bottom: 5px;">
                         @if($manager && $manager->signature)
-                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/' . $manager->signature))) }}" style="max-width: 100px; max-height: 60px;" />
+                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/' . $manager->signature))) }}" style="max-width: 150px; max-height: 100px;" />
                         @endif
                     </div>
                     <p style="margin: 0; font-weight: bold; font-size: 11px;">Manager Laboratorium</p>
