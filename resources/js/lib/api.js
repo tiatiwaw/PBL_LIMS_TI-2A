@@ -1,7 +1,8 @@
 import axios from "axios";
 
+const appUrl = import.meta.env.APP_URL || window.location.origin;
 const api = axios.create({
-    baseURL: "http://localhost:8000/api/v1",
+    baseURL: `${appUrl}/api/v1`,
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
