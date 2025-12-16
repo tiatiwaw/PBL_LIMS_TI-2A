@@ -118,7 +118,7 @@ export default function ManagerDetailOrder() {
             <div className="max-w-7xl mx-auto space-y-6">
                 <OrderDetailHeader 
                     order={order} 
-                    backRoute="/manager/report_validations"
+                    backRoute="/manager/report-validations"
                 />
 
                 <ClientInfoCard client={order.clients} />
