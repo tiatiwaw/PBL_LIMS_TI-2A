@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     Users,
     UserCheck,
@@ -7,62 +8,57 @@ import {
     ShieldAlert,
 } from "lucide-react";
 import { useUserReports } from "@/hooks/useAdmin";
-import { useReportFilters } from "@/hooks/useReportFilters";
-import { useUsersAnalytics } from "@/hooks/analytics/useUsersAnalytics";
 import {
     DistributionPieChart,
     KPICard,
     RankingBarChart,
     SimpleBarChart,
     SummaryTable,
+    TrendLineChart,
 } from "@/components/shared/admin/report-components";
 import ReportLayout from "@/components/layouts/report-layout";
 import { exportUsersReport } from "@/utils/excel/export/users-report";
 
 export default function UserReportDashboard() {
-    const { data: apiData, isLoading, error } = useUserReports();
-    const { users = [], orders = [] } = apiData || {};
+    const [selectedYear, setSelectedYear] = useState("all");
+    const [selectedMonth, setSelectedMonth] = useState("all");
 
-    const filters = useReportFilters(
-        [users, orders],
-        ["created_at", "order_date"]
-    );
-    const isAllPeriod =
-        filters.selectedYear === "all" && filters.selectedMonth === "all";
+    const { data, isLoading, error } = useUserReports({
+        year: selectedYear,
+        month: selectedMonth,
+    });
 
-    const analytics = useUsersAnalytics(
-        apiData,
-        filters.dateFilter,
-        isAllPeriod
-    );
+    const kpi = data?.kpi || {};
+    const charts = data?.charts || {};
+    const meta = data?.meta || {};
 
-    const analystTableData = analytics.analystActivityData.map((i) => ({
-        name: i.name,
-        value: i.tests,
-    }));
-    const clientTableData = analytics.clientRankingData.map((i) => ({
-        name: i.name,
-        value: i.orders,
-    }));
+    const handleClearFilters = () => {
+        setSelectedYear("all");
+        setSelectedMonth("all");
+    };
 
-    const handleExport = () => exportUsersReport(analytics);
+    const handleExport = () => exportUsersReport(data);
 
     return (
         <ReportLayout
             title="Laporan Pengguna"
             headerTitle="Laporan Pengguna"
-            subtitle="Wawasan detail mengenai keterlibatan pengguna & kinerja tim."
+            subtitle={
+                !isLoading
+                    ? `Menampilkan data dari ${kpi.total_pengguna || 0} Pengguna.`
+                    : "Memuat data..."
+            }
             isLoading={isLoading}
             error={error}
-            hasData={analytics.totalNonAdmins > 0}
+            hasData={kpi.total_karyawan_non_admin > 0}
             filterProps={{
-                selectedYear: filters.selectedYear,
-                selectedMonth: filters.selectedMonth,
-                availableYears: filters.availableYears,
-                onYearChange: filters.setSelectedYear,
-                onMonthChange: filters.setSelectedMonth,
-                onClearFilters: filters.clearFilters,
-                onExport: handleExport,
+                selectedYear,
+                selectedMonth,
+                availableYears: meta.years || [],
+                onYearChange: setSelectedYear,
+                onMonthChange: setSelectedMonth,
+                onClearFilters: handleClearFilters,
+                onExport: () => exportUsersReport(data),
             }}
             emptyStateIcon={Users}
             kpiContent={
@@ -70,96 +66,110 @@ export default function UserReportDashboard() {
                     <KPICard
                         icon={Microscope}
                         title="Total Analis"
-                        value={analytics.totalAnalysts}
+                        value={kpi.total_analyst}
                         subtitle="Pengguna role Analyst"
                         delay={0.1}
                     />
                     <KPICard
                         icon={Users}
                         title="Total Pelanggan"
-                        value={analytics.totalClients}
+                        value={kpi.total_client}
                         subtitle="Pengguna role Client"
                         delay={0.2}
                     />
                     <KPICard
                         icon={ShoppingBag}
                         title="Top Pelanggan"
-                        value={analytics.topClient.name}
-                        subtitle={`${analytics.topClient.orders} Order`}
+                        value={kpi.top_client?.name || "-"}
+                        subtitle={`${kpi.top_client?.orders || 0} Order`}
                         delay={0.3}
                     />
                     <KPICard
                         icon={UserCheck}
                         title="Top Analis"
-                        value={analytics.topAnalyst.name}
-                        subtitle={`${analytics.topAnalyst.tests} Sampel`}
+                        value={kpi.top_analyst?.name || "-"}
+                        subtitle={`${kpi.top_analyst?.samples || 0} Sampel`}
                         delay={0.4}
                     />
                     <KPICard
                         icon={Activity}
                         title="Rerata Tim / Order"
-                        value={analytics.avgAnalystsPerOrder}
+                        value={kpi.avg_analyst_per_order}
                         subtitle="Analis per order"
                         delay={0.5}
                     />
                     <KPICard
                         icon={ShieldAlert}
                         title="Total User (Non-Admin)"
-                        value={analytics.totalNonAdmins}
-                        subtitle="Client, Analyst, dll"
+                        value={kpi.total_karyawan_non_admin}
+                        subtitle="Analyst, dll"
                         delay={0.6}
                     />
                 </>
             }
             chartContent={
-                <>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <RankingBarChart
-                            title="Top Pelanggan (Volume Order)"
-                            data={analytics.clientRankingData}
-                            dataKey="orders"
-                            className="col-span-1 lg:col-span-2"
-                            delay={0.1}
-                        />
-                        <DistributionPieChart
-                            title="Distribusi Role Pengguna"
-                            data={analytics.roleDistribution}
-                            delay={0.2}
-                        />
-                    </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* LINE CHART – TREND USER */}
+                    <TrendLineChart
+                        title={`Tren Registrasi User (${
+                            selectedYear === "all"
+                                ? "Tahunan"
+                                : `Bulanan - ${selectedYear}`
+                        })`}
+                        data={charts.trend || []}
+                        dataKey="count"
+                        className="lg:col-span-3"
+                        delay={0.1}
+                    />
 
+                    {/* BAR CHART – TRAINING ANALYST */}
                     <SimpleBarChart
-                        title="Keterlibatan Analis (Jumlah Sampel Ditangani)"
-                        data={analytics.analystActivityData}
-                        categoryKey="name"
-                        dataKey="tests"
-                        color="#2CACAD"
+                        title="Training Terbanyak oleh Analis"
+                        data={
+                            (charts.training_analyst || []).map((item) => ({
+                                name: item.name,
+                                value: item.total_training,
+                            })) || []
+                        }
+                        dataKey="value"
+                        className="lg:col-span-3"
+                        delay={0.2}
+                    />
+
+                    {/* PIE CHART – KADALUARSA SERTIFIKAT */}
+                    <DistributionPieChart
+                        title="Status Sertifikat Analis"
+                        data={[
+                            { name: "Expired", value: charts.certificate_expiration?.expired || 0 },
+                            { name: "Near Expired (<30 hari)", value: charts.certificate_expiration?.near_expired || 0 },
+                            { name: "Valid", value: charts.certificate_expiration?.valid || 0 },
+                        ]}
                         delay={0.3}
                     />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <SummaryTable
-                            title="Performa Analis"
-                            badgeText="Top 5"
-                            columns={[
-                                { label: "Nama Analis" },
-                                { label: "Total Sampel", align: "right" },
-                            ]}
-                            data={analystTableData}
-                            emptyMessage="Tidak ada aktivitas analis"
-                        />
-                        <SummaryTable
-                            title="Aktivitas Pelanggan"
-                            badgeText="Order Terbanyak"
-                            columns={[
-                                { label: "Nama Klien" },
-                                { label: "Total Order", align: "right" },
-                            ]}
-                            data={clientTableData}
-                            emptyMessage="Tidak ada aktivitas order"
-                        />
-                    </div>
-                </>
+                    {/* TABEL DETAIL TRAINING & SERTIFIKAT */}
+                    <SummaryTable
+                        title="Detail Pelatihan & Kadaluarsa Sertifikat"
+                        columns={[
+                            { key: "analyst_name", label: "Nama Analis" },
+                            { key: "training_name", label: "Nama Pelatihan" },
+                            { key: "training_date", label: "Tanggal Pelatihan" },
+                            { key: "expires_at", label: "Kadaluarsa" },
+                            { key: "status", label: "Status" },
+                        ]}
+                        data={(charts.certificate_detail || []).map((row) => ({
+                            ...row,
+                            status:
+                                row.status === "expired"
+                                    ? "Kadaluarsa"
+                                    : row.status === "near_expired"
+                                    ? "Segera Kadaluarsa"
+                                    : "Aktif",
+                        }))}
+                        className="lg:col-span-3"
+                        delay={0.4}
+                    />
+                </div>
             }
         />
     );
