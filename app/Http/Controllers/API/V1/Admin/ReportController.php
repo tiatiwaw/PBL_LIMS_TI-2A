@@ -366,13 +366,10 @@ class ReportController extends Controller
         $year = $request->input('year');
         $month = $request->input('month');
 
-        // Filter untuk Registrasi User (KPI Count & Trend)
         $userRegistrationQuery = User::query()
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('created_at', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('created_at', $month));
 
-        // Filter untuk Aktivitas (Order & Analyst Performance)
-        // Gunakan Closure agar bisa digunakan berulang pada query Orders
         $activityFilter = function ($query) use ($year, $month) {
             if ($year && $year !== 'all') {
                 $query->whereYear('orders.order_date', $year);
@@ -382,7 +379,6 @@ class ReportController extends Controller
             }
         };
 
-        // --- KPI Counts (Berdasarkan Filter Registrasi) ---
         $filteredAllIds = $userRegistrationQuery->pluck('id');
         $filteredClientIds = (clone $userRegistrationQuery)->where('role', 'client')->pluck('id');
         $filteredAnalystIds = (clone $userRegistrationQuery)->where('role', 'analyst')->pluck('id');
@@ -394,8 +390,6 @@ class ReportController extends Controller
             ->whereNotIn('role', ['admin', 'client'])
             ->count();
 
-        // --- Client Ranking (Berdasarkan Aktivitas Order) ---
-        // Top client dihitung dari order di bulan tersebut, BUKAN kapan client daftar.
         $clientRanking = Order::with(['clients.users'])
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('order_date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('order_date', $month))
@@ -416,7 +410,6 @@ class ReportController extends Controller
         $clientActivityTableData = $clientRankingData;
         $topClientData = $clientRankingData->first() ?? ['name' => '-', 'orders' => 0];
 
-        // --- Role Distribution (Berdasarkan User yang Terdaftar di Filter Ini) ---
         $roleDistribution = User::whereIn('id', $filteredAllIds)
             ->select('role', DB::raw('COUNT(*) as value'))
             ->groupBy('role')
@@ -424,11 +417,9 @@ class ReportController extends Controller
             ->map(fn($i) => ['name' => ucfirst($i->role), 'value' => $i->value])
             ->values();
 
-        // --- Analyst Activity (Berdasarkan Sampel yang Dikerjakan di Bulan Ini) ---
         $analystActivity = DB::table('n_analysts')
             ->join('users', 'n_analysts.analyst_id', '=', 'users.id')
             ->join('orders', 'n_analysts.order_id', '=', 'orders.id')
-            ->where($activityFilter) // Filter berdasarkan tanggal order
             ->select('users.id', 'users.name', DB::raw('COUNT(n_analysts.id) as total_samples'))
             ->groupBy('users.id', 'users.name')
             ->orderByDesc('total_samples')
@@ -448,8 +439,6 @@ class ReportController extends Controller
             ? ['name' => $analystActivityData->first()['name'], 'samples' => $analystActivityData->first()['tests']]
             : ['name' => '-', 'samples' => 0];
 
-        // --- Rerata Analis per Order ---
-        // Hitung berdasarkan order yang ada di periode ini
         $ordersFiltered = Order::query()
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('order_date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('order_date', $month));
@@ -459,7 +448,6 @@ class ReportController extends Controller
 
         $avgSamplesPerOrder = $totalOrdersInPeriod > 0 ? round($totalSamplesInPeriod / $totalOrdersInPeriod, 2) : 0;
 
-        // --- Trend Registrasi User ---
         $yearsAvailable = User::selectRaw('YEAR(created_at) as year')
             ->distinct()
             ->orderByDesc('year')
@@ -490,12 +478,10 @@ class ReportController extends Controller
                 ]);
         }
 
-        // --- Training Activity (Filter by Training Date, bukan User Join Date) ---
         $trainingAnalyst = DB::table('analysts')
             ->leftJoin('n_training_analysts', 'analysts.id', '=', 'n_training_analysts.analyst_id')
             ->leftJoin('trainings', 'n_training_analysts.training_id', '=', 'trainings.id')
             ->join('users', 'analysts.user_id', '=', 'users.id')
-            // Filter training date
             ->when($year && $year !== 'all', fn($q) => $q->whereYear('trainings.date', $year))
             ->when($month && $month !== 'all', fn($q) => $q->whereMonth('trainings.date', $month))
             ->select('analysts.name', DB::raw('COUNT(trainings.id) as total_training'))
@@ -509,8 +495,6 @@ class ReportController extends Controller
                 'total_training' => (int)$i->total_training
             ]);
 
-        // --- Certificate Status (Show ALL active analysts status, ignore date filter for validity) ---
-        // Sertifikat ditampilkan semua status terbarunya agar admin tau mana yang expired
         $trainingCerts = DB::table('n_training_analysts')
             ->join('trainings', 'n_training_analysts.training_id', '=', 'trainings.id')
             ->join('analysts', 'n_training_analysts.analyst_id', '=', 'analysts.id')
@@ -562,7 +546,6 @@ class ReportController extends Controller
                 'certificate_expiration' => $certificateSummary,
                 'certificate_detail' => $trainingCerts->values()
             ],
-            // Data Flat untuk Export Excel (Sesuai JS Export)
             'sortedClients' => $clientRankingData,
             'sortedAnalysts' => $analystActivityData,
             'totalAnalysts' => $totalAnalyst,
@@ -585,6 +568,7 @@ class ReportController extends Controller
 
         $query = Order::with([
             'clients',
+            'analysesMethods'
         ])->where('status', '!=', 'disapproved');
 
         if ($year && $year !== 'all') {
@@ -596,12 +580,21 @@ class ReportController extends Controller
 
         $orders = $query->orderBy('order_date', 'desc')->get();
 
+        $trendMap = [];
+        if ($year && $year !== 'all') {
+            $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            foreach ($months as $m) {
+                $trendMap[$m] = 0;
+            }
+        }
+
         $totalRevenue = 0;
         $maxSingleOrderRevenue = 0;
         $clientRevenueMap = [];
         $methodStats = [];
-        $trendMap = [];
         $orderTypeRevenueMap = [];
+
+        $detailedOrdersCollection = collect();
 
         foreach ($orders as $order) {
             $orderRevenue = 0;
@@ -609,7 +602,6 @@ class ReportController extends Controller
 
             foreach ($order->analysesMethods as $method) {
                 $price = (float) ($method->pivot->price ?? 0);
-
                 $methodName = $method->name ?? $method->analyses_method ?? $method->pivot->description ?? 'Unknown Method';
 
                 $orderRevenue += $price;
@@ -622,7 +614,6 @@ class ReportController extends Controller
             }
 
             $totalRevenue += $orderRevenue;
-
             if ($orderRevenue > $maxSingleOrderRevenue) {
                 $maxSingleOrderRevenue = $orderRevenue;
             }
@@ -647,7 +638,18 @@ class ReportController extends Controller
                 $trendMap[$trendKey] = 0;
             }
             $trendMap[$trendKey] += $orderRevenue;
+
+            $detailedOrdersCollection->push([
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'client_name' => $clientName,
+                'order_type' => $order->order_type,
+                'order_date' => $order->order_date,
+                'method_count' => $order->analysesMethods->count(),
+                'revenue' => $orderRevenue
+            ]);
         }
+
 
         arsort($clientRevenueMap);
         $topClientName = array_key_first($clientRevenueMap);
@@ -662,11 +664,11 @@ class ReportController extends Controller
         $trendChart = [];
         foreach ($trendMap as $key => $value) {
             $trendChart[] = [
-                'name' => ($year === 'all') ? (string)$key : substr($key, 0, 3),
                 'fullName' => (string)$key,
                 'revenue' => $value
             ];
         }
+
         if ($year === 'all') {
             usort($trendChart, fn($a, $b) => $a['name'] <=> $b['name']);
         }
@@ -693,24 +695,7 @@ class ReportController extends Controller
             ->filter()
             ->values();
 
-        $detailedOrders = $orders->map(function ($order) {
-            $revenue = 0;
-            foreach ($order->analysesMethods as $m) {
-                $revenue += (float) ($m->pivot->price ?? 0);
-            }
-
-            return [
-                'id' => $order->id,
-                'order_number' => $order->order_number,
-                'client_name' => $order->clients->name ?? '-',
-                'order_type' => $order->order_type,
-                'order_date' => $order->order_date,
-                'method_count' => $order->analysesMethods->count(),
-                'revenue' => $revenue
-            ];
-        })
-            ->sortByDesc('revenue')
-            ->values();;
+        $sortedDetailedOrders = $detailedOrdersCollection->sortByDesc('revenue')->values();
 
         return response()->json([
             'meta' => ['years' => $yearsAvailable],
@@ -738,7 +723,7 @@ class ReportController extends Controller
                 'method_distribution' => $methodDistribution,
                 'method_revenue' => $methodRevenueChart
             ],
-            'orders' => $detailedOrders
+            'orders' => $sortedDetailedOrders
         ]);
     }
 }

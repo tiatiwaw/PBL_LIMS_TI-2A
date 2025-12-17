@@ -585,6 +585,7 @@ class ReportController extends Controller
 
         $query = Order::with([
             'clients',
+            'analysesMethods'
         ])->where('status', '!=', 'disapproved');
 
         if ($year && $year !== 'all') {
@@ -596,12 +597,21 @@ class ReportController extends Controller
 
         $orders = $query->orderBy('order_date', 'desc')->get();
 
+        $trendMap = [];
+        if ($year && $year !== 'all') {
+            $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            foreach ($months as $m) {
+                $trendMap[$m] = 0;
+            }
+        }
+
         $totalRevenue = 0;
         $maxSingleOrderRevenue = 0;
         $clientRevenueMap = [];
         $methodStats = [];
-        $trendMap = [];
         $orderTypeRevenueMap = [];
+
+        $detailedOrdersCollection = collect();
 
         foreach ($orders as $order) {
             $orderRevenue = 0;
@@ -609,7 +619,6 @@ class ReportController extends Controller
 
             foreach ($order->analysesMethods as $method) {
                 $price = (float) ($method->pivot->price ?? 0);
-
                 $methodName = $method->name ?? $method->analyses_method ?? $method->pivot->description ?? 'Unknown Method';
 
                 $orderRevenue += $price;
@@ -622,7 +631,6 @@ class ReportController extends Controller
             }
 
             $totalRevenue += $orderRevenue;
-
             if ($orderRevenue > $maxSingleOrderRevenue) {
                 $maxSingleOrderRevenue = $orderRevenue;
             }
@@ -647,7 +655,18 @@ class ReportController extends Controller
                 $trendMap[$trendKey] = 0;
             }
             $trendMap[$trendKey] += $orderRevenue;
+
+            $detailedOrdersCollection->push([
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'client_name' => $clientName,
+                'order_type' => $order->order_type,
+                'order_date' => $order->order_date,
+                'method_count' => $order->analysesMethods->count(),
+                'revenue' => $orderRevenue
+            ]);
         }
+
 
         arsort($clientRevenueMap);
         $topClientName = array_key_first($clientRevenueMap);
@@ -662,11 +681,11 @@ class ReportController extends Controller
         $trendChart = [];
         foreach ($trendMap as $key => $value) {
             $trendChart[] = [
-                'name' => ($year === 'all') ? (string)$key : substr($key, 0, 3),
                 'fullName' => (string)$key,
                 'revenue' => $value
             ];
         }
+
         if ($year === 'all') {
             usort($trendChart, fn($a, $b) => $a['name'] <=> $b['name']);
         }
@@ -693,22 +712,7 @@ class ReportController extends Controller
             ->filter()
             ->values();
 
-        $detailedOrders = $orders->map(function ($order) {
-            $revenue = 0;
-            foreach ($order->analysesMethods as $m) {
-                $revenue += (float) ($m->pivot->price ?? 0);
-            }
-
-            return [
-                'id' => $order->id,
-                'order_number' => $order->order_number,
-                'client_name' => $order->clients->name ?? '-',
-                'order_type' => $order->order_type,
-                'order_date' => $order->order_date,
-                'method_count' => $order->analysesMethods->count(),
-                'revenue' => $revenue
-            ];
-        });
+        $sortedDetailedOrders = $detailedOrdersCollection->sortByDesc('revenue')->values();
 
         return response()->json([
             'meta' => ['years' => $yearsAvailable],
@@ -736,7 +740,7 @@ class ReportController extends Controller
                 'method_distribution' => $methodDistribution,
                 'method_revenue' => $methodRevenueChart
             ],
-            'orders' => $detailedOrders
+            'orders' => $sortedDetailedOrders
         ]);
     }
 }

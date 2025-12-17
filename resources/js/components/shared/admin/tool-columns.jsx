@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import ActionColumn from "../tabel/action-column";
 import {
+    getEquipmentCalibrationVariant,
     getEquipmentStatusLabel,
     getEquipmentStatusVariant,
     getOrderTypeVariant,
@@ -22,7 +23,7 @@ export const getEquipmentsColumns = ({ onShowDetail }) => [
             const value = row.calibration_schedule;
             return (
                 <Badge
-                    variant={getOrderTypeVariant(value) || "outline"}
+                    variant={getEquipmentCalibrationVariant(value) || "outline"}
                     className="capitalize"
                 >
                     {value}

@@ -73,6 +73,10 @@ const VARIANTS = {
         maintenance: "warning",
         broken: "error",
     },
+    equipmentCalibration: {
+        eksternal: "warning",
+        internal: "success",
+    },
     categoryType: {
         kimia: "success",
         mikrobiologi: "info",
@@ -149,3 +153,5 @@ export const getConditionTypeVariant = (type) =>
     getValue(VARIANTS, "conditionType", type);
 export const getTemperatureTypeVariant = (type) =>
     getValue(VARIANTS, "temperatureType", type);
+export const getEquipmentCalibrationVariant = (type) =>
+    getValue(VARIANTS, "equipmentCalibration", type);
