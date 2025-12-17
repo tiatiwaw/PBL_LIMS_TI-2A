@@ -23,15 +23,15 @@ class NTrainingAnalystSeeder extends Seeder
                 'training_id' => 2,
             ],
             [
-                'analyst_id'  => 2,
+                'analyst_id'  => 1,
                 'training_id' => 2,
             ],
             [
-                'analyst_id'  => 2,
+                'analyst_id'  => 1,
                 'training_id' => 3,
             ],
             [
-                'analyst_id'  => 3,
+                'analyst_id'  => 1,
                 'training_id' => 4,
             ],
         ];

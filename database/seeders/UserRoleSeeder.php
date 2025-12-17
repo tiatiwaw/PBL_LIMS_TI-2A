@@ -38,7 +38,7 @@ class UserRoleSeeder extends Seeder
                 'name'              => $data['name'],
                 'email'             => $data['email'],
                 'password'          => Hash::make($data['password']),
-                'remember_token'    => Str::random(10),
+                'remember_token'    => Str::random(15),
                 'signature'         => 'signatures/default.png',
                 'email_verified_at' => now(),
                 'role' => $role,
@@ -47,13 +47,18 @@ class UserRoleSeeder extends Seeder
             $user->assignRole($role);
         }
 
-        // 3️⃣ USER DUMMY SETIAP ROLE
-        foreach ($roles as $role) {
-            $dummyUsers = User::factory(5)->create(['role' => $role]);
+        // // 3️⃣ USER DUMMY SETIAP ROLE
+        // foreach ($roles as $role) {
+        //     $dummyUsers = User::factory(5)->create(['role' => $role]);
+        //     foreach ($dummyUsers as $user) {
+        //         $user->assignRole($role);
+        //     }
+        // }
+
+         $dummyUsers = User::factory(10)->create(['role' => 'client']);
             foreach ($dummyUsers as $user) {
-                $user->assignRole($role);
+                $user->assignRole('client');
             }
-        }
 
         // 4️⃣ OUTPUT INFORMASI KE TERMINAL
         $this->command->info("🎉 UserRoleSeeder completed!");

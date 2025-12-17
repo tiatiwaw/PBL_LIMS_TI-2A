@@ -31,7 +31,7 @@ class NAnalystSeeder extends Seeder
         // Tugaskan 1 atau 2 analis acak ke setiap order yang valid
         foreach ($validOrders as $order) {
             // Ambil 1 atau 2 ID analis secara acak
-            $randomAnalysts = $analysts->random(rand(1, 2))->pluck('id');
+            $randomAnalysts = $analysts->pluck('id');
 
             // Gunakan Eloquent relationship untuk mengisi tabel pivot
             $order->analysts()->attach($randomAnalysts);
