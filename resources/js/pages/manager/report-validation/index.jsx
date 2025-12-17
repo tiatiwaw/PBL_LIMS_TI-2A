@@ -34,6 +34,7 @@ export default function ReportValidationPage({ auth }) {
                 columns={columns}
                 loading={loading}
                 showFilter={true}
+                showCreate={false}
                 filterColumn="order_type"
                 filterOptions={[
                     { value: "all", label: "Semua" },
