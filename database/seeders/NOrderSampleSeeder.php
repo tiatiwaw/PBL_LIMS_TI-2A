@@ -33,23 +33,18 @@ class NOrderSampleSeeder extends Seeder
         $sampleIndex = 0;
         $sampleCount = count($samples);
 
-        // Assign samples dengan strategi: setiap sample hanya digunakan sekali
+        // Assign samples ke semua orders dengan cycling
         foreach ($orders as $order) {
             // Tentukan jumlah sample per order (1-3 samples)
             $samplesPerOrder = rand(1, 3);
 
-            // Pastikan kita tidak kehabisan sample
-            if ($sampleIndex + $samplesPerOrder > $sampleCount) {
-                $samplesPerOrder = $sampleCount - $sampleIndex;
-            }
-
-            // Jika sudah tidak ada sample tersisa, stop
-            if ($samplesPerOrder <= 0) {
-                break;
-            }
-
-            // Ambil sample berikutnya dari pool yang belum digunakan
+            // Ambil sample dan cycle jika perlu
             for ($i = 0; $i < $samplesPerOrder; $i++) {
+                // Cycle kembali ke awal jika sudah habis
+                if ($sampleIndex >= $sampleCount) {
+                    $sampleIndex = 0;
+                }
+
                 $currentSample = $samples[$sampleIndex];
 
                 NOrderSample::create([
@@ -62,6 +57,6 @@ class NOrderSampleSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ NOrderSampleSeeder berhasil dijalankan! Semua sample unik per order.');
+        $this->command->info('✅ NOrderSampleSeeder berhasil dijalankan! Semua order telah mendapatkan sample.');
     }
 }
