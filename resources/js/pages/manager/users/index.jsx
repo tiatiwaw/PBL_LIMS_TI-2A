@@ -4,7 +4,7 @@ import UserDetailSheet from "@/components/shared/sheet/user-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
 import { useEmployees } from "@/hooks/useManager";
-import { FILTER_OPTIONS } from "@/utils/constant/users";
+import { FILTER_OPTIONS_MANAGER } from "@/utils/constant/users";
 import { useMemo, useState } from "react";
 
 export default function ManagerUsersPage() {
@@ -48,7 +48,7 @@ export default function ManagerUsersPage() {
                 columns={columns}
                 showFilter={true}
                 filterColumn="role"
-                filterOptions={FILTER_OPTIONS}
+                filterOptions={FILTER_OPTIONS_MANAGER}
                 showCreate={false}
             />
             <UserDetailSheet
