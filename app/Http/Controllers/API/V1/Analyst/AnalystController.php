@@ -25,19 +25,27 @@ class AnalystController extends Controller
     public function dashboard(Request $request): JsonResponse
     {
         $analyst = $this->analyst();
-        $orders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->analyst->id));
-        $pendingOrders = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->analyst->id))->where('status', 'paid');
+        $baseQuery = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->analyst->id));
         $stats = [
-            'pendingOrder' => $pendingOrders->count(),
-            'processedOrder' => $orders->where('status', 'in_progress')->count(),
-            'completedOrder' => $orders->where('status', 'completed')->count(),
+            // Menghitung status 'paid' dari base query
+            'pendingOrder' => (clone $baseQuery)->where('status', 'paid')->count(),
+            
+            // Menghitung status 'in_progress' dari base query
+            'processedOrder' => (clone $baseQuery)->where('status', 'in_progress')->count(),
+            
+            // Menghitung status 'completed' dari base query
+            'completedOrder' => (clone $baseQuery)->where('status', 'completed')->count(),
         ];
+
+        $pendingOrders = (clone $baseQuery)
+            ->where('status', 'paid')
+            ->latest()
+            ->take(5)
+            ->get();
 
         return response()->json([
             'analyst' => $analyst,
-            'orders' => $pendingOrders->latest()
-                ->take(5)
-                ->get(),
+            'orders' => $pendingOrders,
             'stats' => $stats,
         ]);
     }
@@ -109,16 +117,14 @@ class AnalystController extends Controller
 
             foreach ($validated['results'] as $result) {
                 // 1️⃣ Update n_parameter_method yang spesifik dengan result dan status success
-                NParameterMethod::where('status', '!=', 'failed')
-                    ->where('sample_id', $result['sample_id'])
+                NParameterMethod::where('sample_id', $result['sample_id'])
                     ->where('test_parameter_id', $result['parameter']['id'])
                     ->update(['result' => $result['result'], 'status' => 'success']);
 
                 // 2️⃣ Update status sample
                 $sample = Sample::findOrFail($result['sample_id']);
-                $totalParams = NParameterMethod::where('status', '!=', 'failed')->where('sample_id', $sample->id)->count();
-                $allDone = NParameterMethod::where('status', '!=', 'failed')
-                    ->where('sample_id', $sample->id)
+                $totalParams = NParameterMethod::where('sample_id', $sample->id)->count();
+                $allDone = NParameterMethod::where('sample_id', $sample->id)
                     ->whereNotNull('result')
                     ->count();
 
