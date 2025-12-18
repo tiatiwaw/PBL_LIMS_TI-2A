@@ -439,7 +439,7 @@ export default function OrderDetail({ orderId }) {
                                                         openSection === `metode-${sample.id}` ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
                                                     }`}
                                                 >
-                                                    <ul className="text-sm text-gray-600 list-disc ml-6 pb-3 pt-1">
+                                                    <ul className="text-sm text-gray-600 list-disc ml-6 pb-3 pt-1 overflow-auto">
                                                         {sample.test_method.map((m, key) => (
                                                             <li key={key}>{m.name}</li>
                                                         ))}

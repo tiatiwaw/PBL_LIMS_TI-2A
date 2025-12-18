@@ -29,7 +29,7 @@ class AnalystController extends Controller
         $stats = [
             'pendingOrder' => (clone $baseQuery)->where('status', 'paid')->count(),
             'processedOrder' => (clone $baseQuery)->where('status', 'in_progress')->count(),
-            'completedOrder' => (clone $baseQuery)->where('status', 'completed')->count(),
+            'completedOrder' => (clone $baseQuery)->where('status', 'received_test')->count(),
         ];
 
         $pendingOrders = (clone $baseQuery)
