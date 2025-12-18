@@ -157,7 +157,6 @@ export default function ManagerPage() {
 
     const revenueData = transformRevenueData(dashboard?.chart);
     const orderData = transformOrderData(dashboard?.chart);
-    console.log(revenueData);
 
     if (isLoading) {
         return (

@@ -21,7 +21,7 @@ import ActionSupervisorDialog from "@/components/shared/dialog/action-supervisor
 import { toast } from "sonner";
 
 export default function ManagerDetailOrder() {
-    const { id } = usePage().props;
+    const { id, canValidate } = usePage().props;
     const { data: orderRes, isLoading, error } = useManagerOrder(id);
     const {
         update,
@@ -116,8 +116,8 @@ export default function ManagerDetailOrder() {
     return (
         <DashboardLayout title="Detail Order" header="Detail Order">
             <div className="max-w-7xl mx-auto space-y-6">
-                <OrderDetailHeader 
-                    order={order} 
+                <OrderDetailHeader
+                    order={order}
                     backRoute="/manager/report-validations"
                 />
 
@@ -213,14 +213,14 @@ export default function ManagerDetailOrder() {
                     </div>
                 ) : null}
 
-                {(order.status === "pending" ||
-                    order.status === "completed") && (
-                    <OrderValidation
-                        status={order.status}
-                        onValidationAction={handleValidate}
-                        isLoading={isValidating}
-                    />
-                )}
+                {(order.status === "pending" || order.status === "completed") &&
+                    canValidate && (
+                        <OrderValidation
+                            status={order.status}
+                            onValidationAction={handleValidate}
+                            isLoading={isValidating}
+                        />
+                    )}
 
                 <ActionSupervisorDialog
                     action={dialogConfig.action}

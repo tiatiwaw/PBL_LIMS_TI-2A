@@ -94,6 +94,7 @@ Route::middleware(['auth', 'role:manager'])
             Route::get('/{id}', function ($id) {
                 return Inertia::render('manager/detail/index', [
                     'id' => $id,
+                    'canValidate' => true,
                 ]);
             })->name('show');
         });
@@ -105,6 +106,7 @@ Route::middleware(['auth', 'role:manager'])
             Route::get('/{id}', function ($id) {
                 return Inertia::render('manager/detail/index', [
                     'id' => $id,
+                    'canValidate' => false,
                 ]);
             })->name('show');
         });
