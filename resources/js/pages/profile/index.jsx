@@ -677,3 +677,71 @@ function ModalPortal({ children, onClose, title }) {
         </motion.div>
     );
 }
+
+function EditEmailModal({ email, setEmail, password, setPassword, onSave, onClose, isLoading }) {
+  return (
+    <BaseModal title="Ubah Email" onClose={onClose}>
+      <div className="mb-4">
+        <label className="block text-sm mb-2 font-medium text-slate-700">Email Baru</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full border px-3 py-2 rounded-lg bg-slate-50 focus:ring-2 focus:ring-primary-hijauMuda outline-none"
+          placeholder="Masukkan email baru"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm mb-2 font-medium text-slate-700">Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full border px-3 py-2 rounded-lg bg-slate-50 focus:ring-2 focus:ring-primary-hijauMuda outline-none"
+          placeholder="Masukkan password untuk konfirmasi"
+        />
+      </div>
+      <div className="flex justify-end gap-3 mt-4">
+        <button onClick={onClose} className="px-4 py-2 rounded-lg border text-slate-600 hover:bg-slate-100">
+          Batal
+        </button>
+        <button
+          onClick={onSave}
+          disabled={isLoading}
+          className="px-4 py-2 rounded-lg bg-primary-hijauMuda text-white shadow hover:scale-105 transition disabled:opacity-50"
+        >
+          {isLoading ? "Menyimpan" : "Simpan"}
+        </button>
+      </div>
+    </BaseModal>
+  );
+}
+
+function EditPhoneModal({ phone, setPhone, onSave, onClose, isLoading }) {
+  return (
+    <BaseModal title="Ubah Nomor Telepon" onClose={onClose}>
+      <div className="mb-4">
+        <label className="block text-sm mb-2 font-medium text-slate-700">Nomor Telepon</label>
+        <input
+          type="text"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="w-full border px-3 py-2 rounded-lg bg-slate-50 focus:ring-2 focus:ring-primary-hijauMuda outline-none"
+          placeholder="Masukkan nomor telepon"
+        />
+      </div>
+      <div className="flex justify-end gap-3 mt-4">
+        <button onClick={onClose} className="px-4 py-2 rounded-lg border text-slate-600 hover:bg-slate-100">
+          Batal
+        </button>
+        <button
+          onClick={onSave}
+          disabled={isLoading}
+          className="px-4 py-2 rounded-lg bg-primary-hijauMuda text-white shadow hover:scale-105 transition disabled:opacity-50"
+        >
+          {isLoading ? "Menyimpan" : "Simpan"}
+        </button>
+      </div>
+    </BaseModal>
+  );
+}

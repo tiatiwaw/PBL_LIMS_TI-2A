@@ -38,7 +38,6 @@ export default function HistoryDetailOrder({ canValidate }) {
     }, [order, selectedSampleId]);
 
     const handleValidation = () => {
-        console.log("Validasi Order");
     };
 
     if (isLoading) {

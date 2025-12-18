@@ -155,6 +155,7 @@ class ReceiptController extends Controller
                 'payment_method' => $paymentMethod,
                 'order_date' => $orders->order_date ? $orders->created_at : null,
                 'expired_time' => $getTripay('expired_time') ? date('Y-m-d H:i:s', $getTripay('expired_time')) : null,
+                'payment_date' => $transaction?->updated_at?->format('d-m-Y'),
             ],
         ]);
     }

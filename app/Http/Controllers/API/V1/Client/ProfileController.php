@@ -52,11 +52,19 @@ class ProfileController extends Controller
 
     public function updatePhone(Request $request)
     {
+        $user = $request->user();
+
+        if ($user->role !== 'client') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya role client yang dapat mengubah nomor telepon.'
+            ], 403);
+        }
+
         $request->validate([
             'phone_number' => 'required|min:10|max:15'
         ]);
 
-        $user = $request->user();
         $user->clients->phone_number = $request->phone_number;
         $user->clients->save();
 
@@ -65,6 +73,45 @@ class ProfileController extends Controller
             'message' => 'Nomor telepon berhasil diperbarui.',
             'data' => [
                 'phone_number' => $user->clients->phone_number
+            ]
+        ]);
+    }
+
+    /**
+     * Update email (Client only)
+     */
+    public function updateEmail(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->role !== 'client') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya role client yang dapat mengubah email.'
+            ], 403);
+        }
+
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'required'
+        ]);
+
+        // Validasi password
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password tidak sesuai.'
+            ], 400);
+        }
+
+        $user->email = $request->email;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Email berhasil diperbarui.',
+            'data' => [
+                'email' => $user->email
             ]
         ]);
     }

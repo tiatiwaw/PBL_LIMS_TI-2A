@@ -201,6 +201,7 @@ Route::prefix('v1')->group(function () {
                 Route::get('/profile', [ClientProfileController::class, 'show'])->name('profile');
                 Route::post('/profile/update-photo', [ClientProfileController::class, 'updatePhoto'])->name('updatePhoto');
                 Route::post('profile/update-phone', [ClientProfileController::class, 'updatePhone'])->name('updatePhone');
+                Route::post('profile/update-email', [ClientProfileController::class, 'updateEmail'])->name('updateEmail');
                 Route::post('profile/change-password', [ClientProfileController::class, 'changePassword'])->name('client.changePassword');
 
 

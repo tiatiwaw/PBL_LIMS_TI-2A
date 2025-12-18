@@ -9,10 +9,6 @@ import Loading from "@/components/ui/loading";
 
 export default function InvoicePage({ order_number }) {
   const { data, isLoading, isError, errorMessage } = useReceipt(order_number);
-  console.log("Order number:", order_number);
-  console.log("Data:", data);
-
-
   
   if (isLoading) {
     return (

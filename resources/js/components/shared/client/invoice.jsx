@@ -125,7 +125,7 @@ export default function InvoiceReceipt({ invoice}) {
             {formatRupiah(invoice.amount)}
           </p>
           <p className="text-xs text-gray-400 mt-1">
-             Tenggat Pembayaran :{invoice.expired_time}
+             Tanggal Pembayaran :{invoice.payment_date}
           </p>
         </div>
 

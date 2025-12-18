@@ -1,5 +1,5 @@
 import { useGetById } from "./useGetById";
-import { profileService } from "@/services/profileService";
+import { profileService, clientProfileService } from "@/services/profileService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "@inertiajs/react";
 
@@ -18,6 +18,26 @@ export const useUpdateProfile = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ id, data }) => profileService.updateProfile.update(id, data),
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["profile", variables.id] });
+        },
+    });
+};
+
+export const useUpdateEmail = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }) => clientProfileService.updateEmail.create(data),
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["profile", variables.id] });
+        },
+    });
+};
+
+export const useUpdatePhone = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }) => clientProfileService.updatePhone.create(data),
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: ["profile", variables.id] });
         },

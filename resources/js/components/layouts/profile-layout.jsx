@@ -8,7 +8,6 @@ import Loading from "@/components/ui/loading";
 import { useProfile } from "@/hooks/useProfile";
 export default function ProfileLayout() {
   const { user, isLoading } = useAuth();
-console.log(useProfile())
   // Jika masih loading atau belum ada user
   if (isLoading || !user) {
     return (

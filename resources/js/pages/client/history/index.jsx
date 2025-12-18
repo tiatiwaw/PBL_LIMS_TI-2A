@@ -21,7 +21,6 @@ import { useHistory } from "@/hooks/useClient";
 import Loading from "@/components/ui/loading";
 
 export default function HistoryPage({ auth, orderId }) {
-  console.log("props dari Inertia:", orderId);
   const { data: history, isLoading, isError, errorMessage } =
     useHistory(orderId);
 
