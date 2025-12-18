@@ -21,7 +21,7 @@ class EquipmentSeeder extends Seeder
         ];
 
         $statuses = ['available', 'unavailable', 'maintenance', 'broken'];
-        $calibrations = ['internal', 'eksternal'];
+        $calibrations = ['internal', 'external'];
 
         $equipments = [
             ['name' => 'Micropipette 10-100µL', 'brand' => 'Eppendorf', 'serial' => 'EPD-001', 'location' => 'Laboratorium Kimia'],

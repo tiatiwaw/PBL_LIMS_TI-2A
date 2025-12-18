@@ -120,6 +120,36 @@ export default function SupervisorParametersIndex() {
         setCurrentStep(step);
     };
 
+    // Validasi sebelum pindah step
+    const validateStepBeforeNavigate = (targetStep) => {
+        if (targetStep === "analysts") {
+            // Validasi step "index" - harus semua sample sudah punya parameter & method
+            if (
+                formData.samples.length === 0 ||
+                formData.samples.length < samples?.length
+            ) {
+                toast.warning("Isi parameter dan metode untuk semua sampel");
+                return false;
+            }
+            return true;
+        }
+
+        if (targetStep === "review") {
+            // Validasi step "analysts" - harus sudah select analyst dan estimasi selesai
+            if (!formData.analysts || formData.analysts.length === 0) {
+                toast.warning("Pilih minimal satu analyst");
+                return false;
+            }
+            if (!formData.estimasiSelesai) {
+                toast.warning("Isi estimasi tanggal selesai");
+                return false;
+            }
+            return true;
+        }
+
+        return true;
+    };
+
     // Handler untuk edit sample
     const handleEditSample = (sampleId) => {
         setCurrentSampleId(sampleId);
@@ -166,37 +196,46 @@ export default function SupervisorParametersIndex() {
 
     // Handler untuk update sample equipment & reagents
     const handleNParameterMethod = (sampleId, equipments, reagents) => {
-        setIsSubmitting(true);
-        setFormData((prev) => {
-            const sampleIndex = prev.samples.findIndex(
-                (s) => s.sample_id === sampleId
-            );
+        const sampleIndex = formData.samples.findIndex(
+            (s) => s.sample_id === sampleId
+        );
 
-            if (sampleIndex !== -1) {
-                const updatedSamples = [...prev.samples];
-                updatedSamples[sampleIndex] = {
-                    ...updatedSamples[sampleIndex],
-                    equipments: equipments || [],
-                    reagents: reagents || [],
-                };
-                const updatedFormData = {
-                    ...prev,
-                    samples: updatedSamples,
-                };
+        if (sampleIndex !== -1) {
+            // Only send the changed sample, not the entire samples array
+            const changedSample = {
+                ...formData.samples[sampleIndex],
+                equipments: equipments || [],
+                reagents: reagents || [],
+            };
+            
+            const dataToSend = {
+                ...formData,
+                samples: [changedSample], // Send only the changed sample
+            };
 
-                // Call mutation dengan updatedFormData yang sudah terbaru
-                if (isUpdate) {
-                    updateParameter.mutateAsync(updatedFormData);
-                } else {
-                    createParameter.mutateAsync(updatedFormData);
-                }
-                setIsSubmitting(false);
-                setIsUpdate(false);
+            setIsSubmitting(true);
 
-                return updatedFormData;
-            }
-            return prev;
-        });
+            // Call mutation dengan data yang hanya berisi sample yang berubah
+            const mutation = isUpdate ? updateParameter : createParameter;
+            
+            mutation.mutateAsync(dataToSend)
+                .then(() => {
+                    // Update only the changed sample in formData
+                    const updatedSamples = formData.samples.map((s) =>
+                        s.sample_id === sampleId
+                            ? changedSample
+                            : s
+                    );
+                    setFormData({ ...formData, samples: updatedSamples });
+                    setIsSubmitting(false);
+                    setIsUpdate(false);
+                    // Navigate kembali ke index setelah update sukses
+                    handleStepChange("index");
+                })
+                .catch((error) => {
+                    setIsSubmitting(false);
+                });
+        }
     };
 
     // Handler untuk update analysts
@@ -312,7 +351,8 @@ export default function SupervisorParametersIndex() {
                     analystsData={analysts}
                     onAnalystsSelect={handleUpdateAnalysts}
                     onNext={() => {
-                        handleStepChange("review"), setParameterStep(3);
+                        validateStepBeforeNavigate("review") &&
+                            (handleStepChange("review"), setParameterStep(3));
                     }}
                     onBack={() => {
                         handleStepChange("index"), setParameterStep(1);
@@ -485,45 +525,25 @@ export default function SupervisorParametersIndex() {
                 ))}
                 {/* BUTTON LANJUT */}
                 <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    onClick={() => {
-                                        router.visit(
-                                            route(
-                                                "supervisor.order.detail",
-                                                id
-                                            )
-                                        );
-                                    }}
-                                    className="bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 px-8 py-3"
-                                >
-                                    Batal
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                Kembali ke halaman order detail
-                            </TooltipContent>
-                        </Tooltip>
+                    <Button
+                        onClick={() => {
+                            router.visit(route("supervisor.order.detail", id));
+                        }}
+                        className="bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 px-8 py-3"
+                    >
+                        Batal{" "}
+                    </Button>
 
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    onClick={() => {
-                                        handleStepChange("analysts"),
-                                            setParameterStep(2);
-                                    }}
-                                    className="bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 px-8 py-3"
-                                >
-                                    Lanjut
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                Lanjut ke pilih analyst dan estimasi selesai
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <Button
+                        onClick={() => {
+                            validateStepBeforeNavigate("analysts") &&
+                                (handleStepChange("analysts"),
+                                setParameterStep(2));
+                        }}
+                        className="bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 px-8 py-3"
+                    >
+                        Lanjut
+                    </Button>
                 </div>
             </div>
         </DashboardLayout>

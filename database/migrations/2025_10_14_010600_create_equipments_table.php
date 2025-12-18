@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('serial_number')->nullable();
             $table->date('purchase_year');
-            $table->enum('calibration_schedule', ['internal', 'eksternal']);
+            $table->enum('calibration_schedule', ['internal', 'external']);
             $table->enum('status', ['unavailable', 'available', 'maintenance', 'broken'])->default('available');
             $table->string('location');
             $table->timestamps();

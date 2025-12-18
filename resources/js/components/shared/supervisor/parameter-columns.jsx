@@ -162,7 +162,7 @@ export const getReagentSelectorColumns = ({ selectedItems, onSelect }) => [
     },
 ];
 
-export const getEquipmentSelectorColumns = ({ selectedItems, onSelect }) => [
+export const getEquipmentSelectorColumns = ({ selectedItems, onSelect, usedEquipmentIds = [] }) => [
     {
         accessorKey: "no",
         header: "No.",
@@ -207,11 +207,20 @@ export const getEquipmentSelectorColumns = ({ selectedItems, onSelect }) => [
         cell: ({ row }) => {
             const data = row;
             const isSelected = selectedItems?.some((s) => s.id === data.id);
+            const isUsed = usedEquipmentIds?.includes(data.id);
             return (
-                <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={() => onSelect(data)}
-                />
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        checked={isSelected}
+                        disabled={isUsed && !isSelected}
+                        onCheckedChange={() => onSelect(data)}
+                    />
+                    {isUsed && !isSelected && (
+                        <span className="text-xs text-gray-500">
+                            Sudah digunakan
+                        </span>
+                    )}
+                </div>
             );
         },
     },

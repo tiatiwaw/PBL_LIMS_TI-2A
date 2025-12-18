@@ -126,8 +126,8 @@ class ParameterController extends Controller
         $validated = $request->validate([
             'samples'                    => 'required|array',
             'samples.*.sample_id' => 'required|exists:samples,id',
-            'samples.*.parameter_id' => 'required|exists:test_parameters,id',
-            'samples.*.method_id'        => 'required|exists:test_methods,id',
+            'samples.*.parameter_id' => 'nullable|exists:test_parameters,id', // Optional - hanya jika update parameter
+            'samples.*.method_id'        => 'nullable|exists:test_methods,id', // Optional - hanya jika update method
             'samples.*.equipments'       => 'array',
             'samples.*.equipments.*'     => 'exists:equipments,id',
             'samples.*.reagents'         => 'array',
@@ -141,14 +141,26 @@ class ParameterController extends Controller
                 $npm = NParameterMethod::where('sample_id', $sample['sample_id'])
                     ->firstOrFail();
 
-                // update core info
-                $npm->update([
-                    'test_parameter_id' => $sample['parameter_id'],
-                    'test_method_id'    => $sample['method_id'],
-                ]);
+
+                // update core info (hanya jika ada perubahan parameter/method)
+                // Gunakan isset dan !==null untuk proper check
+                $updateData = [];
+                
+                if (isset($sample['parameter_id']) && $sample['parameter_id'] !== null) {
+                    $updateData['test_parameter_id'] = $sample['parameter_id'];
+                }
+                
+                if (isset($sample['method_id']) && $sample['method_id'] !== null) {
+                    $updateData['test_method_id'] = $sample['method_id'];
+                }
+                
+                if (!empty($updateData)) {
+                    $npm->update($updateData);
+                }
 
                 // replace reagents
-                NReagent::where('n_parameter_method_id', $npm->id)->delete();
+                $deletedReagents = NReagent::where('n_parameter_method_id', $npm->id)->delete();
+                
                 foreach ($sample['reagents'] ?? [] as $reagentId) {
                     NReagent::create([
                         'n_parameter_method_id' => $npm->id,
@@ -157,7 +169,7 @@ class ParameterController extends Controller
                 }
 
                 // replace equipments (tanpa ubah status di sini)
-                DB::table('n_equipments')
+                $deletedEquipments = DB::table('n_equipments')
                     ->where('n_parameter_method_id', $npm->id)
                     ->delete();
 

@@ -139,9 +139,9 @@ export const useOrderParameters = (id) => {
             queryClient.invalidateQueries({
                 queryKey: ["orders", id, "parameters"],
             });
-            setTimeout(() => {
-                window.location.href = `/supervisor/orders/follow-up/${id}/parameters`;
-            }, 500);
+            // setTimeout(() => {
+            //     window.location.href = `/supervisor/orders/follow-up/${id}/parameters`;
+            // }, 500);
         },
         onError: (error) => {
             toast.error(error.message || "Gagal memperbarui parameter");

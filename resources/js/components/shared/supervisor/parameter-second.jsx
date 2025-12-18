@@ -27,6 +27,27 @@ export default function ParameterSecond({
     const [reagentDialogOpen, setReagentDialogOpen] = useState(false);
     const [equipmentDialogOpen, setEquipmentDialogOpen] = useState(false);
 
+    // Hitung equipment yang sudah digunakan di sampel lain
+    const getUsedEquipmentIds = () => {
+        const usedIds = [];
+        if (formData?.samples && Array.isArray(formData.samples)) {
+            formData.samples.forEach((sample) => {
+                // Exclude current sample
+                if (sample.sample_id !== sampleId) {
+                    if (
+                        sample.equipments &&
+                        Array.isArray(sample.equipments)
+                    ) {
+                        usedIds.push(...sample.equipments);
+                    }
+                }
+            });
+        }
+        return usedIds;
+    };
+
+    const usedEquipmentIds = getUsedEquipmentIds();
+
     // Initialize dari formData saat sampleId atau formData berubah
     useEffect(() => {
         if (formData?.samples && Array.isArray(formData.samples)) {
@@ -75,6 +96,13 @@ export default function ParameterSecond({
     const useEquipments = () => ({
         data: equipmentData,
     });
+
+    // Filter equipment yang bisa dipilih (exclude yang sudah digunakan)
+    const getAvailableEquipment = () => {
+        return equipmentData?.filter(
+            (eq) => !usedEquipmentIds.includes(eq.id)
+        ) || [];
+    };
 
     const handleReagentSelect = (reagent) => {
         setDialogReagents((prev) => {
@@ -224,6 +252,7 @@ export default function ParameterSecond({
                 onConfirm={handleEquipmentConfirm}
                 getColumns={getEquipmentSelectorColumns}
                 showCreate={false}
+                usedEquipmentIds={usedEquipmentIds}
             />
         </div>
     );

@@ -7,6 +7,7 @@ import OrderForms3 from "@/components/shared/staff/orders-form3";
 import { CheckSquare } from "lucide-react";
 import Loading from "@/components/ui/loading";
 import { useOrders, useSamples } from "@/hooks/useStaff";
+import { toast } from "sonner";
 
 export default function OrdersPage() {
     const [step, setStep] = useState(1);
@@ -96,8 +97,53 @@ export default function OrdersPage() {
         }
     }, [data.tipeOrder, data.metodeAnalisis]);
 
+    const validateStep = (currentStep) => {
+        if (currentStep === 1) {
+            // Step 1 validation
+            if (!data.selectedKlien) {
+                toast.warning("Pilih klien terlebih dahulu");
+                return false;
+            }
+            if (!data.judulOrder.trim()) {
+                toast.warning("Judul order harus diisi");
+                return false;
+            }
+            if (data.metodeAnalisis.length === 0) {
+                toast.warning("Pilih minimal satu metode analisis");
+                return false;
+            }
+            if (data.metodeAnalisis?.some((m) => !m.description?.trim())) {
+                toast.warning("Deskripsi metode analisis harus diisi");
+                return false;
+            }
+            return true;
+        }
+
+        if (currentStep === 2) {
+            // Step 2 validation (estimasi selesai tidak wajib)
+            if (!data.tipeOrder) {
+                toast.warning("Tipe order harus diisi");
+                return false;
+            }
+            if (data.samples.length === 0) {
+                toast.warning("Tambahkan minimal satu sampel");
+                return false;
+            }
+           
+            if (data.samples.some((s) => !s.sample_volume?.trim())) {
+                toast.warning("Volume sampel harus diisi");
+                return false;
+            }
+            return true;
+        }
+
+        return true;
+    };
+
     const handleNext = () => {
-        setStep((prev) => prev + 1);
+        if (validateStep(step)) {
+            setStep((prev) => prev + 1);
+        }
     };
 
     const handlePrev = () => {

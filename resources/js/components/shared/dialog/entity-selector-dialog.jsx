@@ -23,12 +23,17 @@ export default function EntitySelectorDialog({
     getColumns,
     editFields,
     showCreate = true,
+    usedEquipmentIds = [],
 }) {
     const { data, isLoading, error, create } = hook();
     const config = ENTITY_CONFIG[type];
     const columns = useMemo(() => {
-        return getColumns({ selectedItems, onSelect });
-    }, [getColumns, selectedItems, onSelect]);
+        return getColumns({ 
+            selectedItems, 
+            onSelect,
+            usedEquipmentIds,
+        });
+    }, [getColumns, selectedItems, onSelect, usedEquipmentIds]);
 
     const handleCreate = useCallback(
         async (formData) => {
