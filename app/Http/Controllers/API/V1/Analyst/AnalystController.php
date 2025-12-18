@@ -27,13 +27,8 @@ class AnalystController extends Controller
         $analyst = $this->analyst();
         $baseQuery = Order::whereHas('analysts', fn($q) => $q->where('analysts.id', $analyst->analyst->id));
         $stats = [
-            // Menghitung status 'paid' dari base query
             'pendingOrder' => (clone $baseQuery)->where('status', 'paid')->count(),
-            
-            // Menghitung status 'in_progress' dari base query
             'processedOrder' => (clone $baseQuery)->where('status', 'in_progress')->count(),
-            
-            // Menghitung status 'completed' dari base query
             'completedOrder' => (clone $baseQuery)->where('status', 'completed')->count(),
         ];
 
