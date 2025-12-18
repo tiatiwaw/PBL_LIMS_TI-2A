@@ -51,45 +51,18 @@ class OrderController extends Controller
             'metode_analisis' => $metodeAnalisis, 
             'nilai_hasil' => $order->result_value ?? '98',
             'tanggal_order' => $order->order_date ? Carbon::parse($order->order_date)->format('d/m/Y') : null,
-            'tanggal_estimasi' => $order->estimate_date ? Carbon::parse($order->estimate_date)->format('d/m/Y') : '23/10/2000',
+            'tanggal_estimasi' => $order->estimate_date ? Carbon::parse($order->estimate_date)->format('d/m/Y') : null,
             'waktu_laporan' => $order->report_issued_at ? Carbon::parse($order->report_issued_at)->format('d/m/Y H:i:s') : null,
             'direktori_file' => $order->report_file_path ?? 'C:/ /',
             'catatan' => $order->notes ?? '-',
             'tipe_pemesanan' => $order->order_type ?? 'Internal'
         ];
 
-        $tableDataSamples = $order->samples->map(function ($sample) {
-            return [
-                'id' => $sample->id,
-                'name' => $sample->name,
-                'cathegory' => $sample->sample_categories->name ?? '-',
-                'status' => $sample->status,
-                'tanggal_masuk' => $sample->created_at ? Carbon::parse($sample->created_at)->format('d/m/Y') : null,
-                'kategori_sampel' => $sample->sample_categories->name ?? '-',
-                'form' => $sample->form,
-                'preservation_method' => $sample->preservation_method,
-                'volume' => $sample->pivot->sample_volume ?? '-',
-                'condition' => $sample->condition,
-                'status' => $sample->status,
-            ];
-        });
-
-        $detailSample = $order->samples->map(function ($sample)  {
-            return [
-                'kategori_sampel' => $sample->sample_categories->name ?? '-',
-                'form' => $sample->form,
-                'preservation_method' => $sample->preservation_method,
-                'volume' => $sample->pivot->sample_volume ?? '-',
-                'condition' => $sample->condition,
-                'status' => $sample->status,
-            ];
-        }); 
-
         return response()->json([
             'success' => true,
             'data' => [
                 'order_details' => $orderData,
-                'table_data_sample' => $tableDataSamples,
+                'table_data_sample' => $order->samples,
             ]
         ]); 
     }

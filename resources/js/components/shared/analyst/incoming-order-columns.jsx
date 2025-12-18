@@ -1,22 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getOrderTypeVariant } from "@/utils/statusUtils";
 import { Link } from '@inertiajs/react';
 import { FileText, History } from "lucide-react";
-
-const statusVariantMap = {
-    Completed: "success",
-    "In Progress": "warning",
-    Pending: "info",
-    Disapproved: "error",
-    Approved: "approved",
-    Received: "received",
-};
-
-const tipeVariantMap = {
-    Eksternal: "warning",
-    Internal: "info",
-    Urgent: "error",
-};
 
 export const getOrdersColumns = ({setSelectedTest}) => [
     { accessorKey: "order_number", header: "Kode Pesanan" },
@@ -26,10 +12,10 @@ export const getOrdersColumns = ({setSelectedTest}) => [
         accessorKey: "tipe",
         header: "Tipe Pesanan",
         cell: ({ row }) => {
-            const value = row.tipe;
+            const value = row.order_type;
             return (
                 <Badge
-                    variant={tipeVariantMap[value] || "outline"}
+                    variant={getOrderTypeVariant(value) || "outline"}
                     className="capitalize"
                 >
                     {value}

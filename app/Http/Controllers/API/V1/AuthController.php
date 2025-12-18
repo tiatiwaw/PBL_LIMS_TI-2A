@@ -17,41 +17,55 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
-        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
-        }
-
         try {
-            $request->session()->regenerate();
-        } catch (\Throwable $e) {
-        }
+            $credentials = $request->validate([
+                'email' => 'required|string|email',
+                'password' => 'required|string',
+            ]);
 
-        $user = Auth::user();
-        $user->tokens()->delete();
-        $token = $user->createToken('api-token')->plainTextToken;
+            if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Email atau password yang Anda masukkan salah.',
+                ], 401);
+            }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Login successful',
-            'data' => [
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'role' => $user->role,
+            try {
+                $request->session()->regenerate();
+            } catch (\Throwable $e) {
+            }
+
+            $user = Auth::user();
+            $user->tokens()->delete();
+            $token = $user->createToken('api-token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Login successful',
+                'data' => [
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'role' => $user->role,
+                    ],
+                    'token' => $token,
+                    'redirect_url' => $user->getRedirectRoute(),
                 ],
-                'token' => $token,
-                'redirect_url' => $user->getRedirectRoute(),
-            ],
-
-        ]);
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan server. Silahkan coba lagi nanti.',
+                'error' => env('APP_DEBUG') ? $e->getMessage() : null,
+            ], 500);
+        }
     }
 
     public function logout(Request $request)

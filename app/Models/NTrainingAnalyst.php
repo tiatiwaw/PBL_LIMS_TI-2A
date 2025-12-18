@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class NTrainingAnalyst extends Model
 {
+    //
     use HasFactory;
 
     protected $fillable = [

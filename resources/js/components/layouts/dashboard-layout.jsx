@@ -4,10 +4,9 @@ import { motion } from "framer-motion";
 import { menuItems } from "@/utils/menu";
 import { Sidebar } from "./sidebar";
 import { HeaderCard } from "../shared/dashboard/header-card";
-
 import { useAuth } from "@/hooks/useAuth";
 import { MobileSidebar } from "./mobile-sidebar";
-import { useLowStockReagents } from "@/hooks/useAdmin";
+import { useNotifications } from "@/hooks/useNotification";
 
 export default function DashboardLayout({
     children,
@@ -17,19 +16,15 @@ export default function DashboardLayout({
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { url } = usePage();
     const { user, logout } = useAuth();
-    const { data: lowStockReagents, isLoading: notificationsLoading } =
-        useLowStockReagents();
 
     const currentUser = useMemo(
         () => user ?? { name: "Guest", role: "guest" },
         [user]
     );
 
+    const { data: notifications, isLoading } = useNotifications();
+
     const sidebarMenu = useMemo(() => menuItems(url), [url]);
-    const notificationCount = useMemo(
-        () => lowStockReagents?.length ?? 0,
-        [lowStockReagents]
-    );
     const handleLogout = useCallback(() => logout(), [logout]);
 
     return (
@@ -57,9 +52,8 @@ export default function DashboardLayout({
                         <HeaderCard
                             title={header}
                             user={currentUser}
-                            notificationCount={notificationCount}
-                            isNotificationLoading={notificationsLoading}
-                            lowStockReagents={lowStockReagents || []}
+                            isLoading={isLoading}
+                            notifications={notifications || {}}
                             onLogout={handleLogout}
                             onMenuClick={() => setIsMobileMenuOpen(true)}
                         />

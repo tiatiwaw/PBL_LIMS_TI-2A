@@ -15,7 +15,9 @@ class TestParameter extends Model
         'name',
         'category',
         'detection_limit',
-        'quality_standard'
+        'quality_standard',
+        'quality_min',
+        'quality_max'
     ];
 
     public function unit_values()
@@ -23,6 +25,10 @@ class TestParameter extends Model
         return $this->belongsTo(UnitValue::class, 'unit_value_id');
     }
 
+    // public function reagents() {
+    //     return $this->belongsToMany(Reagent::class, 'n_reagents');
+    // }
+    
     public function reference_standards()
     {
         return $this->belongsTo(ReferenceStandard::class, 'reference_id');
@@ -32,4 +38,5 @@ class TestParameter extends Model
     {
         return $this->hasMany(NParameterMethod::class, 'test_parameter_id');
     }
+    
 }

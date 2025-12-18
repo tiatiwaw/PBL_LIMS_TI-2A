@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('n_analyses_methods_order_id')->constrained();
+            $table->foreignId('n_analyses_methods_order_id')->constrained('n_analyses_methods_orders', 'order_id');
             $table->string('reference');
             $table->string('merchant_ref'); //optional
             $table->integer('total_price');

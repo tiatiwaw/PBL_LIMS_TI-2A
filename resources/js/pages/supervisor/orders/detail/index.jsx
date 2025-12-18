@@ -141,8 +141,8 @@ export default function DetailOrder({ canValidate }) {
                             "Yakin ingin mengkonfirmasi pengujian ini?.",
                         data: {
                             action: "validate_test",
-                            reason: "Menunggu Pembayaran dari Klien.",
-                            result_value: resultValue, // 🔹 Gunakan hasil dari getAllResults()
+                            reason: "Menunggu Persetujuan validasi dari Manager.",
+                            result_value: resultValue,
                         },
                     });
                     setOpenDialog(true);
@@ -194,7 +194,7 @@ export default function DetailOrder({ canValidate }) {
 
     if (isLoading) {
         return (
-            <DashboardLayout title="Dashboard Admin">
+            <DashboardLayout title="Detail Order">
                 <Loading />
             </DashboardLayout>
         );
@@ -206,7 +206,7 @@ export default function DetailOrder({ canValidate }) {
 
     if (error) {
         return (
-            <DashboardLayout title="Dashboard Admin">
+            <DashboardLayout title="Detail Order">
                 <div className="text-center text-red-500 py-8">
                     {error.message || "Terjadi kesalahan saat memuat data"}
                 </div>
@@ -217,7 +217,10 @@ export default function DetailOrder({ canValidate }) {
     return (
         <DashboardLayout title="Detail Order" header="Detail Order">
             <div className="max-w-7xl mx-auto space-y-6">
-                <OrderDetailHeader order={order} />
+                <OrderDetailHeader 
+                    order={order} 
+                    backRoute="/supervisor/orders/follow-up"
+                />
 
                 <ClientInfoCard client={order.clients} />
 

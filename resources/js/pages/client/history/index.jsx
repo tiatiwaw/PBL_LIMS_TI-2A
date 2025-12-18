@@ -1,5 +1,3 @@
-
-// resources/js/pages/client/history/index.jsx
 import React from "react";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { Link } from "@inertiajs/react";
@@ -14,29 +12,60 @@ import {
   CheckCircle2,
   Loader2,
   XCircle,
+  CreditCard,
+  CheckCircle,
+  FileText,
+  RefreshCw,
 } from "lucide-react";
 import { useHistory } from "@/hooks/useClient";
+import Loading from "@/components/ui/loading";
 
 export default function HistoryPage({ auth, orderId }) {
   console.log("props dari Inertia:", orderId);
   const { data: history, isLoading, isError, errorMessage } =
     useHistory(orderId);
 
+  // ============================================
+  // PENGATURAN PROGRESS BAR BERDASARKAN STATUS
+  // ============================================
+  
+  // Mapping status ke persentase progress (0-100)
+  // Sesuaikan nilai persentase untuk setiap status
+  const STATUS_PROGRESS_MAP = {
+    'received': 3,           // Status: Sample diterima
+    'disapproved': 100,       // Status: Ditolak (langsung ke akhir)
+    'pending_payment': 18,    // Status: Menunggu pembayaran
+    'paid': 30,               // Status: Sudah dibayar
+    'in_progress': 43,        // Status: Sedang dikerjakan
+    'received_test': 58,      // Status: Hasil tes diterima
+    'revision_test': 72 ,      // Status: Revisi tes
+    'pending': 85,            // Status: Menunggu
+    'completed': 100,         // Status: Selesai
+  };
+  
+  // Atur posisi horizontal garis (dalam pixel)
+  // Nilai positif = geser ke kanan, negatif = geser ke kiri
+  const LINE_OFFSET_LEFT = 20;  // <-- GESER KIRI/KANAN
+  const LINE_OFFSET_RIGHT = 40; // <-- GESER KIRI/KANAN
+  
+  // ============================================
+
   const iconMap = {
     received: FlaskConical,
-    approved: ClipboardCheck,
-    pending: Clock,
-    in_progress: RotateCw,
-    completed: PackageCheck,
     disapproved: XCircle,
+    pending_payment: CreditCard,
+    paid: CheckCircle,
+    in_progress: RotateCw,
+    received_test: FileText,
+    revision_test: RefreshCw,
+    pending: Clock,
+    completed: PackageCheck,
   };
 
   if (isLoading) {
     return (
       <DashboardLayout title="Riwayat" header="Memuat Data...">
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="w-10 h-10 animate-spin text-primary-hijauTua" />
-        </div>
+          <Loading/>
       </DashboardLayout>
     );
   }
@@ -59,17 +88,14 @@ export default function HistoryPage({ auth, orderId }) {
       </DashboardLayout>
     );
   }
-
-  const activeStatuses = history?.data?.statuses.filter((s) => s.is_active);
-
+  
   const statusNow = history?.data?.order?.status;
+  const allStatuses = (history?.data?.statuses || []).filter(
+    status => status?.name !== 'disapproved' || statusNow === 'disapproved'
+  );
 
-  const progressPercent =
-    statusNow === "completed" || statusNow === "disapproved"
-      ? 100
-      : history?.data?.statuses.length > 0
-      ? (activeStatuses.length / history?.data?.statuses.length) * 100
-      : 0;
+  // Ambil persentase progress berdasarkan status saat ini
+  const progressPercent = STATUS_PROGRESS_MAP[statusNow] || 0;
 
   return (
     <DashboardLayout
@@ -90,14 +116,22 @@ export default function HistoryPage({ auth, orderId }) {
           <div className="relative w-full py-8 overflow-x-auto">
             <div className="relative flex flex-col lg:flex-row items-start lg:items-center gap-8 lg:gap-40 min-w-max px-5">
 
-              <div className="hidden lg:block absolute top-[52px] left-5 right-5 h-1.5 bg-primary-hijauPudar rounded-full">
-                <div
-                  className="h-full bg-gradient-to-r from-primary-hijauTua to-primary-hijauMuda rounded-full transition-all duration-1000"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
+              {allStatuses.length > 1 && (
+                <div 
+                  className="hidden lg:block absolute top-[52px] h-1.5 bg-primary-hijauPudar rounded-full"
+                  style={{
+                    left: `${LINE_OFFSET_LEFT}px`,
+                    right: `${LINE_OFFSET_RIGHT}px`,
+                  }}
+                >
+                  <div
+                    className="h-full bg-gradient-to-r from-primary-hijauTua to-primary-hijauMuda rounded-full transition-all duration-1000"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+              )}
 
-              {activeStatuses.map((item, index) => {
+              {allStatuses.map((item, index) => {
                 const Icon = iconMap[item.name] || FlaskConical;
 
                 return (

@@ -10,6 +10,7 @@ import PaymentSummary from '@/components/shared/client/payment-summary.jsx';
 import AnalysisMethodList from "@/components/shared/client/analysis-method-list.jsx";
 import MethodPayment from "@/components/shared/client/method-payment.jsx";
 import axios from "axios";
+import Loading from "@/components/ui/loading";
 
 export default function ClientPayment({ auth, orderId }) {
   const { data: order, isLoading, isError, errorMessage } = usePayment(orderId);
@@ -65,9 +66,7 @@ export default function ClientPayment({ auth, orderId }) {
   if (isLoading) {
     return (
       <DashboardLayout title="Detail Pembayaran" header="Memuat Data...">
-        <div className="flex items-center justify-center min-h-[60vh] text-gray-500">
-          Loading...
-        </div>
+        <Loading/>
       </DashboardLayout>
     );
   }

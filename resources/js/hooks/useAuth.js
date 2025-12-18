@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { router, usePage } from "@inertiajs/react";
-import { authService } from "@/services/authService";
+import { authService, extractErrorMessage } from "@/services/authService";
 import { ERROR_MESSAGES } from "@/utils/constant/auth";
 
 export const useAuth = () => {
@@ -14,15 +14,22 @@ export const useAuth = () => {
         try {
             const response = await authService.login(credentials);
 
+            if (!response.success) {
+                const errorMsg = response.message || ERROR_MESSAGES.LOGIN_FAILED;
+                toast.error(errorMsg);
+                throw new Error(errorMsg);
+            }
+
             toast.success(ERROR_MESSAGES.SUCCESSFUL_LOGIN);
 
-            const targetUrl = response.data?.redirect_url || '/';
+            const targetUrl = response.data?.redirect_url || "/";
 
-            router.visit(targetUrl);
+            window.location.href = targetUrl;
 
             return response;
         } catch (error) {
-            toast.error(error.message || ERROR_MESSAGES.LOGIN_FAILED);
+            const errorMessage = extractErrorMessage(error);
+            toast.error(errorMessage);
             throw error;
         } finally {
             setLoading(false);
@@ -37,9 +44,10 @@ export const useAuth = () => {
 
             toast.success(ERROR_MESSAGES.SUCCESSFUL_LOGOUT);
 
-            router.visit("/auth/login");
+            window.location.href = "/auth/login";
         } catch (error) {
-            toast.error(error.message || ERROR_MESSAGES.LOGOUT_FAILED);
+            const errorMessage = extractErrorMessage(error);
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }

@@ -7,9 +7,9 @@ import { router } from "@inertiajs/react";
 import { useMemo } from "react";
 
 const filterData = [
-    { value: "all", label: "All Status" },
+    { value: "all", label: "Semua Status" },
     { value: "received", label: "Diterima" },
-    { value: "paid", label: "Dibayar" },
+    { value: "paid", label: "Sudah Dibayar" },
     { value: "received_test", label: "Selesai Pengujian" },
 ];
 
@@ -72,7 +72,7 @@ export default function OrdersPage() {
                     <div className="flex items-start gap-3 text-sm">
                         <span className="text-blue-600 font-bold">●</span>
                         <p>
-                            <span className="font-semibold">Dibayar:</span>{" "}
+                            <span className="font-semibold">Sudah Dibayar:</span>{" "}
                             Pembayaran sudah diterima, menunggu hasil akhir
                             pengujian
                         </p>

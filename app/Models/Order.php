@@ -78,4 +78,55 @@ class Order extends Model
     {
         return $this->belongsToMany(Analyst::class, 'n_analysts', 'order_id', 'analyst_id');
     }
+
+    /**
+     * Relasi ke Transaction terkait dari tabel pivot NAnalysesMethodsOrder
+     */
+    public function transaction()
+    {
+        return Transaction::whereHas('n_analyses_methods_order', function($query) {
+            $query->where('order_id', $this->id);
+        })
+        ->latest()
+        ->first();
+    }
+    /**
+     * Accessor: Status kombinasi
+     */
+    public function getCombinedStatusAttribute()
+    {
+        $transaction = $this->transaction();
+        
+        if ($this->status === 'received' && !$transaction) {
+            return 'received';
+        }
+        
+        if ($transaction && $transaction->status === 'unpaid') {
+            return 'pending_payment';
+        }
+        
+        if ($transaction && $transaction->status === 'paid') {
+            return 'paid';
+        }
+        
+        return $this->status;
+    }
+
+    /**
+     * Status pembayaran
+     */
+    public function getPaymentStatusAttribute()
+    {
+        $transaction = $this->transaction();
+        return $transaction ? $transaction->status : 'unpaid';
+    }
+
+    /**
+     * Cek apakah sudah dibayar
+     */
+    public function getIsPaidAttribute()
+    {
+        $transaction = $this->transaction();
+        return $transaction && $transaction->status === 'paid';
+    }
 }

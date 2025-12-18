@@ -19,6 +19,8 @@ return new class extends Migration
             $table->enum('category', ['kimia', 'mikrobiologi', 'fisika', 'klinik'])->default('kimia');
             $table->enum('detection_limit', ['LOD', 'LOQ'])->default('LOD');
             $table->string('quality_standard'); // Baku  Mutu
+            $table->string('quality_min'); // Nilai Minimum
+            $table->string('quality_max'); // Nilai Maksimum
             $table->timestamps();
         });
     }

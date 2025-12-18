@@ -18,4 +18,19 @@ class Transaction extends Model
     function n_analyses_methods_order() {
         return $this->belongsTo(NAnalysesMethodsOrder::class);
     }
+
+    protected static function booted()
+    {
+        static::updated(function ($transaction) {
+            if ($transaction->isDirty('status') && $transaction->status === 'PAID') {
+                $nAnalysesMethodOrder = $transaction->n_analyses_methods_order;
+                
+                if ($nAnalysesMethodOrder && $order = $nAnalysesMethodOrder->order) {
+                    if ($order->status !== 'paid') {
+                        $order->update(['status' => 'paid']);
+                    }
+                }
+            }
+        });
+    }
 }

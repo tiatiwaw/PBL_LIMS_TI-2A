@@ -24,7 +24,7 @@ class HistoryController extends Controller
                         ->firstOrFail();
 
             // Urutan status
-            $steps = ['received', 'approved', 'pending', 'in_progress', 'completed', 'disapproved'];
+            $steps = ['received',  'pending_payment', 'paid', 'in_progress', 'received_test', 'revision_test', 'pending', 'completed', 'disapproved'];
 
             // Status saat ini dari database
             $currentStatus = $order->status;
@@ -81,9 +81,12 @@ class HistoryController extends Controller
     {
         $labels = [
             'received' => 'Sample Telah Diterima',
-            'approved' => 'Order Telah Disetujui',
-            'pending' => 'Order Sedang Dalam Antrean',
+            'pending_payment' => 'Menunggu Pembayaran',
+            'paid' => 'Telah Dibayar',
             'in_progress' => 'Order Sedang Dalam Proses',
+            'received_test'=> "Sampel Diterima Supervisor",
+            'revision_test'=> "Revisi Pengujian",
+            'pending' => 'Order Sedang Divalidasi',
             'completed' => 'Order Selesai',
             'disapproved' => 'Ditolak'
         ];

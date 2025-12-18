@@ -1,11 +1,6 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-
-const conditionVariantMap = {
-    good: "success",
-    damaged: "warning",
-    expired: "error",
-};
+import { getConditionTypeLabel, getConditionTypeVariant } from "@/utils/statusUtils";
 
 export const getSampleColumnsOrder = ({ selectedItems, onSelect }) => [
     { accessorKey: "no", header: "No." },
@@ -24,10 +19,10 @@ export const getSampleColumnsOrder = ({ selectedItems, onSelect }) => [
             const value = row.condition;
             return (
                 <Badge
-                    variant={conditionVariantMap[value] || "outline"}
+                    variant={getConditionTypeVariant(value) || "outline"}
                     className="capitalize"
                 >
-                    {value}
+                    {getConditionTypeLabel(value)}
                 </Badge>
             );
         },
@@ -65,11 +60,11 @@ export const getSampleSelectedColumnsOrder = [
         cell: ({ row }) => {
             const value = row.condition;
             return (
-                <Badge
-                    variant={conditionVariantMap[value] || "outline"}
+                 <Badge
+                    variant={getConditionTypeVariant(value) || "outline"}
                     className="capitalize"
                 >
-                    {value}
+                    {getConditionTypeLabel(value)}
                 </Badge>
             );
         },

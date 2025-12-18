@@ -6,49 +6,52 @@ import {
 } from "../excelSections";
 import { buildTransactionsSection } from "../sections/build-transaction-section";
 
-export const exportTransactionsReport = (analytics) => {
+export const exportTransactionsReport = (data) => {
+    const kpi = data?.kpi || {};
+    const charts = data?.charts || {};
+
     const summary = buildSummarySection("LAPORAN KEUANGAN & TRANSAKSI", [
         {
             label: "Total Pendapatan",
-            value: formatCurrency(analytics.totalRevenue),
-            description: `Dari ${analytics.totalOrders} transaksi`,
+            value: formatCurrency(kpi.total_revenue || 0),
+            description: `Dari ${kpi.total_orders || 0} transaksi`,
         },
         {
             label: "Order Tertinggi",
-            value: formatCurrency(analytics.maxSingleOrderRevenue),
+            value: formatCurrency(kpi.max_single_order || 0),
             description: "Nilai transaksi tunggal tertinggi",
         },
         {
             label: "Pelanggan Top",
-            value: analytics.topClient.name,
+            value: kpi.top_client?.name || "-",
             description: `Total: ${formatCurrency(
-                analytics.topClient.revenue
+                kpi.top_client?.revenue || 0
             )}`,
         },
         {
             label: "Metode Favorit",
-            value: analytics.topMethod.name,
-            description: `${analytics.topMethod.count}x (~${formatCurrency(
-                analytics.topMethodAvgPrice
+            value: kpi.top_method?.name || "-",
+            description: `${kpi.top_method?.count || 0}x (~${formatCurrency(
+                kpi.top_method?.avg_price || 0
             )})`,
         },
         {
             label: "Rerata Order",
-            value: formatCurrency(analytics.avgRevenuePerOrder),
+            value: formatCurrency(kpi.avg_revenue_order || 0),
             description: "Nilai rata-rata per invoice",
         },
         {
             label: "Pendapatan Tipe Terbanyak",
-            value: formatCurrency(analytics.mostCommonOrderTypeRevenue),
-            description: `Dari tipe: ${analytics.mostCommonOrderTypeName}`,
+            value: formatCurrency(kpi.top_order_type?.revenue || 0),
+            description: `Dari tipe: ${kpi.top_order_type?.name || "-"}`,
         },
     ]);
 
-    const charts = buildChartSection([
+    const chartSection = buildChartSection([
         {
             title: "Tren Pendapatan",
             columns: ["Periode", "Pendapatan"],
-            rows: analytics.trendChartData.map((i) => ({
+            rows: (charts.trend || []).map((i) => ({
                 name: i.name,
                 value: i.revenue,
             })),
@@ -56,13 +59,13 @@ export const exportTransactionsReport = (analytics) => {
         {
             title: "Distribusi Penggunaan Metode",
             columns: ["Metode", "Jumlah Penggunaan"],
-            rows: analytics.methodDistributionData,
+            rows: charts.method_distribution || [],
         },
     ]);
 
-    const table = buildTransactionsSection(analytics);
+    const table = buildTransactionsSection(data);
 
-    const aoa = [...summary, ...charts, ...table];
+    const aoa = [...summary, ...chartSection, ...table];
 
     exportWorkbook(
         aoa,

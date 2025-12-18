@@ -1,9 +1,8 @@
 import Loading from "@/components/ui/loading";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { getUnitsColumns } from "@/components/shared/admin/test-columns";
+import { getUnitsColumns } from "@/components/shared/manager/test-columns";
 import UnitDetailSheet from "@/components/shared/sheet/unit-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
-
 import { useMemo, useState } from "react";
 import { useUnits } from "@/hooks/useManager";
 import { exportUnitReportPDF } from "@/utils/pdf/export/test-export";
@@ -51,9 +50,6 @@ export default function ManagerUnitsPage() {
             <ManagedDataTable
                 data={units}
                 columns={columns}
-                createTitle="Tambah Nilai Satuan"
-                editTitle="Edit Nilai Satuan"
-                deleteTitle="Hapus Nilai Satuan"
                 showCreate={false}
                 showExport={true}
                 onExport={handleExport}

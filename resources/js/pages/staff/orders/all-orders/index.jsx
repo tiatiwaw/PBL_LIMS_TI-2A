@@ -5,22 +5,13 @@ import { router } from "@inertiajs/react";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import Loading from "@/components/ui/loading";
 import { useAllOrders } from "@/hooks/useStaff";
+import { filterStatusOrder } from "@/utils/statusUtils";
 
-const filterData = [
-    { value: "all", label: "All Status" },
-    { value: "completed", label: "Completed" },
-    { value: "in_progress", label: "In Progress" },
-    { value: "pending", label: "Pending" },
-    { value: "disapproved", label: "Disapproved" },
-    { value: "approved", label: "Approved" },
-    { value: "received", label: "Received" },
-];
-
-export default function AdminOrdersPage() {
+export default function StaffOrdersPage() {
     const { data: orders, isLoading, error } = useAllOrders();
 
     const handleShowDetail = (data) => {
-        router.visit(route("staff.order.show", data.id));
+        router.visit(route("staff.order.show", data));
     };
 
     const columns = useMemo(
@@ -54,7 +45,7 @@ export default function AdminOrdersPage() {
                 showFilter={true}
                 showCreate={false}
                 filterColumn="status"
-                filterOptions={filterData}
+                filterOptions={filterStatusOrder}
             />
         </DashboardLayout>
     );

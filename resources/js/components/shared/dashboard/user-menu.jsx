@@ -9,29 +9,12 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link } from "@inertiajs/react";
 
 export const UserMenu = ({ user, onLogout }) => {
     const userInitial = user?.name?.charAt(0)?.toUpperCase() || "U";
 
-    const getProfileUrl = (role) => {
-        const normalized = role?.toLowerCase();
-        switch (normalized) {
-            case "manager":
-                return "/manager/profile";
-            case "staff":
-                return "/staff/profile";
-            case "supervisor":
-                return "/supervisor/profile";
-            case "analyst":
-                return "/analyst/profile";
-            case "client":
-                return "/client/profile";
-            default:
-                return "/profile";
-        }
-    };
-
-    const profileUrl = getProfileUrl(user?.role);
+    const profileUrl = '/profile';
 
     return (
         <DropdownMenu>
@@ -99,7 +82,9 @@ export const UserMenu = ({ user, onLogout }) => {
                     className="hover:!bg-primary-hijauTerang cursor-pointer py-2.5"
                 >
                     <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                    <Link href={route('profile')} className="w-full block">
+                        Profile
+                    </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem className="hover:!bg-primary-hijauTerang cursor-pointer py-2.5">

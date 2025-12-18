@@ -90,8 +90,8 @@ export default function SampleInfoCard({ sample }) {
                             <AlertCircle className="w-4 h-4" />
                             Status
                         </div>
-                        <Badge variant={getOrderStatusVariant(sample.status)}>
-                            {getOrderStatusLabel(sample.status)}
+                        <Badge className="capitalize" variant={getSampleStatusVariant(sample.status)}>
+                            {sample.status}
                         </Badge>
                     </div>
                 </div>

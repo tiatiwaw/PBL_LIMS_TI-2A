@@ -1,11 +1,11 @@
 import Loading from "@/components/ui/loading";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-import { getStandardsColumns } from "@/components/shared/admin/test-columns";
 import ReferenceDetailSheet from "@/components/shared/sheet/reference-detail-sheet";
 import ManagedDataTable from "@/components/shared/tabel/managed-data-table";
 import { useMemo, useState } from "react";
 import { useReferences } from "@/hooks/useManager";
 import { exportReferenceReportPDF } from "@/utils/pdf/export/test-export";
+import { getStandardsColumns } from "@/components/shared/manager/test-columns";
 
 export default function ManagerStandardsPage() {
     const [isOpen, setIsOpen] = useState(false);
@@ -50,9 +50,6 @@ export default function ManagerStandardsPage() {
             <ManagedDataTable
                 data={references}
                 columns={columns}
-                createTitle="Tambah Standar Referensi"
-                editTitle="Edit Standar Referensi"
-                deleteTitle="Hapus Standar Referensi"
                 showCreate={false}
                 showExport={true}
                 onExport={handleExport}

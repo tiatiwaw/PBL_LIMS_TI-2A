@@ -18,7 +18,6 @@ class TripayCallbackController extends Controller
         $signature = hash_hmac('sha256', $json, $this->privateKey);
 
         if ($signature !== (string) $callbackSignature) {
-            // PERBAIKAN: Ganti Response::json() dengan response()->json()
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid signature',
@@ -26,7 +25,6 @@ class TripayCallbackController extends Controller
         }
 
         if ('payment_status' !== (string) $request->server('HTTP_X_CALLBACK_EVENT')) {
-            // PERBAIKAN: Ganti Response::json() dengan response()->json()
             return response()->json([
                 'success' => false,
                 'message' => 'Unrecognized callback event, no action was taken',
@@ -36,7 +34,6 @@ class TripayCallbackController extends Controller
         $data = json_decode($json);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
-            // PERBAIKAN: Ganti Response::json() dengan response()->json()
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid data sent by tripay',
@@ -52,8 +49,7 @@ class TripayCallbackController extends Controller
                 ->where('status', '=', 'UNPAID')
                 ->first();
 
-            if (! $transaction) {
-                // PERBAIKAN: Ganti Response::json() dengan response()->json()
+            if (! $transaction) {            
                 return response()->json([
                     'success' => false,
                     'message' => 'No transaction found or already paid: ' . $transactionId,
@@ -63,6 +59,8 @@ class TripayCallbackController extends Controller
             switch ($status) {
                 case 'PAID':
                     $transaction->update(['status' => 'PAID']);
+
+                    $this->OrderStatusReader($transaction);
                     break;
 
                 case 'EXPIRED':
@@ -73,22 +71,40 @@ class TripayCallbackController extends Controller
                     $transaction->update(['status' => 'UNPAID']);
                     break;
 
-                default:
-                    // PERBAIKAN: Ganti Response::json() dengan response()->json()
+                default:                
                     return response()->json([
                         'success' => false,
                         'message' => 'Unrecognized payment status',
                     ]);
             }
-
-            // PERBAIKAN: Ganti Response::json() dengan response()->json()
             return response()->json(['success' => true]);
         }
-        
-        // Tambahkan return default
+            
         return response()->json([
             'success' => true,
             'message' => 'Callback received, payment still open',
         ]);
+    }
+
+    private function OrderStatusReader($transaction)
+    {
+        try {
+            $nAnalysesMethodOrder = $transaction->n_analyses_methods_order;
+            
+            if (!$nAnalysesMethodOrder) {
+                logger()->warning('NAnalysesMethodsOrder not found for transaction: ' . $transaction->id);
+                return;
+            }
+            
+            $order = $nAnalysesMethodOrder->order;
+            
+            if (!$order) {
+                logger()->warning('Order not found for n_analyses_methods_order: ' . $nAnalysesMethodOrder->id);
+                return;
+            }
+            
+        } catch (\Exception $e) {
+            logger()->error('Failed to update order status: ' . $e->getMessage());
+        }
     }
 }

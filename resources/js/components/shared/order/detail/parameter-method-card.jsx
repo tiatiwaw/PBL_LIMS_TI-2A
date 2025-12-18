@@ -2,6 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Gauge } from "lucide-react";
 import {
+    getParameterStatusVariant,
     getSampleStatusVariant,
     getStatusParameterLabel,
 } from "@/utils/statusUtils";
@@ -114,7 +115,7 @@ const ParameterMethodCard = ({ data }) => {
                                 {data.test_methods.validity_period}
                             </Badge>
                         </div>
-                        <div className="col-span-2">
+                        <div>
                             <p className="text-sm text-slate-500 mb-1">
                                 Parameter Terkait
                             </p>
@@ -122,7 +123,7 @@ const ParameterMethodCard = ({ data }) => {
                                 {data.test_methods.applicable_parameter}
                             </p>
                         </div>
-                        <div className="col-span-2">
+                        <div>
                             <p className="text-sm text-slate-500 mb-1">
                                 Referensi Standar
                             </p>
@@ -133,19 +134,35 @@ const ParameterMethodCard = ({ data }) => {
                     </div>
                 </div>
 
-                <div className="bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
-                    <div className="flex items-center justify-between">
-                        <span className="font-semibold text-slate-700">
+                <div className="bg-blue-50 rounded-xl p-5 border-2 border-blue-200">
+                    <div className="flex items-center justify-between mb-4">
+                        <span className="font-semibold text-slate-700 text-base">
                             Hasil Pengujian
                         </span>
-                        <span className="font-bold text-blue-700 text-xl">
-                            {data.result}
-                        </span>
-                    </div>
-                    <div className="mt-2">
-                        <Badge variant={getSampleStatusVariant(data.status)}>
+                        <Badge variant={getParameterStatusVariant(data.status)}>
                             {getStatusParameterLabel(data.status)}
                         </Badge>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <p className="text-sm text-slate-600 mb-1">
+                                Nilai Hasil
+                            </p>
+                            <p className="font-bold text-slate-900 text-2xl">
+                                {data.result}
+                            </p>
+                        </div>
+                        <div>
+                            <p className="text-sm text-slate-600 mb-1">
+                                Satuan
+                            </p>
+                            <Badge
+                                variant="info"
+                                className="text-base px-3 py-1"
+                            >
+                                {data.test_parameters.unit_values.value}
+                            </Badge>
+                        </div>
                     </div>
                 </div>
             </CardContent>

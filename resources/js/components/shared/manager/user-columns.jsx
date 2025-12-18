@@ -1,21 +1,13 @@
-import { Button } from "@/components/ui/button";
+import ActionColumn from "../tabel/action-column";
 
 export const getUsersColumns = ({ onShowDetail }) => [
-    { accessorKey: 'no', header: 'No.' },
-    { accessorKey: 'name', header: 'Nama' },
-    { accessorKey: 'role', header: 'Role' },
-    { accessorKey: 'email', header: 'Email' },
+    { accessorKey: "no", header: "No." },
+    { accessorKey: "name", header: "Nama" },
+    { accessorKey: "role", header: "Role" },
+    { accessorKey: "email", header: "Email" },
     {
         accessorKey: "aksi",
         header: "Aksi",
-        cell: ({ row }) => (
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onShowDetail(row)}
-            >
-                Detail
-            </Button>
-        ),
+        cell: ({ row }) => <ActionColumn onDetail={onShowDetail} row={row} />,
     },
 ];

@@ -66,6 +66,9 @@ class OrdersController extends Controller
                 'analysts.certificates',
                 'analysesMethods',
                 'samples.sample_categories',
+                'samples.n_parameter_methods' => function ($query) {
+                    $query->where('status', '!=', 'failed');
+                },
                 'samples.n_parameter_methods.test_parameters.unit_values',
                 'samples.n_parameter_methods.test_parameters.reference_standards',
                 'samples.n_parameter_methods.test_methods.reference_standards',
@@ -113,6 +116,9 @@ class OrdersController extends Controller
                 'analysts.certificates',
                 'analysesMethods',
                 'samples.sample_categories',
+                'samples.n_parameter_methods' => function ($query) {
+                    $query->where('status', '!=', 'failed');
+                },
                 'samples.n_parameter_methods.test_parameters.unit_values',
                 'samples.n_parameter_methods.test_parameters.reference_standards',
                 'samples.n_parameter_methods.test_methods.reference_standards',

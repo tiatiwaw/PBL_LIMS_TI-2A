@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API\V1\Client;
 
 use App\Http\Controllers\API\V1\Payment\TripayController;
 use App\Http\Controllers\Controller;
-use App\Models\NAnalysesMethodsOrder;
 use App\Models\Order;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -17,23 +16,66 @@ class TransactionController extends Controller
         $tripay = new TripayController();
         $detail = $tripay->detailTransaction($reference);
 
+        $dbTransaction = Transaction::where('reference', $reference)->first();
+
+        $response = (array) $detail;
+
+        if ($dbTransaction) {
+            $status = strtoupper($dbTransaction->status);
+            
+            $response['status'] = $status;
+            $response['original_gateway_status'] = $detail->status ?? null;
+            $response['transaction_id'] = $dbTransaction->id;
+            
+            $tripayStatus = isset($detail->status) ? strtoupper($detail->status) : null;
+            $response['is_match_status'] = ($tripayStatus === $status);
+            
+            if ($status === 'PAID' && Auth::check() && Auth::user()->clients) {
+                $clientId = Auth::user()->clients->id;
+                
+                $order = null;
+                
+                if (isset($detail->order_items) && count($detail->order_items) > 0) {
+                    $orderName = $detail->order_items[0]->name;
+                    
+                    if (strpos($orderName, 'Order ke-') !== false) {
+                        $order = Order::where('client_id', $clientId)
+                            ->where('title', $orderName)
+                            ->first();
+                    }
+                }
+                
+                if (!$order) {
+                    $order = Order::where('client_id', $clientId)
+                        ->orderBy('created_at', 'DESC')
+                        ->first();
+                }
+                
+                if ($order) {
+                    $response['redirect_url'] = route('client.orders.receipt.show', ['order_number' => $order->order_number]);
+                    $response['order_id'] = $order->id;
+                    $response['order_number'] = $order->order_number;
+                }
+            }
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Transaction detail successfully retrieved.',
-            'data' => $detail
+            'data' => $response
         ]);
     }
 
     public function store(Request $request, $order = null)
     {
-        if (!$order && !$request->has('order_id')) {
+        $orderId = $order ?? $request->order_id;
+
+        if (!$orderId) {
             return response()->json([
                 'success' => false,
-                'message' => 'Order ID is required. Please provide order ID in URL or request body.'
+                'message' => 'Order ID is required.'
             ], 400);
         }
-        
-        $orderId = $order ?? $request->order_id;
 
         $user = Auth::user();
         if (!$user || !$user->clients) {
@@ -42,7 +84,6 @@ class TransactionController extends Controller
                 'message' => 'Client profile not found'
             ], 404);
         }
-        $client = $user->clients->id;
 
         if (!$request->filled('method')) {
             return response()->json([
@@ -51,85 +92,65 @@ class TransactionController extends Controller
             ], 400);
         }
 
-        $orders = Order::with([
-                'clients',
-                'analysesMethods'
-            ])
-            ->where('client_id', $client)
+        $orderRecord = Order::with(['clients', 'analysesMethods'])
+            ->where('client_id', $user->clients->id)
             ->where('id', $orderId)
             ->first();
 
-        if (!$orders) {
+        if (!$orderRecord) {
             return response()->json([
                 'success' => false,
                 'message' => 'Order tidak ditemukan'
             ], 404);
         }
 
-        $analysesMethodSum = $orders->analysesMethods->map(function ($method) {
-            return [
-                'analyses_method' => $method->analyses_method,
-                'total_amount'     => $method->pivot->price,
-            ];
+        $subtotal = $orderRecord->analysesMethods->sum(function($method) {
+            return $method->pivot->price;
         });
 
-        $subtotal = $analysesMethodSum->sum(fn($item) => $item['total_amount'] ?? 0);
-        $admin = 2000;
-
-        $total = $subtotal + $admin;
-
+        $total = $subtotal + 2000;
         $method = $request->input('method');
 
         $orderData = (object) [
-            'id' => $orders->id,
-            'name' => $orders->clients->name ?? '-',
-            'order_number' => $orders->order_number ?? 'M-' . $orders->id,
-            'title' => $orders->title ?? 'Pembayaran Layanan',
+            'id' => $orderRecord->id,
+            'name' => $orderRecord->clients->name ?? '-',
+            'order_number' => $orderRecord->order_number ?? 'M-' . $orderRecord->id,
+            'title' => $orderRecord->title ?? 'Pembayaran Layanan',
             'price' => $total,
             'quantity' => 1
         ];
 
         $tripay = new TripayController();
-        $transaction = $tripay->requestTransaction($method, $orderData);
+        $tripayResponse = $tripay->requestTransaction($method, $orderData);
         
-        $transactionData = isset($transaction->data) ? $transaction->data : $transaction;
+        $transactionData = $tripayResponse->data ?? $tripayResponse;
         
         if (!isset($transactionData->reference)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to get transaction reference',
-                'transaction_response' => $transaction
+                'message' => 'Failed to get transaction reference'
             ], 500);
         }
 
-        // Cari id NAnalysesMethodsOrder yang relevan (jika ada). Gunakan first() sebagai fallback.
-        $nAnalysesId = $orders->n_analyses_methods_orders()->exists()
-            ? $orders->n_analyses_methods_orders()->first()->id
-            : null;
-
-        // Tentukan status awal berdasarkan response gateway (fallback UNPAID)
-        $gatewayStatus = strtolower(data_get($transactionData, 'status', ''));
-        $status = $gatewayStatus === 'paid' ? 'PAID' : 'UNPAID';
-
-        Transaction::create([
+        $transaction = Transaction::create([
             'user_id' => $user->id,
-            'n_analyses_methods_order_id' => $nAnalysesId ?? $orders->id,
-            'reference' => data_get($transactionData, 'reference'),
-            'merchant_ref' => data_get($transactionData, 'merchant_ref') ?? data_get($transactionData, 'merchantRef'),
-            'total_price' => data_get($transactionData, 'amount', $total),
-            'status' => $status
+            'n_analyses_methods_order_id' => $orderRecord->id,
+            'reference' => $transactionData->reference,
+            'merchant_ref' => $transactionData->merchant_ref ?? ($transactionData->merchantRef ?? null),
+            'total_price' => $transactionData->amount ?? $total,
+            'status' => 'UNPAID'
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Transaction successfully created.',
             'data' => [
-                'reference' => data_get($transactionData, 'reference'),
-                'merchant_ref' => data_get($transactionData, 'merchant_ref') ?? data_get($transactionData, 'merchantRef'),
-                'amount' => data_get($transactionData, 'amount'),
+                'reference' => $transactionData->reference,
+                'merchant_ref' => $transactionData->merchant_ref ?? ($transactionData->merchantRef ?? null),
+                'amount' => $transactionData->amount,
                 'payment_method' => $method,
-                'checkout_url' => data_get($transactionData, 'checkout_url'),
-                'status' => strtoupper($status),
+                'checkout_url' => $transactionData->checkout_url,
+                'status' => strtoupper($transaction->status),
                 'expired_time' => isset($transactionData->expired_time) 
                     ? date('Y-m-d H:i:s', $transactionData->expired_time) 
                     : null,
@@ -143,10 +164,10 @@ class TransactionController extends Controller
                     'price' => $orderData->price,
                     'quantity' => 1,
                     'subtotal' => $subtotal,
-                    'admin_fee' => $admin,
+                    'admin_fee' => 2000,
                     'total' => $total
                 ],
-                'instructions' => data_get($transactionData, 'instructions')
+                'instructions' => $transactionData->instructions ?? null
             ]
         ]);
     }

@@ -7,6 +7,14 @@ export const FILTER_OPTIONS = [
     { value: "manager", label: "Manager" },
 ];
 
+export const FILTER_OPTIONS_MANAGER = [
+    { value: "all", label: "All Role" },
+    { value: "staff", label: "Staff" },
+    { value: "analyst", label: "Analyst" },
+    { value: "supervisor", label: "Supervisor" },
+    { value: "manager", label: "Manager" },
+];
+
 export const ENTITY_CONFIG = {
     training: {
         title: "Pilih Pelatihan",

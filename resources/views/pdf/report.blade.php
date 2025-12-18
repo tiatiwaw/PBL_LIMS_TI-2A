@@ -147,14 +147,14 @@
     {{-- Header Kop Surat --}}
     <div class="header-top">
         <div class="header-left">
-            <img src="{{ public_path('polines.jpeg') }}" class="logo-img" alt="Logo Polines">
+            <img src="{{ public_path('polines.png') }}" class="logo-img" alt="Logo Polines">
         </div>
         
         <div class="header-center">
             <p class="company-name">LABOO</p>
             <p class="company-subtitle">LABORATORY ASSISTANT BASED ONLINE OPERATION</p>
             <p class="company-address">Jl. Prof. Soedarto, Tembalang, Kec. Tembalang, Kota Semarang, Jawa Tengah 50275</p>
-            <p class="company-email">Email: fiacode.202428@gmail.com</p>
+            <p class="company-email">Email: <span style="color: #0066cc; text-decoration: underline;">tiacode.202428@gmail.com</span></p>
         </div>
         
         <div class="header-right">
@@ -171,14 +171,14 @@
     {{-- Informasi Klien --}}
     <table style="margin-top: 15px; margin-bottom: 25px; border: none;">
         <tr style="border: none;">
-            <td style="border: none; width: 25%;"><strong>Nama klien</strong></td>
-            <td style="border: none; width: 2%;">:</td>
-            <td style="border: none;">{{ $order->clients?->name ?? '-' }}</td>
+            <td style="border: none; width: 100px; padding-right: 5px;"><strong>Nama klien</strong></td>
+            <td style="border: none; width: 10px; padding: 0;">:</td>
+            <td style="border: none; padding-left: 10px;">{{ $order->clients?->name ?? '-' }}</td>
         </tr>
         <tr style="border: none;">
-            <td style="border: none;"><strong>Alamat</strong></td>
-            <td style="border: none;">:</td>
-            <td style="border: none;">{{ $order->clients?->address ?? '-' }}</td>
+            <td style="border: none; padding-right: 5px;"><strong>Alamat</strong></td>
+            <td style="border: none; padding: 0;">:</td>
+            <td style="border: none; padding-left: 10px;">{{ $order->clients?->address ?? '-' }}</td>
         </tr>
     </table>
 
@@ -189,12 +189,15 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 5%;">No</th>
-                    <th style="width: 35%;">Nama Parameter</th>
-                    <th style="width: 15%; text-align: center;">Hasil</th>
-                    <th style="width: 25%;">Baku Mutu</th>
-                    <th style="width: 20%;">Satuan</th>
-                    <th style="width: 25%;">Standar Acuan</th>
+                    <th style="width: 3%;">No</th>
+                    <th style="width: 20%;">Nama Parameter</th>
+                    <th style="width: 8%; text-align: center;">Satuan</th>
+                    <th style="width: 10%; text-align: center;">Standar Maksimal</th>
+                    <th style="width: 10%; text-align: center;">Hasil</th>
+                    <th style="width: 12%; text-align: center;">Standar Minimal</th>
+                    <th style="width: 12%; text-align: center;">Baku Mutu</th>
+                    <th style="width: 12%; text-align: center;">Standar Acuan</th>
+                    <th style="width: 13%;">Keterangan</th>
                 </tr>
             </thead>
             <tbody>
@@ -203,10 +206,13 @@
                     <tr>
                         <td class="text-center">{{ $no++ }}</td>
                         <td>{{ $param['parameter_name'] }}</td>
+                        <td class="text-center">{{ $param['unit'] }}</td>
+                        <td class="text-center">{{ $param['quality_max'] }}</td>
                         <td class="text-center">{{ $param['result'] }}</td>
-                        <td>{{ $param['quality'] }}</td>
-                        <td>{{ $param['unit'] }}</td>
-                        <td>{{ $param['reference'] }}</td>
+                        <td class="text-center">{{ $param['detection_limit'] }}</td>
+                        <td class="text-center">{{ $param['quality_standard'] }}</td>
+                        <td class="text-center">{{ $param['reference'] }}</td>
+                        <td>{{ $param['keterangan'] }}</td>
                     </tr>
                 @endforeach
             </tbody>

@@ -13,7 +13,6 @@ export const getClientColumns = ({ onShowDetail }) => [
             <ActionColumn
                 onDetail={onShowDetail}
                 onEdit={onEdit}
-                onDelete={onDelete}
                 row={row}
             />
         ),

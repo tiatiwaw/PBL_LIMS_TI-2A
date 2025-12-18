@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     CheckCircle,
     FlaskConical,
@@ -6,9 +7,7 @@ import {
     ListTodo,
 } from "lucide-react";
 import { useOrderReports } from "@/hooks/useAdmin";
-import { useReportFilters } from "@/hooks/useReportFilters";
-import { useOrdersAnalytics } from "@/hooks/analytics/useOrdersAnalytics";
-import { COLORS, STATUS_CONFIG } from "@/utils/constant/report";
+import { COLORS } from "@/utils/constant/report";
 import {
     DistributionPieChart,
     KPICard,
@@ -19,39 +18,43 @@ import ReportLayout from "@/components/layouts/report-layout";
 import { exportOrdersReport } from "@/utils/excel/export/orders-report";
 
 export default function OrdersReportDashboard() {
-    const { data: orders = [], isLoading, error } = useOrderReports();
-    const filters = useReportFilters([orders], ["order_date"]);
-    const analytics = useOrdersAnalytics(orders, filters.dateFilter);
+    const [selectedYear, setSelectedYear] = useState("all");
+    const [selectedMonth, setSelectedMonth] = useState("all");
 
-    const handleExport = () => exportOrdersReport(analytics);
-
-    const enhancedStatusChart = analytics.statusChart.map((entry, index) => {
-        const statusKey = Object.keys(STATUS_CONFIG).find(
-            (k) => STATUS_CONFIG[k].label === entry.name
-        );
-        return {
-            ...entry,
-            color:
-                STATUS_CONFIG[statusKey]?.color || COLORS.chartPalette[index],
-        };
+    const { data, isLoading, error } = useOrderReports({
+        year: selectedYear,
+        month: selectedMonth,
     });
+
+    const kpi = data?.kpi || {};
+    const charts = data?.charts || {};
+    const meta = data?.meta || {};
+
+    const handleClearFilters = () => {
+        setSelectedYear("all");
+        setSelectedMonth("all");
+    };
 
     return (
         <ReportLayout
             title="Laporan Analisis Order"
             headerTitle="Laporan Analisis Order"
-            subtitle={`Menampilkan data dari ${analytics.filteredOrders.length} order.`}
+            subtitle={
+                !isLoading
+                    ? `Menampilkan data dari ${kpi.total_orders ?? 0} order.`
+                    : "Memuat data..."
+            }
             isLoading={isLoading}
             error={error}
-            hasData={analytics.filteredOrders.length > 0}
+            hasData={(kpi.total_orders ?? 0) > 0}
             filterProps={{
-                selectedYear: filters.selectedYear,
-                selectedMonth: filters.selectedMonth,
-                availableYears: filters.availableYears,
-                onYearChange: filters.setSelectedYear,
-                onMonthChange: filters.setSelectedMonth,
-                onClearFilters: filters.clearFilters,
-                onExport: handleExport,
+                selectedYear,
+                selectedMonth,
+                availableYears: meta.years || [],
+                onYearChange: setSelectedYear,
+                onMonthChange: setSelectedMonth,
+                onClearFilters: handleClearFilters,
+                onExport: () => exportOrdersReport(data),
             }}
             emptyStateIcon={Search}
             emptyStateDescription="Coba sesuaikan filter atau kata kunci pencarian Anda."
@@ -60,46 +63,46 @@ export default function OrdersReportDashboard() {
                     <KPICard
                         icon={ListTodo}
                         title="Total Order Masuk"
-                        value={analytics.totalOrders}
+                        value={kpi.total_orders ?? 0}
                         subtitle="Total order diregistrasi"
                         delay={0.1}
                     />
                     <KPICard
                         icon={CheckCircle}
                         title="Order Selesai"
-                        value={analytics.completedOrders}
+                        value={kpi.completed_orders ?? 0}
                         subtitle="Total order tervalidasi"
                         delay={0.15}
                     />
                     <KPICard
                         icon={FlaskConical}
                         title="Total Sampel Diuji"
-                        value={analytics.totalSamples}
+                        value={kpi.total_samples ?? 0}
                         subtitle="Spesimen diregistrasi"
                         delay={0.2}
                     />
                     <KPICard
                         icon={Activity}
                         title="Metode Analisis Digunakan"
-                        value={analytics.totalAnalysisMethods}
+                        value={kpi.total_analysis_methods ?? 0}
                         subtitle="Frekuensi penggunaan metode"
                         delay={0.25}
                     />
                     <KPICard
                         icon={Activity}
                         title="Metode Tes Paling Sering Digunakan"
-                        value={analytics.topTestMethods[0]}
-                        subtitle={`${analytics.topTestMethods
-                            .map((i) => i)
+                        value={kpi.top_test_methods?.[0] ?? "-"}
+                        subtitle={`${(kpi.top_test_methods || [])
+                            .slice(0, 5)
                             .join(" | ")}`}
                         delay={0.3}
                     />
                     <KPICard
                         icon={CheckCircle}
                         title="Parameter Paling Sering Digunakan"
-                        value={analytics.topTestParameters[0]}
-                        subtitle={`${analytics.topTestParameters
-                            .map((i) => i)
+                        value={kpi.top_test_parameters?.[0] ?? "-"}
+                        subtitle={`${(kpi.top_test_parameters || [])
+                            .slice(0, 5)
                             .join(" | ")}`}
                         delay={0.35}
                     />
@@ -110,21 +113,21 @@ export default function OrdersReportDashboard() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <DistributionPieChart
                             title="Distribusi Status Order"
-                            data={enhancedStatusChart}
+                            data={charts.status || []}
                             innerRadius={60}
                             outerRadius={80}
                             delay={0.4}
                         />
                         <DistributionPieChart
                             title="Proporsi Tipe Order"
-                            data={analytics.typeChart}
+                            data={charts.type || []}
                             innerRadius={0}
                             outerRadius={80}
                             delay={0.45}
                         />
                         <SimpleBarChart
                             title="Jumlah Sampel Per Order"
-                            data={analytics.samplesPerOrder}
+                            data={charts.samples_per_order || []}
                             dataKey="count"
                             categoryKey="order"
                             color={COLORS.primary.muda}
@@ -135,13 +138,13 @@ export default function OrdersReportDashboard() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <RankingBarChart
                             title="Top Metode Analisis (Paling Sering)"
-                            data={analytics.methodChart}
+                            data={charts.methods || []}
                             dataKey="value"
                             delay={0.55}
                         />
                         <SimpleBarChart
                             title="Kategori Sampel Terbanyak"
-                            data={analytics.categoryChart}
+                            data={charts.categories || []}
                             dataKey="value"
                             color="#2CACAD"
                             delay={0.6}
