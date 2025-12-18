@@ -1,504 +1,679 @@
-import { useState } from "react";
-import { router } from "@inertiajs/react";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+    Award,
+    FileText,
+    Upload,
+    ShieldCheck,
+    User,
+    Mail,
+    MapPin,
+    Phone,
+    Lock,
+    Edit3,
+    ChevronLeft,
+    Eye,
+    X,
+} from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import Loading from "@/components/ui/loading";
-import { Award, FileText, Upload } from "lucide-react";
-import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { getProfile, useChangePassword, useUpdateProfile, useUploadSignature } from "@/hooks/useProfile";
+import {
+    getProfile,
+    useChangePassword,
+    useUpdateProfile,
+    useUploadSignature,
+} from "@/hooks/useProfile";
 import SignaturePad from "@/components/profile/signature-pad";
 
+const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4 },
+};
+
+const staggerContainer = {
+    animate: { transition: { staggerChildren: 0.1 } },
+};
+
 export default function ProfilePage() {
-  const changePassword = useChangePassword();
-  const { mutateAsync: updateProfile, isPending: isUpdating } = useUpdateProfile();
-  const { mutateAsync: uploadSignature, isPending: isUploading } = useUploadSignature();
-  
-  const [pdfPreview, setPdfPreview] = useState(null);
-  const [signaturePreview, setSignaturePreview] = useState(null);
-  const [showChangeModal, setShowChangeModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showSignatureModal, setShowSignatureModal] = useState(false);
-  const [signatureMode, setSignatureMode] = useState("upload"); // "upload" or "draw"
-  const [editName, setEditName] = useState("");
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [signatureFile, setSignatureFile] = useState(null);
-  const [isNavigatingBack, setIsNavigatingBack] = useState(false);
+    const { user } = useAuth();
+    const { data: profileData, isLoading, error } = getProfile(user?.id);
+    const updateProfile = useUpdateProfile();
+    const uploadSignature = useUploadSignature();
+    const changePassword = useChangePassword();
 
-  const { user } = useAuth();
-  const { data: profileData, isLoading, error } = getProfile(user?.id);
+    const [modals, setModals] = useState({
+        editName: false,
+        signature: false,
+        password: false,
+        pdfPreview: null,
+        signaturePreview: false,
+    });
 
-  const handleEditClick = () => {
-    setEditName(profileData?.name || "");
-    setShowEditModal(true);
-  };
+    const [forms, setForms] = useState({
+        name: "",
+        oldPassword: "",
+        newPassword: "",
+        signatureFile: null,
+    });
 
-  const handleBackClick = () => {
-    if (isNavigatingBack) return;
-    setIsNavigatingBack(true);
-    window.history.back();
-  };
-
-  const handleSaveName = async () => {
-    try {
-      await updateProfile({ id: profileData.id, data: { name: editName } });
-      toast.success("Nama berhasil diperbarui");
-      setShowEditModal(false);
-    } catch (err) {
-      if (err.response?.data?.message) {
-        toast.error(err.response.data.message);
-      }
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Profile" header="Selamat Datang">
+                <Loading />
+            </DashboardLayout>
+        );
     }
-  };
 
-  const handleSignatureUpload = async () => {
-    if (!signatureFile) {
-      toast.error("Pilih file terlebih dahulu");
-      return;
+    if (error) {
+        return (
+            <DashboardLayout title="Profile" header="Selamat Datang">
+                <div className="text-center text-red-500 py-8">
+                    {error.message || "Terjadi kesalahan saat memuat data"}
+                </div>
+            </DashboardLayout>
+        );
     }
-    try {
-      await uploadSignature({ id: profileData.id, signature: signatureFile });
-      toast.success("Signature berhasil diunggah");
-      setShowSignatureModal(false);
-      setSignatureFile(null);
-    } catch (err) {
-      if (err.response?.data?.message) {
-        toast.error(err.response.data.message);
-      }
-    }
-  };
 
-  const handleChangePassword = async (id, formData) => {
-    try {
-      await changePassword.mutateAsync({ id, data: formData });
-      setShowChangeModal(false);
-    } catch (err) {
-      if (err.response?.data?.message) {
-        toast.error(err.response.data.message);
-      }
-    }
-  };
+    const toggleModal = (key, value) =>
+        setModals((prev) => ({ ...prev, [key]: value }));
+    const updateForm = (key, value) =>
+        setForms((prev) => ({ ...prev, [key]: value }));
 
-  const handleDrawSignature = async (blob) => {
-    try {
-      const file = new File([blob], `signature-${Date.now()}.png`, { type: "image/png" });
-      await uploadSignature({ id: profileData.id, signature: file });
-      toast.success("Signature berhasil disimpan");
-      setShowSignatureModal(false);
-      setSignatureMode("upload");
-    } catch (err) {
-      if (err.response?.data?.message) {
-        toast.error(err.response.data.message);
-      }
-    }
-  };
+    const handleSaveName = async () => {
+        try {
+            await updateProfile.mutateAsync({
+                id: profileData.id,
+                data: { name: forms.name },
+            });
+            toast.success("Profil berhasil diperbarui");
+            toggleModal("editName", false);
+        } catch (err) {
+            toast.error(
+                err.response?.data?.message || "Gagal memperbarui nama"
+            );
+        }
+    };
 
-  if (isLoading) return <DashboardLayout title="Profil Pengguna" header="Profil Pengguna"><Loading /></DashboardLayout>;
-  
-  if (error) return <DashboardLayout title="Profil Pengguna" header="Profil Pengguna"><div className="text-center text-red-500 py-8">{error.message || "Terjadi kesalahan"}</div></DashboardLayout>;
+    const handleSignatureSubmit = async (fileData) => {
+        try {
+            const file =
+                fileData instanceof Blob
+                    ? new File([fileData], `sig-${Date.now()}.png`, {
+                          type: "image/png",
+                      })
+                    : forms.signatureFile;
 
-  return (
-    <DashboardLayout title="Profil Pengguna" header="Profil Pengguna">
-      <div className="mx-auto space-y-8 py-4">
-        
-        {/* HEADER BANNER */}
-        <div className="bg-gradient-to-r from-primary-hijauGelap to-primary-hijauTua text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
-          <div className="absolute inset-0 bg-white/10 backdrop-blur-sm rounded-2xl"></div>
-          <div className="relative z-10 flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold">Halo, {profileData?.name}! 👋</h1>
-              <p className="text-sm opacity-90 mt-1">Ini adalah halaman profil Anda.</p>
-            </div>
-            <button
-              onClick={handleBackClick}
-              disabled={isNavigatingBack}
-              className="px-4 py-2 bg-primary-hijauTerang text-primary-hijauTua hover:bg-primary-hijauTerang/80 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition text-sm font-medium"
+            await uploadSignature.mutateAsync({
+                id: profileData.id,
+                signature: file,
+            });
+            toast.success("Tanda tangan tersimpan");
+            toggleModal("signature", false);
+        } catch (err) {
+            toast.error("Gagal mengunggah tanda tangan");
+        }
+    };
+
+    return (
+        <DashboardLayout title="Profil Saya" header="Profil Saya">
+            <motion.div
+                initial="initial"
+                animate="animate"
+                variants={staggerContainer}
+                className="max-w-5xl mx-auto space-y-6 pb-10 px-4"
             >
-              ← Kembali
-            </button>
-          </div>
-        </div>
+                <motion.div variants={fadeInUp} className="relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-primary-hijauTua to-primary-hijauGelap rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+                    <div className="relative bg-white rounded-2xl p-8 border border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 shadow-sm">
+                        <div className="flex items-center gap-6">
+                            <div className="h-20 w-20 rounded-2xl bg-primary-hijauTua text-white flex items-center justify-center shadow-lg shadow-primary-hijauTua/20">
+                                <User size={36} />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <h1 className="text-2xl font-bold text-primary-hijauGelap">
+                                        {profileData?.name}
+                                    </h1>
+                                    <Badge className="bg-primary-hijauTua text-white border-none hover:bg-primary-hijauGelap transition-colors uppercase text-[10px]">
+                                        {profileData?.role}
+                                    </Badge>
+                                </div>
+                                <p className="text-slate-500 flex items-center gap-2 mt-1 text-sm">
+                                    <Mail
+                                        size={14}
+                                        className="text-primary-hijauTua"
+                                    />{" "}
+                                    {profileData?.email}
+                                </p>
+                            </div>
+                        </div>
+                        <Button
+                            variant="outline"
+                            onClick={() => window.history.back()}
+                            className="rounded-xl border-primary-hijauTua/20 text-primary-hijauTua hover:bg-primary-hijauTua hover:text-white transition-all"
+                        >
+                            <ChevronLeft className="mr-2 w-4 h-4" /> Kembali
+                        </Button>
+                    </div>
+                </motion.div>
 
-        {/* PROFILE INFO CARD */}
-        <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100 space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-slate-700">Informasi Dasar</h2>
-            <button
-              onClick={handleEditClick}
-              className="text-md px-3 py-1 bg-primary-hijauMuda text-white rounded hover:scale-105 transition"
-            >
-              Edit
-            </button>
-          </div>
-
-          <Detail label="Nama" value={profileData?.name} />
-          <Detail label="Email" value={profileData?.email} />
-
-          {profileData?.role === "analyst" && (
-            <>
-              <Detail label="Specialist" value={profileData?.analyst?.specialist} />
-            </>
-          )}
-
-          {profileData?.role === "client" && (
-            <>
-              <Detail label="Alamat" value={profileData?.clients?.address} />
-              <Detail label="No. Hp" value={profileData?.clients?.phone_number} />
-            </>
-          )}
-
-          <div className="flex justify-end pt-4 gap-2">
-            {profileData?.role !== "client" && (
-              <button
-                onClick={() => setShowSignatureModal(true)}
-                className="px-4 py-2 rounded-lg bg-primary-hijauMuda text-white hover:scale-105 transition flex items-center gap-2"
-              >
-                <Upload className="w-4 h-4" /> {profileData?.signature ? "Ubah" : "Upload"} Tanda Tangan
-              </button>
-            )}
-            <button
-              onClick={() => setShowChangeModal(true)}
-              className="px-4 py-2 rounded-lg bg-primary-hijauTua text-white hover:bg-primary-hijauGelap transition-all"
-            >
-              Ganti Password
-            </button>
-          </div>
-        </div>
-
-         {/* SIGNATURE SECTION - Email Footer Style */}
-        {profileData?.role !== "client" && profileData?.signature && (
-          <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
-            <h3 className="text-lg font-semibold text-slate-700 mb-4">Tanda Tangan Digital</h3>
-            <div className="border-t pt-4 flex items-center gap-4">
-              <div className="flex-1">
-                <p className="font-semibold text-slate-700">{profileData?.name}</p>
-                <p className="text-sm text-slate-500">{profileData?.email}</p>
-              </div>
-              <button
-                onClick={() => setSignaturePreview(profileData.signature)}
-                className="border rounded p-3 bg-slate-50 hover:bg-slate-100 transition cursor-pointer"
-              >
-                <img src={`/storage/${profileData.signature?.replace(/\\/g, '/')}`} alt="signature" className="h-20 object-contain" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ANALYST SECTIONS */}
-        {profileData?.role === "analyst" && (
-          <>
-            <CertificatesSection certificates={profileData?.analyst?.certificates} onPdfPreview={setPdfPreview} />
-            <TrainingSection trainings={profileData?.analyst?.trainings} />
-          </>
-        )}
-
-       
-
-        {/* PDF PREVIEW MODAL */}
-        {pdfPreview && <PdfPreviewModal pdfPath={pdfPreview} onClose={() => setPdfPreview(null)} />}
-
-        {/* SIGNATURE PREVIEW MODAL */}
-        {signaturePreview && (
-          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-6 relative shadow-2xl max-w-md">
-              <button
-                className="absolute top-3 right-3 text-slate-600 hover:text-primary-hijauGelap text-xl"
-                onClick={() => setSignaturePreview(null)}
-              >
-                ✕
-              </button>
-              <h3 className="text-lg font-semibold mb-4">Preview Signature</h3>
-              <img src={`/storage/${signaturePreview?.replace(/\\/g, '/')}`} alt="signature" className="w-full object-contain border rounded p-4 bg-slate-50" />
-            </div>
-          </div>
-        )}
-
-        {/* MODALS */}
-        {showEditModal && (
-          <EditNameModal
-            name={editName}
-            setName={setEditName}
-            onSave={handleSaveName}
-            onClose={() => setShowEditModal(false)}
-            isLoading={isUpdating}
-          />
-        )}
-
-        {showSignatureModal && (
-          <BaseModal title="Unggah Tanda Tangan" onClose={() => { setShowSignatureModal(false); setSignatureMode("upload"); }}>
-            <div className="space-y-4">
-              <div className="flex gap-2 mb-4">
-                <button
-                  onClick={() => setSignatureMode("upload")}
-                  className={`flex-1 py-2 rounded-lg transition ${
-                    signatureMode === "upload"
-                      ? "bg-primary-hijauMuda text-white"
-                      : "border border-slate-300 text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  Upload File
-                </button>
-                <button
-                  onClick={() => setSignatureMode("draw")}
-                  className={`flex-1 py-2 rounded-lg transition ${
-                    signatureMode === "draw"
-                      ? "bg-primary-hijauMuda text-white"
-                      : "border border-slate-300 text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  Gambar
-                </button>
-              </div>
-
-              {signatureMode === "upload" ? (
-                <>
-                  <div>
-                    <label className="block text-sm mb-2 font-medium text-slate-700">Pilih File</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setSignatureFile(e.target.files?.[0] || null)}
-                      className="w-full border px-3 py-2 rounded-lg bg-slate-50"
-                    />
-                    {signatureFile && <p className="text-xs text-slate-500 mt-2">File: {signatureFile.name}</p>}
-                  </div>
-                  <div className="flex justify-end gap-3 mt-4">
-                    <button onClick={() => setShowSignatureModal(false)} className="px-4 py-2 rounded-lg border text-slate-600 hover:bg-slate-100">
-                      Batal
-                    </button>
-                    <button
-                      onClick={handleSignatureUpload}
-                      disabled={isUploading || !signatureFile}
-                      className="px-4 py-2 rounded-lg bg-primary-hijauMuda text-white hover:scale-105 transition disabled:opacity-50"
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <motion.div
+                        variants={fadeInUp}
+                        className="md:col-span-2 space-y-6"
                     >
-                      {isUploading? "Mengupload" : "Upload"}
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <SignaturePad
-                  onSave={handleDrawSignature}
-                  onCancel={() => setShowSignatureModal(false)}
-                />
-              )}
+                        <Card className="border-none shadow-sm overflow-hidden ring-1 ring-slate-200">
+                            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-slate-50">
+                                <div>
+                                    <CardTitle className="text-lg text-primary-hijauGelap">
+                                        Informasi Personal
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Detail akun dan data diri Anda
+                                    </CardDescription>
+                                </div>
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="text-primary-hijauTua hover:bg-primary-hijauTerang"
+                                    onClick={() => {
+                                        updateForm("name", profileData?.name);
+                                        toggleModal("editName", true);
+                                    }}
+                                >
+                                    <Edit3 className="w-4 h-4 mr-2" /> Edit
+                                </Button>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 py-6">
+                                <InfoItem
+                                    icon={<User />}
+                                    label="Nama Lengkap"
+                                    value={profileData?.name}
+                                />
+                                <InfoItem
+                                    icon={<Mail />}
+                                    label="Email"
+                                    value={profileData?.email}
+                                />
+                                {profileData?.role === "analyst" && (
+                                    <InfoItem
+                                        icon={<ShieldCheck />}
+                                        label="Spesialisasi"
+                                        value={profileData?.analyst?.specialist}
+                                    />
+                                )}
+                                {profileData?.role === "client" && (
+                                    <>
+                                        <InfoItem
+                                            icon={<MapPin />}
+                                            label="Alamat"
+                                            value={
+                                                profileData?.clients?.address
+                                            }
+                                        />
+                                        <InfoItem
+                                            icon={<Phone />}
+                                            label="No. Hp"
+                                            value={
+                                                profileData?.clients
+                                                    ?.phone_number
+                                            }
+                                        />
+                                    </>
+                                )}
+                            </CardContent>
+                            <div className="p-4 bg-slate-50 border-t flex justify-end gap-3">
+                                <Button
+                                    variant="outline"
+                                    className="border-primary-hijauTua/20 text-primary-hijauTua hover:bg-primary-hijauTerang"
+                                    onClick={() =>
+                                        toggleModal("password", true)
+                                    }
+                                >
+                                    <Lock className="w-4 h-4 mr-2" /> Ganti
+                                    Password
+                                </Button>
+                            </div>
+                        </Card>
+
+                        {profileData?.role === "analyst" && (
+                            <div className="space-y-6">
+                                <ProfessionalCard
+                                    title="Sertifikat"
+                                    icon={
+                                        <Award className="text-primary-hijauTua" />
+                                    }
+                                    items={profileData?.analyst?.certificates}
+                                    type="certificate"
+                                    onPreview={(path) =>
+                                        toggleModal("pdfPreview", path)
+                                    }
+                                />
+                                <ProfessionalCard
+                                    title="Training"
+                                    icon={
+                                        <FileText className="text-primary-hijauTua" />
+                                    }
+                                    items={profileData?.analyst?.trainings}
+                                    type="training"
+                                />
+                            </div>
+                        )}
+                    </motion.div>
+
+                    <motion.div variants={fadeInUp} className="md:col-span-1">
+                        {profileData?.role !== "client" && (
+                            <Card className="border-none shadow-sm ring-1 ring-slate-200 sticky top-6 overflow-hidden">
+                                <CardHeader>
+                                    <CardTitle className="text-lg flex items-center gap-2 text-primary-hijauGelap">
+                                        <Edit3 className="w-4 h-4 text-primary-hijauTua" />{" "}
+                                        Tanda Tangan
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Pratinjau tanda tangan digital Anda
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    {profileData?.signature ? (
+                                        <div
+                                            className="group relative border-2 border-dashed border-primary-hijauTua/20 rounded-xl p-4 bg-primary-hijauTerang/30 hover:border-primary-hijauTua/40 hover:bg-primary-hijauTerang transition-all cursor-pointer"
+                                            onClick={() =>
+                                                toggleModal(
+                                                    "signaturePreview",
+                                                    true
+                                                )
+                                            }
+                                        >
+                                            <img
+                                                src={`/storage/${profileData.signature.replace(
+                                                    /\\/g,
+                                                    "/"
+                                                )}`}
+                                                alt="signature"
+                                                className="w-full h-32 object-contain filter hover:brightness-95"
+                                            />
+                                            <div className="absolute inset-0 bg-primary-hijauTua/5 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-xl transition-opacity">
+                                                <Eye className="text-primary-hijauTua" />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="h-32 border-2 border-dashed border-slate-100 rounded-xl flex flex-col items-center justify-center text-slate-400 bg-slate-50/50">
+                                            <Upload className="mb-2 opacity-30" />
+                                            <span className="text-xs">
+                                                Belum ada tanda tangan
+                                            </span>
+                                        </div>
+                                    )}
+                                    <Button
+                                        className="w-full bg-primary-hijauTua hover:bg-primary-hijauGelap text-white shadow-md transition-all active:scale-95"
+                                        onClick={() =>
+                                            toggleModal("signature", true)
+                                        }
+                                    >
+                                        <Upload className="w-4 h-4 mr-2" />
+                                        {profileData?.signature
+                                            ? "Ubah"
+                                            : "Upload"}{" "}
+                                        Tanda Tangan
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        )}
+                    </motion.div>
+                </div>
+
+                <Dialog
+                    open={modals.editName}
+                    onOpenChange={(val) => toggleModal("editName", val)}
+                >
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle className="text-primary-hijauTua">
+                                Edit Nama
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="name">Nama Lengkap</Label>
+                                <Input
+                                    id="name"
+                                    value={forms.name}
+                                    onChange={(e) =>
+                                        updateForm("name", e.target.value)
+                                    }
+                                    className="focus-visible:ring-primary-hijauTua"
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button
+                                variant="outline"
+                                onClick={() => toggleModal("editName", false)}
+                            >
+                                Batal
+                            </Button>
+                            <Button
+                                className="bg-primary-hijauTua hover:bg-primary-hijauGelap"
+                                onClick={handleSaveName}
+                                disabled={updateProfile.isPending}
+                            >
+                                {updateProfile.isPending
+                                    ? "Menyimpan..."
+                                    : "Simpan"}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                <Dialog
+                    open={modals.password}
+                    onOpenChange={(val) => toggleModal("password", val)}
+                >
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle className="text-primary-hijauTua">
+                                Ganti Password
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="space-y-2">
+                                <Label>Password Lama</Label>
+                                <Input
+                                    type="password"
+                                    value={forms.oldPassword}
+                                    onChange={(e) =>
+                                        updateForm(
+                                            "oldPassword",
+                                            e.target.value
+                                        )
+                                    }
+                                    className="focus-visible:ring-primary-hijauTua"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Password Baru</Label>
+                                <Input
+                                    type="password"
+                                    value={forms.newPassword}
+                                    onChange={(e) =>
+                                        updateForm(
+                                            "newPassword",
+                                            e.target.value
+                                        )
+                                    }
+                                    className="focus-visible:ring-primary-hijauTua"
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button
+                                variant="outline"
+                                onClick={() => toggleModal("password", false)}
+                            >
+                                Batal
+                            </Button>
+                            <Button
+                                className="bg-primary-hijauTua hover:bg-primary-hijauGelap"
+                                onClick={() =>
+                                    changePassword.mutate({
+                                        id: profileData.id,
+                                        data: {
+                                            old_password: forms.oldPassword,
+                                            new_password: forms.newPassword,
+                                        },
+                                    })
+                                }
+                                disabled={changePassword.isPending}
+                            >
+                                Perbarui Password
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                <Dialog
+                    open={modals.signature}
+                    onOpenChange={(val) => toggleModal("signature", val)}
+                >
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle className="text-primary-hijauTua text-center">
+                                Metode Tanda Tangan
+                            </DialogTitle>
+                        </DialogHeader>
+                        <Tabs defaultValue="upload" className="w-full">
+                            <TabsList className="grid w-full grid-cols-2 bg-slate-100 p-1">
+                                <TabsTrigger
+                                    value="upload"
+                                    className="data-[state=active]:bg-primary-hijauTua data-[state=active]:text-white"
+                                >
+                                    Upload File
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="draw"
+                                    className="data-[state=active]:bg-primary-hijauTua data-[state=active]:text-white"
+                                >
+                                    Gambar
+                                </TabsTrigger>
+                            </TabsList>
+                            <TabsContent
+                                value="upload"
+                                className="space-y-4 pt-4"
+                            >
+                                <div className="border-2 border-dashed border-primary-hijauTua/20 rounded-xl p-8 text-center bg-slate-50/50">
+                                    <Input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        id="sig-file"
+                                        onChange={(e) =>
+                                            updateForm(
+                                                "signatureFile",
+                                                e.target.files?.[0]
+                                            )
+                                        }
+                                    />
+                                    <Label
+                                        htmlFor="sig-file"
+                                        className="cursor-pointer flex flex-col items-center"
+                                    >
+                                        <div className="h-10 w-10 rounded-full bg-primary-hijauTua text-white shadow-md flex items-center justify-center mb-2">
+                                            <Upload className="w-5 h-5" />
+                                        </div>
+                                        <span className="text-sm font-medium text-primary-hijauTua">
+                                            {forms.signatureFile?.name ||
+                                                "Klik untuk pilih gambar"}
+                                        </span>
+                                    </Label>
+                                </div>
+                                <Button
+                                    className="w-full bg-primary-hijauTua hover:bg-primary-hijauGelap"
+                                    disabled={
+                                        !forms.signatureFile ||
+                                        uploadSignature.isPending
+                                    }
+                                    onClick={handleSignatureSubmit}
+                                >
+                                    Upload
+                                </Button>
+                            </TabsContent>
+                            <TabsContent value="draw" className="pt-4">
+                                <SignaturePad
+                                    onSave={handleSignatureSubmit}
+                                    onCancel={() =>
+                                        toggleModal("signature", false)
+                                    }
+                                />
+                            </TabsContent>
+                        </Tabs>
+                    </DialogContent>
+                </Dialog>
+
+                <AnimatePresence>
+                    {modals.pdfPreview && (
+                        <ModalPortal
+                            onClose={() => toggleModal("pdfPreview", null)}
+                            title="Pratinjau Dokumen"
+                        >
+                            <iframe
+                                src={`/${modals.pdfPreview}`}
+                                className="w-full h-full rounded-lg"
+                            />
+                        </ModalPortal>
+                    )}
+                    {modals.signaturePreview && (
+                        <ModalPortal
+                            title="Pratinjau Tanda Tangan"
+                            onClose={() =>
+                                toggleModal("signaturePreview", false)
+                            }
+                        >
+                            <div className="bg-slate-50 p-8 rounded-xl flex items-center justify-center border border-slate-100 h-full">
+                                <img
+                                    src={`/storage/${profileData.signature.replace(
+                                        /\\/g,
+                                        "/"
+                                    )}`}
+                                    alt="Signature Preview"
+                                    className="max-h-full object-contain"
+                                />
+                            </div>
+                        </ModalPortal>
+                    )}
+                </AnimatePresence>
+            </motion.div>
+        </DashboardLayout>
+    );
+}
+
+function InfoItem({ icon, label, value }) {
+    return (
+        <div className="flex items-start gap-4">
+            <div className="mt-1 p-2 rounded-lg bg-primary-hijauTerang text-primary-hijauTua">
+                {React.cloneElement(icon, { size: 16 })}
             </div>
-          </BaseModal>
-        )}
-
-        {showChangeModal && (
-          <ChangePasswordModal
-            oldPassword={oldPassword}
-            setOldPassword={setOldPassword}
-            newPassword={newPassword}
-            setNewPassword={setNewPassword}
-            onSave={() => handleChangePassword(profileData.id, { new_password: newPassword, old_password: oldPassword })}
-            onClose={() => setShowChangeModal(false)}
-            isLoading={changePassword.isPending}
-          />
-        )}
-      </div>
-    </DashboardLayout>
-  );
-}
-
-// ========== COMPONENTS ==========
-function Detail({ label, value }) {
-  return (
-    <div className="flex text-sm py-2 border-b last:border-b-0">
-      <span className="w-32 font-semibold text-slate-700">{label}</span>
-      <span className="text-slate-600">: {value}</span>
-    </div>
-  );
-}
-
-function CertificatesSection({ certificates, onPdfPreview }) {
-  return (
-    <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
-      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        <Award className="w-5 h-5 text-primary-hijauTua" /> Sertifikat
-      </h3>
-      <div className="grid grid-cols-2 gap-4">
-        {certificates?.length > 0 ? (
-          certificates.map((cert, i) => (
-            <CertificateCard key={i} cert={cert} onPdfPreview={onPdfPreview} />
-          ))
-        ) : (
-          <p className="text-slate-500 text-sm">Belum ada sertifikat.</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function CertificateCard({ cert, onPdfPreview }) {
-  return (
-    <div
-      className={`border p-4 rounded-xl shadow-sm transition-all ${
-        cert.file_path ? "cursor-pointer hover:shadow-md hover:bg-primary-toska" : "opacity-50 cursor-not-allowed"
-      }`}
-      onClick={() => cert.file_path && onPdfPreview(cert.file_path)}
-    >
-      <p className="font-semibold text-slate-700">{cert.name}</p>
-      <p className="text-xs text-slate-500 mt-1">
-        {cert.file_path ? "Klik untuk melihat PDF" : "File belum tersedia"}
-      </p>
-    </div>
-  );
-}
-
-function TrainingSection({ trainings }) {
-  return (
-    <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
-      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        <FileText className="w-5 h-5 text-primary-hijauTua" /> Training
-      </h3>
-      {trainings?.length > 0 ? (
-        <div className="space-y-4">
-          {trainings.map((t, i) => (
-            <TrainingCard key={i} training={t} />
-          ))}
+            <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    {label}
+                </p>
+                <p className="text-primary-hijauGelap font-semibold text-sm">
+                    {value || "-"}
+                </p>
+            </div>
         </div>
-      ) : (
-        <p className="text-slate-500 text-sm">Belum ada training.</p>
-      )}
-    </div>
-  );
+    );
 }
 
-function TrainingCard({ training }) {
-  return (
-    <div className="p-4 border rounded-xl bg-slate-50 shadow-sm">
-      <p className="font-semibold">{training.name}</p>
-      <p className="text-sm text-slate-700">{training.provider}</p>
-      <p className="text-xs text-slate-500">{training.date}</p>
-      <p className="text-xs text-primary-hijauTua font-semibold mt-1">{training.result}</p>
-    </div>
-  );
+function ProfessionalCard({ title, icon, items, type, onPreview }) {
+    return (
+        <Card className="border-none shadow-sm ring-1 ring-slate-100 overflow-hidden">
+            <CardHeader className="bg-slate-50/50 py-3 border-b border-slate-100">
+                <CardTitle className="text-sm flex items-center gap-2 text-primary-hijauTua font-bold">
+                    {icon} {title}
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+                {items?.length > 0 ? (
+                    <div
+                        className={
+                            type === "certificate"
+                                ? "grid grid-cols-1 sm:grid-cols-2 gap-3"
+                                : "space-y-3"
+                        }
+                    >
+                        {items.map((item, idx) => (
+                            <div
+                                key={idx}
+                                onClick={() =>
+                                    item.file_path &&
+                                    onPreview?.(item.file_path)
+                                }
+                                className={`p-3 rounded-xl border border-slate-100 transition-all ${
+                                    item.file_path
+                                        ? "hover:border-primary-hijauTua hover:bg-primary-hijauTerang cursor-pointer"
+                                        : "bg-slate-50/50"
+                                }`}
+                            >
+                                <div className="flex justify-between items-start gap-2">
+                                    <div className="overflow-hidden">
+                                        <h4 className="font-bold text-primary-hijauTua text-xs truncate">
+                                            {item.name}
+                                        </h4>
+                                        <p className="text-[10px] text-slate-500 mt-0.5 truncate">
+                                            {item.provider || item.date}
+                                        </p>
+                                        {item.result && (
+                                            <Badge className="mt-2 bg-primary-hijauTua text-white border-none text-[9px] h-5">
+                                                {item.result}
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    {item.file_path && (
+                                        <Eye className="w-3 h-3 text-primary-hijauTua shrink-0" />
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-4 text-slate-400 text-xs italic">
+                        Data belum tersedia
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+    );
 }
 
-function PdfPreviewModal({ pdfPath, onClose }) {
-  return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-4 w-3/4 h-3/4 relative shadow-2xl">
-        <button
-          className="absolute top-2 right-2 bg-primary-hijauTua text-white px-3 py-1 rounded"
-          onClick={onClose}
+function ModalPortal({ children, onClose, title }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-primary-hijauGelap/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4"
         >
-          ✕
-        </button>
-        <iframe src={`/${pdfPath}`} className="w-full h-full rounded"></iframe>
-      </div>
-    </div>
-  );
-}
-
-function EditNameModal({ name, setName, onSave, onClose, isLoading }) {
-  return (
-    <BaseModal title="Edit Nama" onClose={onClose}>
-      <div className="mb-4">
-        <label className="block text-sm mb-2 font-medium text-slate-700">Nama</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full border px-3 py-2 rounded-lg bg-slate-50 focus:ring-2 focus:ring-primary-hijauMuda outline-none"
-          placeholder="Masukkan nama"
-        />
-      </div>
-      <div className="flex justify-end gap-3 mt-4">
-        <button onClick={onClose} className="px-4 py-2 rounded-lg border text-slate-600 hover:bg-slate-100">
-          Batal
-        </button>
-        <button
-          onClick={onSave}
-          disabled={isLoading}
-          className="px-4 py-2 rounded-lg bg-primary-hijauMuda text-white shadow hover:scale-105 transition disabled:opacity-50"
-        >
-          {isLoading? "Menyimpan" : "Simpan"}
-        </button>
-      </div>
-    </BaseModal>
-  );
-}
-
-function SignatureUploadModal({ file, setFile, onUpload, onClose, isLoading }) {
-  return (
-    <BaseModal title="Upload Signature" onClose={onClose}>
-      <div className="mb-4">
-        <label className="block text-sm mb-2 font-medium text-slate-700">Pilih File</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-          className="w-full border px-3 py-2 rounded-lg bg-slate-50"
-        />
-        {file && <p className="text-xs text-slate-500 mt-2">File: {file.name}</p>}
-      </div>
-      <div className="flex justify-end gap-3 mt-4">
-        <button onClick={onClose} className="px-4 py-2 rounded-lg border text-slate-600 hover:bg-slate-100">
-          Batal
-        </button>
-        <button
-          onClick={onUpload}
-          disabled={isLoading || !file}
-          className="px-4 py-2 rounded-lg bg-primary-hijauMuda text-primary-hijauGelap shadow hover:scale-105 transition disabled:opacity-50"
-        >
-          Upload
-        </button>
-      </div>
-    </BaseModal>
-  );
-}
-
-function ChangePasswordModal({ oldPassword, setOldPassword, newPassword, setNewPassword, onSave, onClose, isLoading }) {
-  return (
-    <BaseModal title="Ganti Password" onClose={onClose}>
-      <ModalInput label="Password Lama" value={oldPassword} setValue={setOldPassword} />
-      <ModalInput label="Password Baru" value={newPassword} setValue={setNewPassword} />
-      <div className="flex justify-end gap-3 mt-4">
-        <button onClick={onClose} className="px-4 py-2 rounded-lg border text-slate-600 hover:bg-slate-100">
-          Batal
-        </button>
-        <button
-          onClick={onSave}
-          disabled={isLoading}
-          className="px-4 py-2 rounded-lg bg-primary-hijauMuda text-white shadow hover:scale-105 transition disabled:opacity-50"
-        >
-          {isLoading? "Menyimpan" : "Ganti Password"}
-        </button>
-      </div>
-    </BaseModal>
-  );
-}
-
-function BaseModal({ title, onClose, children }) {
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white shadow-xl rounded-2xl p-6 w-full max-w-md relative border">
-        <button
-          className="absolute top-3 right-3 text-slate-600 hover:text-primary-hijauGelap"
-          onClick={onClose}
-        >
-          ✕
-        </button>
-        <h3 className="text-lg font-bold mb-4 text-slate-700 text-center">{title}</h3>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function ModalInput({ label, value, setValue }) {
-  return (
-    <div className="mb-4">
-      <label className="block text-sm mb-1 font-medium text-slate-700">{label}</label>
-      <input
-        type="password"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        className="w-full border px-3 py-2 rounded-lg bg-slate-50 focus:ring-2 focus:ring-primary-hijauMuda outline-none"
-        placeholder={label}
-      />
-    </div>
-  );
+            <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="bg-white rounded-2xl w-full max-w-4xl h-[75vh] flex flex-col relative shadow-2xl overflow-hidden"
+            >
+                <div className="p-4 border-b flex justify-between items-center bg-primary-hijauTua text-white">
+                    <h3 className="font-bold text-sm">{title}</h3>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={onClose}
+                        className="rounded-full h-8 w-8 text-white hover:bg-white/20"
+                    >
+                        <X className="w-4 h-4" />
+                    </Button>
+                </div>
+                <div className="flex-1 p-4 bg-slate-50/30">{children}</div>
+            </motion.div>
+        </motion.div>
+    );
 }
