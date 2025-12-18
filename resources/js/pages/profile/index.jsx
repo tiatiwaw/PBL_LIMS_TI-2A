@@ -43,6 +43,8 @@ import {
     useChangePassword,
     useUpdateProfile,
     useUploadSignature,
+    useUpdateEmail,
+    useUpdatePhone,
 } from "@/hooks/useProfile";
 import SignaturePad from "@/components/profile/signature-pad";
 
@@ -62,9 +64,13 @@ export default function ProfilePage() {
     const updateProfile = useUpdateProfile();
     const uploadSignature = useUploadSignature();
     const changePassword = useChangePassword();
+    const updateEmail = useUpdateEmail();
+    const updatePhone = useUpdatePhone();
 
     const [modals, setModals] = useState({
         editName: false,
+        editEmail: false,
+        editPhone: false,
         signature: false,
         password: false,
         pdfPreview: null,
@@ -73,6 +79,9 @@ export default function ProfilePage() {
 
     const [forms, setForms] = useState({
         name: "",
+        email: "",
+        emailPassword: "",
+        phone: "",
         oldPassword: "",
         newPassword: "",
         signatureFile: null,
@@ -112,6 +121,42 @@ export default function ProfilePage() {
         } catch (err) {
             toast.error(
                 err.response?.data?.message || "Gagal memperbarui nama"
+            );
+        }
+    };
+
+    const handleSaveEmail = async () => {
+        if (!forms.email || !forms.emailPassword) {
+            toast.error("Email dan password harus diisi");
+            return;
+        }
+        try {
+            await updateEmail.mutateAsync({
+                id: profileData.id,
+                data: { email: forms.email, password: forms.emailPassword },
+            });
+            toast.success("Email berhasil diperbarui");
+            toggleModal("editEmail", false);
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Gagal memperbarui email");
+        }
+    };
+
+    const handleSavePhone = async () => {
+        if (!forms.phone) {
+            toast.error("Nomor telepon harus diisi");
+            return;
+        }
+        try {
+            await updatePhone.mutateAsync({
+                id: profileData.id,
+                data: { phone_number: forms.phone },
+            });
+            toast.success("Nomor telepon berhasil diperbarui");
+            toggleModal("editPhone", false);
+        } catch (err) {
+            toast.error(
+                err.response?.data?.message || "Gagal memperbarui nomor telepon"
             );
         }
     };
@@ -367,6 +412,46 @@ export default function ProfilePage() {
                                 />
                             </div>
                         </div>
+                        {profileData?.role === "client" && (
+                            <div className="border-t pt-4">
+                                <p className="text-sm font-semibold text-slate-700 mb-3">
+                                    Ubah Data Lain
+                                </p>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="border-primary-hijauTua/20 text-primary-hijauTua hover:bg-primary-hijauTerang"
+                                        onClick={() => {
+                                            updateForm("email", profileData?.email);
+                                            updateForm("emailPassword", "");
+                                            toggleModal("editName", false);
+                                            toggleModal("editEmail", true);
+                                        }}
+                                    >
+                                        <Mail className="w-4 h-4 mr-2" /> Ubah
+                                        Email
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="border-primary-hijauTua/20 text-primary-hijauTua hover:bg-primary-hijauTerang"
+                                        onClick={() => {
+                                            updateForm(
+                                                "phone",
+                                                profileData?.clients
+                                                    ?.phone_number
+                                            );
+                                            toggleModal("editName", false);
+                                            toggleModal("editPhone", true);
+                                        }}
+                                    >
+                                        <Phone className="w-4 h-4 mr-2" /> Ubah
+                                        No. HP
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
                         <DialogFooter>
                             <Button
                                 variant="outline"
@@ -448,6 +533,108 @@ export default function ProfilePage() {
                                 disabled={changePassword.isPending}
                             >
                                 Perbarui Password
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                <Dialog
+                    open={modals.editEmail}
+                    onOpenChange={(val) => toggleModal("editEmail", val)}
+                >
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle className="text-primary-hijauTua">
+                                Ubah Email
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="email">Email Baru</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    value={forms.email}
+                                    onChange={(e) =>
+                                        updateForm("email", e.target.value)
+                                    }
+                                    className="focus-visible:ring-primary-hijauTua"
+                                    placeholder="Masukkan email baru"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="emailPassword">Password</Label>
+                                <Input
+                                    id="emailPassword"
+                                    type="password"
+                                    value={forms.emailPassword}
+                                    onChange={(e) =>
+                                        updateForm("emailPassword", e.target.value)
+                                    }
+                                    className="focus-visible:ring-primary-hijauTua"
+                                    placeholder="Masukkan password untuk konfirmasi"
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button
+                                variant="outline"
+                                onClick={() => toggleModal("editEmail", false)}
+                            >
+                                Batal
+                            </Button>
+                            <Button
+                                className="bg-primary-hijauTua hover:bg-primary-hijauGelap"
+                                onClick={handleSaveEmail}
+                                disabled={updateEmail.isPending}
+                            >
+                                {updateEmail.isPending
+                                    ? "Menyimpan..."
+                                    : "Simpan"}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                <Dialog
+                    open={modals.editPhone}
+                    onOpenChange={(val) => toggleModal("editPhone", val)}
+                >
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle className="text-primary-hijauTua">
+                                Ubah Nomor Telepon
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="phone">Nomor Telepon</Label>
+                                <Input
+                                    id="phone"
+                                    value={forms.phone}
+                                    onChange={(e) =>
+                                        updateForm("phone", e.target.value)
+                                    }
+                                    className="focus-visible:ring-primary-hijauTua"
+                                    placeholder="Masukkan nomor telepon"
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button
+                                variant="outline"
+                                onClick={() => toggleModal("editPhone", false)}
+                            >
+                                Batal
+                            </Button>
+                            <Button
+                                className="bg-primary-hijauTua hover:bg-primary-hijauGelap"
+                                onClick={handleSavePhone}
+                                disabled={updatePhone.isPending}
+                            >
+                                {updatePhone.isPending
+                                    ? "Menyimpan..."
+                                    : "Simpan"}
                             </Button>
                         </DialogFooter>
                     </DialogContent>
