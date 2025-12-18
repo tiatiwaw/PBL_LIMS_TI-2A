@@ -17,11 +17,40 @@ export const getOrdersColumns = () => [
         accessorKey: "estimate_date",
         header: "Estimasi Selesai",
         cell: ({ row }) => {
-            const value = row.estimate_date;
+            const dateString = row.estimate_date;
+            if (!dateString) return "-";
+
+            const targetDate = new Date(dateString);
+            const today = new Date();
+
+            const formattedDate = new Intl.DateTimeFormat('id-ID', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }).format(targetDate);
+
+            const start = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+            const end = Date.UTC(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+            
+            const diffInMs = end - start;
+            const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
+
+            let timeInfo = "";
+            if (diffInDays === 0) {
+                timeInfo = "hari ini";
+            } else if (diffInDays > 0) {
+                timeInfo = `${diffInDays} hari lagi`;
+            } else {
+                timeInfo = `${Math.abs(diffInDays)} hari yang lalu`;
+            }
+
             return (
-                <>
-                    {value}
-                </>
+                <div class="flex flex-col">
+                    <span>{formattedDate}</span>
+                    <span className="text-gray-500">
+                        ({timeInfo})
+                    </span>
+                </div>
             );
         },
     },
