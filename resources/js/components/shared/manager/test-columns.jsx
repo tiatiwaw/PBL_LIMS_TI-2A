@@ -89,7 +89,7 @@ export const getUnitsColumns = ({ onShowDetail }) => [
 
 export const getStandardsColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No.", enableSorting: false },
-    { accessorKey: "name", header: "Nama Alat", enableSorting: true },
+    { accessorKey: "name", header: "Nama Standar", enableSorting: true },
     {
         id: "aksi",
         header: "Aksi",
@@ -166,7 +166,7 @@ export const getSertifColumns = ({ onShowDetail }) => [
 
 export const getTrainingColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No.", enableSorting: false },
-    { accessorKey: "name", header: "Nama Sertifikat", enableSorting: true },
+    { accessorKey: "name", header: "Nama Pelatihan", enableSorting: true },
     { accessorKey: "provider", header: "Nama Penyedia", enableSorting: true },
     { accessorKey: "date", header: "Tanggal Pelatihan", enableSorting: true },
     { accessorKey: "result", header: "Hasil", enableSorting: true },

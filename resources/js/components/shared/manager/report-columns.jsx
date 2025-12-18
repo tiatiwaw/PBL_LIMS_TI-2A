@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
     getOrderStatusLabel,
     getOrderStatusVariant,
@@ -70,13 +69,22 @@ export const getReportsColumns = ({ onShowDetail }) => [
         accessorKey: "aksi",
         header: "Aksi",
         cell: ({ row }) => (
-            <Button
-                variant="outline"
-                size="sm"
+            <button
                 onClick={() => onShowDetail(row.id)}
+                className="
+                    inline-flex items-center gap-2
+                    px-4 py-1.5
+                    rounded-xl
+                    border border-slate-200
+                    text-sm font-medium text-slate-700
+                    bg-white
+                    hover:bg-slate-100 hover:border-slate-300
+                    active:scale-95
+                    transition-all duration-200
+                "
             >
                 Detail
-            </Button>
+            </button>
         ),
     },
 ];

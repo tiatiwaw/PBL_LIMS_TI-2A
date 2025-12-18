@@ -65,7 +65,7 @@ export const getEquipmentsColumns = ({ onShowDetail }) => [
 
 export const getBrandsColumns = ({ onShowDetail }) => [
     { accessorKey: "no", header: "No.", enableSorting: false },
-    { accessorKey: "name", header: "Nama Alat", enableSorting: true },
+    { accessorKey: "name", header: "Nama Brand", enableSorting: true },
     {
         id: "aksi",
         header: "Aksi",
