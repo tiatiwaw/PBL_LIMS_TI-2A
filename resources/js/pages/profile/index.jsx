@@ -5,12 +5,14 @@ import Loading from "@/components/ui/loading";
 import { Award, FileText, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { getProfile, useChangePassword, useUpdateProfile, useUploadSignature } from "@/hooks/useProfile";
+import { getProfile, useChangePassword, useUpdateProfile, useUploadSignature, useUpdateEmail, useUpdatePhone } from "@/hooks/useProfile";
 import SignaturePad from "@/components/profile/signature-pad";
 
 export default function ProfilePage() {
   const changePassword = useChangePassword();
   const { mutateAsync: updateProfile, isPending: isUpdating } = useUpdateProfile();
+  const { mutateAsync: updateEmail, isPending: isUpdatingEmail } = useUpdateEmail();
+  const { mutateAsync: updatePhone, isPending: isUpdatingPhone } = useUpdatePhone();
   const { mutateAsync: uploadSignature, isPending: isUploading } = useUploadSignature();
   
   const [pdfPreview, setPdfPreview] = useState(null);
@@ -18,8 +20,13 @@ export default function ProfilePage() {
   const [showChangeModal, setShowChangeModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
+  const [showEditEmailModal, setShowEditEmailModal] = useState(false);
+  const [showEditPhoneModal, setShowEditPhoneModal] = useState(false);
   const [signatureMode, setSignatureMode] = useState("upload"); // "upload" or "draw"
   const [editName, setEditName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editEmailPassword, setEditEmailPassword] = useState("");
+  const [editPhone, setEditPhone] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [signatureFile, setSignatureFile] = useState(null);
@@ -33,6 +40,17 @@ export default function ProfilePage() {
     setShowEditModal(true);
   };
 
+  const handleEditEmailClick = () => {
+    setEditEmail(profileData?.email || "");
+    setEditEmailPassword("");
+    setShowEditEmailModal(true);
+  };
+
+  const handleEditPhoneClick = () => {
+    setEditPhone(profileData?.clients?.phone_number || "");
+    setShowEditPhoneModal(true);
+  };
+
   const handleBackClick = () => {
     if (isNavigatingBack) return;
     setIsNavigatingBack(true);
@@ -44,6 +62,49 @@ export default function ProfilePage() {
       await updateProfile({ id: profileData.id, data: { name: editName } });
       toast.success("Nama berhasil diperbarui");
       setShowEditModal(false);
+    } catch (err) {
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      }
+    }
+  };
+
+  const handleSaveEmail = async () => {
+    if (!editEmail || !editEmailPassword) {
+      toast.error("Email dan password harus diisi");
+      return;
+    }
+    try {
+      await updateEmail({ 
+        id: profileData.id, 
+        data: { 
+          email: editEmail,
+          password: editEmailPassword
+        } 
+      });
+      toast.success("Email berhasil diperbarui");
+      setShowEditEmailModal(false);
+    } catch (err) {
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      }
+    }
+  };
+
+  const handleSavePhone = async () => {
+    if (!editPhone) {
+      toast.error("Nomor telepon harus diisi");
+      return;
+    }
+    try {
+      await updatePhone({ 
+        id: profileData.id, 
+        data: { 
+          phone_number: editPhone
+        } 
+      });
+      toast.success("Nomor telepon berhasil diperbarui");
+      setShowEditPhoneModal(false);
     } catch (err) {
       if (err.response?.data?.message) {
         toast.error(err.response.data.message);
@@ -132,18 +193,21 @@ export default function ProfilePage() {
           </div>
 
           <Detail label="Nama" value={profileData?.name} />
-          <Detail label="Email" value={profileData?.email} />
-
-          {profileData?.role === "analyst" && (
+          
+          {profileData?.role === "client" ? (
             <>
-              <Detail label="Specialist" value={profileData?.analyst?.specialist} />
-            </>
-          )}
-
-          {profileData?.role === "client" && (
-            <>
-              <Detail label="Alamat" value={profileData?.clients?.address} />
+              <Detail label="Email" value={profileData?.email} />
               <Detail label="No. Hp" value={profileData?.clients?.phone_number} />
+              <Detail label="Alamat" value={profileData?.clients?.address} />
+            </>
+          ) : (
+            <>
+              <Detail label="Email" value={profileData?.email} />
+              {profileData?.role === "analyst" && (
+                <>
+                  <Detail label="Specialist" value={profileData?.analyst?.specialist} />
+                </>
+              )}
             </>
           )}
 
@@ -221,6 +285,15 @@ export default function ProfilePage() {
             onSave={handleSaveName}
             onClose={() => setShowEditModal(false)}
             isLoading={isUpdating}
+            userRole={profileData?.role}
+            onEditEmail={() => {
+              setShowEditModal(false);
+              setShowEditEmailModal(true);
+            }}
+            onEditPhone={() => {
+              setShowEditModal(false);
+              setShowEditPhoneModal(true);
+            }}
           />
         )}
 
@@ -294,6 +367,28 @@ export default function ProfilePage() {
             onSave={() => handleChangePassword(profileData.id, { new_password: newPassword, old_password: oldPassword })}
             onClose={() => setShowChangeModal(false)}
             isLoading={changePassword.isPending}
+          />
+        )}
+
+        {showEditEmailModal && (
+          <EditEmailModal
+            email={editEmail}
+            setEmail={setEditEmail}
+            password={editEmailPassword}
+            setPassword={setEditEmailPassword}
+            onSave={handleSaveEmail}
+            onClose={() => setShowEditEmailModal(false)}
+            isLoading={isUpdatingEmail}
+          />
+        )}
+
+        {showEditPhoneModal && (
+          <EditPhoneModal
+            phone={editPhone}
+            setPhone={setEditPhone}
+            onSave={handleSavePhone}
+            onClose={() => setShowEditPhoneModal(false)}
+            isLoading={isUpdatingPhone}
           />
         )}
       </div>
@@ -392,7 +487,7 @@ function PdfPreviewModal({ pdfPath, onClose }) {
   );
 }
 
-function EditNameModal({ name, setName, onSave, onClose, isLoading }) {
+function EditNameModal({ name, setName, onSave, onClose, isLoading, userRole, onEditEmail, onEditPhone }) {
   return (
     <BaseModal title="Edit Nama" onClose={onClose}>
       <div className="mb-4">
@@ -405,6 +500,29 @@ function EditNameModal({ name, setName, onSave, onClose, isLoading }) {
           placeholder="Masukkan nama"
         />
       </div>
+      
+      {userRole === "client" && (
+        <>
+          <div className="border-t pt-4 mt-4">
+            <p className="text-sm font-semibold text-slate-700 mb-3">Ubah Data Lain</p>
+            <div className="flex gap-2">
+              <button
+                onClick={onEditEmail}
+                className="flex-1 px-3 py-2 text-sm rounded-lg border border-primary-hijauMuda text-primary-hijauMuda hover:bg-primary-hijauMuda hover:text-white transition"
+              >
+                Ubah Email
+              </button>
+              <button
+                onClick={onEditPhone}
+                className="flex-1 px-3 py-2 text-sm rounded-lg border border-primary-hijauMuda text-primary-hijauMuda hover:bg-primary-hijauMuda hover:text-white transition"
+              >
+                Ubah No. HP
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+      
       <div className="flex justify-end gap-3 mt-4">
         <button onClick={onClose} className="px-4 py-2 rounded-lg border text-slate-600 hover:bg-slate-100">
           Batal
@@ -500,5 +618,73 @@ function ModalInput({ label, value, setValue }) {
         placeholder={label}
       />
     </div>
+  );
+}
+
+function EditEmailModal({ email, setEmail, password, setPassword, onSave, onClose, isLoading }) {
+  return (
+    <BaseModal title="Ubah Email" onClose={onClose}>
+      <div className="mb-4">
+        <label className="block text-sm mb-2 font-medium text-slate-700">Email Baru</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full border px-3 py-2 rounded-lg bg-slate-50 focus:ring-2 focus:ring-primary-hijauMuda outline-none"
+          placeholder="Masukkan email baru"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm mb-2 font-medium text-slate-700">Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full border px-3 py-2 rounded-lg bg-slate-50 focus:ring-2 focus:ring-primary-hijauMuda outline-none"
+          placeholder="Masukkan password untuk konfirmasi"
+        />
+      </div>
+      <div className="flex justify-end gap-3 mt-4">
+        <button onClick={onClose} className="px-4 py-2 rounded-lg border text-slate-600 hover:bg-slate-100">
+          Batal
+        </button>
+        <button
+          onClick={onSave}
+          disabled={isLoading}
+          className="px-4 py-2 rounded-lg bg-primary-hijauMuda text-white shadow hover:scale-105 transition disabled:opacity-50"
+        >
+          {isLoading ? "Menyimpan" : "Simpan"}
+        </button>
+      </div>
+    </BaseModal>
+  );
+}
+
+function EditPhoneModal({ phone, setPhone, onSave, onClose, isLoading }) {
+  return (
+    <BaseModal title="Ubah Nomor Telepon" onClose={onClose}>
+      <div className="mb-4">
+        <label className="block text-sm mb-2 font-medium text-slate-700">Nomor Telepon</label>
+        <input
+          type="text"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="w-full border px-3 py-2 rounded-lg bg-slate-50 focus:ring-2 focus:ring-primary-hijauMuda outline-none"
+          placeholder="Masukkan nomor telepon"
+        />
+      </div>
+      <div className="flex justify-end gap-3 mt-4">
+        <button onClick={onClose} className="px-4 py-2 rounded-lg border text-slate-600 hover:bg-slate-100">
+          Batal
+        </button>
+        <button
+          onClick={onSave}
+          disabled={isLoading}
+          className="px-4 py-2 rounded-lg bg-primary-hijauMuda text-white shadow hover:scale-105 transition disabled:opacity-50"
+        >
+          {isLoading ? "Menyimpan" : "Simpan"}
+        </button>
+      </div>
+    </BaseModal>
   );
 }

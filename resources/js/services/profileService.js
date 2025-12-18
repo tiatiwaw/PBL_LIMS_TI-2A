@@ -6,3 +6,9 @@ export const profileService = {
     updateProfile: serviceMethods("/profile/update", {useFormData: true}),
     uploadSignature: serviceMethods("/profile/upload-signature", {useFormData: true}),
 };
+
+// Client-specific profile service
+export const clientProfileService = {
+    updateEmail: serviceMethods("/client/profile/update-email", {useFormData: false}),
+    updatePhone: serviceMethods("/client/profile/update-phone", {useFormData: false}),
+};

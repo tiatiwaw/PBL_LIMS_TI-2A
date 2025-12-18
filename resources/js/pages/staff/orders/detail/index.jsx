@@ -23,7 +23,6 @@ export default function HistoryDetailOrder({ canValidate }) {
     const { id } = props;
 
     const { data: order, isLoading, error } = useOrder(id);
-    console.log(order);
 
     const [selectedSampleId, setSelectedSampleId] = useState(null);
 
@@ -39,7 +38,6 @@ export default function HistoryDetailOrder({ canValidate }) {
     }, [order, selectedSampleId]);
 
     const handleValidation = () => {
-        console.log("Validasi Order");
     };
 
     if (isLoading) {

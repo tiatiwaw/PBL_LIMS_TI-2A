@@ -132,7 +132,6 @@ export default function DetailOrder({ canValidate }) {
                 case VALIDATION_ACTION_TYPES.VALIDATE_TEST:
                     // 🔹 Ambil semua results
                     const resultValue = getAllResults();
-                    console.log(resultValue);
 
                     setDialogConfig({
                         action: "confirm",

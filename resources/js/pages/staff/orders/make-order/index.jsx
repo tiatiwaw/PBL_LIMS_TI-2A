@@ -12,7 +12,6 @@ export default function OrdersPage() {
     const [step, setStep] = useState(1);
     const [isSaved, setIsSaved] = useState(false);
     const { data: orders, isLoading, error, create: createOrder } = useOrders();
-    // console.log("order", orders);
     const { create: createSample } = useSamples();
 
     const { clients, methods, categories, orderNumber } = orders || {};

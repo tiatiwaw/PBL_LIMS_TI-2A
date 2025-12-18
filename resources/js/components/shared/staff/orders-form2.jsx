@@ -44,7 +44,7 @@ export default function OrdersForm2({
     };
 
     const handleSampleSelect = (sample) => {
-        if (!sample) return console.log(`sample ${sample} tidak terkirim"`); // 🚧 Tambahkan guard agar tidak undefined
+        if (!sample) return toast.error(`sample ${sample} tidak terkirim"`); // 🚧 Tambahkan guard agar tidak undefined
 
         setSelectedSamples((prev) => {
             const exists = prev.find((s) => s.id === sample.id);

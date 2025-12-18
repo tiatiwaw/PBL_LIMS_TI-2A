@@ -21,7 +21,6 @@ export default function AdminDetailOrder({ canValidate }) {
     }, [order, selectedSampleId]);
 
     const handleValidation = () => {
-        console.log("Validasi Order");
     };
 
     if (isLoading) {
