@@ -30,7 +30,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // Admin
-Route::middleware(['auth', 'role:admin'])
+Route::middleware(['auth', 'role:admin|admin'])
     ->prefix('admin')
     ->as('admin.')
     ->group(function () {
@@ -77,7 +77,7 @@ Route::middleware(['auth', 'role:admin'])
     });
 
 // Manager
-Route::middleware(['auth', 'role:manager'])
+Route::middleware(['auth', 'role:manager|admin'])
     ->prefix('manager')
     ->as('manager.')
     ->group(function () {
@@ -141,7 +141,7 @@ Route::middleware(['auth', 'role:manager'])
     });
 
 // Staff
-Route::middleware(['auth', 'role:staff'])
+Route::middleware(['auth', 'role:staff|admin'])
     ->prefix('staff')
     ->name('staff.')
     ->group(function () {
@@ -184,7 +184,7 @@ Route::middleware(['auth', 'role:staff'])
 
 // Supervisor
 Route::controller(SupervisorController::class)
-    ->middleware(['auth', 'role:supervisor'])
+    ->middleware(['auth', 'role:supervisor|admin'])
     ->prefix('supervisor')
     ->name('supervisor.')
     ->group(function () {
@@ -216,7 +216,7 @@ Route::controller(SupervisorController::class)
 
 // Analyst
 Route::controller(AnalystController::class)
-    ->middleware(['auth', 'role:analyst'])
+    ->middleware(['auth', 'role:analyst|admin'])
     ->prefix('analyst')
     ->name('analyst.')
     ->group(function () {
@@ -250,7 +250,7 @@ Route::controller(AnalystController::class)
 
 // Client
 Route::controller(ClientController::class)
-    ->middleware(['auth', 'role:client'])
+    ->middleware(['auth', 'role:client|admin'])
     ->prefix('client')
     ->name('client.')
     ->group(function () {

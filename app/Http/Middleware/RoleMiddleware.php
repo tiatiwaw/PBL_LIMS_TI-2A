@@ -28,8 +28,13 @@ class RoleMiddleware
             return $next($request);
         }
 
+        // allow full access for admin
+        if (method_exists($user, 'hasRole') && $user->hasRole('admin')) {
+            return $next($request);
+        }
+
         foreach ($roles as $role) {
-            if ($user->hasRole($role)) {
+            if (method_exists($user, 'hasRole') && $user->hasRole($role)) {
                 return $next($request);
             }
         }
