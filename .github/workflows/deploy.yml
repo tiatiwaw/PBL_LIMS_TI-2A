@@ -21,18 +21,21 @@ jobs:
           port: ${{ secrets.SERVER_PORT || 22 }}
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 60s
+          command_timeout: 30m
           envs: APP_ENV_CONTENT
           script: |
             # 1. Pastikan folder ~/app tersedia dan clone/pull dari branch main
             set -e
+            export GIT_TERMINAL_PROMPT=0
             if [ ! -d ~/app/.git ]; then
               rm -rf ~/app
-              git clone -b main https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git ~/app
+              git clone --depth 1 -b main https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git ~/app
               cd ~/app
             else
               cd ~/app
               git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-              git fetch --all
+              git fetch --depth 1 origin main
               git reset --hard origin/main
             fi
             # 2. Inject environment variables dari GitHub Secret (APP_ENV)
