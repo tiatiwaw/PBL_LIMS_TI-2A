@@ -67,6 +67,25 @@ jobs:
             fi
 
             # 3. Instalasi dependensi
+            export COMPOSER_ALLOW_SUPERUSER=1
+            # Pastikan PHP & Composer terpasang di container
+            if ! which php >/dev/null 2>&1; then
+              echo "⚠️ PHP belum terpasang. Memasang PHP 8.2 otomatis..."
+              export DEBIAN_FRONTEND=noninteractive
+              curl -s 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x4F4EA0AAE5267A6C' | gpg --dearmor -o /etc/apt/trusted.gpg.d/ondrej-php.gpg 2>/dev/null || true
+              echo 'deb https://ppa.launchpadcontent.net/ondrej/php/ubuntu jammy main' > /etc/apt/sources.list.d/ondrej-php.list
+              apt-get update -qq && (apt-get install -y -qq php8.2-cli php8.2-mbstring php8.2-xml php8.2-curl php8.2-zip php8.2-sqlite3 php8.2-mysql php8.2-bcmath php8.2-intl unzip git || apt-get install -y -qq php-cli php-mbstring php-xml php-curl php-zip php-sqlite3 php-mysql php-bcmath php-intl unzip git)
+              (update-alternatives --set php /usr/bin/php8.2 2>/dev/null || true)
+            fi
+            if ! which composer >/dev/null 2>&1; then
+              echo "⚠️ Composer belum terpasang. Mengunduh Composer resmi..."
+              curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+              chmod +x /usr/local/bin/composer 2>/dev/null || true
+            fi
+            if [ -f package.json ] && ! which node >/dev/null 2>&1; then
+              echo "⚠️ Node.js belum terpasang untuk frontend assets (Vite). Memasang Node.js LTS..."
+              curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y -qq nodejs
+            fi
             composer install --no-interaction --prefer-dist --optimize-autoloader; if [ -f package.json ]; then npm install; fi
 
             # 4. Persiapan ORM & framework cache
@@ -88,6 +107,12 @@ jobs:
             fi
 
             # 7. Menjalankan proses aplikasi via PM2 & auto-resurrect on reboot
+            if ! which pm2 >/dev/null 2>&1; then
+              if ! which node >/dev/null 2>&1; then
+                curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y -qq nodejs
+              fi
+              npm install -g pm2 --silent 2>/dev/null || true
+            fi
             pm2 delete app 2>/dev/null || true
             pm2 delete app 2>/dev/null || true; pm2 start "php artisan serve --host=0.0.0.0 --port=3000" --name app
             pm2 save 2>/dev/null || true
