@@ -39,7 +39,8 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh -i ~/.ssh/deploy_key -p $SERVER_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=30 root@$SERVER_HOST "bash -s" << 'REMOTE_SCRIPT_EOF'
+          APP_ENV_B64=$(echo -n "$APP_ENV_CONTENT" | base64 -w 0)
+          ssh -i ~/.ssh/deploy_key -p $SERVER_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=30 root@$SERVER_HOST "APP_ENV_B64="$APP_ENV_B64" bash -s" << 'REMOTE_SCRIPT_EOF'
             set -e
             export GIT_TERMINAL_PROMPT=0
 
@@ -62,9 +63,10 @@ jobs:
             fi
 
             # 2. Injeksi environment variables dari secrets
-            if [ -n "$APP_ENV_CONTENT" ]; then
-              echo "$APP_ENV_CONTENT" > .env
+            if [ -n "$APP_ENV_B64" ]; then
+              echo "$APP_ENV_B64" | base64 -d > .env
             fi
+            sed -i 's/\\n/\n/g' .env 2>/dev/null || true
 
             # 3. Instalasi dependensi
             export COMPOSER_ALLOW_SUPERUSER=1
@@ -93,12 +95,18 @@ jobs:
               npx prisma generate 2>/dev/null || true
             fi
             if [ -f artisan ]; then
+              if [ ! -f .env ]; then cp .env.example .env 2>/dev/null || touch .env; fi
+              sed -i 's/\\n/\n/g' .env 2>/dev/null || true
+              if ! grep -q '^APP_KEY=.\+' .env 2>/dev/null; then
+                if ! grep -q '^APP_KEY=' .env 2>/dev/null; then echo '' >> .env; echo 'APP_KEY=' >> .env; fi
+                php artisan key:generate --force 2>/dev/null || true
+              fi
               php artisan config:clear 2>/dev/null || true
             fi
 
             # 5. Build & kompilasi aplikasi
             export NODE_OPTIONS="--max-old-space-size=1200"
-            if [ ! -f .env ]; then cp .env.example .env 2>/dev/null || touch .env; fi; if ! grep -q '^APP_KEY=' .env 2>/dev/null; then echo 'APP_KEY=' >> .env; fi; grep -q '^LARAVEL_CLOUD=' .env 2>/dev/null || echo 'LARAVEL_CLOUD=1' >> .env; php artisan key:generate --force 2>/dev/null || true; if [ -f package.json ]; then export NODE_OPTIONS='--max-old-space-size=1200'; npm run build; node -e 'const fs=require("fs"),f="public/build/manifest.json";if(fs.existsSync(f)){const d=JSON.parse(fs.readFileSync(f,"utf8"));let c=false;for(const k of Object.keys(d)){if(k.includes("resources/js/pages/")){const a=k.replace("resources/js/pages/","resources/js/Pages/");if(!d[a]){d[a]=d[k];c=true;}}else if(k.includes("resources/js/Pages/")){const a=k.replace("resources/js/Pages/","resources/js/pages/");if(!d[a]){d[a]=d[k];c=true;}}}if(c)fs.writeFileSync(f,JSON.stringify(d,null,2));}' 2>/dev/null || true; fi; chmod -R 775 storage bootstrap/cache 2>/dev/null || true; php artisan storage:link 2>/dev/null || true; if grep -q 'DB_CONNECTION=sqlite' .env 2>/dev/null || ! grep -q 'DB_CONNECTION=' .env 2>/dev/null; then mkdir -p database && touch database/database.sqlite 2>/dev/null || true; fi; php artisan migrate --force 2>/dev/null || true; php artisan optimize:clear 2>/dev/null || true; php artisan config:cache 2>/dev/null || true; php artisan route:cache 2>/dev/null || true; php artisan view:cache 2>/dev/null || true
+            if [ ! -f .env ]; then cp .env.example .env 2>/dev/null || touch .env; fi; sed -i 's/\\n/\n/g' .env 2>/dev/null || true; if ! grep -q '^APP_KEY=.\+' .env 2>/dev/null; then if ! grep -q '^APP_KEY=' .env 2>/dev/null; then echo '' >> .env; echo 'APP_KEY=' >> .env; fi; php artisan key:generate --force 2>/dev/null || true; fi; grep -q '^LARAVEL_CLOUD=' .env 2>/dev/null || echo 'LARAVEL_CLOUD=1' >> .env; if [ -f package.json ]; then export NODE_OPTIONS='--max-old-space-size=1200'; npm run build; node -e 'const fs=require("fs"),f="public/build/manifest.json";if(fs.existsSync(f)){const d=JSON.parse(fs.readFileSync(f,"utf8"));let c=false;for(const k of Object.keys(d)){if(k.includes("resources/js/pages/")){const a=k.replace("resources/js/pages/","resources/js/Pages/");if(!d[a]){d[a]=d[k];c=true;}}else if(k.includes("resources/js/Pages/")){const a=k.replace("resources/js/Pages/","resources/js/pages/");if(!d[a]){d[a]=d[k];c=true;}}}if(c)fs.writeFileSync(f,JSON.stringify(d,null,2));}' 2>/dev/null || true; fi; chmod -R 775 storage bootstrap/cache 2>/dev/null || true; php artisan storage:link 2>/dev/null || true; if grep -q 'DB_CONNECTION=sqlite' .env 2>/dev/null || ! grep -q 'DB_CONNECTION=' .env 2>/dev/null; then mkdir -p database && touch database/database.sqlite 2>/dev/null || true; fi; php artisan migrate --force 2>/dev/null || true; php artisan optimize:clear 2>/dev/null || true; php artisan config:cache 2>/dev/null || true; php artisan route:cache 2>/dev/null || true; php artisan view:cache 2>/dev/null || true
 
             # 6. Konfigurasi Nginx reverse proxy
             if which nginx >/dev/null 2>&1; then
