@@ -65,7 +65,7 @@ jobs:
 
             TOTAL=$(echo "$STATUS_RES" | jq -r '.job.logs | length' 2>/dev/null || echo 0)
             if [ "$TOTAL" -gt "$LAST_COUNT" ]; then
-              echo "$STATUS_RES" | jq -r --argjson last "$LAST_COUNT" '.job.logs[$last:] | .[] | "[(.timestamp)] (.text)"' 2>/dev/null || true
+              echo "$STATUS_RES" | jq -r --argjson last "$LAST_COUNT" '.job.logs[$last:] | .[] | "[" + .timestamp + "] " + .text' 2>/dev/null || true
               LAST_COUNT=$TOTAL
             fi
 
