@@ -3,7 +3,13 @@ name: Deploy to RupaCloud (Laravel (Blade / Inertia React))
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '.github/workflows/**'
   workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -39,9 +45,23 @@ jobs:
 
           POLL_URL="https://$BASE_DOMAIN/api/customer/orders/$ORDER_ID/deploy?jobId=$JOB_ID"
           LAST_COUNT=0
+          FAIL_COUNT=0
           while true; do
-            STATUS_RES=$(curl -s "$POLL_URL")
+            STATUS_RES=$(curl -s -H "Authorization: Bearer $DEPLOY_TOKEN" "$POLL_URL")
             STATUS=$(echo "$STATUS_RES" | grep -o '"status":"[^"]*' | cut -d'"' -f4)
+
+            API_ERR=$(echo "$STATUS_RES" | jq -r '.error // empty' 2>/dev/null || true)
+            if [ -n "$API_ERR" ]; then
+              echo "⚠️ Kendala polling ($API_ERR). Mencoba kembali..."
+              FAIL_COUNT=$((FAIL_COUNT+1))
+              if [ "$FAIL_COUNT" -gt 15 ]; then
+                echo "❌ Gagal memantau deployment karena otorisasi atau koneksi bermasalah."
+                exit 1
+              fi
+              sleep 2
+              continue
+            fi
+            FAIL_COUNT=0
 
             TOTAL=$(echo "$STATUS_RES" | jq -r '.job.logs | length' 2>/dev/null || echo 0)
             if [ "$TOTAL" -gt "$LAST_COUNT" ]; then
