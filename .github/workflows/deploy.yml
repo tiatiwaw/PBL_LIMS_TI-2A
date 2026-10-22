@@ -20,12 +20,12 @@ jobs:
             echo "Mengunduh client Cloudflare Tunnel untuk koneksi SSH..."
             sudo curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/local/bin/cloudflared
             sudo chmod +x /usr/local/bin/cloudflared
-            cat << 'EOF' >> ~/.ssh/config
-          Host *
-            ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
-            StrictHostKeyChecking no
-            UserKnownHostsFile /dev/null
-          EOF
+            cat << 'CLOUDFLARE_SSH_EOF' >> ~/.ssh/config
+Host *
+  ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+CLOUDFLARE_SSH_EOF
           else
             echo "Menggunakan koneksi IP langsung."
           fi
@@ -40,7 +40,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           APP_ENV_B64=$(echo -n "$APP_ENV_CONTENT" | base64 -w 0)
-          ssh -i ~/.ssh/deploy_key -p $SERVER_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=30 -o BatchMode=yes root@$SERVER_HOST "APP_ENV_B64="$APP_ENV_B64" bash -s" << 'REMOTE_SCRIPT_EOF'
+          ssh -i ~/.ssh/deploy_key -p $SERVER_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=60 -o BatchMode=yes root@$SERVER_HOST "APP_ENV_B64="$APP_ENV_B64" bash -s" << 'REMOTE_SCRIPT_EOF'
             set -e
             export GIT_TERMINAL_PROMPT=0
 
