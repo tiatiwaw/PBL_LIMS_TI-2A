@@ -25,6 +25,8 @@ jobs:
           ORDER_ID: 'cf898b97-d409-4c4b-b24c-1d9d240bf40b'
           BASE_DOMAIN: 'rupacloud.web.id'
         run: |
+          bash << 'EOF'
+          set -e
           echo "📡 Menghubungi RupaCloud Builder..."
           DEPLOY_URL="https://$BASE_DOMAIN/api/customer/orders/$ORDER_ID/deploy-webhook"
 
@@ -78,6 +80,7 @@ jobs:
             fi
             sleep 2
           done
+          EOF
 
       - name: 📊 Ringkasan Status Deployment (RuPa Cloud Summary)
         if: success()
