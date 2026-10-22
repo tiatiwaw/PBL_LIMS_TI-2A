@@ -20,8 +20,7 @@ jobs:
             echo "Mengunduh client Cloudflare Tunnel untuk koneksi SSH..."
             sudo curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/local/bin/cloudflared
             sudo chmod +x /usr/local/bin/cloudflared
-            printf '%s
-'               'Host *'               '  ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h'               '  StrictHostKeyChecking no'               '  UserKnownHostsFile /dev/null' > ~/.ssh/config
+            echo -e "Host *\n  ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h\n  StrictHostKeyChecking no\n  UserKnownHostsFile /dev/null" > ~/.ssh/config
           else
             echo "Menggunakan koneksi IP langsung."
           fi
